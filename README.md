@@ -1,1 +1,0 @@
-# kubewarden-product-docs

@@ -1,0 +1,28 @@
+site:
+  title: Kubewarden documentation
+  start_page: 1.16@kubewarden-product-docs:en:index.adoc
+
+content:
+  sources:
+    - url: ./
+      branches: [main]
+      start_paths: docstore/next, docstore/version-*
+
+ui:
+  bundle:
+    url: https://github.com/rancher/product-docs-ui/blob/main/build/ui-bundle.zip?raw=true
+    snapshot: true
+  supplemental_files: ./product-docs-supplemental-files
+
+asciidoc:
+  attributes:
+    page-pagination: ''
+  extensions:
+    - asciidoctor-kroki
+    - '@asciidoctor/tabs'
+antora:
+  extensions:
+  - require: '@antora/lunr-extension'
+
+output:
+  dir: build/site
