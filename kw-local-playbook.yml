@@ -6,7 +6,7 @@ content:
   sources:
     - url: ./
       branches: [main]
-      start_paths: docstore/next, docstore/version-*
+      start_paths: [docstore/next, docstore/version-*]
 
 ui:
   bundle:
