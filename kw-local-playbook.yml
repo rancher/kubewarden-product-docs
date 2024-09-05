@@ -6,7 +6,7 @@ content:
   sources:
     - url: ./
       branches: [main]
-      start_paths: [docstore/next, docstore/version-*]
+      start_paths: [docs/next, docs/version-*]
 
 ui:
   bundle:
@@ -16,6 +16,9 @@ ui:
 
 asciidoc:
   attributes:
+    kw-build-type: 'product'
+    kw-rancher-product-name: 'Rancher Policy Engine'
+    kw-community-product-name: 'Kubewarden'
     page-pagination: ''
   extensions:
     - asciidoctor-kroki

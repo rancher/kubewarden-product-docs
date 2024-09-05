@@ -1,4 +1,5 @@
-= What is Kubewarden?
+include::partial$kw-global.adoc[]
+= What is {product-name}?
 :description: Introducing Kubewarden, a CNCF Sandbox project.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["introduction"]
@@ -9,7 +10,7 @@
 :slug: /
 :current-version: {page-origin-branch}
 
-Kubewarden is a Kubernetes Policy Engine.
+{product-name} is a Kubernetes Policy Engine.
 It aims to be the Universal Policy Engine for Kubernetes.
 
 * You can reuse policies from other policy engines without having to rewrite them.
@@ -18,10 +19,10 @@ that generates WebAssembly binaries,
 reusing your language tooling and libraries.
 * You can run policies both outside the cluster and as part of your CI/CD processes.
 
-Kubewarden also provides an audit scanner to
+{product-name} also provides an audit scanner to
 actively and continuously check policy enforcement over time.
 
-Kubewarden is a https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
+{intro-paragraph}
 
 == What is WebAssembly?
 
@@ -56,8 +57,8 @@ plugged into current CI and CD workflows.
 
 == Policy distribution
 
-Kubewarden policies can be served by a regular web server or,
+{product-name} policies can be served by a regular web server or,
 better, be published from an OCI compliant registry.
 
-Kubewarden policies can be stored inside an OCI compliant registry as
+{product-name} policies can be stored inside an OCI compliant registry as
 https://github.com/opencontainers/artifacts[OCI artifacts].

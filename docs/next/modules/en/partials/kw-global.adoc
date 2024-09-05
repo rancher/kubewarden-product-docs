@@ -1,0 +1,12 @@
+:rancher-product-name: {kw-rancher-product-name}
+:community-product-name: {kw-community-product-name}
+
+ifeval::["{kw-build-type}" == "community"]
+:product-name: {community-product-name}
+:intro-paragraph: {community-product-name} is a https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
+endif::[]
+
+ifeval::["{kw-build-type}" == "product"]
+:product-name: {rancher-product-name}
+:intro-paragraph: {rancher-product-name} is derived from a https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-product-name}], originally created by https://www.rancher.com/[SUSE Rancher].
+endif::[]

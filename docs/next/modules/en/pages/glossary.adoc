@@ -49,7 +49,7 @@ this is how a Kubewarden controller informs Kubernetes where to find a resource 
 A PolicyReport and a <<clusterpolicyreport,ClusterPolicyReport>> store results of
 policy scans. Which one is used depends on the scope of the resource.
 
-[#policy-server]
+[#_policy_server]
 === PolicyServer
 
 A PolicyServer validates incoming requests by executing Kubewarden policies against requests.
