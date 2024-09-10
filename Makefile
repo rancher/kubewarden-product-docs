@@ -10,7 +10,7 @@ remote:
 	npm install && npm update
 	npx antora --version
 	npx antora --stacktrace --log-format=pretty \
-		kw-netlify-playbook.yml \
+		kw-remote-playbook.yml \
 		2>&1 | tee tmp/netlify-build.log 2>&1
 
 clean:

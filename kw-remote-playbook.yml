@@ -1,0 +1,31 @@
+site:
+  title: Kubewarden documentation
+  start_page: 1.16@kubewarden-product-docs:en:introduction.adoc
+
+content:
+  sources:
+    - url: https://github.com/rancher/kubewarden-product-docs.git
+      branches: [main]
+      start_paths: [docs/next, docs/version-*]
+
+ui:
+  bundle:
+    url: https://github.com/rancher/product-docs-ui/blob/main/build/ui-bundle.zip?raw=true
+    snapshot: true
+  supplemental_files: ./product-docs-supplemental-files
+
+asciidoc:
+  attributes:
+    kw-build-type: 'community'
+    kw-rancher-product-name: 'Rancher Policy Engine'
+    kw-community-product-name: 'Kubewarden'
+    page-pagination: ''
+  extensions:
+    - asciidoctor-kroki
+    - '@asciidoctor/tabs'
+antora:
+  extensions:
+  - require: '@antora/lunr-extension'
+
+output:
+  dir: build/site
