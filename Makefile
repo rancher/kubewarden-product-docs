@@ -7,6 +7,8 @@ local:
 
 remote:
 	mkdir -p tmp
+	wget 'https://github.com/rancher/product-docs-ui/blob/main/build/ui-bundle.zip?raw=true' -O tmp/ui-bundle.zip
+	unzip -o tmp/ui-bundle.zip -d tmp/sp
 	npm install && npm update
 	npx antora --version
 	npx antora --stacktrace --log-format=pretty \
