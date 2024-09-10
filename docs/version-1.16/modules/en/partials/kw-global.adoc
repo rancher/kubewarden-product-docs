@@ -1,0 +1,40 @@
+:rancher-product-name: {kw-rancher-product-name}
+:community-product-name: {kw-community-product-name}
+
+ifeval::["{kw-build-type}" == "community"]
+:product-name: {community-product-name}
+:intro-paragraph: {community-product-name} is a https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
+endif::[]
+
+ifeval::["{kw-build-type}" == "rancher"]
+:product-name: {rancher-product-name}
+:intro-paragraph: {rancher-product-name} is derived from a https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-product-name}], originally created by https://www.rancher.com/[SUSE Rancher].
+endif::[]
+
+// Glossary terms start
+
+:admission-policy: xref:glossary.adoc#_admissionpolicy[AdmissionPolicy]
+
+:cluster-admission-policy: xref:glossary.adoc#_usteradmissionpolicyClusterAdmissionPolicy]
+
+:cluster-policy-report: xref:glossary.adoc#_clusterpolicyreport[ClusterPolicyReport]
+
+:kwctl: xref:glossary.adoc#_kwctl[kwctl]
+
+:mutating-webhook-configuration: xref:glossary.adoc#_mutatingwebhookconfiguration[MutatingWebhookConfiguration]
+
+:policy-report: xref:glossary.adoc#_policyreport[PolicyReport]
+
+:policy-server: xref:glossary.adoc#_policyserver[PolicyServer]
+
+:validating-webhook-configuration: xref:glossary.adoc#_walidatingwebhookconfiguration[ValidatingWebhookConfiguration]
+
+:waPC: xref:glossary.adoc#_wapc[waPC]
+
+:WASI: xref:glossary.adoc#_wasi[WASI]
+
+:Wasm: xref:glossary.adoc#_wasm[Wasm]
+
+:Wasmtime: xref:glossary.adoc#_wasmtime[Wasmtime]
+
+// Glossary terms end
