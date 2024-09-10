@@ -5,7 +5,7 @@ local:
 		kw-local-playbook.yml \
 		2>&1 | tee tmp/local-build.log 2>&1
 
-netlify:
+remote:
 	mkdir -p tmp
 	npm install && npm update
 	npx antora --version
