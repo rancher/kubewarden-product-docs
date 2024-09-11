@@ -92,8 +92,7 @@ We can proceed to the deployment of Kubewarden in the usual way.
 
 [NOTE]
 ====
-cert-manager is a requirement of Kubewarden, and OpenTelemetry is required for this
-feature, but we've already installed them in a previous section of this book.
+cert-manager is a requirement of OpenTelemetry, but we've already installed it in a previous section of this book.
 ====
 
 
