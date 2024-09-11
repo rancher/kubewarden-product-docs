@@ -135,6 +135,11 @@ Notice the commented numbers on both the YAML manifests. Let's expand on them:
 | `backgroundAudit`, annotations
 | These Kubewarden fields set the policy usage in xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], and its category and severity for PolicyReports.
 
+| 8
+| `matchConditions`
+| `matchConditions`
+| Kubewarden's policies have `matchConditions`.
+
 |
 | `---`
 | Kubewarden-only features
@@ -154,8 +159,6 @@ This is described inside of xref:howtos/vap-migration.adoc[this howto].
 There are some VAP features that aren't yet implemented. If look forward to them, please get in contact with us. These are:
 
 * VAP https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz[authorizer library].
-* VAP https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#matching-requests-matchconditions[matchConditions]
-(`spec.matchConditions`).
 * VAP https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#parameter-resources[Parameters]
 (ValidatingAdmissionPolicy `spec.paramKind` & ValidatingAdmissionPolicyBinding `spec.paramRef`).
 * VAP https://kubernetes.io/docs/reference/labels-annotations-taints/audit-annotations/[Audit Annotations]
