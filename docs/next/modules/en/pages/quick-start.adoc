@@ -11,7 +11,7 @@ include::partial$kw-global.adoc[]
 
 The Kubewarden stack comprises:
 
-* Some {cluster-admission-policy} resources: this is how policies are defined for Kubernetes clusters
+* Some {cluster-admission-policy} resoit: this is how policies are defined for Kubernetes clusters
 * Some {policy-server} resources: representing a deployment of a Kubewarden
 `PolicyServer`. Your administrator's policies are loaded and evaluated by the Kubewarden
 `PolicyServer`
@@ -28,23 +28,6 @@ The Kubernetes Custom Resource Definitions (CRDs) defined by Kubewarden are desc
 
 
 == Installation
-
-[IMPORTANT]
-.Prerequisites
-====
-The Helm chart depends on `cert-manager`. Ensure you install https://cert-manager.io/docs/installation/[`cert-manager`] _before_ the `kubewarden-controller` chart.
-
-You can install the latest version of `cert-manager` through Helm by running the following commands:
-
-[subs="+attributes",console]
-----
-helm repo add jetstack https://charts.jetstack.io
-
-helm install --wait --namespace cert-manager --create-namespace \
-	--set crds.enabled=true cert-manager jetstack/cert-manager
-----
-====
-
 
 [IMPORTANT]
 .Authentication
