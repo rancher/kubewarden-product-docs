@@ -16,8 +16,8 @@ Kubernetes clusters.
 Kubewarden has separate policies to achieve the same goal as a monolithic PSP
 configuration. Each Kubewarden policy definition functions as a different
 configuration section in the specification of a PSP. The mapping of PSP
-configuration fields to their respective Kubewarden policies is in the <<mapping-kuberwarden-policies-to-psp-fields,mapping
-table>> below.
+configuration fields to their respective Kubewarden policies is in the
+<<_mapping_kuberwarden_policies_to_psp_fields,mapping table>> below.
 
 With Kubewarden, operators have granular control of policy configuration in
 their clusters.

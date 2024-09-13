@@ -1,9 +1,9 @@
 local:
 	mkdir -p tmp
 	npx antora --version
-	npx antora --stacktrace --log-format=pretty --log-level=warn \
+	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-local-playbook.yml \
-		2>&1 | tee tmp/local-build.log 2>&1
+		2>&1 | tee tmp/local-build.log
 
 remote:
 	mkdir -p tmp
@@ -11,9 +11,9 @@ remote:
 	unzip -o tmp/ui-bundle.zip -d tmp/sp
 	npm install && npm update
 	npx antora --version
-	npx antora --stacktrace --log-format=pretty \
+	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-remote-playbook.yml \
-		2>&1 | tee tmp/netlify-build.log 2>&1
+		2>&1 | tee tmp/remote-build.log
 
 clean:
 	rm -rf build

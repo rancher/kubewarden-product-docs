@@ -34,23 +34,23 @@ This table provides a comparison between OPA Gatekeeper and Kubewarden. Topics r
 | ✅
 | ✅
 
-| Policy language <<writing-policies,[1]>>
+| Policy language <<_writing_policies,[1]>>
 | Rego
 | Rego, CEL, Go, Rust,...
 
-| Context aware <<context-aware,[2]>>
+| Context aware <<_context_aware,[2]>>
 | ✅
 | ✅
 
-| Kubernetes integration <<kubernetes-integration,[3]>>
+| Kubernetes integration <<_kubernetes_integration,[3]>>
 | cluster wide CRD
 | cluster wide and namespaced CRDs
 
-| Policy distribution <<policy-distribution,[4]>>
+| Policy distribution <<_policy_distribution,[4]>>
 | embedded into Kubernetes CR
 | Container registry, or embeded into Kubernetes CR (CEL)
 
-| CI/CD integration <<cicd-integration,[5]>>
+| CI/CD integration <<_cicd_integration,[5]>>
 | ✅
 | ✅
 
@@ -58,11 +58,11 @@ This table provides a comparison between OPA Gatekeeper and Kubewarden. Topics r
 | deny, warn
 | deny, warn
 
-| Deployment mode <<deployment-mode,[6]>>
+| Deployment mode <<_deployment_mode,[6]>>
 | single evaluation server
 | multiple evaluation servers
 
-| Background checks <<background-checks,[7]>>
+| Background checks <<_background_checks,[7]>>
 | ✅
 | ✅
 |===
