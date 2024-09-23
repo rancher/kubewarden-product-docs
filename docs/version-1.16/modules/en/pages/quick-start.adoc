@@ -163,15 +163,31 @@ Check the https://github.com/kubewarden/policy-server/pkgs/container/policy-serv
 
 Overview of the attributes of the `PolicyServer` resource:
 
-// prettier-ignore
+[cols="^,,"]
+|===
+| Required | Placeholder | Description
 
-| Required | Placeholder         | Description    |
-|:------:| ------------- | -------------------- |
-| Y | `image`  | The name of the container image |
-| Y | `replicas`  | The number of desired instances |
-| N | `serviceAccountName` | The name of the `ServiceAccount` to use for the `PolicyServer` deployment. If no value is provided, the default `ServiceAccount` from the namespace, where the `kubewarden-controller` is installed, will be used |
-| N | `env` | The list of environment variables |
-| N | `annotations` | The list of annotations |
+| Y
+| `image`
+| The name of the container image
+
+| Y
+| `replicas`
+| The number of desired instances
+
+| N
+| `serviceAccountName`
+| The name of the `ServiceAccount` to use for the `PolicyServer` deployment. If no value is provided, the default `ServiceAccount` from the namespace, where the `kubewarden-controller` is installed, will be used.
+
+| N
+| `env`
+| The list of environment variables
+
+| N
+| `annotations`
+| The list of annotations
+
+|===
 
 Changing any of these attributes causes a `PolicyServer` deployment with the new configuration.
 
@@ -484,7 +500,7 @@ policies as shown in the xref:tutorials/writing-policies/rego/01-intro-rego.adoc
 chapters].
 
 .Full list of available policies on ArtifactHub
-[%collapsible]
+[%collapsible,subs="+macros"]
 ======
 
 +++<div class="artifacthub-widget-group" data-url="https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1" data-theme="light" data-header="false" data-stars="false" data-color="#fe7c3f" data-responsive="true" data-loading="true">++++++</div>+++
