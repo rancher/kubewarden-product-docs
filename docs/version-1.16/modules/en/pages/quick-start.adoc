@@ -9,6 +9,12 @@ include::partial$kw-global.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
+++++
+<head>
+<script async src="https://artifacthub.io/artifacthub-widget.js"></script>
+</head>
+++++
+
 The Kubewarden stack comprises:
 
 * Some {cluster-admission-policy} resources: this is how policies are defined for Kubernetes clusters
@@ -503,6 +509,10 @@ chapters].
 [%collapsible,subs="+macros"]
 ======
 
-+++<div class="artifacthub-widget-group" data-url="https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1" data-theme="light" data-header="false" data-stars="false" data-color="#fe7c3f" data-responsive="true" data-loading="true">++++++</div>+++
+++++
+
+<div class="artifacthub-widget-group" data-url="https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1" data-theme="light" data-header="false" data-stars="false" data-color="#fe7c3f" data-responsive="true" data-loading="true"></div>
+
+++++
 
 ======
