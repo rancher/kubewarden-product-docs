@@ -1,10 +1,10 @@
 include::partial$kw-global.adoc[]
 = Quick start
-:description: Getting started with Kubewarden, installing the Kubewarden stack and taking care of prerequisites and authentication
+:description: Getting started with {product-name}, installing the {product-name} stack and taking care of prerequisites and authentication
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]
-:keywords: ["Kubewarden", "installation", "quick start", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{product-name}", "installation", "quick start", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Quick start
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -15,21 +15,21 @@ include::partial$kw-global.adoc[]
 </head>
 ++++
 
-The Kubewarden stack comprises:
+The {product-name} stack comprises:
 
-* Some {cluster-admission-policy} resoit: this is how policies are defined for Kubernetes clusters
-* Some {policy-server} resources: representing a deployment of a Kubewarden
-`PolicyServer`. Your administrator's policies are loaded and evaluated by the Kubewarden
+* Some {cluster-admission-policy} resources: this is how policies are defined for Kubernetes clusters
+* Some {policy-server} resources: representing a deployment of a {product-name}
+`PolicyServer`. Your administrator's policies are loaded and evaluated by the {product-name}
 `PolicyServer`
 * Some {admission-policy} resources: policies for a defined namespace
 * A deployment of a `kubewarden-controller`: this controller monitors the
-{cluster-admission-policy} resources and interacts with the Kubewarden
+{cluster-admission-policy} resources and interacts with the {product-name}
 {policy-server} components.
 
 [TIP]
 ====
 
-The Kubernetes Custom Resource Definitions (CRDs) defined by Kubewarden are described xref:reference/CRDs.adoc[here].
+The Kubernetes Custom Resource Definitions (CRDs) defined by {product-name} are described xref:reference/CRDs.adoc[here].
 ====
 
 
@@ -38,8 +38,8 @@ The Kubernetes Custom Resource Definitions (CRDs) defined by Kubewarden are desc
 [IMPORTANT]
 .Authentication
 ====
-Kubewarden policies can be retrieved from the GitHub container registry at https://ghcr.io.
-You need authentication to use the repository with the Kubewarden CLI, a https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens[GitHub personal access token] (PAT).
+{product-name} policies can be retrieved from the GitHub container registry at https://ghcr.io.
+You need authentication to use the repository with the {product-name} CLI, a https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens[GitHub personal access token] (PAT).
 Their documentation guides you through creating one if you haven't already done so.
 Then you authenticate with a command like:
 
@@ -50,7 +50,7 @@ echo $PAT | docker login ghcr.io --username <my-gh-username> --password-stdin
 ====
 
 
-Deploy the Kubewarden stack using `helm` charts as follows:
+Deploy the {product-name} stack using `helm` charts as follows:
 
 [subs="+attributes",console]
 ----
@@ -67,7 +67,7 @@ Install the following Helm charts inside the `kubewarden` namespace in your Kube
 * `kubewarden-crds`, which registers the {cluster-admission-policy},
 {admission-policy} and {policy-server} Custom Resource Definitions. Also,
 the {policy-report} Custom Resource Definitions used by the audit scanner.
-* `kubewarden-controller`, which installs the Kubewarden controller and the
+* `kubewarden-controller`, which installs the {product-name} controller and the
 audit scanner
 
 [NOTE]
@@ -114,7 +114,7 @@ The default configuration values are sufficient for most deployments. All option
 
 == Main components
 
-Kubewarden has three main components which you will interact with:
+{product-name} has three main components which you will interact with:
 
 * The {policy-server}
 * The {cluster-admission-policy}
@@ -122,10 +122,10 @@ Kubewarden has three main components which you will interact with:
 
 === `PolicyServer`
 
-A Kubewarden `PolicyServer` is managed by the `kubewarden-controller`.
+A {product-name} `PolicyServer` is managed by the `kubewarden-controller`.
 Multiple {policy-server}s can be deployed in the same Kubernetes cluster.
 
-A `PolicyServer` validates incoming requests by executing Kubewarden policies against them.
+A `PolicyServer` validates incoming requests by executing {product-name} policies against them.
 
 This is the default `PolicyServer` configuration:
 
@@ -182,7 +182,7 @@ Changing any of these attributes causes a `PolicyServer` deployment with the new
 
 === ClusterAdmissionPolicy
 
-The {cluster-admission-policy} resource is the core of the Kubewarden stack. It defines how policies evaluate requests.
+The {cluster-admission-policy} resource is the core of the {product-name} stack. It defines how policies evaluate requests.
 
 Enforcing policies is the most common operation which a Kubernetes administrator performs.
 You can declare as many policies as you want, each targets one or more Kubernetes resources (that is, `pods`, `Custom Resource` and others).
@@ -227,7 +227,7 @@ Overview of the attributes of the {cluster-admission-policy} resource:
 
 | Y
 | `module`
-| The location of the Kubewarden policy. The following schemes are allowed:
+| The location of the {product-name} policy. The following schemes are allowed:
 
 | N
 |
@@ -438,7 +438,7 @@ helm uninstall --namespace kubewarden kubewarden-controller
 helm uninstall --namespace kubewarden kubewarden-crds
 ----
 
-Once the `helm` charts have been uninstalled, remove the Kubernetes namespace that was used to deploy the Kubewarden stack:
+Once the `helm` charts have been uninstalled, remove the Kubernetes namespace that was used to deploy the {product-name} stack:
 
 [subs="+attributes",console]
 ----
@@ -447,7 +447,7 @@ kubectl delete namespace kubewarden
 
 [CAUTION]
 ====
-Kubewarden contains a helm pre-delete hook that removes all ``PolicyServer``s and ``kubewarden-controller``s.
+{product-name} contains a helm pre-delete hook that removes all ``PolicyServer``s and ``kubewarden-controller``s.
 Then the `kubewarden-controller` will delete all resources, so it's important that `kubewarden-controller` is running when helm uninstall is executed.
 ====
 
@@ -482,7 +482,7 @@ kubectl delete -l "kubewarden" mutatingwebhookconfigurations.admissionregistrati
 
 == What's next?
 
-Now, you are ready to deploy Kubewarden! Have a look at the policies on
+Now, you are ready to deploy {product-name}! Have a look at the policies on
 https://artifacthub.io/packages/search?kind=13[artifacthub.io], on
 https://github.com/topics/kubewarden-policy[GitHub], or reuse existing Rego
 policies as shown in the xref:tutorials/writing-policies/rego/01-intro-rego.adoc[following
