@@ -1,14 +1,18 @@
-:rancher-product-name: {kw-rancher-product-name}
-:community-product-name: {kw-community-product-name}
+:rancher-product-name: 'Rancher Policy Management'
+:community-product-name: 'Kubewarden'
 
 ifeval::["{kw-build-type}" == "community"]
-:product-name: {community-product-name}
-:intro-paragraph: {community-product-name} is a https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
+:product-name: Kubewarden
+:short-product-name: {product-name}
+:product-abbrev: {product-name}
+:intro-paragraph: {product-name} is a https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
 endif::[]
 
 ifeval::["{kw-build-type}" == "product"]
-:product-name: {rancher-product-name}
-:intro-paragraph: {rancher-product-name} is derived from a https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-product-name}], originally created by https://www.rancher.com/[SUSE Rancher].
+:product-name: SUSE® Rancher Prime Policy Manager
+:short-product-name: SUSE® Policy Manager
+:product-abbrev: SUSE® RP-PM
+:intro-paragraph: {product-name} is derived from a https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-product-name}], originally created by https://www.rancher.com/[SUSE Rancher]. {product-name} may be shortened to {short-product-name} or abbreviated to {product-abbrev} in this documentation. The name {community-product-name} refers to the open-source community project. The name {community-product-name} may also be used throughout this in place of {product-name}, {short-product-name}, or {product-abbrev}.
 endif::[]
 
 // Glossary terms start

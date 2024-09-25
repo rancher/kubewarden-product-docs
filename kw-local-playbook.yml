@@ -16,9 +16,7 @@ ui:
 
 asciidoc:
   attributes:
-    kw-build-type: 'community'
-    kw-rancher-product-name: 'Rancher Policy Management'
-    kw-community-product-name: 'Kubewarden'
+    kw-build-type: 'community' # 'community' or 'product'
     page-pagination: ''
   extensions:
     - asciidoctor-kroki
