@@ -1,12 +1,12 @@
 site:
-  title: Kubewarden documentation
+  title: SUSE® Rancher Prime Policy Manager
   start_page: 1.16@kubewarden-product-docs:en:introduction.adoc
 
 content:
   sources:
     - url: ./
       branches: [main]
-      start_paths: [docs/next, docs/version-*]
+      start_paths: [shared, docs/next, docs/version-*]
 
 ui:
   bundle:
@@ -16,7 +16,7 @@ ui:
 
 asciidoc:
   attributes:
-    kw-build-type: 'community' # 'community' or 'product'
+    kw-build-type: 'product' # 'community' or 'product'
     page-pagination: ''
   extensions:
     - asciidoctor-kroki
