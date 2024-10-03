@@ -10,6 +10,7 @@ endif::[]
 
 ifeval::["{kw-build-type}" == "product"]
 :product-name: SUSE® Rancher Prime Policy Manager
+:short-product-name: Policy Manager
 :intro-paragraph: {product-name} is derived from a https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-product-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {community-product-name} refers to the open-source community project. The name {community-product-name} may also be used throughout this documentation in place of {product-name}.
 endif::[]
 
