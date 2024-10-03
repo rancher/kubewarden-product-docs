@@ -43,7 +43,26 @@ backwards-compatible changes in the chart templates and `values.yaml`.
 
 When upgrading components, it is allowed to upgrade multiple `PATCH` stack versions
 in a single operation. However, the upgrade of multiple `MAJOR` or `MINOR` stack versions
-in a single upgrade is *not* supported.+++<figure>+++```mermaid %%{init: "theme": "neutral"}%% flowchart LR; 1.0.0(1.0.0)-\->1.0.1(1.0.1); 1.0.1-\->1.0.2(1.0.2); 1.0.2-\->1.1.0(1.1.0); 1.1.0-\->1.1.2(1.1.2); 1.1.0-\->1.1.1; 1.1.1-\->1.1.2; 1.1.2-\->|Not recommended|1.2.0(1.2.0); 1.0.2-\->|Not supported|1.2.0(1.2.0); 1.1.2-\->1.2.1(1.2.1); 1.2.0-\->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray: 3 5 linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5 ```+++<figcaption>+++Upgrade path suppport graph+++</figcaption>++++++</figure>+++
+in a single upgrade is *not* supported.
+
+.Upgrade path support graph
+[mermaid]
+....
+%%{init: "theme": "neutral"}%%
+flowchart LR;
+  1.0.0(1.0.0)-->1.0.1(1.0.1);
+  1.0.1-->1.0.2(1.0.2);
+  1.0.2-->1.1.0(1.1.0);
+  1.1.0-->1.1.2(1.1.2);
+  1.1.0-->1.1.1;
+  1.1.1-->1.1.2;
+  1.1.2-->|Not recommended|1.2.0(1.2.0);
+  1.0.2-->|Not supported|1.2.0(1.2.0);
+  1.1.2-->1.2.1(1.2.1);
+  1.2.0-->1.2.1;
+  linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray: 3 5
+  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
+....
 
 For example, the user is allowed to upgrade components from version `1.1.10` to
 `1.1.50` in a single upgrade. But the upgrade from `1.1.10` to `1.5.0` is not supported.
@@ -55,7 +74,7 @@ two `MAJOR` versions.
 
 == Upgrade order
 
-Kuberwarden users should upgrade the stack starting with the `kubewarden-crds`
+Kubewarden users should upgrade the stack starting with the `kubewarden-crds`
 chart, then the `kubewarden-controller` chart. After that, upgrade the
 `policy-server` (via `kubewarden-defaults` chart or bumping the images of
 custom ones) and `kwctl`.
