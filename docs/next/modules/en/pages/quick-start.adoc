@@ -29,7 +29,34 @@ The {product-name} stack comprises:
 [TIP]
 ====
 
-The Kubernetes Custom Resource Definitions (CRDs) defined by {product-name} are described xref:reference/CRDs.adoc[here].
+The Kubernetes Custom Resource Definitions (CRDs) defined by {product-name}
+are described xref:reference/CRDs.adoc[here].
+
+Kubewarden CRDs mentioned in this tutorial and in the rest of
+documentation have short names, which are easier to use. These are the short
+names for the CRDs:
+
+[cols="1,1"]
+|===
+| Resource | shortName
+
+| AdmissionPolicies
+| *ap*
+
+| ClusterAdmissionPolicies
+| *cap*
+
+| AdmissionPolicyGroups
+| *apg*
+
+| ClusterAdmissionPolicyGroups
+| *capg*
+
+| PolicyServers
+| *ps*
+
+|===
+
 ====
 
 
