@@ -1,16 +1,30 @@
-:rancher-product-name: 'Rancher Policy Management'
-:community-product-name: 'Kubewarden'
+:build-type: {kw-build-type}
 
-ifeval::["{kw-build-type}" == "community"]
-:product-name: Kubewarden
+// The source of truth for the kw-product-name and kw-community-name values are in the playbooks
+// for the product-docs-playbook repository. Those below are a convenience for local builds.
+// It's worth checking they are aligned occasionally.
+
+ifndef::kw-product-name[]
+:kw-product-name: SUSE® Rancher Prime Admission Policy Manager
+endif::[]
+
+ifndef::kw-community-name[]
+:kw-community-name: Kubewarden
+endif::[]
+
+ifeval::["{build-type}" == "community"]
+:product-name: {kw-community-name}
+:community-product-name: Kubewarden
 :short-product-name: {product-name}
 :product-abbrev: {product-name}
 :intro-paragraph: {product-name} is a https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
 endif::[]
 
-ifeval::["{kw-build-type}" == "product"]
-:product-name: SUSE® Rancher Prime Policy Manager
-:short-product-name: Policy Manager
+ifeval::["{build-type}" == "product"]
+:product-name: {kw-product-name}
+:community-product-name: {kw-community-name}
+:short-product-name: Admission Policy Manager
+:product-abbrev: SRP-APM
 :intro-paragraph: {product-name} is derived from a https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-product-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {community-product-name} refers to the open-source community project. The name {community-product-name} may also be used throughout this documentation in place of {product-name}.
 endif::[]
 
