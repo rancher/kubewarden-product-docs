@@ -8,7 +8,13 @@
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-Kubewarden artifacts are signed using https://docs.sigstore.dev[Sigstore],
+The Kubewarden stack provides different attestations and assurances:
+
+- Provenance attestations: Inform of the build process, build dependencies, and aids in replicating the builds. Implement https://slsa.dev/spec/v1.0/[SLSA] Standard (level 3 in our case).
+- SBOMs attestations: Contain the software dependencies. Help downstream consumers ascertain vulnerabilities of Kubewarden and its dependencies.
+- Signed artifacts: Indicate if an artifact is authentic or not, providing supply chain security. This includes the deliverables, but also the provenance and SBOM attestations.
+
+Kubewarden artifacts, provenance attestations and SBOMs are signed using https://docs.sigstore.dev[Sigstore],
 with the keyless workflow. This means that the signing certificate contains the
 following info, where `*` matches any following characters:
 
@@ -44,7 +50,7 @@ provenance files.
 [#container-images]
 == Container images
 
-To verify the keyless signed container images produced by the Kubewarden team,
+To verify the keyless-signed container images produced by the Kubewarden team,
 you can use the `cosign` CLI tool. For example, to verify the
 `kubewarden/policy-server` image, you can execute the following command:
 
@@ -110,7 +116,7 @@ You can find our Helm charts in our `https://` traditional Helm repository under
 https://charts.kubewarden.io.
 
 The same Helm charts are signed via Sigstore's keyless signing, and pushed to an
-OCI repository that can hold both the Helm chart and its signature as OCI
+OCI repository that holds both the Helm chart and its provenance attestation as OCI
 artifacts.
 
 Since Helm 3.8.0, Helm has support for OCI registries, but because of
@@ -136,6 +142,8 @@ The following checks were performed on each of these signatures:
 
 You can then verify that the cert in the returned json contains the correct
 issuer, subject, and `github_workflow_repository` extensions.
+
+The chart attestations are pushed to the OCI registry as an artifact layer. See the xref:#container-images[container images] section on how to verify them.
 
 Kubewarden charts ship `imagelist.txt` and (`policylist.txt` when relevant) inside
 of the chart. Hence, if you already verified the chart, you can use those lists
@@ -188,6 +196,13 @@ Verified OK
 
 You can then verify that the cert in the returned json contains the correct
 issuer, subject, and `github_workflow_repository` extensions.
+
+The SBOMs are signed and published in the
+https://github.com/kubewarden/kwctl/releases[GitHub Releases] of the project.
+
+The provenance attestation for `kwctl` is verified by using
+https://cli.github.com/manual/gh_attestation_verify[`gh attestation verify`]. For
+example with `gh attestation verify kwctl-linux-x86_64 --repo kubewarden/kwctl`.
 
 == Policies
 
