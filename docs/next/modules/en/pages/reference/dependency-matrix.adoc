@@ -29,8 +29,8 @@ Needed for specific features.
 | Chart dependency | Helm chart `appVersion` | Helm chart `version` | Feature
 
 | `open-telemetry/opentelemetry-operator` chart
-| `≥ 0.98`
-| Example: `0.56.0`
+| `≥ 0.104`
+| Example: `0.65.0`
 | OTLM
 
 | `prometheus-community/kube-prometheus-stack` chart
