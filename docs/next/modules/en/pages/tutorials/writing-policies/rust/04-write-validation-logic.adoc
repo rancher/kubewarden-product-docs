@@ -13,59 +13,58 @@ In this file you can find a function called `validate`.
 
 This is the scaffolding provided function:
 
-```rust showLineNumbers
-fn validate(payload: &[u8]) \-> CallResult {
-    // highlight-next-line
-    let validation_request: ValidationRequest+++<Settings>+++= ValidationRequest::new(payload)?;+++</Settings>+++
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?; <1>
 
- info!(LOG_DRAIN, "starting validation");
- if validation_request.request.kind.kind != apicore::Pod::KIND {
-     warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
-     return kubewarden::accept_request();
- }
- // TODO: you can unmarshal any Kubernetes API type you are interested in
- // highlight-next-line
- match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
-     Ok(pod) => {
-         // TODO: your logic goes here
-         // highlight-next-line
-         if pod.metadata.name == Some("invalid-pod-name".to_string()) {
-             let pod_name = pod.metadata.name.unwrap();
-             info!(
-                 LOG_DRAIN,
-                 "rejecting pod";
-                 "pod_name" => &pod_name
-             );
-             kubewarden::reject_request(
-                 Some(format!("pod name {} is not accepted", &pod_name)),
-                 None,
-                 None,
-                 None,
-             )
-         } else {
-             info!(LOG_DRAIN, "accepting resource");
-             kubewarden::accept_request()
-         }
-     }
-     Err(_) => {
-         // TODO: handle as you wish
-         // We were forwarded a request we cannot unmarshal or
-         // understand, just accept it
-         warn!(LOG_DRAIN, "cannot unmarshal resource: this policy does not know how to evaluate this resource; accept it");
-         // highlight-next-line
-         kubewarden::accept_request()
-     }
- } }
-```
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+    // TODO: you can unmarshal any Kubernetes API type you are interested in <2>
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        Ok(pod) => {
+            // TODO: your logic goes here <3>
+            if pod.metadata.name == Some("invalid-pod-name".to_string()) {
+                let pod_name = pod.metadata.name.unwrap();
+                info!(
+                    LOG_DRAIN,
+                    "rejecting pod";
+                    "pod_name" => &pod_name
+                );
+                kubewarden::reject_request(
+                    Some(format!("pod name {} is not accepted", &pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                info!(LOG_DRAIN, "accepting resource");
+                kubewarden::accept_request()
+            }
+        }
+        Err(_) => {
+            // TODO: handle as you wish
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            warn!(LOG_DRAIN, "cannot unmarshal resource: this policy does not know how to evaluate this resource; accept it");
+            kubewarden::accept_request() <4>
+        }
+    }
+}
+----
+
 
 Walking through the code listing:
 
-* In line 2. Parse the incoming `payload` into a `ValidationRequest<Setting>` object.
+* In the line marked ➀. Parse the incoming `payload` into a `ValidationRequest<Setting>` object.
 This automatically populates the `Settings` instance inside the `ValidationRequest` with the parameters provided by the user.
-* In line 10. Convert the Kubernetes raw JSON object embedded into the request into an instance of the
+* In line marked ➁. Convert the Kubernetes raw JSON object embedded into the request into an instance of the
 https://arnavion.github.io/k8s-openapi/v0.11.x/k8s_openapi/api/core/v1/struct.Pod.html[Pod struct]
-* In line 13. The request has a Pod object, the code approves only the requests that don't have `metadata.name` equal to the hard-coded value `invalid-pod-name`
-* In line 36. The request doesn't contain a Pod object, hence the policy accepts the request.
+* In line marked ➂. The request has a Pod object, the code approves only the requests that don't have `metadata.name` equal to the hard-coded value `invalid-pod-name`
+* In line marked ➃. The request doesn't contain a Pod object, hence the policy accepts the request.
 
 As you can see, the code is already doing a validation that resembles the one you want to implement.
 You just have to remove the hard-coded value and use the values provided by the user via the policy settings.

@@ -61,7 +61,48 @@ When defining this container:
 * the `runAsNonRoot` attribute must be set to `true`
 * the `runAsUser` one can't be set to `0`.
 
-So, the following resource won't reach its desired state:+++<details>++++++<summary>+++`kubectl command configuring a resource with the highlighted runAsUser: 0`+++</summary>+++ ```shell kubectl apply -n my-namespace -f - <<EOF apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment labels: app: nginx spec: replicas: 1 selector: matchLabels: app: template-nginx template: metadata: labels: app: template-nginx spec: containers: - name: nginx image: nginx:1.14.2 securityContext: runAsNonRoot: true // highlight-next-line runAsUser: 0 allowPrivilegeEscalation: false capabilities: drop: - "ALL" seccompProfile: type: "RuntimeDefault" ports: - containerPort: 80 EOF ```+++</details>+++
+So, the following resource won't reach its desired state:
+
+.`kubectl` command configuring a resource with `runAsUser: 0` (marked as ➀)
+[%collapsible]
+=====
+[subs="+attributes",shell]
+----
+kubectl apply -n my-namespace -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template-nginx
+  template:
+    metadata:
+      labels:
+        app: template-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 0 <1>
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: "RuntimeDefault"
+        ports:
+        - containerPort: 80
+EOF
+----
+<1> `runAsUser: 0`
+=====
 
 If we check the deployment, we can see the PSA prevents the pod creation:
 
@@ -78,7 +119,47 @@ kubectl get deploy -n my-namespace nginx-deployment -o json | jq ".status.condit
 }
 ----
 
-You can fix this by removing the `runAsUser: 0` from the container definition:+++<details>++++++<summary>+++`kubectl command configuring a resource without runAsUser: 0`+++</summary>+++ ```shell kubectl apply -n my-namespace -f - <<EOF apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment labels: app: nginx spec: replicas: 1 selector: matchLabels: app: template-nginx template: metadata: labels: app: template-nginx spec: containers: - name: nginx image: nginx:1.14.2 securityContext: runAsNonRoot: true allowPrivilegeEscalation: false capabilities: drop: - "ALL" seccompProfile: type: "RuntimeDefault" ports: - containerPort: 80 EOF ```+++</details>+++
+You can fix this by removing the `runAsUser: 0` from the container definition:
+
+.`kubectl` command configuring a resource without `runAsUser: 0`
+[%collapsible]
+=====
+[subs="+attributes",shell]
+----
+kubectl apply -n my-namespace -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: template-nginx
+  template:
+    metadata:
+      labels:
+        app: template-nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        securityContext:
+          runAsNonRoot: true
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+              - "ALL"
+          seccompProfile:
+            type: "RuntimeDefault"
+
+        ports:
+        - containerPort: 80
+EOF
+----
+=====
 
 Now PSA allows an attempt at pod creation but it still fails.
 
@@ -155,13 +236,11 @@ spec:
     run_as_user:
       rule: "MustRunAs"
       overwrite: false
-// highlight-start
       ranges:
         - min: 1000
           max: 2000
         - min: 4000
           max: 5000
-// highlight-end
     run_as_group:
       rule: "RunAsAny"
     supplemental_groups:
@@ -277,8 +356,7 @@ spec:
         image: nginx:1.14.2
         securityContext:
           runAsNonRoot: true
-// highlight-next-line
-          runAsUser: 7000
+          runAsUser: 7000 <1>
           allowPrivilegeEscalation: false
           capabilities:
             drop:
@@ -289,7 +367,7 @@ spec:
         - containerPort: 80
 EOF
 ----
-
+<1> `runAsUser: 7000`
 ======
 
 It's rejected because the `runAsUser` value is set to `7000`, which is outside the ranges allowed by the policy:
