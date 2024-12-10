@@ -1,12 +1,16 @@
-= Kubewarden artifacts
-:sidebar_label: Artifacts		sidebar_label: Artifacts
-:sidebar_position: 20		sidebar_position: 20
-:title: Artifacts		title: Artifacts
-:description: List of Kubewarden artifacts		description: List of Kubewarden artifacts
-:keywords: [artifacts, support, airgap, images]		keywords: [artifacts, support, airgap, images]
-:doc-persona: [kubewarden-operator]		doc-persona: [kubewarden-operator]
-:doc-type: [reference]		doc-type: [reference]
-:doc-topic: [operator-manual, artifacts, registry, images]		doc-topic: [operator-manual, artifacts, registry, images]
+include::partial$variables.adoc[]
+:sidebar_label: Artifacts
+:sidebar_position: 20
+:title: Artifacts
+:description: List of Kubewarden artifacts
+:keywords: [artifacts, support, airgap, images]
+:doc-persona: [kubewarden-operator]
+:doc-type: [reference]
+:doc-topic: [operator-manual, artifacts, registry, images]
+
+= {title}
+
+Here are the artifacts that Kubewarden publishes and how to access them.
 
 == Binaries
 
