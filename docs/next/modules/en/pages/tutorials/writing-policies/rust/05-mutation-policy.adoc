@@ -64,53 +64,54 @@ https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.accept_requ
 
 This is how the `validate` function in `lib.rs` should look:
 
-```rust showLineNumbers
-fn validate(payload: &[u8]) \-> CallResult {
-    let validation_request: ValidationRequest+++<Settings>+++= ValidationRequest::new(payload)?;+++</Settings>+++
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?;
 
-....
-info!(LOG_DRAIN, "starting validation");
-if validation_request.request.kind.kind != apicore::Pod::KIND {
-    warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
-    return kubewarden::accept_request();
-}
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
 
-match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
-    // NOTE 1
-    Ok(mut pod) => {
-        let pod_name = pod.metadata.name.clone().unwrap_or_default();
-        if validation_request
-            .settings
-            .invalid_names
-            .contains(&pod_name)
-        {
-            kubewarden::reject_request(
-                Some(format!("pod name {:?} is not accepted", pod_name)),
-                None,
-                None,
-                None,
-            )
-        } else {
-            // NOTE 2
-            let mut new_annotations = pod.metadata.annotations.clone().unwrap_or_default();
-            new_annotations.insert(
-                String::from("kubewarden.policy.demo/inspected"),
-                String::from("true"),
-            );
-            pod.metadata.annotations = Some(new_annotations);
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        // NOTE 1
+        Ok(mut pod) => {
+            let pod_name = pod.metadata.name.clone().unwrap_or_default();
+            if validation_request
+                .settings
+                .invalid_names
+                .contains(&pod_name)
+            {
+                kubewarden::reject_request(
+                    Some(format!("pod name {:?} is not accepted", pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                // NOTE 2
+                let mut new_annotations = pod.metadata.annotations.clone().unwrap_or_default();
+                new_annotations.insert(
+                    String::from("kubewarden.policy.demo/inspected"),
+                    String::from("true"),
+                );
+                pod.metadata.annotations = Some(new_annotations);
 
-            // NOTE 3
-            let mutated_object = serde_json::to_value(pod)?;
-            kubewarden::mutate_request(mutated_object)
+                // NOTE 3
+                let mutated_object = serde_json::to_value(pod)?;
+                kubewarden::mutate_request(mutated_object)
+            }
+        }
+        Err(_) => {
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            kubewarden::accept_request()
         }
     }
-    Err(_) => {
-        // We were forwarded a request we cannot unmarshal or
-        // understand, just accept it
-        kubewarden::accept_request()
-    }
-} }
-```
+}
+----
 
 Compared to the previous code, you have made three changes:
 
