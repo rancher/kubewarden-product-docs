@@ -1,4 +1,5 @@
-= PodSecurityPolicy migration
+include::partial$variables.adoc[]
+:title: PodSecurityPolicy migration
 :description: Discusses PSP migration to Kubewarden policies after Kubernetes v1.25.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
@@ -7,6 +8,8 @@
 :sidebar_label: PSP migration
 :sidebar_position: 20
 :current-version: {page-origin-branch}
+
+= {title}
 
 For Kubernetes ≥ v1.25.
 https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy]
@@ -142,7 +145,42 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 === User and group configuration
 
 Now, to enforce the user and group configuration, you can use the
-https://github.com/kubewarden/user-group-psp-policy[user-group-psp policy]+++<details>++++++<summary>+++`kubectl command to use user-group-psp-policy`+++</summary>+++ ```shell $ kubectl apply -f - <<EOF apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-user-group spec: module: ghcr.io/kubewarden/policies/user-group-psp:v0.4.9 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: true settings: run_as_user: rule: MustRunAsNonRoot supplemental_groups: rule: MustRunAs ranges: - min: 1000 max: 65535 EOF ```+++</details>+++
+https://github.com/kubewarden/user-group-psp-policy[user-group-psp policy].
+
+.`kubectl` command to use user-group-psp-policy
+[%collapsible]
+======
+[subs="+attributes",shell]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-user-group
+spec:
+  module: ghcr.io/kubewarden/policies/user-group-psp:v0.4.9
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: true
+  settings:
+    run_as_user:
+      rule: MustRunAsNonRoot
+    supplemental_groups:
+      rule: MustRunAs
+      ranges:
+        - min: 1000
+          max: 65535
+EOF
+----
+======
 
 You should configure the policy with `mutation: true`. It's required because
 the policy will add
@@ -647,9 +685,206 @@ clusteradmissionpolicy.policies.kubewarden.io/psp-defaultallowprivilegeescalatio
 
 If users want to inspect the policies before applying, it's possible to redirect the content to a file or review it directly in the console
 
-To store the generated policies and view them:+++<details>++++++<summary>+++`
-$ ./psp-to-kubewarden > policies.yaml && cat policies.yaml
-`+++</summary>+++ ```shell $ ./psp-to-kubewarden > policies.yaml $ cat policies.yaml --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-privileged-eebb9 spec: module: registry://ghcr.io/kubewarden/policies/pod-privileged:v0.2.7 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: null --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-readonlyrootfilesystem-34d7c spec: module: registry://ghcr.io/kubewarden/policies/readonly-root-filesystem-psp:v0.1.6 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: null --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-hostnamespaces-41314 spec: module: registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.6 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: allow_host_ipc: false allow_host_pid: false allow_host_ports: - max: 8080 min: 80 allow_host_network: false --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-volumes-2fd34 spec: module: registry://ghcr.io/kubewarden/policies/volumes-psp:v0.1.11 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: allowedTypes: - configMap - emptyDir - projected - secret - downwardAPI - csi - persistentVolumeClaim - ephemeral --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-capabilities-340fe spec: module: registry://ghcr.io/kubewarden/policies/capabilities-psp:v0.1.13 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: allowed_capabilities: [] required_drop_capabilities: - ALL --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-usergroup-19f7a spec: module: registry://ghcr.io/kubewarden/policies/user-group-psp:v0.4.9 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: run_as_user: rule: MustRunAsNonRoot supplemental_groups: ranges: - max: 65535 min: 1 rule: MustRunAs --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-fsgroup-52337 spec: module: registry://ghcr.io/kubewarden/policies/allowed-fsgroups-psp:v0.1.10 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: ranges: - max: 65535 min: 1 rule: MustRunAs --- apiVersion: policies.kubewarden.io/v1 kind: ClusterAdmissionPolicy metadata: name: psp-defaultallowprivilegeescalation-6f11b spec: module: registry://ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v0.2.6 rules: - apiGroups: - "" apiVersions: - v1 resources: - pods operations: - CREATE - UPDATE mutating: false settings: default_allow_privilege_escalation: false ```+++</details>+++
+To store the generated policies and view them:
+
+.`./psp-to-kubewarden > policies.yaml && cat policies.yaml`
+[%collapsible]
+======
+[subs="+attributes",shell]
+----
+$ ./psp-to-kubewarden > policies.yaml
+$ cat policies.yaml
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-privileged-eebb9
+spec:
+  module: registry://ghcr.io/kubewarden/policies/pod-privileged:v0.2.7
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings: null
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-readonlyrootfilesystem-34d7c
+spec:
+  module: registry://ghcr.io/kubewarden/policies/readonly-root-filesystem-psp:v0.1.6
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings: null
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-hostnamespaces-41314
+spec:
+  module: registry://ghcr.io/kubewarden/policies/host-namespaces-psp:v0.1.6
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings:
+    allow_host_ipc: false
+    allow_host_pid: false
+    allow_host_ports:
+      - max: 8080
+        min: 80
+    allow_host_network: false
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-volumes-2fd34
+spec:
+  module: registry://ghcr.io/kubewarden/policies/volumes-psp:v0.1.11
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings:
+    allowedTypes:
+      - configMap
+      - emptyDir
+      - projected
+      - secret
+      - downwardAPI
+      - csi
+      - persistentVolumeClaim
+      - ephemeral
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-capabilities-340fe
+spec:
+  module: registry://ghcr.io/kubewarden/policies/capabilities-psp:v0.1.13
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings:
+    allowed_capabilities: []
+    required_drop_capabilities:
+      - ALL
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-usergroup-19f7a
+spec:
+  module: registry://ghcr.io/kubewarden/policies/user-group-psp:v0.4.9
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings:
+    run_as_user:
+      rule: MustRunAsNonRoot
+    supplemental_groups:
+      ranges:
+        - max: 65535
+          min: 1
+      rule: MustRunAs
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-fsgroup-52337
+spec:
+  module: registry://ghcr.io/kubewarden/policies/allowed-fsgroups-psp:v0.1.10
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings:
+    ranges:
+      - max: 65535
+        min: 1
+    rule: MustRunAs
+
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-defaultallowprivilegeescalation-6f11b
+spec:
+  module: registry://ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v0.2.6
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  settings:
+    default_allow_privilege_escalation: false
+----
+======
 
 [TIP]
 ====
