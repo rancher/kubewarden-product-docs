@@ -17,6 +17,8 @@ ui:
 asciidoc:
   attributes:
     kw-build-type: 'product' # 'community' or 'product'
+    kw-rancher-product-name: 'SUSE® Rancher Prime Policy Manager'
+    kw-community-product-name: 'Kubewarden'
     page-pagination: ''
   extensions:
     - asciidoctor-kroki

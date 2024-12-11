@@ -1,12 +1,12 @@
 site:
-  title: Kubewarden documentation
+  title: SUSE® Rancher Prime Policy Manager
   start_page: 1.19@policy-manager:en:introduction.adoc
 
 content:
   sources:
     - url: https://github.com/rancher/kubewarden-product-docs.git
       branches: [main]
-      start_paths: [docs/next, docs/version-*]
+      start_paths: [shared, docs/next, docs/version-*]
 
 ui:
   bundle:
@@ -17,7 +17,7 @@ ui:
 asciidoc:
   attributes:
     kw-build-type: 'community'
-    kw-rancher-product-name: 'Rancher Policy Engine'
+    kw-rancher-product-name: 'SUSE® Rancher Prime Policy Manager'
     kw-community-product-name: 'Kubewarden'
     page-pagination: ''
     tabs-sync-option: ''

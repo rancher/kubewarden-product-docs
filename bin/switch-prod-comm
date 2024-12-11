@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Switch version yaml files between community and product versions
+
+target_version="$1"
+
+if [ -z "$target_version" ]; then
+  echo "Usage: $0 <version>"
+  exit 1
+fi
+
+docs_root="$(realpath $(dirname $0)/../docs)"
+echo "Docs root: $docs_root"
+
+function fetch_versions_list () {
+  local versions=$(ls -1 $docs_root)
+  echo "$versions"
+}
+
+for version in $(fetch_versions_list); do
+  echo "Processing $version"
+  cd "$docs_root/$version"
+  if [ $? -ne 0 ]; then
+    echo "Error: $docs_root/$version not found"
+    exit 1
+  fi
+  if [ -f antora-yml/antora-"$target_version".yml ]; then
+    ln -sf antora-yml/antora-"$target_version".yml antora.yml
+    if [ $? -eq 0 ]; then
+      echo "Switched to antora.yml -> antora-yml/antora-$target_version.yml"
+    else
+      echo "Error: failed to switch to antora-yml/antora-$target_version.yml"
+      exit 1
+    fi
+  else
+    echo "antora-yml/antora-$target_version.yml not found"
+    echo "Error: correction needed before trying again"
+    exit 1
+  fi
+done
