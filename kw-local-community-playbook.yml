@@ -12,7 +12,7 @@ ui:
   bundle:
     url: https://github.com/rancher/product-docs-ui/blob/main/build/ui-bundle.zip?raw=true
     snapshot: true
-  supplemental_files: ./community-docs-supplemental-files
+  supplemental_files: ./kw-community-docs-supp-files
 
 asciidoc:
   attributes:
