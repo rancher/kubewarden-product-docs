@@ -1,25 +1,26 @@
 site:
-  title: SUSE® Rancher Prime Policy Manager
-  start_page: 1.19@policy-manager:en:introduction.adoc
+  title: Kubewarden
+  start_page: 1.19@kubewarden:en:introduction.adoc
 
 content:
   sources:
-    - url: ./
+    - url: https://github.com/rancher/kubewarden-product-docs.git
       branches: [main]
       start_paths: [shared, docs/next, docs/version-*]
 
 ui:
   bundle:
-    url: https://github.com/rancher/product-docs-ui/blob/main/build/ui-bundle.zip?raw=true
+    url: tmp/sp
     snapshot: true
-  supplemental_files: ./product-docs-supplemental-files
+  supplemental_files: ./community-docs-supplemental-files
 
 asciidoc:
   attributes:
-    kw-build-type: 'product' # 'community' or 'product'
+    kw-build-type: 'community'
     kw-rancher-product-name: 'SUSE® Rancher Prime Policy Manager'
     kw-community-product-name: 'Kubewarden'
     page-pagination: ''
+    tabs-sync-option: ''
   extensions:
     - asciidoctor-kroki
     - '@asciidoctor/tabs'
@@ -28,4 +29,4 @@ antora:
   - require: '@antora/lunr-extension'
 
 output:
-  dir: build/site
+  dir: build-community/site
