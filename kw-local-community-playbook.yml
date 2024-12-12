@@ -20,6 +20,7 @@ asciidoc:
     kw-rancher-product-name: 'SUSE® Rancher Prime Policy Manager'
     kw-community-product-name: 'Kubewarden'
     page-pagination: ''
+    tabs-sync-option: ''
   extensions:
     - asciidoctor-kroki
     - '@asciidoctor/tabs'
