@@ -21,14 +21,11 @@ The following sections describe the process.
 https://github.com/kubewarden/helm-charts/releases/[release page].
 Alternatively, the `imagelist.txt` and `policylist.txt` files are shipped inside the helm charts containing the used container images and policy Wasm modules, respectively.
 +
-
 [NOTE]
 ====
-+
 Optionally, you can verify the signatures of the
  xref:tutorials/verifying-kubewarden.adoc#_helm_charts[helm charts] and
  xref:tutorials/verifying-kubewarden.adoc#_container_images[container images]
-+
 ====
 
 . Download `kubewarden-save-images.sh` and `kubewarden-load-images.sh` from the
