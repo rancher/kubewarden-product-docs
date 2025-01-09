@@ -39,7 +39,7 @@ First, create a `policies.yml` file with the following content:
 [subs="+attributes",yaml]
 ----
 raw-validation:
-  url: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+  module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
   settings:
     validUsers:
       - alice
@@ -52,7 +52,7 @@ raw-validation:
       - products
 
 raw-mutation:
-  url: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+  module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
   allowedToMutate: true
   settings:
     forbiddenResources:
@@ -148,7 +148,7 @@ metadata:
 data:
   policies.yml: |
     raw-validation:
-      url: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+      module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
       settings:
         validUsers:
           - alice
@@ -160,7 +160,7 @@ data:
           - orders
           - products
     raw-mutation:
-      url: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+      module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
       allowedToMutate: true
       settings:
         forbiddenResources:
