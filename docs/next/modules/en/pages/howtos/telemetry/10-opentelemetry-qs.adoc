@@ -26,7 +26,7 @@ This is a simple deployment pattern using OpenTelemetry. It's final setup looks 
 
 The Kubewarden Helm chart doesn't cover all the possible deployment scenarios of the OpenTelemetry collector.
 It's also possible to configure Kubewarden to send data to an OpenTelemetry collector.
-Documentation for that scenario is in the [custom OpenTelemetry guide](./40-custom-otel-collector.md).
+Documentation for that scenario is in the xref:./40-custom-otel-collector.adoc[custom OpenTelemetry guide].
 
 You first deploy OpenTelemetry in a Kubernetes cluster, so you can use it in the following sections
 addressing specifically tracing and metrics.
