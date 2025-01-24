@@ -1,4 +1,5 @@
-# Don't run makes in parallel, stuff will break
+.PHONY: all clean test local rancher-dsc local-community \
+	remote remote-community clean environment
 
 local:
 	mkdir -p tmp
@@ -7,6 +8,14 @@ local:
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-local-playbook.yml \
 		2>&1 | tee -a tmp/local-build.log
+
+rancher-dsc:
+	mkdir -p tmp
+	bin/switch-prod-comm product | tee tmp/rancher-dsc-build.log
+	npx antora --version | tee -a tmp/rancher-dsc-build.log
+	npx antora --stacktrace --log-format=pretty --log-level=info \
+		kw-rancher-dsc.yml \
+		2>&1 | tee -a tmp/rancher-dsc-build.log
 
 local-community:
 	mkdir -p tmp
@@ -45,4 +54,4 @@ clean:
 	rm -rf build*
 
 environment:
-	npm ci
+	npm ci || npm install
