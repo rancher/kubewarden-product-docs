@@ -6,7 +6,7 @@ content:
   sources:
     - url: ./
       branches: [HEAD]
-      start_paths: [shared, docs/next, docs/version-*]
+      start_paths: [shared, docs/version-*]
 
 ui:
   bundle:
@@ -26,6 +26,7 @@ asciidoc:
 
 antora:
   extensions:
+    # - require: "@antora/pdf-extension"
     - require: "@antora/lunr-extension"
     - require: "@sntke/antora-mermaid-extension"
       mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
