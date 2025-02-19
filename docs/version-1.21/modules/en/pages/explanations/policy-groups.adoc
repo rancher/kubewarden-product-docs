@@ -225,9 +225,15 @@ Moreover, the evaluation details are always part of the OpenTelemetry traces emi
 == Context-Aware Policies
 
 Another distinction between policy groups and ordinary policies is the location
-where context-aware resource rules are defined. Each policy in a group
-accepts an optional `contextAwareResources` field to specify the resources that
-the policy is allowed to access during evaluation.
+where context-aware resource rules are defined. Each policy in a group accepts
+an optional `contextAwareResources` field to specify the resources that the
+policy is allowed to access during evaluation. Similarly to ordinary policies,
+context-aware capabilities can only be used by defining a
+`ClusterAdmissionPolicyGroup`. This is for security reasons, as
+`AdmissionPolicyGroup` resources can be deployed by unprivileged users. For
+more details, refer to the
+xref:explanations/context-aware-policies.adoc[context-aware policies]
+documentation.
 
 .An example of a policy group that makes use of a context-aware policy.
 [%collapsible]
