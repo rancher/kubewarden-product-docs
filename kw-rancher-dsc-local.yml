@@ -1,0 +1,37 @@
+site:
+  title: SUSE® Rancher Prime Policy Manager
+  start_page: 1.20@policy-manager:en:introduction.adoc
+
+content:
+  sources:
+    - url: ./
+      branches: [HEAD]
+      start_paths: [shared, docs/version-*]
+
+ui:
+  bundle:
+    url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
+    snapshot: true
+  supplemental_files: ../../doc-suse-com/dsc-style-bundle/supplemental-files/rancher
+
+asciidoc:
+  attributes:
+    kw-build-type: "product" # 'community' or 'product'
+    kw-rancher-product-name: "SUSE® Rancher Prime Policy Manager"
+    kw-community-product-name: "Kubewarden"
+    page-pagination: ""
+    tabs-sync-option: ""
+  extensions:
+    - "@asciidoctor/tabs"
+
+antora:
+  extensions:
+    # - require: "@antora/pdf-extension"
+    - require: "@antora/lunr-extension"
+    - require: "@sntke/antora-mermaid-extension"
+      mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
+      script_stem: header-scripts # <3>
+      mermaid_initialize_options: # <4>
+
+output:
+  dir: build-rancher-dsc-local/site

@@ -17,6 +17,14 @@ rancher-dsc:
 		kw-rancher-dsc.yml \
 		2>&1 | tee -a tmp/rancher-dsc-build.log
 
+rancher-dsc-local:
+	mkdir -p tmp
+	bin/switch-prod-comm product | tee tmp/rancher-dsc-build.log
+	npx antora --version | tee -a tmp/rancher-dsc-build.log
+	npx antora --stacktrace --log-format=pretty --log-level=info \
+		kw-rancher-dsc-local.yml \
+		2>&1 | tee -a tmp/rancher-dsc-local-build.log
+
 local-community:
 	mkdir -p tmp
 	bin/switch-prod-comm community | tee tmp/local-community-build.log
