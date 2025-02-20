@@ -48,12 +48,12 @@ Kubewarden offers flexibility for policy admission and enforcement in a Kubernet
 
 == New to Kubewarden?
 
-If new to the Kubewarden project start with the xref:quick-start.adoc[Quick start
-guide] and the xref:explanations/architecture.adoc[architecture] page. Then it
-depends where your interests take you. For policy developers there are language
-specific sections in the tutorials. For integrators and administrators there is
-a 'howtos' section. The explanations section contains useful background
-material. There is also a xref:glossary.adoc[glossary].
+If new to the Kubewarden project start with the xref:quick-start.adoc[Quick
+start guide] and the xref:explanations/architecture.adoc[architecture] page.
+Then it depends where your interests take you. For policy developers there are
+language specific sections in the tutorials. For integrators and administrators
+there is a 'howtos' section. The explanations section contains useful
+background material. There is also a xref:glossary.adoc[glossary].
 
 == What is WebAssembly?
 
@@ -66,10 +66,9 @@ compilation target for programming languages, enabling deployment on
 the web for client and server applications.
 ____
 
-Wasm was originally conceived as a browser "extension".
-However, efforts are being made by the WebAssembly
-community to allow the execution of Wasm code outside
-browsers.
+Wasm was originally conceived as a browser "extension". However, the
+WebAssembly community is engaged in efforts to allow the execution of Wasm code
+outside browsers.
 
 == Why use WebAssembly?
 
@@ -81,15 +80,12 @@ Wasm modules are portable, once built they can run on any kind of
 processor architecture and operating system. For example, a policy developed and built on Apple
 Silicon can run on AMD64/Intel64 Linux without conversion.
 
-Policy authors can reuse their skills, tools and best
-practices. Policies are "traditional" programs that can have reusable
-blocks (regular libraries), can be linted and tested, and be
-plugged into current CI and CD workflows.
+Policy authors can reuse their skills, tools and best practices. Policies are
+"traditional" programs that can have reusable blocks (regular libraries). You
+can lint and test them and you can plug them into current CI and CD workflows.
 
 == Policy distribution
 
-{product-name} policies can be served by a regular web server or,
-better, be published from an OCI compliant registry.
-
-{product-name} policies can be stored inside an OCI compliant registry as
+You can serve {product-name} policies using a standard web server or, better,
+you can publish them in an OCI compliant registry as
 https://github.com/opencontainers/artifacts[OCI artifacts].
