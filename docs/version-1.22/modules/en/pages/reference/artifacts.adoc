@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 :sidebar_label: Artifacts
 :sidebar_position: 20
-:title: Artifacts
+:title: Kubewarden artifacts
 :description: List of Kubewarden artifacts
 :keywords: [artifacts, support, airgap, images]
 :doc-persona: [kubewarden-operator]
@@ -10,7 +10,10 @@ include::partial$variables.adoc[]
 
 = {title}
 
-Here are the artifacts that Kubewarden publishes and how to access them.
+== Verifying Kubewarden
+
+There is a tutorial on xref:/tutorials/verifying-kubewarden.adoc[verifying
+Kubewarden] demonstrating how to verify Kubewarden artifacts.
 
 == Binaries
 
@@ -18,18 +21,18 @@ Our `kwctl` CLI tool is published via https://github.com/kubewarden/kwctl/releas
 
 == OCI artifacts
 
-For OCI artifacts, we publish everything in `ghcr.io` under
-https://github.com/orgs/kubewarden/packages.
+For Open Container Initiative (OCI) artifacts, the project publishes everything
+in `ghcr.io` under https://github.com/orgs/kubewarden/packages.
 
 - https://github.com/orgs/kubewarden/packages/policies[`kubewarden/packages/policies/*`]
-  are our policy WASM OCI artifacts.
+  are the policy Wasm OCI artifacts.
 - https://github.com/orgs/kubewarden/packages/charts[`kubewarden/packages/charts/*`]
-  are our Helm charts as OCI artifacts. They follow SLSA standards.
-- our container images are published as OCI images: `kubewarden-controller`, `policy-server`, `audit-scanner`, `kubectl`.
+  are the Helm charts as OCI artifacts. They follow SLSA standards.
+- the container images published as OCI images: `kubewarden-controller`, `policy-server`, `audit-scanner`, `kubectl`.
 - there's also `packages/tests/*` containing artifacts used in e2e tests.
 
 == Helm charts via HTTPS
 
-Our Helm charts are published in the Helm chart HTTPS
-repository at https://charts.kubewarden.io (they are without SLSA, or signatures, but
-this type of Helm repository provides searching).
+Kubewarden publishes Helm charts in the Helm chart HTTPS repository at
+https://charts.kubewarden.io. They're without SLSA, or signatures, but this
+type of Helm repository provides searching.
