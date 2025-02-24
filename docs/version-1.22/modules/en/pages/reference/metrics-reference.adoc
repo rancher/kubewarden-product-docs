@@ -28,7 +28,7 @@ key-value attributes are added to the metric to provide additional information.
 
 
 |===
-| Name | Type |
+| Name | Type | Baggage
 
 | `kubewarden_policy_evaluations_total`
 | Counter
@@ -52,17 +52,19 @@ key-value attributes are added to the metric to provide additional information.
 | Kind of the evaluated resource
 
 | `resource_namespace`
-| Namespace of the evaluated resource. Not present if the resource is cluster scoped.
+| Namespace of the evaluated resource. Not present if the resource is
+  cluster scoped.
 
 | `resource_request_operation`
 | Operation type: `CREATE`, `UPDATE`, `DELETE`, `PATCH`, `WATCH`...
 
 | `accepted`
-| Whether the request was accepted or not
+| Was the request accepted?
 
 | `mutated`
-| Whether the request was mutated or not
+| Was the request mutated?
 
 | `error_code`
-| Error code returned by the policy in case of rejection, if any. Not present if the policy didn't provide one.
+| Error code returned by the policy if rejected, if any.
+  Not present if the policy didn't provide one.
 |===
