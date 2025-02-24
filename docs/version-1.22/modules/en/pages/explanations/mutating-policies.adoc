@@ -8,13 +8,13 @@
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
-Mutating policies receive an object request and rebuild this incoming object
-(mutate it) into a new request, according to the defined values in the settings
-of the policy. The request will proceed through the Kubernetes API, potentially being
+Mutating policies receive an object request and rebuild it (mutate it) into a
+new request. This is according to the defined values in the settings of the
+policy. The request proceeds through the Kubernetes API, potentially being
 evaluated by other policies.
 
-If you want to allow the behavior of mutating requests,
-set the `ClusterAdmissionPolicy.mutating` field to `true`.
+To permit mutating request behavior, set the `ClusterAdmissionPolicy.mutating`
+field to `true`.
 
 However, if you set the `ClusterAdmissionPolicy.mutating` field to `false`,
 the mutated requests will be rejected.
@@ -25,9 +25,11 @@ the mutated requests will be rejected.
 
 [WARNING]
 ====
-To prevent system abuse, Kubewarden administrators should review mutating
-policies: mutating policies could for example modify a workload, such that it
-allows for privileged container creation.
+
+To prevent system abuse Kubewarden administrators should review mutating
+policies. Mutating policies could, for example, modify a workload, such that it
+permits privileged container creation.
+
 ====
 
 
@@ -41,10 +43,12 @@ important when using a DSL (such as Rego) to build complex policies.
 
 [WARNING]
 ====
+
 Mutating policies return requests that proceed through the Kubernetes API. If
 there are other Kubernetes Controllers that listen for those same resources,
 they may mutate them back in a follow-up request. This could lead to an
 infinite feedback loop of mutations.
+
 ====
 
 
@@ -54,13 +58,13 @@ Perform the mutation against:
 
 . The lower type of resource (e.g: Pod).
 . The highest type of resource (e.g: Deployment). Note: this could still lead
-to loops if a controller is managing those resources. For example
-controllers of GitOps solutions (like fleet, flux, argo, ...) or other 3rd
-party controllers that translate their own CRDs into Deployment objects.
+  to loops if a controller is managing those resources. For example,
+  controllers of GitOps solutions (like fleet, flux, argo, ...) or other third
+  party controllers that translate their own CRDs into Deployment objects.
 
 == Examples
 
-Let's see a mutating policy at work. Create the following
+You can see a mutating policy at work. Create the following
 `ClusterAdmissionPolicy` with the `mutating` field set to `true`:
 
 [subs="+attributes",bash]
@@ -99,10 +103,13 @@ EOF
 clusteradmissionpolicy.policies.kubewarden.io/psp-user-group created
 ----
 
-The https://github.com/kubewarden/user-group-psp-policy[`psp-user-group`] policy is used to control users and groups in containers and can mutate the requests.
-In the example above, the `runAsUser` field is set and it will be added to the container `securityContext` section.
+You use the
+https://github.com/kubewarden/user-group-psp-policy[`psp-user-group`] policy to
+control users and groups in containers and can mutate the requests. In the
+previous example, iyou set the `runAsUser` field and it's added to the
+container `securityContext` section.
 
-As the `mutating` field is set to `true`, the following request will be applied successfully:
+As the `mutating` field is `true`, the following request succeeds:
 
 [subs="+attributes",bash]
 ----
@@ -122,7 +129,7 @@ EOF
 pod/pause-user-group created
 ----
 
-Once the request is applied, you can see the results of the container's `securityContext`:
+You can see the results of the container's `securityContext`:
 
 [subs="+attributes",bash]
 ----
@@ -171,7 +178,7 @@ EOF
 clusteradmissionpolicy.policies.kubewarden.io/psp-user-group configured
 ----
 
-As the `mutating` field is set to `false`, the following request will fail:
+As the `mutating` field is `false`, the following request fail:
 
 [subs="+attributes",bash]
 ----
@@ -191,4 +198,5 @@ EOF
 Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
 ----
 
-In conclusion, you can see Kubewarden replicates the same behavior as the deprecated Kubernetes Pod Security Policies (PSP).
+In conclusion, you can see Kubewarden replicates the same behavior as the
+deprecated Kubernetes Pod Security Policies (PSP).
