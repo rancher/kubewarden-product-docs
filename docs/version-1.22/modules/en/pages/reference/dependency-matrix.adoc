@@ -1,9 +1,9 @@
 = Dependency matrix
 :description: Dependency matrix of Kubewarden.
-:doc-persona: ["kubewarden-all"]
-:doc-topic: ["operator-manual", "dependencies"]
-:doc-type: ["reference"]
-:keywords: ["dependency", "dependencies", "CRD", "charts", "matrix"]
+:doc-persona: [“kubewarden-all”]
+:doc-topic: [“operator-manual”, “dependencies”]
+:doc-type: [“reference”]
+:keywords: [“dependency”, “dependencies”, “CRD”, “charts”, “matrix”]
 :sidebar_label: Dependency matrix
 :sidebar_position: 10
 :current-version: {page-origin-branch}
@@ -15,7 +15,7 @@ not tested.
 == OpenTelemetry, metrics and tracing dependencies
 
 At the time of writing, the https://opentelemetry.io[OpenTelemetry] stack keeps
-improving. However, it's not yet stable, and unannounced,
+improving. However, it’s not yet stable, and unannounced,
 backwards-incompatible changes still happen. The Kubewarden developers endeavor
 to track OpenTelemetry stack changes and adjust to them. The project tests
 against a known working range of OpenTelemetry, metrics and tracing stack.
@@ -24,7 +24,7 @@ against a known working range of OpenTelemetry, metrics and tracing stack.
 
 Needed for specific features.
 
-[cols=",^,^,^"]
+[cols=”,^,^,^"]
 |===
 | Chart dependency | Helm chart `appVersion` | Helm chart `version` | Feature
 
@@ -44,7 +44,7 @@ Needed for specific features.
 | Tracing
 
 | `kyverno/policy-reporter` chart
-| `≥ 2 < 3`
+| `≥ 2 < 4`
 | In `kubewarden-controller` chart as subchart
 | Policy Reports UI
 |===
