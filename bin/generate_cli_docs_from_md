@@ -1,0 +1,41 @@
+#!/bin/bash
+
+kwctl_preamble=":sidebar_label: kwctl CLI Reference
+:sidebar_position: 120
+:title: kwctl CLI
+:description: kwctl CLI reference documentation
+:keywords: [cli, reference, kwctl]
+:doc-persona: [kubewarden-operator]
+:doc-type: [reference]
+:doc-topic: [operator-manual]"
+
+policy_server_preamble=":sidebar_label: Policy Server CLI Reference
+:sidebar_position: 121
+:title: Policy Server CLI
+:description: Policy Server CLI reference documentation
+:keywords: [cli, reference, policy-server]
+:doc-persona: [kubewarden-operator]
+:doc-type: [reference]
+:doc-topic: [operator-manual]"
+
+kwctl_md_file="$HOME/projects/suse/kubewarden-kwctl/cli-docs.md"
+policy_server_md_file="$HOME/projects/suse/kubewarden-policy-server/cli-docs.md"
+
+latest_version="$(cd $HOME/projects/suse/product-docs/kubewarden-product-docs/docs && ls -d version-* | sort -V | tail -n 1 | cut -f1 -d'/')"
+
+echo "Working with version = $latest_version. Ok (y/n)?" && read -r response
+if [ "$response" != "y" ]; then
+    echo "Exiting..."
+    exit 1
+fi
+
+kwctl_ad_file="$HOME/projects/suse/product-docs/kubewarden-product-docs/docs/$latest_version/modules/en/pages/reference/kwctl-cli.adoc"
+policy_server_ad_file="$HOME/projects/suse/product-docs/kubewarden-product-docs/docs/$latest_version/modules/en/pages/reference/policy-server-cli.adoc"
+
+echo "$kwctl_preamble" > "$kwctl_ad_file"
+echo "$policy_server_preamble" > "$policy_server_ad_file"
+
+#pandoc -f markdown -t asciidoc "$kwctl_md_file" >> "$kwctl_ad_file"
+#pandoc -f markdown -t asciidoc "$policy_server_md_file" >> "$policy_server_ad_file"
+cat "$kwctl_md_file" >> "$kwctl_ad_file"
+cat "$policy_server_md_file" >> "$policy_server_ad_file"
