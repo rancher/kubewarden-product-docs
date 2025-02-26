@@ -35,7 +35,7 @@ policy_server_ad_file="$HOME/projects/suse/product-docs/kubewarden-product-docs/
 echo "$kwctl_preamble" > "$kwctl_ad_file"
 echo "$policy_server_preamble" > "$policy_server_ad_file"
 
-#pandoc -f markdown -t asciidoc "$kwctl_md_file" >> "$kwctl_ad_file"
-#pandoc -f markdown -t asciidoc "$policy_server_md_file" >> "$policy_server_ad_file"
-cat "$kwctl_md_file" >> "$kwctl_ad_file"
-cat "$policy_server_md_file" >> "$policy_server_ad_file"
+pandoc -f markdown -t asciidoc "$kwctl_md_file" | sed 's/=======/====/' >> "$kwctl_ad_file"
+pandoc -f markdown -t asciidoc "$policy_server_md_file" | sed 's/=======/====/' >> "$policy_server_ad_file"
+#cat "$kwctl_md_file" >> "$kwctl_ad_file"
+#cat "$policy_server_md_file" >> "$policy_server_ad_file"
