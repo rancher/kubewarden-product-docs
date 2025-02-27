@@ -1,12 +1,12 @@
 site:
   title: SUSE® Rancher Prime Policy Manager
-  start_page: 1.20@policy-manager:en:introduction.adoc
+  start_page: 1.22@policy-manager:en:introduction.adoc
 
 content:
   sources:
     - url: ./
       branches: [HEAD]
-      start_paths: [shared, docs/version-1.22, docs/version-1.21]
+      start_paths: [shared, docs/version-1.23, docs/version-1.22]
 
 ui:
   bundle:

@@ -19,8 +19,8 @@ rancher-dsc:
 
 rancher-dsc-local:
 	mkdir -p tmp
-	bin/switch-prod-comm product | tee tmp/rancher-dsc-build.log
-	npx antora --version | tee -a tmp/rancher-dsc-build.log
+	bin/switch-prod-comm product | tee tmp/rancher-dsc-local-build.log
+	npx antora --version | tee -a tmp/rancher-dsc-local-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-rancher-dsc-local.yml \
 		2>&1 | tee -a tmp/rancher-dsc-local-build.log
@@ -60,6 +60,7 @@ remote-community:
 
 clean:
 	rm -rf build*
+	rm -rf tmp/*.log
 
 environment:
 	npm ci || npm install
