@@ -6,7 +6,7 @@ content:
   sources:
     - url: ./
       branches: [HEAD]
-      start_paths: [shared, docs/version-1.23, docs/version-1.22]
+      start_paths: [shared, docs/version-*]
 
 ui:
   bundle:
