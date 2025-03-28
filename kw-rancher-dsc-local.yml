@@ -6,7 +6,8 @@ content:
   sources:
     - url: ./
       branches: [HEAD]
-      start_paths: [shared, docs/version-*]
+      #start_paths: [shared, docs/version-*]
+      start_paths: [shared, docs/version-1.1*, docs/version-1.2*]
 
 ui:
   bundle:
@@ -28,6 +29,7 @@ antora:
   extensions:
     # - require: "@antora/pdf-extension"
     - require: "@antora/lunr-extension"
+      index_latest_only: true
     - require: "@sntke/antora-mermaid-extension"
       mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
       script_stem: header-scripts # <3>
