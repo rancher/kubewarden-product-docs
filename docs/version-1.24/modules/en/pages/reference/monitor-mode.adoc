@@ -78,6 +78,9 @@ Mutating policies in `monitor` mode won't perform a mutation on the resource.
 In `monitor` mode policies log what their action would have been. They also log
 the mutation patch they would have produced in `protect` mode.
 
+[WARNING]
+====
 When a mutating policy is in `monitor` mode, later policies evaluate an
 unchanged, and so different resource, than when the mutating policy is in
 `protect` mode.
+====
