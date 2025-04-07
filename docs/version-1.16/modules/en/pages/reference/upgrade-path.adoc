@@ -50,6 +50,8 @@ in a single upgrade is *not* supported.
 ....
 %%{init: "theme": "neutral"}%%
 flowchart LR;
+  accTitle: Upgrade path support graph
+  accDescr: A diagram showing recommended and supported upgrade paths for Kubewarden.
   1.0.0(1.0.0)-->1.0.1(1.0.1);
   1.0.1-->1.0.2(1.0.2);
   1.0.2-->1.1.0(1.1.0);
