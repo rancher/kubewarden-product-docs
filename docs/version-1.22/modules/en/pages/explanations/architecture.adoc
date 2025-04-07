@@ -145,6 +145,8 @@ The {product-name} consists of these components:
   }
 }%%
 graph LR
+    accTitle: Kubewarden architecture
+    accDescr: A diagram showing the architecture of Kubewarden components.
     subgraph " "
       direction LR
       subgraph " "

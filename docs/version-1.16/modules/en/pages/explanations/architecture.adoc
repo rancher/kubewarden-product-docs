@@ -143,6 +143,8 @@ flagging the ones that no longer adhere with the deployed Kubewarden policies.
   }
 }%%
 graph LR
+    accTitle: Kubewarden architecture
+    accDescr: A diagram showing the architecture of Kubewarden components.
     subgraph " "
       direction LR
       subgraph " "
