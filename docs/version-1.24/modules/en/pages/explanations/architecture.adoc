@@ -96,43 +96,43 @@ the Kubernetes cluster.
 
 == The {product-name} stack
 
-The {product-name} consists of these components:
+{product-name} consists of these components:
 
 * {product-name} Custom Resources are
-  https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes
-  Custom Resources] that simplify the process of managing policies.
+https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes
+Custom Resources] that simplify the process of managing policies.
 +
-  {product-name} integrates with Kubernetes using
-  https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamic
-  Admission Control]. In particular, {product-name} operates as a Kubernetes
-  Admission Webhook. The `policy-server` is the Webhook endpoint called by the
-  Kubernetes API server to validate requests.
+{product-name} integrates with Kubernetes using
+https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamic
+Admission Control]. In particular, {product-name} operates as a Kubernetes
+Admission Webhook. The `policy-server` is the Webhook endpoint called by the
+Kubernetes API server to validate requests.
 
 * The https://github.com/kubewarden/kubewarden-controller[{product-name}
-  controller] is a Kubernetes controller that reconciles {product-name}'s
-  Custom Resources. This controller creates parts of the {product-name} stack.
-  It also translates {product-name} configuration into Kubernetes directives.
+controller] is a Kubernetes controller that reconciles {product-name}'s
+Custom Resources. This controller creates parts of the {product-name} stack.
+It also translates {product-name} configuration into Kubernetes directives.
 +
-  The `kubewarden-controller` registers the needed
-  `MutatingWebhookConfiguration` or `ValidatingWebhookConfiguration` objects
-  with the Kubernetes API server.
+The `kubewarden-controller` registers the needed
+`MutatingWebhookConfiguration` or `ValidatingWebhookConfiguration` objects
+with the Kubernetes API server.
 
 * xref:../tutorials/writing-policies/index.adoc[{product-name} policies] are
-  WebAssembly modules holding the validation or mutation logic. WebAssembly
-  modules have detailed documentation in the
-  xref:../tutorials/writing-policies/index.adoc[writing policies] sections.
+WebAssembly modules holding the validation or mutation logic. WebAssembly
+modules have detailed documentation in the
+xref:../tutorials/writing-policies/index.adoc[writing policies] sections.
 
 * The https://github.com/kubewarden/policy-server[PolicyServer] receives
-  requests for validation. It validates the requests by executing
-  {product-name} policies.
+requests for validation. It validates the requests by executing
+{product-name} policies.
 
 * The https://github.com/kubewarden/audit-scanner[audit scanner] inspects the
-  resources already in the cluster. It identifies those violating
-  {product-name} policies.
+resources already in the cluster. It identifies those violating
+{product-name} policies.
 +
-  xref:/explanations/audit-scanner/audit-scanner.adoc[Audit scanner] constantly
-  checks the resources declared in the cluster, flagging the ones that no
-  longer adhere to the deployed {product-name} policies.
+xref:/explanations/audit-scanner/audit-scanner.adoc[Audit scanner] constantly
+checks the resources declared in the cluster, flagging the ones that no
+longer adhere to the deployed {product-name} policies.
 +
 .Architecture
 [mermaid]
