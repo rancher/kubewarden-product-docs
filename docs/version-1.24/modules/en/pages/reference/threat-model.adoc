@@ -41,7 +41,7 @@ This is Kubewarden's default behavior.
 Failing closed means that if, for any reason,
 Kubewarden stops responding or crashes,
 the API server rejects the request by default.
-This is even if the request is normally be accepted by Kubewarden.
+This is even if the request is normally accepted by Kubewarden.
 
 === Threat 2 - Attacker passes workloads which require complex processing causing timeouts
 
