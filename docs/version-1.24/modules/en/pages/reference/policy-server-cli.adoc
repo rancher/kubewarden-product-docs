@@ -86,7 +86,7 @@ Default value: `3000`
 * `--readiness-probe-port ++<++READINESS++_++PROBE++_++PORT++>++` —
 Expose readiness endpoint on READINESS++_++PROBE++_++PORT
 +
-Default value: `3000`
+Default value: `8081`
 * `--sigstore-cache-dir ++<++SIGSTORE++_++CACHE++_++DIR++>++` —
 Directory used to cache sigstore data
 +
