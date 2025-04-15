@@ -129,16 +129,11 @@ admission controller webhook.
 
 ==== Mitigation
 
-Use Webhook mTLS authentication. You should also use
+Configure the cluster with mTLS authentication for the Webhooks and enable the
+mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
+that supports Network Policies. Use the
 https://artifacthub.io/packages/kubewarden/capabilities-psp/capabilities-psp[capabilities-psp]
-and configure it to drop NET_RAW capabilities.
-
-==== To-do
-
-Implement mutual TLS authentication.
-Additionally, it would be possible to add a policy within the recommended
-policies section in the `kubewarden-defaults` which drops the `NET_RAW`
-capability.
+policy and configure it to drop NET_RAW capabilities.
 
 === Threat 9 - Attacker steals traffic from the webhook via spoofing
 
@@ -149,11 +144,9 @@ admission controller webhook, by spoofing.
 
 ==== Mitigation
 
-Use Webhook mTLS authentication.
-
-==== To-do
-
-Kubewarden should implement mutual TLS authentication
+Configure the cluster with mTLS authentication for the Webhooks and enable the
+mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
+that supports Network Policies.
 
 === Threat 10 - Abusing a mutation rule to create a privileged container
 
@@ -227,7 +220,7 @@ deprecated resources. It's available from
 https://github.com/kubewarden/deprecated-api-versions-policy[the
 deprecated-api-versions-policy].
 
-NOTE:  `deprecated-api-versions-policy` only deals with Custom Resources known
+NOTE: `deprecated-api-versions-policy` only deals with Custom Resources known
 to it. The threat is both deprecated resource versions, and new unknown ones
 that are misused, hence the policy only covers part of the problem.
 
@@ -249,13 +242,9 @@ Admission controller uses restrictive policies to prevent privileged workloads.
 An attacker, who has rights to deploy hostPath volumes with workloads, creates a
 volume that allows for access to the admission controller pod's files.
 
-==== Mitigation
-
-Admission controller uses restrictive policies to prevent privileged workloads
-
-==== To-do
-
-Add a recommended policy in the `kubewarden-default` Helm chart to prevent this.
+Deploy the `kubewarden-default` Helm chart and enable its recommended policies,
+which includes the `hostpaths-psp` policy. This policy is configured to reduce
+the shared hostPath volumes.
 
 === Threat 17 - Attacker has privileged SSH access to cluster node running admission webhook
 
@@ -276,8 +265,12 @@ sends sensitive data to an external system.
 
 ==== Mitigation
 
-Strictly control external access for webhook
-Kubewarden policies run in a restrictive environment. They don't have network access.
+* Configure the cluster with mTLS authentication for the Webhooks and enable
+  the mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a
+  CNI that supports Network Policies.
+
+* By default, Kubewarden policies don't have network access and run in a
+  restrictive environment, strictly controlling external access on Webhooks.
 
 == Kubewarden threats
 
@@ -300,10 +293,11 @@ For example, by:
 
 ==== Mitigation
 
-. Kubewarden provides a Software Bill Of Materials, which lists all images needed. This aids with Zero-Trust.
-The Kubernetes Administrator must verify the Kubewarden images, its dependencies' images, and charts
-out of the Kubernetes cluster, in a trusted environment.
-You can do this with `cosign`, for example.
-Incidentally, this is part of the implementation needed for air-gapped installations.
-. Use signed Helm charts, and verified digests instead of tags for Kubewarden images in those Helm charts.
-This doesn't secure dependencies though.
+. Kubewarden provides a Software Bill Of Materials, which lists all images
+  needed. This aids with Zero-Trust. The Kubernetes Administrator must verify
+  the Kubewarden images, its dependencies' images, and charts out of the
+  Kubernetes cluster, in a trusted environment. You can do this with `cosign`,
+  for example. Incidentally, this is part of the implementation needed for
+  air-gapped installations.
+. Use signed Helm charts, and verified digests instead of tags for Kubewarden
+  images in those Helm charts. This doesn't secure dependencies though.
