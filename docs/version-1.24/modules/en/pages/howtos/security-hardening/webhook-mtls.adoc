@@ -104,7 +104,7 @@ kube-apiserver-arg:
 - admission-control-config-file=/etc/rancher/k3s/admission/admission.yaml
 ----
 
-== Install k3s
+== Install K3s
 
 Install k3s using the following command:
 
