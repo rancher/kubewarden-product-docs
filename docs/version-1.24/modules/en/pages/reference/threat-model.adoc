@@ -129,16 +129,14 @@ admission controller webhook.
 
 ==== Mitigation
 
-Use Webhook mTLS authentication. You should also use
+Configure the cluster with mTLS authentication for the Webhooks and enable the
+mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
+that supports Network Policies. See
+xref:/reference/security-hardening/webhook-mtls.md[here] for more information.
+
+Use the
 https://artifacthub.io/packages/kubewarden/capabilities-psp/capabilities-psp[capabilities-psp]
-and configure it to drop NET_RAW capabilities.
-
-==== To-do
-
-Implement mutual TLS authentication.
-Additionally, it would be possible to add a policy within the recommended
-policies section in the `kubewarden-defaults` which drops the `NET_RAW`
-capability.
+policy and configure it to drop NET_RAW capabilities.
 
 === Threat 9 - Attacker steals traffic from the webhook via spoofing
 
