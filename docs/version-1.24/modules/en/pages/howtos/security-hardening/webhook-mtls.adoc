@@ -93,7 +93,7 @@ users:
     client-key: /etc/rancher/k3s/admission/certs/client.key
 ----
 
-=== Create a k3s configuration file
+=== Create a K3s configuration file
 
 Create a k3s configuration file at `/etc/rancher/k3s/config.yaml`:
 
