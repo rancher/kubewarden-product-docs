@@ -131,7 +131,7 @@ admission controller webhook.
 
 Configure the cluster with mTLS authentication for the Webhooks and enable the
 mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
-that supports Network Policies. See
+that supports Network Policies. Refer to
 xref:/reference/security-hardening/webhook-hardening.md["Secure webhooks with
 mutual TLS"] for more information.
 
