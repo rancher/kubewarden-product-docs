@@ -17,7 +17,7 @@ The verification-config format is used by:
 * `policy-server` to verify policy modules provenance
 * `verify-image-signatures` policy to verify cluster images provenance
 
-See xref:../howtos/secure-supply-chain.adoc[secure supply chain] for more info.
+Refer to xref:/howtos/security-hardening/secure-supply-chain.adoc[secure supply chain] for more info.
 
 == Format
 
@@ -53,7 +53,7 @@ key-values, that must be present in the signature.
 
 == Example
 
-Here you can see an example of a configuration for verifying
+Here is an example of a configuration for verifying
 signatures using the Sigstore workflow:
 
 [subs="+attributes",yaml]

@@ -1,7 +1,7 @@
 = Air gap installation
 :description: Air gap installation for Kubewarden.
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
-:doc-topic: [“operator-manual”, “airgap”, “installation”]
+:doc-topic: [“operator-manual”, “air gap”, “installation”]
 :doc-type: [“howto”]
 :keywords: [“kubewarden”, “kubernetes”, “air gap installation”]
 :sidebar_label: Installation
@@ -12,7 +12,7 @@ an air-gapped installation of Kubewarden, you need a private Open Container
 Initiative (OCI) registry accessible by your Kubernetes cluster. Kubewarden
 Policies are WebAssembly modules, therefore you can store them in an
 OCI-compliant registry as OCI artifacts. You need to add Kubewarden’s images
-and policies to this OCI registry. You can see a list of Kubewarden artifacts
+and policies to this OCI registry. You can refer to a list of Kubewarden artifacts
 in the xref:/reference/artifacts.adoc[Artifacts reference] page. The following
 sections describe the process.
 
@@ -149,7 +149,7 @@ helm install --wait -n kubewarden \
 
 To use the Policy Reported sub-chart available in the `kubewarden-controller`
 chart you need to define other values specific for the sub-chart in an
-air-gapped environment. See an example below:
+air-gapped environment. There is an example below:
 
 [subs="+attributes”,shell]
 ----
@@ -165,7 +165,7 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden-controller.tg
 It’s necessary to define `auditScanner.policyReporter` to enable the sub-chart
 and 4 more values, to configure the registry and repository where the Policy
 Reporter images are stored. For more information about the policy report
-sub-chart values see the
+sub-chart values refer to the
 https://github.com/kyverno/policy-reporter/tree/policy-reporter-2.19.4/charts/policy-reporter[Policy
 Reporter documentation].
 
@@ -207,7 +207,7 @@ the `global.cattle.systemDefaultRegistry` is used as the default registry.
 
 
 Finally, you need to configure Policy Server to fetch policies from your private registry.
-See the xref:howtos/policy-servers/02-private-registry.adoc[using private registry] section of the documentation.
+Refer to the xref:howtos/policy-servers/02-private-registry.adoc[using private registry] section of the documentation.
 
 Now you can create Kubewarden policies in your cluster.
 Policies must be available in your private registry.
