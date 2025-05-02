@@ -1,0 +1,168 @@
+= Installing kwctl (Kubewarden CLI)
+:sidebar_label: Install kwctl
+:sidebar_position: 15
+:title: Installing kwctl
+:description: Installing kwctl
+:keywords: kubewarden, kubernetes, install kwctl, install, kwctl
+:doc-persona: kubewarden-all
+:doc-type: howto
+:doc-topic: install-kwctl
+:canonical: https://docs.kubewarden.io/howtos/install-kwctl
+
+`kwctl` is the command-line interface (CLI) tool for Kubewarden. Below are installation instructions for some operating systems.
+
+== Install for Linux
+
+=== Using Homebrew
+
+If you use the Homebrew package manager on Linux, then:
+
+[source,bash]
+----
+brew install kwctl
+----
+
+Verify Installation:
+[source,bash]
+----
+kwctl --version
+----
+
+=== Using AUR (Arch User Repository)
+
+If you're using Arch Linux, or an Arch-based distribution, you can install kwctl from the AUR.
+
+==== Using an AUR Helper (yay)
+[source,bash]
+----
+yay -S kwctl
+----
+
+==== Using makepkg
+[source,bash]
+----
+# Clone the AUR package
+git clone https://aur.archlinux.org/kwctl.git
+cd kwctl
+
+# Build and install the package
+makepkg -si
+----
+
+==== Verify the installation
+[source,bash]
+----
+kwctl --version
+----
+
+=== Manual installation
+
+1. Download the latest release of `kwctl` for Linux:
+[source,bash]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-x86_64.zip
+----
+
+For ARM64 systems (e.g., Raspberry Pi), use:
+[source,bash]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-aarch64.zip
+----
+
+2. Extract the files from the downloaded `.zip` file:
+[source,bash]
+----
+unzip kwctl-linux-x86_64.zip
+----
+
+This extracts the following files:
+
+- `kwctl-linux-x86_64`: The `kwctl` binary
+- `kwctl-linux-x86_64.sig`: A signature file for verifying the binary
+- `kwctl-linux-x86_64.pem`: A certificate file for verifying the signature
+
+3. Move the binary to a directory in your PATH, rename to `kwctl` and make executable.
+
+4. Verify the installation:
+[source,bash]
+----
+kwctl --version
+----
+
+== Install for macOS
+
+=== Using Homebrew
+Install `kwctl`:
+[source,shell]
+----
+brew install kwctl
+----
+
+Verify installation:
+[source,bash]
+----
+kwctl --version
+----
+
+=== Manual installation
+
+1. Download the latest release of `kwctl` for macOS:
+- For **Apple Silicon (ARM64)** systems, use:
+[source,bash]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-darwin-aarch64.zip
+----
+- For **Intel (x86_64)** systems, use:
+[source,bash]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-darwin-x86_64.zip
+----
+
+2. Extract the files from the downloaded `.zip` file:
+[source,bash]
+----
+unzip kwctl-darwin-x86_64.zip
+----
+
+This extracts the following files:
+- `kwctl-darwin-x86_64`: The `kwctl` binary
+- `kwctl-darwin-x86_64.sig`: A signature file for verifying the binary
+- `kwctl-darwin-x86_64.pem`: A certificate file for verifying the signature
+
+3. Move the binary to a directory in your PATH, rename to `kwctl` and make executable.
+
+4. Verify the Installation:
+[source,bash]
+----
+kwctl --version
+----
+
+== Install for Windows
+
+1. Download `kwctl`:
+    a. Open your browser and go to the https://github.com/kubewarden/kwctl/releases/latest[Kubewarden releases page].
+    b. Download the `kwctl-windows-x86_64.zip` file.
+
+2. Extract the files from the downloaded zip file. It will contain:
+- `kwctl-windows-x86_64.exe`: the `kwctl` binary.
+- `kwctl-windows-x86_64.sig`: a signature file for verifying the binary.
+- `kwctl-windows-x86_64.pem`: a certificate file for verifying the signature.
+
+3. Rename the binary file from `kwctl-windows-x86_64.exe` to `kwctl.exe` for easier use.
+
+4. Move the binary to a location covered by your `PATH` environment variable.
+
+5. Verify the installation. Open a new command prompt or PowerShell window and check the `kwctl` installation:
+[source,cmd]
+----
+kwctl --version
+----
+
+== Install shell completions
+
+The `kwctl` CLI has the `--shell` option to generate shell completion commands for your shell. You can use the output from this command to integrate completions into your shell.
+
+[source,bash]
+----
+kwctl completions --shell [bash|elvish|fish|powershell|zsh]
+----
