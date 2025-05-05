@@ -452,7 +452,7 @@ Possible values: `CREATE`
 Output an artifacthub-pkg.yml file from a metadata.yml file
 
 *Usage:*
-`kwctl scaffold artifacthub ++[++OPTIONS++]++ --metadata-path ++<++PATH++>++ --version ++<++VALUE++>++`
+`kwctl scaffold artifacthub [OPTIONS]`
 
 ==== *Options:*
 
