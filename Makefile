@@ -75,3 +75,7 @@ checkmake:
 	else \
 		echo "checkmake not available"; \
 	fi
+
+.PHONY: preview
+preview:
+	npx http-server build-rancher-dsc-local/site -c-1
