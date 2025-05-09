@@ -48,7 +48,7 @@ This table provides a comparison between OPA Gatekeeper and Kubewarden. Topics r
 
 | Policy distribution <<_policy_distribution,[4]>>
 | embedded into Kubernetes CR
-| Container registry, or embeded into Kubernetes CR (CEL)
+| Container registry, or embedded into Kubernetes CR (CEL)
 
 | CI/CD integration <<_cicd_integration,[5]>>
 | ✅

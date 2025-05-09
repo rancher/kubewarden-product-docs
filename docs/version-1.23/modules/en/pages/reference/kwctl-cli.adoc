@@ -525,12 +525,12 @@ Convert a Kubernetes `ValidatingAdmissionPolicy` into a Kubewarden
 ==== *Options:*
 
 * `-b`, `--binding ++<++VALIDATING-ADMISSION-POLICY-BINDING.yaml++>++` —
-The file containining the ValidatingAdmissionPolicyBinding definition
+The file containing the ValidatingAdmissionPolicyBinding definition
 * `--cel-policy ++<++URI++>++` — The CEL policy module to use
 +
 Default value: `ghcr.io/kubewarden/policies/cel-policy:latest`
 * `-p`, `--policy ++<++VALIDATING-ADMISSION-POLICY.yaml++>++` — The file
-containining the ValidatingAdmissionPolicy definition
+containing the ValidatingAdmissionPolicy definition
 
 === `kwctl scaffold verification-config`
 
