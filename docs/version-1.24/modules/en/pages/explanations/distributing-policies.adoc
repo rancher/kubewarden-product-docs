@@ -165,7 +165,7 @@ $ kwctl push annotated-policy.wasm \
 It's discouraged to push unannotated policies. The policy server uses the
 metadata provided by annotations to correctly execute a policy. By default,
 `kwctl push` refuses to push such a policy to an OCI registry. If you need an
-unannotated policy, use the `--force` flag of `kwctl push`.
+unannotated policy, use the `-&#x200D;-&#x200D;force` flag of `kwctl push`.
 
 You can reference a policy from the Kubewarden Policy Server or `kwctl` as
 `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

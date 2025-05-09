@@ -32,7 +32,7 @@ local-community: tmpdir environment
 	bin/switch-prod-comm product | tee tmp/local-community-build.log
 
 .PHONY: remote
-remote: tmpdir environment get_and_expand_ui_bundle
+remote: tmpdir environment
 	bin/switch-prod-comm product | tee tmp/remote-build.log
 	npx antora --version | tee -a tmp/remote-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
@@ -60,21 +60,13 @@ environment:
 tmpdir:
 	mkdir -p tmp
 
-.PHONY: get_and_expand_ui_bundle
-get_and_expand_ui_bundle:
-	wget \
-		'https://github.com/rancher/product-docs-ui/blob/main/build/ui-bundle.zip?raw=true' \
-		-O tmp/ui-bundle.zip \
-		&& \
-		unzip -o tmp/ui-bundle.zip -d tmp/sp
-
 .PHONY: checkmake
 checkmake:
-	@if [ $$(which checkmake 2>/dev/null) ]; then \
-		checkmake Makefile; \
-	else \
-		echo "checkmake not available"; \
-	fi
+	@if [ $$(which checkmake 2>/dev/null) ]; then checkmake Makefile; \
+		if [ $$? -ne 0 ]; then echo "checkmake failed"; exit 1; \
+		else echo "checkmake passed"; \
+		fi; \
+	else echo "checkmake not available"; fi
 
 .PHONY: preview
 preview:
