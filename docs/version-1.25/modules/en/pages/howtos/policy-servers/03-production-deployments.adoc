@@ -215,7 +215,7 @@ PriorityClass remain unchanged, but following Pods that use the
 name of the deleted PriorityClass will not be created by Kubernetes.
 ====
 
-== Configuring PriorityClasses
+=== Configuring PriorityClasses
 
 An example using the default `system-cluster-critical` priorityClass:
 
