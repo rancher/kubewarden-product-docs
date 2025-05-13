@@ -206,7 +206,7 @@ spec:
 
 The Kubewarden controller can set the PriorityClass used for the pods of
 PolicyServers. This means PolicyServer workloads are scheduled with priority,
-preventing eviction and ensuring service reliability. See the https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes documentation on scheduling-eviction/pod-priority-preemption] for more information.
+preventing eviction and ensuring service reliability. See https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes documentation on scheduling-eviction/pod-priority-preemption] for more information.
 
 [WARNING]
 ====
