@@ -23,7 +23,7 @@ The {product-name} stack comprises:
 * {product-name}
   `PolicyServer`. The Kubewarden `PolicyServer` loads and evaluates your
   administrator's policies.
-* One or more {admission-policy} resources: policies for a defined namespace. A
+* One or more {admission-policy} resources: policies for a defined namespace.
 * A deployment of a `kubewarden-controller`: this controller monitors the
   {cluster-admission-policy} resources and interacts with the {product-name}
   {policy-server} components.
