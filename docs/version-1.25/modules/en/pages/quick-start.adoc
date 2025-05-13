@@ -17,7 +17,7 @@ include::partial$variables.adoc[]
 
 The {product-name} stack comprises:
 
-* One or more {cluster-admission-policy} resources: this defines
+* One or more {cluster-admission-policy} resources: this defines policies
   for Kubernetes clusters.
 * One or more {policy-server} resources: representing a deployment of a
 * {product-name}
