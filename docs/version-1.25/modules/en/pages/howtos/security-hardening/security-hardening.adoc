@@ -82,7 +82,7 @@ See the
 https://kubernetes.io/docs/concepts/security/pod-security-admission/[official
 documentation] of Kubernetes' Pod Security Admission for more details.
 
-### SecurityContexts
+=== SecurityContexts
 
 The `kubewarden-controller` Helm chart configures the SecurityContexts and
 exposes them in its `values.yaml`.
