@@ -124,7 +124,7 @@ For a quick look or debugging, one can setup a port-forwarding to the service wi
 kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
 ----
 
-Which will make the Policy Reporter UI available at http://localhost:8082.
+Which will make the Policy Reporter UI available at \`\http://localhost:8082`.
 
 == Trigger manual run
 

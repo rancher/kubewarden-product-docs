@@ -310,7 +310,7 @@ forwarding to your local machine:
 kubectl -n jaeger port-forward service/my-open-telemetry-query 16686
 ----
 
-The web UI is reachable at http://localhost:16686[localhost:16686].
+The web UI is reachable at `\http://localhost:16686`.
 
 == Exploring the Prometheus UI
 
@@ -321,5 +321,5 @@ The Prometheus UI can be accessed doing a port forwarding to your local machine:
 kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-operated 9090
 ----
 
-The web UI is now reachable at http://localhost:9090[localhost:9090].
+The web UI is now reachable at `\http://localhost:9090`.
 

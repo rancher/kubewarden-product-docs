@@ -235,11 +235,11 @@ Overview of the attributes of the {cluster-admission-policy} resource:
 
 | N
 |
-| - `http`, `https`: The policy is downloaded from a regular HTTP(s) server. Example: `https://<website/policy URL>`
+| - `http`, `https`: The policy is downloaded from a regular HTTP(s) server. Example: `\https://<website/policy URL>`
 
 | N
 |
-| - `file`: The policy is loaded from a file in the computer file system. Example: `file:///<policy WASM binary full path>`
+| - `file`: The policy is loaded from a file in the computer file system. Example: `\file:///<policy WASM binary full path>`
 
 | Y
 | `resources`
