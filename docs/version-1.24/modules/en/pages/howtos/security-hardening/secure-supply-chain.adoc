@@ -26,9 +26,9 @@ Policy developers can sign their policies and publish them in a registry.
 
 In the following sections, you need a few tools to be installed.
 These are so users can sign and verify OCI artifacts signatures.
-The examples show the use of https://docs.sigstore.dev/cosign/installation/[`cosign`] and https://github.com/kubewarden/kwctl[`kwctl`] utilities for signing and inspecting policies.
+The examples show the use of https://docs.sigstore.dev/quickstart/quickstart-cosign/[`cosign`] and https://github.com/kubewarden/kwctl[`kwctl`] utilities for signing and inspecting policies.
 
-Users may also want to use GitHub to sign their policies. In which case, they need to install https://docs.sigstore.dev/cosign/installation/#github-action[Github actions].
+Users may also want to use GitHub to sign their policies. In which case, they need to install https://docs.sigstore.dev/cosign/system_config/installation/#github-actions[Github actions].
 
 Keyless signing uses the default https://github.com/SigStore/fulcio[fulcio]
 and https://github.com/sigstore/rekor[rekor] instances provided by the
