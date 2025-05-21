@@ -106,7 +106,7 @@ issuer, subject, and `github_workflow_repository` extensions.
 
 == kwctl
 
-kwctl binaries are signed using https://docs.sigstore.dev/signing/signing_with_blobs/[Sigstore's blog signing].
+kwctl binaries are signed using https://docs.sigstore.dev/cosign/signing/signing_with_blobs/[Sigstore's blob signing].
 
 When you download a https://github.com/kubewarden/kwctl/releases/[kwctl
 release] each zip file contains
