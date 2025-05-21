@@ -52,7 +52,7 @@ helm upgrade -i --wait \
 [CAUTION]
 ====
 This is *not suitable for production deployment*.
-You should consult read Jaeger's https://www.jaegertracing.io/docs/latest/operator/[official documentation].
+You should consult read Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
 ====
 
 To create a Jaeger resource:
@@ -137,7 +137,7 @@ For simplicity, there is no encryption of the communication between the
 OpenTelemetry collector and the Jaeger endpoint.
 
 Again, this is *unsuitable for a production deployment*.
-Consult Jaeger's https://www.jaegertracing.io/docs/latest/operator/[official documentation].
+Consult Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
 ====
 
 Then you can proceed with the installation of the helm charts:
