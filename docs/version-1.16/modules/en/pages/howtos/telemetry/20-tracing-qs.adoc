@@ -55,7 +55,7 @@ helm upgrade -i --wait \
 [CAUTION]
 ====
 This is *not meant to be a production deployment*.
-We strongly recommend to read Jaeger's https://www.jaegertracing.io/docs/latest/operator/[official documentation].
+We strongly recommend to read Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
 ====
 
 
@@ -141,7 +141,7 @@ OpenTelemetry collector and the Jaeger endpoint.
 
 This is *not meant to be a production deployment*.
 We strongly recommend
-to read Jaeger's https://www.jaegertracing.io/docs/latest/operator/[official documentation].
+to read Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
 ====
 
 
