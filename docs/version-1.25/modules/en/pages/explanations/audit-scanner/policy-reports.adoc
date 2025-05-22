@@ -54,7 +54,7 @@ Using the kubectl CLI, it’s possible to query the results of the scan:
 
 List the reports in the default namespace:
 
-[subs=”+attributes”,console]
+[source,console]
 ----
 $ kubectl get polr -o wide
 
@@ -68,7 +68,7 @@ NAME                                   KIND         NAME                        
 
 List the cluster-wide reports:
 
-[subs=”+attributes”,console]
+[source,console]
 ----
 $ kubectl get cpolr -o wide
 
@@ -80,14 +80,14 @@ NAME                                   KIND        NAME                 PASS   F
 
 Get the details of a specific PolicyReport:
 
-[subs=”+attributes”,console]
+[source,console]
 ----
 kubectl get polr 009805e4-6e16-4b70-80c9-cb33b6734c82 -o yaml
 ----
 
 Get the details of a specific ClusterPolicyReport:
 
-[subs=”+attributes”,console]
+[source,console]
 ----
 kubectl get cpolr 261c9492-deec-4a09-8aa9-cd464bb4b8d1 -o yaml
 ----
@@ -98,7 +98,7 @@ The following example shows a `PolicyReport` for the `Deployment` resource
 `deployment1` in the `default` namespace. The report indicates that the `Pod`
 failed the `safe-labels` AdmissionPolicy.
 
-[subs=”+attributes”,yaml]
+[source,yaml]
 ----
 apiVersion: wgpolicyk8s.io/v1beta1
 kind: PolicyReport
@@ -156,7 +156,7 @@ The following example shows a `ClusterPolicyReport` for the `Namespace`
 resource `default`. The report indicates that the resource has failed the
 `safe-annotations` ClusterAdmissionPolicy validation.
 
-[subs=”+attributes”,yaml]
+[source,yaml]
 ----
 apiVersion: wgpolicyk8s.io/v1beta1
 kind: ClusterPolicyReport

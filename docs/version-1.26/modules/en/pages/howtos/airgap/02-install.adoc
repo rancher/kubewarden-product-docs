@@ -35,7 +35,7 @@ Optionally, you can verify the signatures of the
   https://github.com/kubewarden/utils[utilities repository].
 . Save Kubewarden container images into a `.tar.gz` file:
 +
-[subs=”+attributes”,shell]
+[,shell]
 ----
  ./kubewarden-save-images.sh \
    --image-list ./kubewarden-images.txt \
@@ -55,7 +55,7 @@ ran the command, has a tarball, `kubewarden-images.tar.gz`.
   the https://github.com/kubewarden/kwctl/tree/main/scripts[kwctl repository]
 . Save policies into a `.tar.gz` file:
 +
-[subs=”+attributes”,shell]
+[,shell]
 ----
 ./kubewarden-save-policies.sh --policies-list policies.txt
 ----
@@ -67,7 +67,7 @@ The `kwctl` CLI download the policies and stores them in the
 
 You need to download the following helm charts to your workstation:
 
-[subs=”+attributes”,shell]
+[,shell]
 ----
 helm pull kubewarden/kubewarden-crds
 helm pull kubewarden/kubewarden-controller
@@ -87,7 +87,7 @@ Move these files to the air gap environment:
 . Load Kubewarden images into the private registry.
 The Docker client must be authenticated against the local registry.
 +
-[subs="+attributes”,shell]
+[,shell]
 ----
  ./kubewarden-load-images.sh \
    --image-list ./kubewarden-images.txt \
@@ -99,7 +99,7 @@ The Docker client must be authenticated against the local registry.
 Kwctl must be authenticated against the local registry
 (`kwctl` uses the same mechanism to authenticate as `docker`, a `~/.docker/config.json` file)
 +
-[subs="+attributes”,shell]
+[,shell]
 ----
  ./kubewarden-load-policies.sh \
    --policies-list policies.txt \
@@ -131,13 +131,13 @@ private registry.
 
 Install the Kubewarden stack:
 
-[subs="+attributes”,shell]
+[,shell]
 ----
 helm install --wait -n kubewarden \
   kubewarden-crds kubewarden-crds.tgz
 ----
 
-[subs="+attributes”,shell]
+[,shell]
 ----
 helm install --wait -n kubewarden \
   kubewarden-controller kubewarden-controller.tgz \
@@ -151,7 +151,7 @@ To use the Policy Reported sub-chart available in the `kubewarden-controller`
 chart you need to define other values specific for the sub-chart in an
 air-gapped environment. There is an example below:
 
-[subs="+attributes”,shell]
+[,shell]
 ----
 helm install --wait -n kubewarden kubewarden-controller kubewarden-controller.tgz \
     --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
@@ -172,7 +172,7 @@ Reporter documentation].
 ====
 
 
-[subs="+attributes”,shell]
+[,shell]
 ----
 helm install --wait -n kubewarden \
   kubewarden-defaults kubewarden-defaults.tgz \
@@ -192,7 +192,7 @@ repository doesn’t support OCI artifacts.
 To install, and wait for the installation to complete, use the following
 command:
 
-[subs="+attributes”,console]
+[,console]
 ----
 helm install --wait -n kubewarden \
   kubewarden-defaults kubewarden-defaults.tgz \
@@ -212,6 +212,7 @@ Refer to the xref:howtos/policy-servers/02-private-registry.adoc[using private r
 Now you can create Kubewarden policies in your cluster.
 Policies must be available in your private registry.
 
+[,console]
 ----
 kubectl apply -f - <<EOF
 apiVersion: policies.kubewarden.io/v1
@@ -235,7 +236,7 @@ EOF
 `PolicyServer` resources must use the image available in your private registry.
 For example:
 
-[subs="+attributes”,yaml]
+[,yaml]
 ----
 apiVersion: policies.kubewarden.io/v1
 kind: PolicyServer
