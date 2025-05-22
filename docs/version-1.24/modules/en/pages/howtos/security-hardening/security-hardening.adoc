@@ -37,7 +37,7 @@ Refer to the xref:/tutorials/verifying-kubewarden.adoc[Verifying Kubewarden] tut
 
 Kubewarden describes RBAC configurations in different
 _Explanations_ sections. Users can fine-tune the needed permissions for the
-xref:/explanations/audit-scanner.adoc_#permissions_and_serviceaccounts[Audit Scanner]
+xref:/explanations/audit-scanner/audit-scanner.adoc#_permissions_and_serviceaccounts[Audit Scanner]
 feature, as well as xref:/explanations/context-aware-policies.adoc[per Policy Server]
 Service Account for the context-aware feature.
 

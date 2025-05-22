@@ -82,7 +82,7 @@ include::partial$variables.adoc[]
 ** xref:howtos/custom-certificate-authorities.adoc[]
 ** xref:howtos/raw-policies.adoc[]
 ** xref:howtos/argocd-installation.adoc[]
-** Security
+** xref:howtos/security-hardening/security-hardening.adoc[Security]
 *** xref:howtos/security-hardening/secure-supply-chain.adoc[]
 *** xref:howtos/security-hardening/webhook-mtls.adoc[Enable mTLS with K3s]
 ** Air gap
