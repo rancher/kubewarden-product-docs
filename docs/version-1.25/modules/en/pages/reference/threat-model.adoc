@@ -132,7 +132,7 @@ admission controller webhook.
 Configure the cluster with mTLS authentication for the Webhooks and enable the
 mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
 that supports Network Policies. Refer to
-xref:/reference/security-hardening/webhook-hardening.md["Secure webhooks with
+xref:/reference/security-hardening/webhooks-hardening.adoc["Secure webhooks with
 mutual TLS"] for more information.
 
 Use the
@@ -151,7 +151,7 @@ admission controller webhook, by spoofing.
 Configure the cluster with mTLS authentication for the Webhooks and enable the
 mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
 that supports Network Policies. Refer to
-xref:/reference/security-hardening/webhook-hardening.md["Secure webhooks with
+xref:/reference/security-hardening/webhooks-hardening.adoc["Secure webhooks with
 mutual TLS"] for more information.
 
 === Threat 10 - Abusing a mutation rule to create a privileged container
