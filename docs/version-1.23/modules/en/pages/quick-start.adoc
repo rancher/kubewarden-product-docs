@@ -169,7 +169,7 @@ options.
 === `PolicyServer`
 
 The `kubewarden-controller` manages a {product-name} `PolicyServer`. You can
-deploy multiple {policy-servers}s in the same Kubernetes cluster.
+deploy multiple {policy-server}s in the same Kubernetes cluster.
 
 A `PolicyServer` validates incoming requests by executing {product-name}
 policies against them.
