@@ -16,7 +16,7 @@ To decrease their attack surface, you should limit access to these webhooks to
 the only valid callers they have:
 
 * the Kubernetes API server
-* the https://docs.kubewarden.io/explanations/audit-scanner/[audit scanner]
+* the xref:/explanations/audit-scanner/audit-scanner.adoc[audit scanner]
   component.
 
 You can do this using network policies and authentication independently, or
