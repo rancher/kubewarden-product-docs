@@ -1,17 +1,18 @@
-= Kubewarden use cases
+include::partial$variables.adoc[]
+= {project-name} use cases
 :sidebar_label: Use cases
 :sidebar_position: 74
-:description: A description of certain use cases for Kubewarden.
+:description: A description of certain use cases for {short-project-name}.
 :keywords: Kubewarden, documentation, use cases, case studies
 :doc-persona: kubewarden-all
 :doc-type: explanation
 :doc-topic: explanation
 
-These are a few example use cases for Kubewarden's xref:/personas.adoc[personas].
+These are a few example use cases for {project-name}'s xref:/personas.adoc[personas].
 
 == Case A: As a Kubernetes operator, I want to ensure my cluster is safe and compliant.
 
-I deploy Kubewarden and its default configuration with its
+I deploy {short-project-name} and its default configuration with its
 `kubewarden-defaults` Helm chart, in the `kubewarden` Namespace. This deploys a
 default PolicyServer and recommended ClusterAdmissionPolicies in the
 `kubewarden` namespace, solely under the control of the Kubernetes operator.
@@ -34,7 +35,7 @@ These include:
 * image verification
 
 Security expectations change over time. Previously correct deployments in the
-cluster may no longer be so. Yet Kubewarden has already accepted those
+cluster may no longer be so. Yet {short-project-name} has already accepted those
 operations in the cluster. In these situations, the operator can deploy the
 Audit Scanner feature, a CronJob that runs periodically and evaluates the
 existing resources in the cluster. This checks the cluster is safe and
@@ -43,12 +44,12 @@ compliant even over time.
 The operator can configure policies in `monitor` mode instead of `protect`
 mode, to learn from the state of the cluster without blocking operations.
 
-Operators can receive information from policies and the Kubewarden stack by
+Operators can receive information from policies and the {short-project-name} stack by
 consuming logs and OpenTelemetry information for metrics and tracing.
 
 == Case B: As a Kubernetes operator, I want to provide a framework to my Kubernetes users so they can self-service in their Namespaces.
 
-As an operator, I deploy Kubewarden as in Case A for a set of policies of my
+As an operator, I deploy {short-project-name} as in Case A for a set of policies of my
 choosing. This provides me with a safe baseline in the cluster, that other users
 can't evade.
 
@@ -66,28 +67,28 @@ throughput and low latency, for example.
 
 == Case C: As a policy author, I want to use the tools and languages that I know to write new policies.
 
-Kubewarden achieves this by supporting any language that compiles to
+{short-project-name} achieves this by supporting any language that compiles to
 WebAssembly as possible target languages for policies. This means that policy
 authors can reuse their workflows (`git`, CI, editors, peer reviews, etc.), and
 tools: languages, language libraries, testing harnesses and frameworks, etc.
 
 It permits re-using Domain Specific Languages (like Rego, CEL, Kyverno's
 YAML+macros) or general-purpose languages (like Go, Rust, C#, Javascript, any
-that compiles to Wasm). Kubewarden provides
+that compiles to Wasm). {short-project-name} provides
 xref:/tutorials/writing-policies/index.adoc[SDKs] for a few languages as
 first-class support.
 
-Kubewarden policies can be simple or complex
+{short-project-name} policies can be simple or complex
 xref:/explanations/context-aware-policies.adoc[context-aware] policies.
 Context-aware policies are also used to interface with separate workloads (for
 example, to obtain information from an image scanner long-running service).
 
-== Case D: As a system integrator, I want to re-use Kubewarden as part of my security and compliance solution.
+== Case D: As a system integrator, I want to re-use {short-project-name} as part of my security and compliance solution.
 
-As a system integrator, I want to re-use Kubewarden, and possibly re-use other
-solutions by including them in Kubewarden.
+As a system integrator, I want to re-use {short-project-name}, and possibly re-use other
+solutions by including them in {short-project-name}.
 
-As a system integrator, I can reuse parts of Kubewarden. For example, the
+As a system integrator, I can reuse parts of {short-project-name}. For example, the
 `policy-server`, to police resources, internal or external to the Kubernetes
 cluster via the xref:/howtos/raw-policies.adoc["raw policies"] feature.
 
@@ -101,14 +102,14 @@ implementation in a Kubernetes controller.
 
 == Non-goals
 
-Kubewarden doesn't intend to:
+{short-project-name} doesn't intend to:
 
 - Replace Kubernetes built-in security features, but complement them:
-  - Kubewarden provides migration from PSPs.
-  - You can re-use ValidatingAdmissionPolicies and CEL policies with Kubewarden's
+  - {short-project-name} provides migration from PSPs.
+  - You can re-use ValidatingAdmissionPolicies and CEL policies with {short-project-name}'s
     `cel-policy`.
-  - Kubewarden policies can be mutating, while Pod Security Admission cannot.
-  - Kubewarden policies benefit from the Kubewarden stack features (audit
+  - {short-project-name} policies can be mutating, while Pod Security Admission cannot.
+  - {short-project-name} policies benefit from the {short-project-name} stack features (audit
     scanner, telemetry, CRD management).
 - Provide runtime security like intrusion detection or runtime container
   isolation.

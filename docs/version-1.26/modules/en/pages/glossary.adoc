@@ -1,5 +1,6 @@
+include::partial$variables.adoc[]
 = Glossary
-:description: Kubewarden glossary
+:description: {project-name} glossary
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["glossary"]
 :doc-type: ["explanation"]
@@ -38,9 +39,9 @@ A CLI tool to generate and test Kubernetes YAML files for policy deployment.
 
 A
 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes resource]
-created by the Kubewarden controller to let Kubernetes know where to send an `AdmissionReview`.
+created by the {short-project-name} controller to let Kubernetes know where to send an `AdmissionReview`.
 In other words,
-this is how a Kubewarden controller informs Kubernetes where to find a resource mutating policy.
+this is how a {short-project-name} controller informs Kubernetes where to find a resource mutating policy.
 
 == P
 
@@ -52,7 +53,7 @@ policy scans. Which one is used depends on the scope of the resource.
 [#_policy_server]
 === PolicyServer
 
-A PolicyServer validates incoming requests by executing Kubewarden policies against requests.
+A PolicyServer validates incoming requests by executing {short-project-name} policies against requests.
 
 == V
 
@@ -60,8 +61,8 @@ A PolicyServer validates incoming requests by executing Kubewarden policies agai
 
 A
 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes resource]
-created by the Kubewarden controller to let Kubernetes know where to send a `AdmissionReview`.
-In other words, this is how Kubewarden informs Kubernetes where to find a resource validating policy.
+created by the {short-project-name} controller to let Kubernetes know where to send a `AdmissionReview`.
+In other words, this is how {short-project-name} informs Kubernetes where to find a resource validating policy.
 
 == W
 
