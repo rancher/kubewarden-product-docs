@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 = Quick start
-:description: Getting started with {product-name}, installing the {product-name} stack and taking care of prerequisites and authentication
+:description: Getting started with {project-name}, installing the {project-name} stack and taking care of prerequisites and authentication
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]
-:keywords: ["{product-name}", "installation", "quick start", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{project-name}", "installation", "quick start", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Quick start
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -15,26 +15,26 @@ include::partial$variables.adoc[]
 </head>
 ++++
 
-The {product-name} stack comprises:
+The {project-name} stack comprises:
 
 * One or more {cluster-admission-policy} resources: this defines policies
   for Kubernetes clusters.
 * One or more {policy-server} resources: representing a deployment of a
-* {product-name}
+* {project-name}
   `PolicyServer`. The Kubewarden `PolicyServer` loads and evaluates your
   administrator's policies.
 * One or more {admission-policy} resources: policies for a defined namespace.
 * A deployment of a `kubewarden-controller`: this controller monitors the
-  {cluster-admission-policy} resources and interacts with the {product-name}
+  {cluster-admission-policy} resources and interacts with the {project-name}
   {policy-server} components.
 
 [TIP]
 ====
 
-{product-name} describes its Kubernetes Custom Resource Definitions (CRDs)
+{project-name} describes its Kubernetes Custom Resource Definitions (CRDs)
 xref:reference/CRDs.adoc[here].
 
-{product-name} CRDs mentioned in this tutorial and in the rest of
+{project-name} CRDs mentioned in this tutorial and in the rest of
 documentation have short names, which are easier to use. These are the short
 names for the CRDs:
 
@@ -70,9 +70,9 @@ names for the CRDs:
 
 :gh-pat-url: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
-You can retrieve {product-name} policies from the GitHub container registry at
+You can retrieve {project-name} policies from the GitHub container registry at
 https://ghcr.io. You need authentication to use the repository with the
-{product-name} CLI, a {gh-pat-url}[GitHub personal access token] (PAT). Their
+{project-name} CLI, a {gh-pat-url}[GitHub personal access token] (PAT). Their
 documentation guides you through creating one if you haven't already done so.
 Then you authenticate with a command like:
 
@@ -84,7 +84,7 @@ echo $PAT | docker login ghcr.io --username <my-gh-username> --password-stdin
 ====
 
 
-Deploy the {product-name} stack using `helm` charts as follows:
+Deploy the {project-name} stack using `helm` charts as follows:
 
 [subs="+attributes",console]
 ----
@@ -102,7 +102,7 @@ Kubernetes cluster:
 * `kubewarden-crds`, which registers the {cluster-admission-policy},
   {admission-policy} and {policy-server} Custom Resource Definitions. Also, the
   {policy-report} Custom Resource Definitions used by the audit scanner.
-* `kubewarden-controller`, which installs the {product-name} controller and the
+* `kubewarden-controller`, which installs the {project-name} controller and the
   audit scanner
 +
 [NOTE]
@@ -160,7 +160,7 @@ options.
 
 == Main components
 
-{product-name} has three main components which you interact with:
+{project-name} has three main components which you interact with:
 
 * The {policy-server}
 * The {cluster-admission-policy}
@@ -168,10 +168,10 @@ options.
 
 === `PolicyServer`
 
-The `kubewarden-controller` manages a {product-name} `PolicyServer`. You can
+The `kubewarden-controller` manages a {project-name} `PolicyServer`. You can
 deploy multiple {policy-server}s in the same Kubernetes cluster.
 
-A `PolicyServer` validates incoming requests by executing {product-name}
+A `PolicyServer` validates incoming requests by executing {project-name}
 policies against them.
 
 This is the default `PolicyServer` configuration:
@@ -234,7 +234,7 @@ new configuration.
 
 === ClusterAdmissionPolicy
 
-The {cluster-admission-policy} resource is the core of the {product-name}
+The {cluster-admission-policy} resource is the core of the {project-name}
 stack. It defines how policies evaluate requests.
 
 Enforcing policies is the most common operation which a Kubernetes
@@ -283,7 +283,7 @@ Overview of the attributes of the {cluster-admission-policy} resource:
 
 | Y
 | `module`
-| The location of the {product-name} policy. The following schemes are allowed:
+| The location of the {project-name} policy. The following schemes are allowed:
 
 | N
 |
@@ -523,7 +523,7 @@ helm uninstall --namespace kubewarden kubewarden-crds
 ----
 
 After removal of the `helm` charts remove the Kubernetes namespace used to
-deploy the {product-name} stack:
+deploy the {project-name} stack:
 
 [subs="+attributes",console]
 ----
@@ -533,7 +533,7 @@ kubectl delete namespace kubewarden
 [CAUTION]
 ====
 
-{product-name} contains a helm pre-delete hook that removes all
+{project-name} contains a helm pre-delete hook that removes all
 `PolicyServer`s and `kubewarden-controller`s. Then the
 `kubewarden-controller` deletes all resources, so it's important that
 `kubewarden-controller` is running when helm uninstall executes.
@@ -575,7 +575,7 @@ configuration for the rest of the resources needed to run the policies.
 
 == What's next?
 
-Now, you are ready to deploy {product-name}! Have a look at the policies on
+Now, you are ready to deploy {project-name}! Have a look at the policies on
 https://artifacthub.io/packages/search?kind=13[artifacthub.io], on
 https://github.com/topics/kubewarden-policy[GitHub], or reuse existing Rego
 policies as shown in the xref:tutorials/writing-policies/rego/01-intro-rego.adoc[following

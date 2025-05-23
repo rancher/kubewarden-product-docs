@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-= What is {product-name}?
+= What is {project-name}?
 :description: Introducing Kubewarden, a CNCF Sandbox project.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["introduction"]
@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :slug: /
 :current-version: {page-origin-branch}
 
-{product-name} is a Kubernetes Policy Engine.
+{project-name} is a Kubernetes Policy Engine.
 It aims to be the Universal Policy Engine for Kubernetes.
 
 {intro-paragraph}
@@ -82,7 +82,7 @@ can lint and test them and you can plug them into current CI and CD workflows.
 
 == Policy distribution
 
-You can serve {product-name} policies using a standard web server or, better,
+You can serve {project-name} policies using a standard web server or, better,
 you can publish them in an OCI compliant registry as
 https://github.com/opencontainers/artifacts[OCI artifacts].
 
