@@ -77,4 +77,4 @@ The `kubewarden-defaults` Helm chart allows for configuring the default Policy
 Server `.spec.securityContexts` under `.Values.policyServer.securityContexts`.
 
 For Policy Servers managed by operators, you can configure them via their
-https://docs.kubewarden.io/reference/CRDs#policyserversecurity[`spec.securityContexts`].
+xref:/reference/CRDs.adoc#_policyserversecurity[`spec.securityContexts`].

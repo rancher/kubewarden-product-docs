@@ -4,7 +4,6 @@
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, telemetry, metrics, quick-start
-:canonical: https://docs.kubewarden.io/howtos/telemetry/custom-otel-collector
 
 This guide explains how to configure Kubewarden to send telemetry data to an OpenTelemetry collector
 already deployed on the cluster.

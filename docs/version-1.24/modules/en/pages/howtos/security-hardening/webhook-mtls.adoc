@@ -5,7 +5,6 @@
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, security
-:canonical: https://docs.kubewarden.io/howtos/security-hardening/webhook-mtls
 
 This guide shows you how to enable mutual TLS (mTLS) for all the webhooks used
 by the Kubewarden stack when using https://k3s.io/[K3s] as your Kubernetes
