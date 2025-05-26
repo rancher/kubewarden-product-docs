@@ -98,7 +98,7 @@ spec:
 Notice the commented numbers on both the YAML manifests. Let's expand on them:
 
 |===
-| # | VAP field | `cel-policy` field |
+| # | VAP field | `cel-policy` field | Description
 
 | 1
 | `failurePolicy`
