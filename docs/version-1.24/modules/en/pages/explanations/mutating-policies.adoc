@@ -106,7 +106,7 @@ clusteradmissionpolicy.policies.kubewarden.io/psp-user-group created
 You use the
 https://github.com/kubewarden/user-group-psp-policy[`psp-user-group`] policy to
 control users and groups in containers and can mutate the requests. In the
-previous example, iyou set the `runAsUser` field and it's added to the
+previous example, you set the `runAsUser` field and it's added to the
 container `securityContext` section.
 
 As the `mutating` field is `true`, the following request succeeds:
