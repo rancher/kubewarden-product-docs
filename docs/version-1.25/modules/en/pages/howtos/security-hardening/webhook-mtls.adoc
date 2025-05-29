@@ -175,7 +175,7 @@ The resulting `ConfigMap` is named `api-server-mtls`.
 === Install the Kubewarden stack
 
 Install the Kubewarden stack as described in the
-link:../../quick-start.adoc[quickstart guide]. Follow all the steps, but when
+xref:/quick-start.adoc[quickstart guide]. Follow all the steps, but when
 installing the `kubewarden-controller` Helm chart, make sure to enable the
 following values:
 
