@@ -111,7 +111,7 @@ func validate(payload []byte) ([]byte, error) {
 
 The code has `NOTE` sections:
 
-. Create a `kubewarden_protocol.ValidationRequest` by unmarshalling the JSON payload.
+. Create a `kubewarden_protocol.ValidationRequest` by unmarshaling the JSON payload.
 . Create a `Settings` object by using the function you earlier defined in the `settings.go` file.
 . Access the raw JSON representation of the Pod that's part of the `ValidationRequest`.
 . Unmarshal the Pod object.
