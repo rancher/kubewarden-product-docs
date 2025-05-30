@@ -22,17 +22,23 @@ endif::[]
 
 ifeval::["{build-type}" == "community"]
 :project-name: {kw-community-name}
+:product-name: {project-name}
 :community-name: Kubewarden
 :short-project-name: {product-name}
+:short-product-name: {short-project-name}
 :project-abbrev: {product-name}
+:product-abbrev: {project-abbrev}
 :intro-paragraph: {project-name} is a xref:#_vendor_neutrality[vendor neutral], https://cncf.io[CNCF] Sandbox project, originally created by https://www.rancher.com/[SUSE Rancher].
 endif::[]
 
 ifeval::["{build-type}" == "product"]
 :project-name: {kw-product-name}
+:product-name: {project-name}
 :community-name: {kw-community-name}
 :short-project-name: {kw-product-short-name}
+:short-product-name: {short-project-name}
 :project-abbrev: {kw-product-abbrev}
+:product-abbrev: {project-abbrev}
 :intro-paragraph: {project-name} is derived from a vendor neutral, https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {project-name} may be shortened to {short-project-name} or abbreviated as {project-abbrev}. The name {community-name} refers to the open-source community project. The name {community-name} may also be used throughout this documentation in place of {project-name}, {short-project-name}, or {project-abbrev}.
 endif::[]
 
