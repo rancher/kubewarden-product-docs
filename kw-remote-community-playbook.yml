@@ -6,7 +6,10 @@ content:
   sources:
     #- url: https://github.com/rancher/kubewarden-product-docs.git
     - url: ./
-      branches: HEAD
+      branches: [main]
+      # Branches need to be HEAD, not [main]. For remote community build to work.
+      # To do with the switching of antora.yml files between product and
+      # community
       start_paths: [shared, docs/version-*]
 
 ui:
