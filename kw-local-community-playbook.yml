@@ -1,12 +1,13 @@
 site:
   title: Kubewarden
-  start_page: 1.23@kubewarden:en:introduction.adoc
+  start_page: 1.25@kubewarden:en:introduction.adoc
 
 content:
   sources:
     - url: ./
       branches: HEAD
-      start_paths: [shared, docs/version-*]
+      start_paths: [shared, docs/version-1.26, docs/version-1.25]
+      #start_paths: [shared, docs/version-*]
 
 ui:
   bundle:
@@ -16,9 +17,8 @@ ui:
 
 asciidoc:
   attributes:
+    page-draft-preview-only: 'You can have anything here, just not empty - so this is true, if empty string, or absent, then - false'
     kw-build-type: 'community' # 'community' or 'product'
-    kw-rancher-product-name: 'SUSE® Rancher Prime Policy Manager'
-    kw-community-product-name: 'Kubewarden'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
@@ -36,4 +36,4 @@ antora:
 
 
 output:
-  dir: build-community/site
+  dir: build-local-community/site

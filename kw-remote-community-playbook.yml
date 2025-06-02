@@ -1,25 +1,27 @@
 site:
   title: Kubewarden
-  start_page: 1.23@kubewarden:en:introduction.adoc
+  start_page: 1.25@kubewarden:en:introduction.adoc
 
 content:
   sources:
     #- url: https://github.com/rancher/kubewarden-product-docs.git
     - url: ./
-      branches: [main]
+      branches: HEAD
+      # Branches need to be HEAD, not [main]. For remote community build to work.
+      # To do with the switching of antora.yml files between product and
+      # community
       start_paths: [shared, docs/version-*]
 
 ui:
   bundle:
-    url: tmp/sp
+    url: https://github.com/SUSEdoc/dsc-style-bundle/blob/main/default-ui/ui-bundle.zip?raw=true
     snapshot: true
   supplemental_files: ./kw-community-docs-supp-files
 
 asciidoc:
   attributes:
+    page-draft-preview-only: 'true'
     kw-build-type: 'community' # 'community' or 'product'
-    kw-rancher-product-name: 'SUSE® Rancher Prime Policy Manager'
-    kw-community-product-name: 'Kubewarden'
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
@@ -37,4 +39,4 @@ antora:
 
 
 output:
-  dir: build-community/site
+  dir: build-remote-community/site
