@@ -20,8 +20,7 @@ function fetch_versions_list () {
 target_version="$1"
 
 if [ -z "$target_version" ]; then
-  echo "Usage: $0 <version>"
-  exit 1
+  px_error "Usage: $0 <version>"
 fi
 
 # shellcheck disable=SC2086,SC2046
@@ -35,12 +34,9 @@ for version in $(fetch_versions_list); do
     if ln -sf antora-yml/antora-"$target_version".yml antora.yml; then
       echo "Switched to $target_version : antora.yml -> antora-yml/antora-$target_version.yml"
     else
-      echo "Error: failed to switch to antora-yml/antora-$target_version.yml"
-      exit 1
+      px_error "Error: failed to switch to antora-yml/antora-$target_version.yml"
     fi
   else
-    echo "antora-yml/antora-$target_version.yml not found"
-    echo "Error: correction needed before trying again"
-    exit 1
+    px_error "antora-yml/antora-$target_version.yml not found\nPlease correct."
   fi
 done

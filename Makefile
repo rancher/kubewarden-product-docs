@@ -42,7 +42,7 @@ remote: tmpdir environment
 remote-community: tmpdir environment
 	bin/switch-prod-comm community | tee tmp/remote-community-build.log
 	npx antora --version | tee -a tmp/remote-community-build.log
-	npx antora --fetch --stacktrace --log-format=pretty --log-level=info \
+	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-remote-community-playbook.yml \
 		2>&1 | tee -a tmp/remote-community-build.log
 	bin/switch-prod-comm product | tee -a tmp/remote-community-build.log
