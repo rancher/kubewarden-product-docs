@@ -33,6 +33,9 @@ for version in $(fetch_versions_list); do
   if [ -f antora-yml/antora-"$target_version".yml ]; then
     if ln -sf antora-yml/antora-"$target_version".yml antora.yml; then
       echo "Switched to $target_version : antora.yml -> antora-yml/antora-$target_version.yml"
+      echo " == Contents =="
+      cat antora.yml
+      echo " == End contents =="
     else
       px_error "Error: failed to switch to antora-yml/antora-$target_version.yml"
     fi

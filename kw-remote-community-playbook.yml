@@ -6,7 +6,7 @@ content:
   sources:
     #- url: https://github.com/rancher/kubewarden-product-docs.git
     - url: ./
-      branches: [main]
+      branches: HEAD
       start_paths: [shared, docs/version-*]
 
 ui:
