@@ -39,7 +39,7 @@ remote: tmpdir environment
 		kw-remote-playbook.yml 2>&1 | tee -a tmp/remote-build.log
 
 .PHONY: remote-community
-remote-community: tmpdir environment get_and_expand_ui_bundle
+remote-community: tmpdir environment
 	bin/switch-prod-comm community | tee tmp/remote-community-build.log
 	npx antora --version | tee -a tmp/remote-community-build.log
 	npx antora --fetch --stacktrace --log-format=pretty --log-level=info \
