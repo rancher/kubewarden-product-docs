@@ -193,7 +193,7 @@ https://www.updatecli.io/[updatecli] and others), or to changes to the
 policy configuration.
 
 The pipeline tests the policy against different types of requests. The testing can be done using
-the https://github.com/kubewarden/kwctl[kwctl] cli tool, without requiring a running
+the https://github.com/kubewarden/kwctl[`kwctl`] cli tool, without requiring a running
 Kubernetes cluster. kwctl uses the same evaluation engine used by the Kubewarden stack deployed
 inside of a Kubernetes cluster.
 

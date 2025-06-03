@@ -45,7 +45,7 @@ correct any registry inaccuracies by using the
 
 The Kubewarden project recommends:
 
-* https://github.com/kubewarden/kwctl[Kwctl] (our CLI tool).
+* https://github.com/kubewarden/kwctl[`kwctl`] (our CLI tool).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
 * https://github.com/google/go-containerregistry/blob/main/cmd/crane/README.md[Crane].
 

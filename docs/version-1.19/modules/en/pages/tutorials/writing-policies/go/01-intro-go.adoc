@@ -101,6 +101,6 @@ During this tutorial you need these tools on your development machine:
 You'll be using the compiler shipped in the official TinyGo container image.
 * https://github.com/bats-core/bats-core[bats]:
 used to write the tests and automate their execution.
-* https://github.com/kubewarden/kwctl/releases[kwctl]:
+* https://github.com/kubewarden/kwctl/releases[`kwctl`]:
 CLI tool provided by Kubewarden to run its policies outside of Kubernetes, among other actions.
 It's covered in xref:tutorials/testing-policies/index.adoc[this section] of the documentation.

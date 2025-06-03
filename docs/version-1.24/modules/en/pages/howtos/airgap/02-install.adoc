@@ -52,7 +52,7 @@ ran the command, has a tarball, `kubewarden-images.tar.gz`.
   list of default policies is in the Kubewarden defaults
   https://github.com/kubewarden/helm-charts/releases/[release page].
 . Download `kubewarden-save-policies.sh` and `kubewarden-load-policies.sh` from
-  the https://github.com/kubewarden/kwctl/tree/main/scripts[kwctl repository]
+  the https://github.com/kubewarden/kwctl/tree/main/scripts[`kwctl` repository]
 . Save policies into a `.tar.gz` file:
 +
 [source,shell]
