@@ -83,7 +83,7 @@ policy. This policy will check all container images from
 `dp.apps.rancher.io/containers/*`. The policy supports OCI registries and
 artifacts.
 
-We configure the policy settings with the https://docs.apps.rancher.io/howto-guides/verify-signatures/[public
+We configure the policy settings with the https://docs.apps.rancher.io/howto-guides/verify-signatures-with-kubewarden/[public
 key] from
 Application Collection (at the time of writing) in the `pubKeys` array.
 
