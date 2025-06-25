@@ -421,7 +421,7 @@ privileged-pods   default         false      pending
 
 Once the new policy is ready to be served, the `kubewarden-controller`
 registers a
-https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.20/#validatingwebhookconfiguration-v1-admissionregistration-k8s-io[ValidatingWebhookConfiguration]
+https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.33/#validatingwebhookconfiguration-v1-admissionregistration-k8s-io[ValidatingWebhookConfiguration]
 object.
 
 The {cluster-admission-policy} status becomes `active` once the Deployment is
