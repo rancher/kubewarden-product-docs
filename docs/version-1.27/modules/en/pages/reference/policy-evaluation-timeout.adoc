@@ -140,7 +140,7 @@ to two different timeouts:
 * The Kubernetes API server timeout value. Set to 10 seconds by default,
   tunable on a per-policy basis via a dedicated attribute on the Kubewarden
   Custom Resources.
-* The Policy Server policy evaluation timeout ====
+* The Policy Server policy evaluation timeout
 
 Now you can examine the following scenarios to better understand the
 differences between Kubernetes' Webhook timeout and Kubewarden's policy
