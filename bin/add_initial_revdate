@@ -6,7 +6,9 @@
 #   sed -i "0,/==*..*/ s/\(==*..*\)/\1\n:revdate: $RDATE\n/" $ADOC
 # done
 
-find docs -type f -name "*.adoc" \
+docs_dir="${1:-docs}"
+
+find "$docs_dir" -type f -name "*.adoc" \
   | grep -vE 'nav.adoc|asciidoctorconfig.adoc|partials/variables.adoc' \
   | while read -r adf; do
   RDATE=$(git --no-pager log -1 --format="%cd" --date='format:%Y-%m-%d' $adf)
