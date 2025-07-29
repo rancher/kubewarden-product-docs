@@ -1,4 +1,6 @@
 = PodSecurityPolicy migration
+:revdate: 2025-03-04
+:page-revdate: {revdate}
 :description: Discusses PSP migration to Kubewarden policies after Kubernetes v1.25.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]

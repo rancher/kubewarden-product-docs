@@ -1,4 +1,6 @@
 = ValidatingAdmissionPolicy migration
+:revdate: 2024-09-10
+:page-revdate: {revdate}
 :description: Discusses how to migrate from Kubernetes VAP policies to Kubewarden.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]

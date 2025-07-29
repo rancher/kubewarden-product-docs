@@ -7,6 +7,8 @@
 :current-version: {page-origin-branch}
 
 = Configuring Tolerations and Affinity/Anti-Affinity for the Kubewarden stack
+:revdate: 2025-04-02
+:page-revdate: {revdate}
 
 Kubewarden provides features for reliability and correct
 scheduling of its components in a Kubernetes cluster.
