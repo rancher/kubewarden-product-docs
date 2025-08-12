@@ -32,17 +32,17 @@ Needed for specific features.
 
 | `open-telemetry/opentelemetry-operator` chart
 | `≥ 0.104`
-| Example: `0.65.0`
-| OTLM
+| Example: `0.92.3`
+| OTEL
 
 | `prometheus-community/kube-prometheus-stack` chart
 | `≥ v0.69`
-| Example: `51.5.3`
+| Example: `75.17.1`
 | Metrics
 
 | `jaegertracing/jaeger-operator` chart
 | `≥ 1.49 < 2`
-| Example: `2.49.0`
+| Example: `2.57.0`
 | Tracing
 
 | `kyverno/policy-reporter` chart
