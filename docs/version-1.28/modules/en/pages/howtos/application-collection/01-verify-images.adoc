@@ -9,13 +9,13 @@
 :sidebar_label: Verify Images
 :current-version: {page-origin-branch}
 
-This section describes how to verify applications and images from the https://apps.rancher.io/[Rancher
-Application Collection] with Kubewarden.
+This section describes how to verify applications and images from the
+https://apps.rancher.io/[Rancher Application Collection] with Kubewarden.
 
-It does so by deploying the https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[Verify Image
-Signatures]
-policy and configuring the PolicyServers so they can pull the signature layers
-of the images from Application Collection.
+You perform image verification by deploying the
+https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[Verify
+Image Signatures] policy and configuring the PolicyServers to pull the images'
+signature layers from the Application Collection.
 
 [IMPORTANT]
 ====
