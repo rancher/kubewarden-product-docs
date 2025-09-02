@@ -18,7 +18,7 @@ function px_error () {
 
 function fetch_versions_list () {
   local versions
-  versions=$(ls -1 "$docs_root")
+  versions=$(ls -1 "$docs_root" | grep -v archive)
   echo "$versions"
 }
 
@@ -49,6 +49,6 @@ for version in $(fetch_versions_list); do
       px_error "Error: failed to switch to antora-yml/antora-$target_version.yml"
     fi
   else
-    px_error "antora-yml/antora-$target_version.yml not found\nPlease correct."
+    px_error "$version - antora-yml/antora-$target_version.yml not found. Please correct."
   fi
 done
