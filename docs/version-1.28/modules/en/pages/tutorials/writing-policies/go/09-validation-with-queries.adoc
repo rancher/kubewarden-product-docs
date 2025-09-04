@@ -1,7 +1,7 @@
 = Validation using JSON queries
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Validation using JSON queries with Kubewarden policies in Go.
+:description: Learn how to reimplement validation logic using JSON queries instead of Go types within Kubernetes object validation policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "validation-using-json"]
 :doc-type: ["tutorial"]

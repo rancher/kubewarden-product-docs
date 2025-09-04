@@ -4,7 +4,7 @@
 :sidebar_label: Emergency disable
 :sidebar_position: 31
 :title: Emergency disable
-:description: How to temporarily disable Kubewarden policies during emergencies
+:description: Learn how to disable Kubewarden in an emergency by stopping its controller, deleting any ValidatingWebhookConfigurations and MutatingWebhookConfigurations it.
 :keywords: ClusterAdmissionPolicies, AdmissionPolicies, configuration
 :doc-persona: kubewarden-operator
 :doc-type: howto

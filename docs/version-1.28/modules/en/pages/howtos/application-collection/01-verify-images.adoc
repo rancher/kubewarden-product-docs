@@ -1,7 +1,7 @@
 = Verify Rancher Application Collection images
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Verify Rancher Application Collection images with Kubewarden.
+:description: Learn how to configure PolicyServers and clusters to verify applications and images from a private registry by setting up image signatures, creating Docker.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher", "installation"]
 :doc-type: ["howto"]

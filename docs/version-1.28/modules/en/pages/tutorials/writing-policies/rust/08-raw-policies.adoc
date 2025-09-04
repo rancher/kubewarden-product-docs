@@ -1,7 +1,7 @@
 = Raw policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Kubewarden support for raw policies using Rust.
+:description: Learn how to create and implement a raw policy in Kubewarden that evaluates arbitrary JSON documents.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["writing-policies", "rust", "raw-policies"]
 :doc-type: ["tutorial"]

@@ -1,7 +1,7 @@
 = Creating a new mutation policy
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Creating a new mutation policy using Rust
+:description: Configure Kubewarden mutation policies to modify incoming objects by adding or modifying annotations. When this is done, serialize the modified object into a.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
 :doc-type: ["tutorial"]

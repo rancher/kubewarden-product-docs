@@ -1,7 +1,7 @@
 = Distributing a Gatekeeper policy with Kubewarden
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Distributing a Gatekeeper policy with Kubewarden.
+:description: Learn how to annotate and deploy policies in a Kubernetes cluster by writing a metadata.yaml file with Kubewarden-specific annotations, pushing the policy to an.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "distribute"]
 :doc-type: ["tutorial"]

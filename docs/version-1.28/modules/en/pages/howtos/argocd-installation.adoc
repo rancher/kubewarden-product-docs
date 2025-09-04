@@ -3,7 +3,7 @@
 :page-revdate: {revdate}
 :sidebar_label: ArgoCD Installation
 :sidebar_position: 35
-:description: How to install Kubewarden with ArgoCD
+:description: Configure ArgoCD applications to ignore certificate differences in order to prevent unsynchronized secrets.
 :keywords: [kubewarden, gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]

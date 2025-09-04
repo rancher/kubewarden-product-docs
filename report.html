@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <title>Description Generation Report: AI Generated Meta Descriptions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans text-slate-800">
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-slate-900">Description Generation Report</h1>
+            <p class="text-xl text-slate-600 mt-1">AI Generated Meta Descriptions</p>
+            <p class="text-sm text-slate-400 mt-2">Report generated on 2025-09-04 09:33:17</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-5 rounded-xl shadow-lg flex items-center justify-between"><div class="info"><div class="text-sm font-medium text-slate-500">Files Processed</div><div class="mt-1 text-3xl font-semibold text-slate-900">127</div></div><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div></div>
+            <div class="bg-white p-5 rounded-xl shadow-lg flex items-center justify-between"><div class="info"><div class="text-sm font-medium text-slate-500">Files Changed</div><div class="mt-1 text-3xl font-semibold text-green-600">126</div></div><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div></div>
+            <div class="bg-white p-5 rounded-xl shadow-lg flex items-center justify-between"><div class="info"><div class="text-sm font-medium text-slate-500">Processing Time</div><div class="mt-1 text-3xl font-semibold text-slate-900">205.27s</div></div><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div></div>
+            <div class="bg-white p-5 rounded-xl shadow-lg flex items-center justify-between"><div class="info"><div class="text-sm font-medium text-slate-500">Model Used</div><div class="mt-1 text-2xl font-semibold text-slate-900 truncate">llama3.1:8b</div></div><div class="icon"><svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg></div></div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center">
+                <div>
+                    <h2 class="text-xl font-semibold text-slate-900">Processing Log</h2>
+                    <p class="text-sm text-slate-500 mt-1">Detailed log of all file operations.</p>
+                </div>
+                <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Filter by path, status, or details..." class="mt-4 sm:mt-0 w-full sm:w-64 px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            <div class="overflow-x-auto">
+                <table class="min-w-full" id="logTable">
+                    <thead class="bg-slate-100 text-slate-600 text-sm font-semibold uppercase">
+                        <tr>
+                            <th class="py-3 px-6 text-left">Timestamp</th>
+                            <th class="py-3 px-6 text-left">Filepath</th>
+                            <th class="py-3 px-6 text-left">Type</th>
+                            <th class="py-3 px-6 text-left">Status</th>
+                            <th class="py-3 px-6 text-left">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm"><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:29:55</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/disclosure.adoc">pages/disclosure.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to responsibly report security vulnerabilities in Kubewarden via GitHub or by emailing them to help protect users.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:29:56</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/enterprise.adoc">pages/enterprise.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about comprehensive enterprise support from SUSE and other organizations through this centralized resource.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:29:57</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/architecture.adoc">explanations/architecture.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to design and implement scalable security policies for your Kubernetes cluster with the Kubewarden architecture.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:29:58</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/audit-scanner/audit-scanner.adoc">audit-scanner/audit-scanner.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to identify and resolve non-compliant resources in your cluster using the Kubewarden audit scanning feature.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:00</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/audit-scanner/limitations.adoc">audit-scanner/limitations.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure admission control policies for CREATE, UPDATE, and DELETE events in Kubernetes environments using SUSEs audit scanner tools.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:01</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/audit-scanner/policy-reports.adoc">audit-scanner/policy-reports.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to store and query policy scan results using PolicyReport and ClusterPolicyReport objects with kubectl.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:02</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/certificates.adoc">explanations/certificates.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure Kubewarden for secure certificate management and automatic renewal with minimal downtime.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:03</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/comparisons/opa-comparison.adoc">comparisons/opa-comparison.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Compare the key features of OPA Gatekeeper and Kubewarden, including policy distribution and enforcement modes.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:05</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/context-aware-policies.adoc">explanations/context-aware-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure context-aware policies to control access to specific Kubernetes resources, controlling what information is fetched at runtime during AdmissionRequest.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:08</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/distributing-policies.adoc">explanations/distributing-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure and distribute Kubewarden policies as WebAssembly (Wasm) binaries through OCI-compliant registries. Annotate these policies with metadata using kwctl.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:09</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/mutating-policies.adoc">explanations/mutating-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure and manage mutating policies in Kubernetes to control user and group access within containers.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:11</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/explanations/policy-groups.adoc">explanations/policy-groups.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create complex policies by combining multiple policies with logical operators using the policy group feature in SUSE.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:12</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/glossary.adoc">pages/glossary.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about key terms and concepts used in Kubewarden, such as AdmissionPolicy, PolicyServer, and WASI.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:13</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/Rancher-Fleet.adoc">howtos/Rancher-Fleet.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to manage Kubewarden Helm charts, define chart dependencies, and correctly remove them using Rancher Fleet.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:14</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/airgap/01-requirements.adoc">airgap/01-requirements.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about private registries that support OCI artifacts, including secure storage of container images and policies.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:15</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/airgap/02-install.adoc">airgap/02-install.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubewarden for air-gapped environments by installing images, policies, and Helm charts into a private OCI registry.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:17</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/airgap/03-hauler.adoc">airgap/03-hauler.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubewarden in air-gapped environments using the Hauler manifest, synchronizing resources from a file into your private environment.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:20</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/application-collection/01-verify-images.adoc">application-collection/01-verify-images.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure PolicyServers and clusters to verify applications and images from a private registry by setting up image signatures, creating Docker.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:21</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/argocd-installation.adoc">howtos/argocd-installation.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure ArgoCD applications to ignore certificate differences in order to prevent unsynchronized secrets.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:23</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/audit-scanner.adoc">howtos/audit-scanner.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Audit Scanner settings in Kubewarden to ensure consistent compliance verification across clusters.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:24</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/contribution-guide/contributing.adoc">contribution-guide/contributing.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to contribute to Kubewarden documentation by submitting suggestions, creating new content, or reporting issues on GitHub.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:26</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/contribution-guide/contribution-guide.adoc">contribution-guide/contribution-guide.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about collaborating effectively with Kubewarden as a contributor by reviewing its welcoming contribution policies and guidelines found in the.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:28</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/contribution-guide/suggesting-an-improvement.adoc">contribution-guide/suggesting-an-improvement.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to contribute to Kubewarden documentation by filing a detailed issue on GitHub that describes the problem, its impact, and breaks down larger issues.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:31</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/custom-certificate-authorities.adoc">howtos/custom-certificate-authorities.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure policies for Kubewarden by pulling from Open Container Initiative (OCI) registries, HTTP servers, or pushing to OCI registries with HTTPS and TLS.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:32</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/deploy-at-scale.adoc">howtos/deploy-at-scale.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure Kubewarden for high availability and optimal performance in large-scale Kubernetes environments.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:35</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/emergency-disable.adoc">howtos/emergency-disable.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to disable Kubewarden in an emergency by stopping its controller, deleting any ValidatingWebhookConfigurations and MutatingWebhookConfigurations it.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:36</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/gatekeeper-migration.adoc">howtos/gatekeeper-migration.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">ADDED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to migrate Gatekeeper policies to Kubewarden by following a step-by-step guide on compiling and distributing WebAssembly modules.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:37</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/install-kwctl.adoc">howtos/install-kwctl.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to install and configure kwctl on Linux, macOS, or Windows using various installation methods.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:39</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/pod-security-admission-with-kubewarden.adoc">howtos/pod-security-admission-with-kubewarden.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Pod Security Policies in Kubernetes clusters with restrictive policies to harden and secure pods.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:40</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/policies.adoc">howtos/policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to target specific namespaces with Admission Policies and customize rejection messages for improved cluster management.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:42</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/policy-groups.adoc">howtos/policy-groups.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create a ClusterAdmissionPolicyGroup in Kubernetes that rejects pods with images using the latest tag or lacking signatures from trusted parties.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:43</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/policy-servers/01-custom-cas.adoc">policy-servers/01-custom-cas.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure your PolicyServer to accept insecure connections or use custom certificates by modifying the `spec.insecureSources` and `spec.sourceAuthorities`.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:45</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/policy-servers/02-private-registry.adoc">policy-servers/02-private-registry.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure PolicyServers to access private OCI registries by creating a secret that contains registry credentials and then configuring the PolicyServers.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:47</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/policy-servers/03-production-deployments.adoc">policy-servers/03-production-deployments.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure and manage a secure server policy infrastructure through step-by-step guidance for production environments.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:48</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/production-deployments.adoc">howtos/production-deployments.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubernetes tolerations and affinity settings for the Kubewarden stack to ensure reliability and optimal resource utilization within your cluster.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:50</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/psp-migration.adoc">howtos/psp-migration.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to replace PodSecurityPolicy with Kubewarden policies for admission control in Kubernetes clusters.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:51</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/raw-policies.adoc">howtos/raw-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to run and configure a standalone Kubewarden Policy Server outside of a Kubernetes cluster.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:54</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/security-hardening/secure-supply-chain.adoc">security-hardening/secure-supply-chain.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure secure software supply chains with Kubewardens active approach, which verifies artifact integrity through trusted entities, policy signing,.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:55</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/security-hardening/security-hardening.adoc">security-hardening/security-hardening.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubewarden securely using step-by-step hardening tips and best practices for a safe deployment.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:57</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/security-hardening/webhook-mtls.adoc">security-hardening/webhook-mtls.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Enable mutual Transport Layer Security (TLS) for Kubewarden webhooks by creating certificates and ConfigMaps in a K3s environment.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:30:58</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/tasks.adoc">howtos/tasks.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to manage Kubewarden policies using kwctl, a CLI tool designed for both policy authors and cluster administrators.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:00</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/telemetry/10-opentelemetry-qs.adoc">telemetry/10-opentelemetry-qs.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to deploy the OpenTelemetry collector in sidecar mode using the official Kubernetes Helm chart.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:03</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/telemetry/20-tracing-qs.adoc">telemetry/20-tracing-qs.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure tracing support for the Policy Server by installing Jaeger components, setting up the OpenTelemetry collector, and defining a ClusterAdmissionPolicy.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:04</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/telemetry/30-metrics-qs.adoc">telemetry/30-metrics-qs.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure metrics reporting on the Policy Server by creating ServiceMonitors and installing the Prometheus Operator.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:06</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/telemetry/40-custom-otel-collector.adoc">telemetry/40-custom-otel-collector.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubewarden to send telemetry data to an OpenTelemetry collector, which monitors your Kubernetes cluster.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:07</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/ui-extension/01-install.adoc">ui-extension/01-install.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure the Kubewarden UI as a global extension in Rancher to manage cluster admission policies and create custom policy rules.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:09</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/ui-extension/02-metrics.adoc">ui-extension/02-metrics.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure and deploy monitoring tools using Ranchers Cluster Tool to integrate Grafana and Prometheus, leverage Kubewarden for policy-based metrics management.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:10</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/ui-extension/03-tracing.adoc">ui-extension/03-tracing.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure tracing for Kubewarden deployments and policies, with installation instructions and configuration details.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:14</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/vap-migration.adoc">howtos/vap-migration.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Deploy custom admission policies in Kubernetes with Kubewardens CEL policy, which enables running Validating Admission Policies without modification.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:15</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/howtos/workarounds/policy-server-certificate-expiry.adoc">workarounds/policy-server-certificate-expiry.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Manually renew policy-server certificates in Kubewarden versions 1.16.0 and earlier by deleting the expired certificate secret and triggering controller.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:16</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/introduction.adoc">pages/introduction.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create and enforce admission policies with KubeFlow, a Kubernetes policy engine offering flexibility, security hardening, compliance auditing,.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:18</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/organization.adoc">pages/organization.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about the organization and structure of documentation in this project through its various sections, which include Tutorials, Explanations, Howtos,.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:19</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/personas.adoc">pages/personas.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about the roles and responsibilities in Kubewardens ecosystem to understand who is best suited to use and contribute to its policies.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:23</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/quick-start.adoc">pages/quick-start.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to install and configure the Kubewarden stack, which comprises ClusterAdmissionPolicy, PolicyServer, AdmissionPolicy resources, and a deployment.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:24</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/CRDs.adoc">reference/CRDs.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about Kubewarden Custom Resource definitions and their usage on this page, which provides reference documentation for building and managing policies.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:25</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/artifacts.adoc">reference/artifacts.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to verify Kubewarden artifacts with our tutorial, which includes tools for verifying OCI images and instructions on using them.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:26</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/dependency-matrix.adoc">reference/dependency-matrix.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about the dependencies required for Kubewarden, which include version constraints for each dependency.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:28</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/kwctl-cli.adoc">reference/kwctl-cli.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to manage Kubewarden policies using the kwctl CLI reference documentation, which provides commands for annotating, benchmarking, and loading policies.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:29</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/metrics-reference.adoc">reference/metrics-reference.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to identify patterns and potential issues in your Kubewarden cluster using exposed platform metrics and key-value attributes.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:30</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/monitor-mode.adoc">reference/monitor-mode.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure policies to operate in either monitor mode or protect mode, balancing security and logging requirements.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:31</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/oci-registries-support.adoc">reference/oci-registries-support.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to distribute and manage Kubewarden policies using regular Open Container Initiative (OCI) registries.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:32</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/policy-evaluation-timeout.adoc">reference/policy-evaluation-timeout.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure policy evaluation timeouts in Kubewarden to optimize compute resource availability for incoming requests.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:34</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/policy-server-cli.adoc">reference/policy-server-cli.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure and use the policy-server command-line interface with this comprehensive reference guide.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:35</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/security-hardening/webhooks-hardening.adoc">security-hardening/webhooks-hardening.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to harden your Kubewarden stack by configuring network policies that limit access to webhooks and prevent unauthorized requests.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:36</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/sources_yaml.adoc">reference/sources_yaml.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure and manage sources in your PolicyServer CR with specifications for insecure sources and their authorities.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:37</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/01-intro-spec.adoc">spec/01-intro-spec.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about the API used by the host to interact with Kubewarden policies and their associated attributes.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:38</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/02-settings.adoc">spec/02-settings.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure and validate policy settings for Kubewarden policies using the validateSettings function.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:40</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/03-validating-policies.adoc">spec/03-validating-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to evaluate Kubernetes requests using Kubewarden policies, which receive and analyze request data from the API server.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:41</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/04-mutating-policies.adoc">spec/04-mutating-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about the structure and functionality of mutating policies, including how they register functions and propose object mutations within Kubernetes.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:43</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/05-context-aware-policies.adoc">spec/05-context-aware-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure policy access and management for your Kubernetes cluster by learning about the Policy Servers capabilities, supported policy types, and caching.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:44</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/host-capabilities/01-intro-host-capabilities.adoc">host-capabilities/01-intro-host-capabilities.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to access and utilize extra capabilities offered by the host environment in Kubewarden policies. (I did not make any changes, as the original sentence.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:45</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/host-capabilities/02-signature-verifier-policies.adoc">host-capabilities/02-signature-verifier-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to implement a secure supply chain for your cluster using Kubewardens support for Sigstore signatures.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:47</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/host-capabilities/03-container-registry.adoc">host-capabilities/03-container-registry.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to interact with container registries, including images and artifacts, as well as OCI objects, using the Kubewarden hosts capabilities.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:48</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/host-capabilities/04-net.adoc">host-capabilities/04-net.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure network operations for Kubewarden policies using capabilities exposed by the host via the waPC protocol and DNS lookup.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:49</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/host-capabilities/05-crypto.adoc">host-capabilities/05-crypto.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to integrate Kubewarden policies with host-side cryptographic functions using specific exposed APIs.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:50</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/spec/host-capabilities/06-kubernetes.adoc">host-capabilities/06-kubernetes.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to access and retrieve Kubernetes cluster information using Kubewardens SDKs and the waPC (Web Application Protection Controller) communication.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:54</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/threat-model.adoc">reference/threat-model.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to protect your Kubernetes cluster from various security threats by implementing secure defaults and devising a circumstance-specific threat model.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:55</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/upgrade-path.adoc">reference/upgrade-path.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to manage upgrades for your Kubewarden stack with version compatibility rules and recommended upgrade paths.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-yellow-500">09:31:55</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/reference/verification-config.adoc">reference/verification-config.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-yellow-500">SKIPPED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">File already has a description.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:57</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/publish-policy-to-artifact-hub.adoc">tutorials/publish-policy-to-artifact-hub.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Publish Kubewarden policies on Artifact Hub by following a central guide that outlines various layouts for Git repositories and provides steps to host.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:31:59</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/testing-policies/02-policy-authors.adoc">testing-policies/02-policy-authors.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to develop and test Kubewarden policies as WebAssembly programs using familiar tools, development environments, and testing frameworks. Then run.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:01</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/testing-policies/03-cluster-operators.adoc">testing-policies/03-cluster-operators.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to test Kubewarden policies with various configurations and validation request objects using the kwctl utility.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:02</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/testing-policies/index.adoc">testing-policies/index.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to test and tune Kubewarden policies with confidence using step-by-step guides designed for policy developers and cluster operators.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:04</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/verifying-kubewarden.adoc">tutorials/verifying-kubewarden.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to verify the secure supply chain of Kubewarden artifacts and achieve SLSA Level 3 compliance through SBOM, provenance files, and cosign CLI tool.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:05</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/CEL/01-intro-cel.adoc">CEL/01-intro-cel.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubernetes CEL validation rules with cel-policy, a backwards-compatible, context-aware policy that exposes Kubewarden extensions for secure.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:08</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/CEL/02-reusing-vap.adoc">CEL/02-reusing-vap.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure and compare ValidatingAdmissionPolicies in Kubernetes, including their equivalent implementation using Kubewardens cel-policy, through.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:10</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/CEL/03-context-aware.adoc">CEL/03-context-aware.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create a context-aware Kubewarden policy enforcing unique Ingress rules within your Kubernetes cluster.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:11</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/CEL/04-example-sigstore.adoc">CEL/04-example-sigstore.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create a Kubernetes policy that verifies container images with Sigstores keyless signatures using CEL and Kubewarden.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:12</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/dotnet.adoc">writing-policies/dotnet.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write and manage policies for .NET Core using the WebAssembly WASI platform by consulting official documentation.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:14</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/01-intro-go.adoc">go/01-intro-go.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to compile and run TinyGo programs on over 94 different microcontroller boards, creating WebAssembly binaries that are usable by Kubewarden.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:15</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/02-scaffold.adoc">go/02-scaffold.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create policies that validate Pod object labels and reject creations based on specified rules.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:17</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/03-policy-settings.adoc">go/03-policy-settings.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure custom settings validation for Kubewarden policies to ensure that their settings are valid and consistent with Kubernetes object requirements.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:18</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/04-validation.adoc">go/04-validation.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure a validation function using Go types by following these steps and consulting the provided code examples.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:19</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/05-e2e-tests.adoc">go/05-e2e-tests.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write end-to-end tests for your WebAssembly policy using both Kubewarden CLI and TinyGo.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:21</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/06-logging.adoc">go/06-logging.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure the logger object in your Go SDK with the provided code example, which includes steps for logging from specific entry points such as validating.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:23</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/07-automate.adoc">go/07-automate.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure GitHub Actions to automate tasks including unit tests, end-to-end tests, and releases, which are then automatically published to an Open Container.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:25</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/08-distribute.adoc">go/08-distribute.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to complete your Go journey and successfully publish your policy using the GitHub release.yml Action, which is covered in this tutorial and further.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:27</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/09-validation-with-queries.adoc">go/09-validation-with-queries.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to reimplement validation logic using JSON queries instead of Go types within Kubernetes object validation policies.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:28</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/go/10-raw-policies.adoc">go/10-raw-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create a raw policy in Kubewarden, which evaluates JSON documents and enforces custom validation rules.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:29</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/index.adoc">writing-policies/index.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write and deploy Kubewarden policies, which expose well-defined functionalities through a defined API for validating Kubernetes requests.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:31</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/metadata.adoc">writing-policies/metadata.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure and customize Kubewarden policies using metadata files, which include defining rules, specifying policy type, and referencing.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:33</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/other-languages.adoc">writing-policies/other-languages.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Discover how to create Kubernetes policy configurations using any programming language that can produce WebAssembly modules targeting the WASI interface.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:34</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/01-intro-rego.adoc">rego/01-intro-rego.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to implement policy as code in Kubernetes using Open Policy Agent, Gatekeeper, and context-aware Rego policies.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:35</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/02-builtin-support.adoc">rego/02-builtin-support.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn about the Rego built-in functions available for WebAssembly policies, including dependencies on Kubewarden and potential implementation gaps.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:37</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/gatekeeper/01-intro.adoc">gatekeeper/01-intro.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to migrate existing Gatekeeper policies to Kubewarden by understanding their compatibility and then executing them using Kubewardens built-in Open.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:39</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/gatekeeper/02-create-policy.adoc">gatekeeper/02-create-policy.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to implement a policy that rejects resources targeting the default namespace with Gatekeeper and Open Policy Agent.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:41</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/gatekeeper/03-build-and-run.adoc">gatekeeper/03-build-and-run.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure a Rego policy for Open Policy Agent by building and running it in exactly the same way as any other Rego policy, using the `opa` command to create a.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:45</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/gatekeeper/04-distribute.adoc">gatekeeper/04-distribute.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to annotate and deploy policies in a Kubernetes cluster by writing a metadata.yaml file with Kubewarden-specific annotations, pushing the policy to an.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:47</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc">open-policy-agent/01-intro.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Rego policies using the opa CLI tool to produce valid Kubernetes AdmissionReview objects as evaluation results.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:48</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/open-policy-agent/02-create-policy.adoc">open-policy-agent/02-create-policy.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create a sample policy that evaluates namespaced resources and enforces namespace restrictions with the Open Policy Agent.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:49</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/open-policy-agent/03-build-and-run.adoc">open-policy-agent/03-build-and-run.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to build, run, and evaluate Rego policies with Open Policy Agent for secure Kubernetes policy enforcement.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:52</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/open-policy-agent/04-distribute.adoc">open-policy-agent/04-distribute.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure your Rego policy for distribution by annotating its metadata with relevant information, including authorship, license, and rules describing resource.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:53</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rego/open-policy-agent/05-raw-policies.adoc">open-policy-agent/05-raw-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure policies to evaluate arbitrary JSON documents using this step-by-step guide for creating and modifying policy files.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:54</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/01-intro-rust.adoc">rust/01-intro-rust.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write Kubewarden policies in Rust by following this documentation, which provides a central point for accessing information about working.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:56</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/02-create-policy.adoc">rust/02-create-policy.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create and configure a simple validation policy for Pod creation requests with Cargo Generate.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:57</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/03-define-policy-settings.adoc">rust/03-define-policy-settings.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write and test validation functions for a Kubernetes policy with step-by-step examples and code snippets.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:32:59</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/04-write-validation-logic.adoc">rust/04-write-validation-logic.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Deploy a custom validation function in `src/lib.rs` to verify incoming Kubernetes resources against user-defined settings.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:02</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/05-mutation-policy.adoc">rust/05-mutation-policy.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure Kubewarden mutation policies to modify incoming objects by adding or modifying annotations. When this is done, serialize the modified object into a.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:03</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/06-logging.adoc">rust/06-logging.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to configure logging for your Kubewarden policy using popular libraries and then integrate it with Kubewarden.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:06</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/07-build-and-distribute.adoc">rust/07-build-and-distribute.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to build a Kubewarden policy as a WebAssembly binary using the make command with a compilation target of release mode, resulting in a .wasm file.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:07</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/rust/08-raw-policies.adoc">rust/08-raw-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to create and implement a raw policy in Kubewarden that evaluates arbitrary JSON documents.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:08</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/swift.adoc">writing-policies/swift.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to build and deploy Kubewarden policies using Swift, a modern programming language that provides fast and safe development capabilities.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:09</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/typescript.adoc">writing-policies/typescript.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Language features, tooling, and best practices for writing, compiling, and deploying TypeScript code.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:11</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/wasi/01-intro-wasi.adoc">wasi/01-intro-wasi.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write a Kubewarden policy using plain WASI interfaces by understanding subcommands, validation processes, and annotation requirements.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:12</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/tutorials/writing-policies/wasi/02-raw-policies.adoc">wasi/02-raw-policies.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Learn how to write and validate custom raw policies for WASI execution mode by defining types and functions that represent payload validation logic.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:16</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/pages/use-cases.adoc">pages/use-cases.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">REPLACED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Deploy Kubewardens default configuration with its kubewarden-defaults Helm chart in the kubewarden Namespace. This deployment includes a default PolicyServer.</td>
+                </tr><tr class="border-b border-slate-200 hover:bg-slate-50">
+                    <td class="py-3 px-6 whitespace-nowrap border-l-4 border-green-500">09:33:17</td>
+                    <td class="py-3 px-6 font-medium text-slate-700" title="/home/scribe/kubewarden-product-docs-jcayouette/docs/version-1.28/modules/en/partials/variables.adoc">partials/variables.adoc</td>
+                    <td class="py-3 px-6 whitespace-nowrap">AsciiDoc</td>
+                    <td class="py-3 px-6"><span class="text-white text-xs font-bold mr-2 px-2.5 py-1 rounded-full bg-green-500">ADDED</span></td>
+                    <td class="py-3 px-6 font-mono text-xs text-slate-600 break-words">Configure and manage Kubewarden policies by using variables, which provide additional functionality for policy evaluation and customization.</td>
+                </tr></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center text-sm text-slate-500">
+            <p>Ollama: {html.escape(system_info['ollama_version'])} &bull; GPU: {html.escape(system_info['gpu_info'])} &bull; System RAM: {html.escape(system_info['ram_total'])}</p>
+            <p class="mt-1">Source Directory: {html.escape(directory)}</p>
+        </div>
+    </div>
+    <script>
+    function filterTable() {{
+        var input, filter, table, tr, i;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("logTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 1; i < tr.length; i++) {{ // Start from 1 to skip header row
+            var pathTd = tr[i].getElementsByTagName("td")[1];
+            var statusTd = tr[i].getElementsByTagName("td")[3];
+            var detailsTd = tr[i].getElementsByTagName("td")[4];
+            if (pathTd && statusTd && detailsTd) {{
+                var pathText = pathTd.textContent || pathTd.innerText;
+                var statusText = statusTd.textContent || statusTd.innerText;
+                var detailsText = detailsTd.textContent || detailsTd.innerText;
+                if (pathText.toUpperCase().indexOf(filter) > -1 || 
+                    statusText.toUpperCase().indexOf(filter) > -1 || 
+                    detailsText.toUpperCase().indexOf(filter) > -1) {{
+                    tr[i].style.display = "";
+                }} else {{
+                    tr[i].style.display = "none";
+                }}
+            }}
+        }}
+    }}
+    </script>
+</body>
+</html>

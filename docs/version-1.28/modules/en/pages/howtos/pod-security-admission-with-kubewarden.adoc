@@ -1,7 +1,7 @@
 = Using Pod Security Admission with Kubewarden
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using Pod Security Admission with Kubewarden, since the Kubernetes 1.25 release.
+:description: Configure Pod Security Policies in Kubernetes clusters with restrictive policies to harden and secure pods.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-admission-with-kubewarden"]
 :doc-type: ["howto"]

@@ -1,7 +1,7 @@
 = Creating a new Gatekeeper Rego policy
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Creating a new Gatekeeper rego policy.
+:description: Learn how to implement a policy that rejects resources targeting the default namespace with Gatekeeper and Open Policy Agent.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "create-policy"]
 :doc-type: ["tutorial"]

@@ -4,7 +4,7 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Use cases
 :sidebar_position: 74
-:description: A description of certain use cases for {short-project-name}.
+:description: Deploy Kubewardens default configuration with its kubewarden-defaults Helm chart in the kubewarden Namespace. This deployment includes a default PolicyServer.
 :keywords: Kubewarden, documentation, use cases, case studies
 :doc-persona: kubewarden-all
 :doc-type: explanation

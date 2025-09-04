@@ -1,7 +1,7 @@
 = Writing raw policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using Kubewarden for writing raw policies.
+:description: Learn how to write and validate custom raw policies for WASI execution mode by defining types and functions that represent payload validation logic.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "raw-policies"]
 :doc-type: ["tutorial"]

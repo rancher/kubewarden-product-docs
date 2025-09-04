@@ -1,7 +1,7 @@
 = Policy Server certificate rotation issue
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: How-to work around Policy Server certificate expiry issue
+:description: Manually renew policy-server certificates in Kubewarden versions 1.16.0 and earlier by deleting the expired certificate secret and triggering controller.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "workarounds", "policy server certificates"]
 :doc-type: ["howto"]

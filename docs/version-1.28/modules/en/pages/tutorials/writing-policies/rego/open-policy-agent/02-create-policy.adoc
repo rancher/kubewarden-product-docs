@@ -1,7 +1,7 @@
 = Creating a new policy
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Creating a new OPA policy for Kubewarden.
+:description: Learn how to create a sample policy that evaluates namespaced resources and enforces namespace restrictions with the Open Policy Agent.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "create-policy"]
 :doc-type: ["tutorial"]

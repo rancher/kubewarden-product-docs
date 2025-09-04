@@ -1,7 +1,7 @@
 = Introduction to CEL
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: An introduction to writing Kubewarden policies with CEL.
+:description: Configure Kubernetes CEL validation rules with cel-policy, a backwards-compatible, context-aware policy that exposes Kubewarden extensions for secure.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "introduction"]
 :doc-type: ["tutorial"]
