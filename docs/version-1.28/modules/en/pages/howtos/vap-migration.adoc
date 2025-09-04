@@ -1,7 +1,7 @@
 = ValidatingAdmissionPolicy migration
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Discusses how to migrate from Kubernetes VAP policies to Kubewarden.
+:description: Deploy custom admission policies in Kubernetes with Kubewardens CEL policy, which enables running Validating Admission Policies without modification.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]

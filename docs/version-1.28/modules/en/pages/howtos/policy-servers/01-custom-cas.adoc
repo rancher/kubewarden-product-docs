@@ -1,7 +1,7 @@
 = Using custom certificate authorities
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with Kubewarden policy servers.
+:description: Configure your PolicyServer to accept insecure connections or use custom certificates by modifying the `spec.insecureSources` and `spec.sourceAuthorities`.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
 :doc-type: ["howto"]

@@ -1,7 +1,7 @@
 = Writing raw policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Writing raw Kubewarden policies using Go.
+:description: Learn how to create a raw policy in Kubewarden, which evaluates JSON documents and enforces custom validation rules.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "raw-policies"]
 :doc-type: ["tutorial"]

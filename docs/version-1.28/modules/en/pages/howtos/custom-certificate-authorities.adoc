@@ -1,7 +1,7 @@
 = Custom certificate authorities
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with Kubewarden.
+:description: Configure policies for Kubewarden by pulling from Open Container Initiative (OCI) registries, HTTP servers, or pushing to OCI registries with HTTPS and TLS.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "custom-certificate-authorities"]
 :doc-type: ["howto"]

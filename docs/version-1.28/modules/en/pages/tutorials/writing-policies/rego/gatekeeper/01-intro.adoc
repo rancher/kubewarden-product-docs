@@ -1,7 +1,7 @@
 = Gatekeeper support
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Introducing Gatekeeper support in Kubewarden.
+:description: Learn how to migrate existing Gatekeeper policies to Kubewarden by understanding their compatibility and then executing them using Kubewardens built-in Open.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "introduction"]
 :doc-type: ["tutorial"]

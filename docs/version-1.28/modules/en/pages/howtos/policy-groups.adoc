@@ -1,7 +1,7 @@
 = How to use policy groups
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: How to use Kubewarden policy groups
+:description: Learn how to create a ClusterAdmissionPolicyGroup in Kubernetes that rejects pods with images using the latest tag or lacking signatures from trusted parties.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["howto"]

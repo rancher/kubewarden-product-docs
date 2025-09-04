@@ -1,7 +1,7 @@
 = Monitoring
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Monitoring and metrics for Kubewarden.
+:description: Configure and deploy monitoring tools using Ranchers Cluster Tool to integrate Grafana and Prometheus, leverage Kubewarden for policy-based metrics management.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]

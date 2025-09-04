@@ -1,7 +1,7 @@
 = Writing validation logic
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Writing validation logic in Rust for a Kubewarden policy
+:description: Deploy a custom validation function in `src/lib.rs` to verify incoming Kubernetes resources against user-defined settings.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "validation-logic"]
 :doc-type: ["tutorial"]

@@ -1,7 +1,7 @@
 = Defining policy settings
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Defining policy setting for a Kubewarden policy written in Go.
+:description: Configure custom settings validation for Kubewarden policies to ensure that their settings are valid and consistent with Kubernetes object requirements.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "defining-policy-settings"]
 :doc-type: ["tutorial"]

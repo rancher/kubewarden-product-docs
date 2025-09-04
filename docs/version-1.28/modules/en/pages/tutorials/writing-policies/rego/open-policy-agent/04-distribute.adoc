@@ -1,7 +1,7 @@
 = Distributing an OPA policy with Kubewarden
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Distributing an OPA policy with Kubewarden.
+:description: Configure your Rego policy for distribution by annotating its metadata with relevant information, including authorship, license, and rules describing resource.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "distribute"]
 :doc-type: ["tutorial"]

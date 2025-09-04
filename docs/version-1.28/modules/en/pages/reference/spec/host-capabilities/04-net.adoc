@@ -1,7 +1,7 @@
 = Network capabilities
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Network capabilities.
+:description: Configure network operations for Kubewarden policies using capabilities exposed by the host via the waPC protocol and DNS lookup.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "network-capabilities"]
 :doc-type: ["reference"]

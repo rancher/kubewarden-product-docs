@@ -1,7 +1,7 @@
 = Configuring PolicyServers to use private registries
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Configuring PolicyServers to use private registries in Kubewarden.
+:description: Configure PolicyServers to access private OCI registries by creating a secret that contains registry credentials and then configuring the PolicyServers.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "private-registry"]
 :doc-type: ["howto"]

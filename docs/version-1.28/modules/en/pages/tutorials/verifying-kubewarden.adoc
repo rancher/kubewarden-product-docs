@@ -1,7 +1,7 @@
 = Verifying Kubewarden
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Verifying Kubewarden.
+:description: Learn how to verify the secure supply chain of Kubewarden artifacts and achieve SLSA Level 3 compliance through SBOM, provenance files, and cosign CLI tool.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["security", "verifying-kubewarden"]
 :doc-type: ["tutorial"]

@@ -1,7 +1,7 @@
 = Build and run a Gatekeeper policy
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Building and running a Gatekeeper policy written in Rego.
+:description: Configure a Rego policy for Open Policy Agent by building and running it in exactly the same way as any other Rego policy, using the `opa` command to create a.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "build-and-run"]
 :doc-type: ["tutorial"]

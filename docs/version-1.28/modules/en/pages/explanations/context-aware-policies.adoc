@@ -1,7 +1,7 @@
 = Context aware policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A description of Kubewarden context aware policies, what they are and how they are useful.
+:description: Configure context-aware policies to control access to specific Kubernetes resources, controlling what information is fetched at runtime during AdmissionRequest.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "context-aware-policies"]
 :doc-type: ["explanation"]

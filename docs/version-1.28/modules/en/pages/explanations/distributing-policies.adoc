@@ -1,7 +1,7 @@
 = Distributing policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A description of how Kubewarden policies are distributed from OCI-compliant repositories.
+:description: Configure and distribute Kubewarden policies as WebAssembly (Wasm) binaries through OCI-compliant registries. Annotate these policies with metadata using kwctl.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]

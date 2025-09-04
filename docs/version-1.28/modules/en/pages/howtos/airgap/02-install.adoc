@@ -1,7 +1,7 @@
 = Air gap installation
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Air gap installation for Kubewarden.
+:description: Configure Kubewarden for air-gapped environments by installing images, policies, and Helm charts into a private OCI registry.
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
 :doc-topic: [“operator-manual”, “air gap”, “installation”]
 :doc-type: [“howto”]
