@@ -253,7 +253,7 @@ didn't complete in time.
 [NOTE]
 ====
 
-Setting Kubewarden's policy evaluation timeout to a value cwas high as the
+Setting Kubewarden's policy evaluation timeout to a value as high as the
 Kubernetes' webhook timeout isn't a good choice.
 
 While the policy evaluation is still interrupted, reducing the chances of a DOS
