@@ -22,7 +22,7 @@ You can read more about the CEL policy in xref:../tutorials/writing-policies/CEL
 xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[This paragraph]
 explains the benefits of running VAP policies using Kubewarden.
 
-This howto explains how the `kwctl` tool can be used to migrate a VAP policy to Kubewarden.
+This guide explains how to use the `kwctl` tool to migrate a VAP policy to Kubewarden.
 
 == Migration steps
 

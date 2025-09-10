@@ -17,8 +17,8 @@ to view overall metrics for a Policy Server or metrics for a given policy.
 [CAUTION]
 ====
 
-* Issues with Rancher Manager `v2.7.1` can cause issues with the Metrics dashboard view. The project recommends version `v2.7.2` or greater.
-* You need a cluster with at least 4 cores to install the Monitoring tool.
+You need a cluster with at least 4 cores to install the Monitoring tool.
+
 ====
 
 
@@ -82,9 +82,11 @@ spec:
 [,yml]
 ----
 telemetry:
-  metrics:
-    enabled: True
-    port: 8080
+  metrics: true
+  mode: sidecar
+  sidecar:
+    metrics:
+      port: 8080
 ----
 
 [NOTE]
