@@ -12,12 +12,6 @@
 This section describes installing the Kubewarden UI as an extension of
 https://github.com/rancher/rancher[Rancher Manager].
 
-[IMPORTANT]
-====
-You need a running instance of Rancher Manager `v2.7.0` or greater.
-====
-
-
 == Install Kubewarden UI Extension
 
 The Kubewarden UI is installed as a global extension,
@@ -72,8 +66,10 @@ image:ui_policyserver_detail.png[UI PolicyServer Detail]
 
 === Creating policies
 
-When creating policies, you will initially be given a "Custom Policy" option from the Policy Grid.
-Provide the required information for your policy's Name, Module, and Rules.
+When creating policies, you will initially be given a "Custom Policy" option
+from the Policy Grid. Provide the required information for your policy's Name,
+Module, and Rules. It's recommended to add the Policy Catalog repository to
+access Kubewarden's official policies.
 
 *_Creating a custom policy_*
 image:ui_policy_custom.png[UI Policy Whitelist]
@@ -83,12 +79,6 @@ image:ui_policy_custom.png[UI Policy Whitelist]
 Follow the instructions to include xref:howtos/ui-extension/02-metrics.adoc[Monitoring] or xref:howtos/ui-extension/03-tracing.adoc[Tracing].
 
 == Air gap installation
-
-[CAUTION]
-====
-This requires Rancher Manager version `v2.8.0` or greater.
-====
-
 
 As Kubewarden is a Rancher Official Extension,
 the Rancher team provides a mechanism to automatically generate an Extension Catalog Image.

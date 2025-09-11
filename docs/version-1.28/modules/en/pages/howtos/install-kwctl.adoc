@@ -35,6 +35,13 @@ Verify installation:
 kwctl --version
 ----
 
+. Zypper (openSUSE)
++
+[source,console]
+----
+zypper install kwctl
+----
+
 . AUR
 +
 If you're using Arch Linux, or an Arch-based distribution, you can install kwctl from the AUR.
