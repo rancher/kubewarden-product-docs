@@ -20,13 +20,17 @@ You can contribute to Kubewarden documentation by:
 
 == Getting started
 
-Everybody is welcome to suggest changes by submitting a pull request
-or report a bug/typo with the help of a GitHub issue to the
+Everybody is welcome to suggest changes by submitting a pull request. You can
+also report a bug or typo with the help of a GitHub issue to the
 https://github.com/kubewarden/docs[`kubewarden/docs` repository].
 
 To get involved with the documentation:
 
-* Familiarize yourself with the https://github.com/kubewarden/docs[documentation repository]
-and the https://docusaurus.io/[static site generator].
-* Docusaurus makes use of the Markdown syntax and uses https://mdxjs.com/[MDX] as the parser.
-* Understand how to xref:howtos/contribution-guide/suggesting-an-improvement.adoc[suggest an improvement] and open a pull request.
+* Familiarize yourself with the
+  https://github.com/kubewarden/docs[documentation repository] and the
+  https://docusaurus.io/[static site generator].
+* Docusaurus makes use of the Markdown syntax and uses https://mdxjs.com/[MDX]
+  as the parser.
+* Understand how to
+  xref:howtos/contribution-guide/suggesting-an-improvement.adoc[suggest an
+  improvement] and open a pull request.

@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# 
+# Adds the initial languages metadata :page-languages: to a set of asciidoc
+# files
+#
+# $1 is the docs directory, assumed relative and you are invoking in a repo
+# root dir. $2 is the additional languages list. English is assumed to be the
+# default.
+# 
+# So, for example, invoke as
+# 
+# bin/add_initial_languages docs "es, zh, pt_br"
+#
+
+if [ "$1" == "-t" ]; then
+  trial=true
+  shift
+else
+  trial=false
+fi
+
+if [ "$1" == "" ]; then
+  echo "No directory passed."
+  exit 1
+fi
+
+if [ "$2" == "" ]; then
+  echo "No lang values passed."
+  exit 1
+fi
+
+function dprint {
+  debug=true
+  if [ $debug =  true ]; then
+    echo "$*"
+  fi
+}
+
+
+required_lang_value="[en, $(echo $2 \
+  | sed 's/ //g' \
+  | sed 's/en,//g' \
+  | sed 's/,en//g' \
+  | sed 's/\[//g; s/\]//g' \
+  | sed 's/,/, /g')]"
+
+# shellcheck disable=SC2001
+required_lang_value=$(echo "$required_lang_value" | sed 's/, ]/]/')
+dprint "Processing directory '$1' with required languages '$required_lang_value'"
+
+# We are only interested in pages built to html, not includes or partials
+find "$1" -wholename '*modules/*/pages/*.adoc' | grep -v nav.adoc \
+  | while read -r adf; do
+      dprint "Processing $adf"
+      check=$(grep '^:page-languages:' "$adf" | cut -f3 -d':' | sed 's/ //'g)
+      if [ "$check" != "" ]; then
+        dprint "Stopping for $adf, ':page-languages:' of value '$check' already present"
+      fi
+      if [ $trial = false ]; then
+        dprint "Adding $required_lang_value"
+        sed -i "0,/==*..*/ s/\(==*..*\)/\1\n:page-languages: $required_lang_value/" "$adf"
+      else
+        dprint "Would insert '$required_lang_value' in $adf if trial mode was false."
+      fi
+  done
+

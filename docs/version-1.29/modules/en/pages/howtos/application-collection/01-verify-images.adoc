@@ -30,9 +30,8 @@ Collection.
 
 Following the
 https://docs.apps.rancher.io/get-started/authentication/[Application Collection
-documentation], create an access token and configure the cluster so it can pull
-from the Application Collection registry, with a Docker Config Secret, such as
-this one:
+documentation], create an access token and configure the cluster to pull
+from the Application Collection registry, with a Docker Config Secret:
 
 [subs="+attributes",console]
 ----
@@ -150,13 +149,19 @@ spec:
 EOF
 ----
 
- $ kubectl apply -f mypolicy.yml
- $ kubectl get admissionpolicies -n default # wait for status active
+[subs="+attributes",console]
+----
+$ kubectl apply -f mypolicy.yml
+$ kubectl get admissionpolicies -n default # wait for status active
+----
 
 To test it, deploy a Pod with a signed image from Application Collection:
 
- $ kubectl run nginx --image [dp.apps.rancher.io/containers/nginx:1.24.0](http://dp.apps.rancher.io/containers/nginx:1.24.0) --overrides='{"spec": {"imagePullSecrets":[{"name": "application-collection"}]}}'
+[subs="+attributes",console]
+----
+$ kubectl run nginx --image [dp.apps.rancher.io/containers/nginx:1.24.0](http://dp.apps.rancher.io/containers/nginx:1.24.0) --overrides='{"spec": {"imagePullSecrets":[{"name": "application-collection"}]}}'
  pod/nginx created
+----
 
 You can inspect the logs of your policy-server Pod to see that the verification
 took place.
