@@ -1,13 +1,13 @@
 site:
   title: Kubewarden
-  start_page: 1.27@kubewarden:en:introduction.adoc
+  start_page: 1.28@kubewarden:en:introduction.adoc
 
 content:
   sources:
     - url: ./
       branches: HEAD
-      start_paths: [shared, docs/version-1.26, docs/version-1.25]
-      #start_paths: [shared, docs/version-*]
+      #start_paths: [shared, docs/version-1.26, docs/version-1.25]
+      start_paths: [shared, docs/version-*]
 
 ui:
   bundle:

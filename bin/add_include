@@ -1,0 +1,50 @@
+#!/bin/bash
+
+# 
+# Adds the shared include.
+#
+# $1 is the docs directory, assumed relative and you are invoking in a repo
+# root dir. 
+# 
+# bin/add_include docs 
+#
+
+if [ "$1" == "-t" ]; then
+  trial=true
+  shift
+else
+  trial=false
+fi
+
+if [ "$1" == "" ]; then
+  echo "No directory passed."
+  exit 1
+fi
+
+function dprint {
+  debug=true
+  if [ $debug =  true ]; then
+    echo "$*"
+  fi
+}
+
+
+dprint "Processing directory '$1' to add shared include."
+
+# We are only interested in pages built to html, not includes or partials
+find "$1" -wholename '*modules/*/pages/*.adoc' | grep -v nav.adoc \
+  | while read -r adf; do
+      dprint "Processing $adf"
+      check=$(grep '^include::partial\$variables.adoc\[\]$' "$adf" | cut -f3 -d':' | sed 's/ //'g)
+      if [ "$check" != "" ]; then
+        dprint "Stopping for $adf, 'include' is already present"
+        continue
+      fi
+      if [ $trial = false ]; then
+        dprint "Adding include"
+        sed -i "0,/==*..*/ s/\(==*..*\)/include::partial\$variables.adoc[]\n\1/" "$adf"
+      else
+        dprint "Would insert include in $adf if trial mode was false."
+      fi
+  done
+
