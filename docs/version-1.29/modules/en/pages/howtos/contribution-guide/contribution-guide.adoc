@@ -1,7 +1,8 @@
+include::partial$variables.adoc[]
 = Contribution guide
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Contributing to kubewarden
+:description: Contributing to {short-project-name}.
 :doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
 :doc-topic: ["contribution-guide", "docs-contribution"]
 :doc-type: ["howto"]
@@ -10,6 +11,8 @@
 :sidebar_position: 1
 :current-version: {page-origin-branch}
 
-_Kubewarden welcomes all contributors, whether new or experienced._
+_{short-project-name} welcomes all contributors, whether new or experienced._
 
+ifeval::["{build-type}" == "community"]
 Please review the contributing guide https://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[here].
+endif::[]

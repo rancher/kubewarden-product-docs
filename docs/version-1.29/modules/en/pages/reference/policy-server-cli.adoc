@@ -6,6 +6,7 @@
 :doc-persona: [kubewarden-operator]
 :doc-type: [reference]
 :doc-topic: [operator-manual]
+include::partial$variables.adoc[]
 == Command-Line Help for `policy-server`
 :revdate: 2025-07-09
 :page-revdate: {revdate}
