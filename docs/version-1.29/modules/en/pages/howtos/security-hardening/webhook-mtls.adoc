@@ -9,9 +9,9 @@ include::partial$variables.adoc[]
 :doc-type: howto
 :doc-topic: operator-manual, security
 
-This guide shows you how to enable mutual TLS (mTLS) for all the webhooks used
-by the Kubewarden stack when using https://k3s.io/[K3s] as your Kubernetes
-distribution.
+This guide shows you how to enable mutual Transport Layer Security (mTLS) for
+webhooks used by the {short-project-name} stack when using https://k3s.io/[K3s]
+as your Kubernetes distribution.
 
 For more information on how to harden the webhooks, refer to the
 xref:/reference/security-hardening/webhooks-hardening.adoc[reference page].
@@ -19,8 +19,8 @@ xref:/reference/security-hardening/webhooks-hardening.adoc[reference page].
 == Prerequisites
 
 Before installing K3s, you need to create a certificate authority (CA) and a
-client certificate to use to secure the communication between the Kubewarden
-webhooks and the Kubernetes API server.
+client certificate. You use to secure the communication between the
+{short-project-name} webhooks and the Kubernetes API server.
 
 As a first step, create the `/etc/rancher/k3s/admission/certs` directory:
 
@@ -78,7 +78,7 @@ openssl x509 -req -CA rootCA.crt -CAkey rootCA.key -in client.csr -out client.cr
 openssl x509 -text -noout -in client.crt
 ----
 
-The following files should have been created:
+This creates the following files:
 
 * `client.crt`
 * `client.csr`
@@ -89,7 +89,8 @@ The following files should have been created:
 
 === Create the Kubernetes configuration file
 
-Create the `/etc/rancher/k3s/admission/admission.yaml` file with the following content:
+Create the `/etc/rancher/k3s/admission/admission.yaml` file with the following
+content:
 
 [source,yaml]
 ----
@@ -150,12 +151,12 @@ Wait for the installation to complete.
 === Prerequisites
 
 The certificate of the root CA, that issued the Kubernetes client certificate,
-must be made available to the Kubewarden stack.
+needs to be available to the Kubewarden stack.
 
 The root CA is available at `/etc/rancher/k3s/admission/certs/rootCA.crt` on
 the Kubernetes node. Its content has to be put into a `ConfigMap` under the
-`kubewarden` namespace. The contents of the `rootCA.crt` file must be stored in
-a key named `client-ca.crt`.
+`kubewarden` namespace. You store the contents of the `rootCA.crt` file in the
+key named `client-ca.crt`.
 
 First, create the `kubewarden` namespace:
 
@@ -182,12 +183,11 @@ xref:/quick-start.adoc[quickstart guide]. Follow all the steps, but when
 installing the `kubewarden-controller` Helm chart, make sure to enable the
 following values:
 
-* `mTLS.enable`: must be set to `true`.
-* `mTLS.configMapName`: must be set to the name of the `ConfigMap` that was
-  previously created.
+* `mTLS.enable`: must be `true`.
+* `mTLS.configMapName`: must the name of the previously created `ConfigMap`.
 
-Given the `ConfigMap` was named `api-server-mtls`, the Helm command to install
-the `kubewarden-controller` is:
+The `ConfigMap` name is `api-server-mtls`. The Helm command to install the
+`kubewarden-controller` is:
 
 [source,console]
 ----
@@ -196,5 +196,5 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
     --set mTLS.configMapName=api-server-mtls
 ----
 
-Once this command finishes, the Kubewarden stack is installed and its webhooks
-are secured with mTLS.
+Once this command finishes, mTLS secures the installation of the
+{short-project-name} stack and its webhooks.
