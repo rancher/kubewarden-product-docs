@@ -1,3 +1,4 @@
+include::partial$variables.adoc[]
 :description: Verification configuration for Kubewarden.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "verification-config"]
@@ -8,7 +9,6 @@
 :sidebar_position: 100
 :current-version: {page-origin-branch}
 
-include::partial$variables.adoc[]
 = Verification configuration format
 :revdate: 2025-07-09
 :page-revdate: {revdate}
@@ -188,7 +188,6 @@ clarify who owns the key.
       -----END PUBLIC KEY-----
 ----
 
-[discrete]
 === Keyless signature validation
 
 A policy signed in keyless mode doesn't have a public key you can verify. You
