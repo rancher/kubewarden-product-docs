@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Tracing quickstart
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A tracing quickstart for Kubewarden.
+:description: A tracing quickstart for {short-project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "tracing", "quick-start"]
 :doc-type: ["howto"]
@@ -10,32 +10,40 @@ include::partial$variables.adoc[]
 :sidebar_label: Tracing
 :current-version: {page-origin-branch}
 
-This section shows how to enable tracing support for
-Policy Server.
+This section shows how to enable tracing support for Policy Server.
 
 [NOTE]
 ====
+
 Before continuing, make sure you completed the previous
-xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry] section
-of this documentation. It's required for this section to work correctly.
+xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry]
+section of this documentation. It's required for this section to work
+correctly.
+
 ====
 
 
 Tracing lets you collect fine grained details about policy evaluations. It can
-be a useful tool for debugging issues in your Kubewarden deployment and policies.
+be a useful tool for debugging issues in your {short-project-name} deployment
+and policies.
 
-You use https://www.jaegertracing.io/[Jaeger] -- used to receive, store and visualize trace
-events.
+You use https://www.jaegertracing.io/[Jaeger] -- used to receive, store and
+visualize trace events.
 
 == Install Jaeger
 
 You use the https://github.com/jaegertracing/jaeger-operator[Jaeger Operator]
-to manage all the different Jaeger components. You can install the Jaeger Operator using Helm charts.
+to manage all the different Jaeger components. You can install the Jaeger
+Operator using Helm charts.
 
 [NOTE]
 ====
-At the time of writing (2022-06-21), only specific versions of Jaeger are compatible with
-Cert Manager, https://github.com/jaegertracing/helm-charts/blob/main/charts/jaeger-operator/COMPATIBILITY.md[see the compatibility chart].
+
+At the time of writing (2022-06-21), only specific versions of Jaeger are
+compatible with Cert Manager,
+https://github.com/jaegertracing/helm-charts/blob/main/charts/jaeger-operator/COMPATIBILITY.md[see
+the compatibility chart].
+
 ====
 
 To install the Helm Chart:
@@ -54,8 +62,11 @@ helm upgrade -i --wait \
 
 [CAUTION]
 ====
-This is *not suitable for production deployment*.
-You should consult read Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
+
+This is *not suitable for production deployment*. You should consult read
+Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official
+documentation].
+
 ====
 
 To create a Jaeger resource:
@@ -76,26 +87,29 @@ spec:
 EOF
 ----
 
-After creation of Jaeger Operator resources, you have a
-Service under `my-open-telemetry-collector.jaeger.svc.cluster.local`.
-The Jaeger Query UI is reachable at the following address:
+After creation of Jaeger Operator resources, you have a Service under
+`my-open-telemetry-collector.jaeger.svc.cluster.local`. The Jaeger Query UI is
+reachable at the following address:
 
 [subs="+attributes",console]
 ----
 echo http://`minikube ip`
 ----
 
-== Install Kubewarden
+== Install {short-project-name}
 
-Now you can proceed to the deployment of Kubewarden in the usual way.
+Now you can proceed to the deployment of {short-project-name} in the usual way.
 
 [NOTE]
 ====
-cert-manager is a requirement of OpenTelemetry,
-but you have already installed it in a previous section of this documentation.
+
+The `cert-manager` is a requirement of OpenTelemetry, but you have already
+installed it in a previous section of this documentation.
+
 ====
 
-As a first step, you add the Helm repository that contains Kubewarden:
+As a first step, you add the Helm repository that contains
+{short-project-name}:
 
 [subs="+attributes",console]
 ----
@@ -103,7 +117,7 @@ helm repo add kubewarden https://charts.kubewarden.io
 ----
 
 Then you install the Custom Resource Definitions (CRDs) defined by
-Kubewarden:
+{short-project-name}:
 
 [subs="+attributes",console]
 ----
@@ -113,7 +127,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Now you can deploy the rest of the Kubewarden stack. The official
+Now you can deploy the rest of the {short-project-name} stack. The official
 `kubewarden-defaults` helm chart creates a PolicyServer named `default`. You
 want this PolicyServer instance to have tracing enabled.
 
@@ -136,11 +150,13 @@ telemetry:
 
 [CAUTION]
 ====
+
 For simplicity, there is no encryption of the communication between the
 OpenTelemetry collector and the Jaeger endpoint.
 
-Again, this is *unsuitable for a production deployment*.
-Consult Jaeger's https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
+Again, this is *unsuitable for a production deployment*. Consult Jaeger's
+https://www.jaegertracing.io/docs/latest/kubernetes/[official documentation].
+
 ====
 
 Then you can proceed with the installation of the helm charts:
@@ -165,16 +181,16 @@ default   3m7s
 ----
 
 Looking closer at the Pod running the PolicyServer instance, you can see it has
-two containers in it. The `policy-server` and the OpenTelemetry
-Collector sidecar `otc-container`.
+two containers in it. The `policy-server` and the OpenTelemetry Collector
+sidecar `otc-container`.
 
 == Enforcing a policy
 
-You start by deploying the https://github.com/kubewarden/safe-labels-policy[safe-labels]
-policy.
+You start by deploying the
+https://github.com/kubewarden/safe-labels-policy[safe-labels] policy.
 
-You want the policy enforced only in Namespaces that have a
-label `environment` with a value of `production`.
+You want the policy enforced only in Namespaces that have a label `environment`
+with a value of `production`.
 
 To a Namespace that has such a label:
 
@@ -190,7 +206,7 @@ metadata:
 EOF
 ----
 
-Next, let's define a ClusterAdmissionPolicy:
+Next, you can define a ClusterAdmissionPolicy:
 
 [subs="+attributes",yaml]
 ----
@@ -260,7 +276,8 @@ spec:
 EOF
 ----
 
-The policy permits the creation of this Deployment object as it doesn't violate the policy.
+The policy permits the creation of this Deployment object as it doesn't violate
+the policy.
 
 The policy blocks this Deployment object:
 
@@ -309,6 +326,7 @@ EOF
 The policy permits the creation of a Deployment resource,
 without any labels, in the `team-alpha-staging` Namespace:
 
+[subs="+attributes",console]
 ----
 kubectl apply -f - <<EOF
 apiVersion: apps/v1
@@ -338,13 +356,13 @@ As expected, this resource is successfully created.
 
 == Exploring the Jaeger UI
 
-You can see the trace events are sent by the PolicyServer instance to Jaeger,
+You can see the trace events sent by the PolicyServer instance to Jaeger,
 as there is a new service `kubewarden-policy-server` listed in the UI:
 
 image::jaeger-ui-home.png[Jaeger dashboard]
 
-The Jaeger collector is properly receiving the traces generated by our PolicyServer.
+The Jaeger collector is receiving the traces generated by your PolicyServer.
 
-To access the Jaeger UI, you can create an ingress or use
-`kubectl -n jaeger port-forward service/my-open-telemetry-query 16686`
-then go to `\http://localhost:16686`.
+To access the Jaeger UI, you can create an ingress or use `kubectl -n jaeger
+port-forward service/my-open-telemetry-query 16686` then go to
+`\http://localhost:16686`.
