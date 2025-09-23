@@ -39,7 +39,7 @@ ifeval::["{build-type}" == "product"]
 :short-product-name: {short-project-name}
 :project-abbrev: {kw-product-abbrev}
 :product-abbrev: {project-abbrev}
-:intro-paragraph: {project-name} is derived from a vendor neutral, https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {project-name} may be shortened to {short-project-name} or abbreviated as {project-abbrev}. The name {community-name} refers to the open-source community project. The name {community-name} may also be used throughout this documentation in place of {project-name}, {short-project-name}, or {project-abbrev}.
+:intro-paragraph: {short-project-name} is derived from a vendor neutral, https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {project-name} may be shortened to {short-project-name} or abbreviated as {project-abbrev}. The name {community-name} refers to the open-source community project. The name {community-name} may also be used throughout this documentation in place of {project-name}, {short-project-name}, or {project-abbrev}.
 endif::[]
 
 // Glossary terms start
