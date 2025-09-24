@@ -102,8 +102,7 @@ Helm repository with the {short-project-name} UI chart for installation.
 
 === Installation steps
 
-.
-  https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-resources-setup/secrets[Create]
+. https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-resources-setup/secrets[Create]
   a registry secret within the `cattle-ui-plugin-system` namespace. Enter the
   domain of the image address in the *Registry Domain Name* field.
 . Navigate back to the *Extensions* page (for example,

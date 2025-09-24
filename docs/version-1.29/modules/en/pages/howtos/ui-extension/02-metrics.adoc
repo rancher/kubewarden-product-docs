@@ -34,8 +34,8 @@ instructions] to install it.
 * Import the manifest to create the ServiceMonitors.
 * You need to specify the {short-project-name} installation namespace
 
-These steps are an adpatation from
-xref:howtos/telemetry/30-metrics-qs.adoc[telemetry metrics instructions].:
+These steps are an adpatation from the
+xref:howtos/telemetry/30-metrics-qs.adoc[telemetry metrics instructions].
 
 [subs="+attributes",yaml]
 ----
@@ -77,7 +77,7 @@ spec:
 * Navigate to Apps & Marketplace → Installed Apps.
 * Select the `Edit/Upgrade` action for your `rancher-kubewarden-controller`
   resource.
-* Edit the YAML for `telemetry` to be `enabled: "true"` and check the metrics
+* Edit the YAML for `telemetry` to be `enabled: "true"` and verify that the metrics
   port is correct.
 
 [,yml]
@@ -108,7 +108,7 @@ This method is suitable for air-gapped installations.
 ====
 
 
-The dashboards are unique between Policy Server and Policies, so need separate
+The dashboards are unique between Policy Server and Policies, so you need to separate
 creation.
 
 Within the detail view for a Policy Server or a specific Policy:
