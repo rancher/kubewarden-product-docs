@@ -6,6 +6,8 @@ GEM
       public_suffix (>= 2.0.2, < 7.0)
     afm (0.2.2)
     asciidoctor (2.0.23)
+    asciidoctor-kroki (0.10.0)
+      asciidoctor (~> 2.0)
     asciidoctor-pdf (2.3.19)
       asciidoctor (~> 2.0)
       concurrent-ruby (~> 1.1)
@@ -58,6 +60,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  asciidoctor-kroki
   asciidoctor-pdf
   rouge
 

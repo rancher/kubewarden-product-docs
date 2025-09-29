@@ -6,7 +6,8 @@ content:
   sources:
     - url: ./
       branches: [HEAD]
-      start_paths: [shared, docs/version-1.29, docs/version-1.28, docs/version-1.27, docs/version-1.26]
+      start_paths: [shared, docs/version-1.29]
+      # start_paths: [shared, docs/version-1.29, docs/version-1.28, docs/version-1.27, docs/version-1.26]
 
 ui:
   bundle:
@@ -20,26 +21,12 @@ asciidoc:
     kw-build-type: "product" # 'community' or 'product'
     page-pagination: ""
     tabs-sync-option: ""
-    page-project-data: [
-      {'title': 'Policy Manager', 'url-part': 'policy-manager', 'url': 'https://documentation.suse.com/cloudnative/policy-manager'},
-      {'title': 'Cluster API', 'url-part': 'cluster-api', 'url': 'https://documentation.suse.com/cloudnative/cluster-api'},
-      {'title': 'Continuous Delivery', 'url-part': 'continuous-delivery', 'url': 'https://documentation.suse.com/cloudnative/continuous-delivery'},
-      {'title': 'K3s', 'url-part': 'k3s', 'url': 'https://documentation.suse.com/cloudnative/k3s'},
-      {'title': 'OS Manager', 'url-part': 'os-manager', 'url': 'https://documentation.suse.com/cloudnative/os-manager'},
-      {'title': 'Policy Manager', 'url-part': 'policy-manager', 'url': 'https://documentation.suse.com/cloudnative/policy-manager'},
-      {'title': 'RKE2', 'url-part': 'rke2', 'url': 'https://documentation.suse.com/cloudnative/rke2'},
-      {'title': 'SUSE Observability', 'url-part': 'suse-observability', 'url': 'https://documentation.suse.com/cloudnative/suse-observability'},
-      {'title': 'SUSE Rancher Manager', 'url-part': 'rancher-manager', 'url': 'https://documentation.suse.com/cloudnative/rancher-manager'},
-      {'title': 'SUSE Security', 'url-part': 'security', 'url': 'https://documentation.suse.com/cloudnative/security'},
-      {'title': 'SUSE Storage', 'url-part': 'storage', 'url': 'https://documentation.suse.com/cloudnative/storage'},
-      {'title': 'SUSE Virtualization', 'url-part': 'virtualization', 'url': 'https://documentation.suse.com/cloudnative/virtualization'},
-    ]
   extensions:
     - "@asciidoctor/tabs"
 
 antora:
   extensions:
-    # - require: "@antora/pdf-extension"
+    - require: "@antora/pdf-extension"
     - require: "@antora/lunr-extension"
       index_latest_only: true
     - require: "@sntke/antora-mermaid-extension"
