@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Verifying Kubewarden
-:revdate: 2025-07-09
+:revdate: 2025-10-08
 :page-revdate: {revdate}
 :description: Verifying Kubewarden.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
@@ -115,12 +115,22 @@ Now that the files integrity is verified, you can inspect the SBOM and Provenanc
 
 == Helm charts
 
-You can find our Helm charts in our `https://` traditional Helm repository under
-https://charts.kubewarden.io.
+You can find {short-project-name} Helm charts in our `https://` traditional
+Helm repository under https://charts.kubewarden.io.
 
 The same Helm charts are signed via Sigstore's keyless signing, and pushed to an
 OCI repository that holds both the Helm chart and its provenance attestation as OCI
 artifacts.
+
+The Helm charts are published alongside a https://hauler.dev[Hauler] manifest
+that lists all needed artifacts.
+
+=== Verifying with Hauler
+
+Hauler automatically verifies the artifacts on download. For more information,
+refer to xref:/howtos/airgap/03-hauler.adoc[our documentation].
+
+=== Verifying manually
 
 Since Helm 3.8.0, Helm has support for OCI registries, but because of
 constraints in them, they can't be searched via `helm`. You can find the
