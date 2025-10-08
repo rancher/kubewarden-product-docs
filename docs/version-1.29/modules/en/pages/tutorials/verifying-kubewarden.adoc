@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Verifying Kubewarden
-:revdate: 2025-07-09
+:revdate: 2025-10-08
 :page-revdate: {revdate}
 :description: Verifying Kubewarden.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
@@ -115,7 +115,7 @@ Now that the files integrity is verified, you can inspect the SBOM and Provenanc
 
 == Helm charts
 
-You can find {short_project_name} Helm charts in our `https://` traditional
+You can find {short-project-name} Helm charts in our `https://` traditional
 Helm repository under https://charts.kubewarden.io.
 
 The same Helm charts are signed via Sigstore's keyless signing, and pushed to an
