@@ -26,7 +26,7 @@ Let's see a concrete example. These and others can be reused with Kubewarden's
 The following ValidatingAdmissionPolicy is adapted from the https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#creating-a-validatingadmissionpolicy[Kubernetes
 docs].
 
-This policy checks that the number of Replicas in Deployments is less than or
+This policy checks whether the number of Replicas in Deployments is less than or
 equal to a default `maxreplicas` of 5. Users can override this default per
 Namespace or Deployment and pick a smaller number via the use of a parameter.
 
