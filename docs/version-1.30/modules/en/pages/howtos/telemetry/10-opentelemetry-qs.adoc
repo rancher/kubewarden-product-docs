@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Open Telemetry quick start
-:revdate: 2025-07-09
+:revdate: 2025-10-10
 :page-revdate: {revdate}
 :description: An Open Telemetry quickstart for {short-project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -105,6 +105,11 @@ $ minikube addons enable ingress
 [#install-opentelemetry]
 == Install OpenTelemetry
 
+[NOTE]
+====
+See the xref:/reference/dependency-matrix.adoc[dependency matrix] for the latest supported component versions.
+====
+
 You use the
 https://github.com/open-telemetry/opentelemetry-operator[OpenTelemetry
 Operator] to manage the automatic injection of the OpenTelemetry Collector
@@ -112,18 +117,6 @@ sidecar into the PolicyServer pod.
 
 The OpenTelemetry Operator requires installation of
 https://cert-manager.io/docs/installation/[cert-manager] in the cluster.
-
-At the time of writing (2022-06-21), only specific versions of OpenTelemetry
-are compatible with Cert Manager,
-https://github.com/open-telemetry/opentelemetry-operator#opentelemetry-operator-vs-kubernetes-vs-cert-manager[see
-the compat chart].
-
-You should install the latest cert-manager Helm chart:
-
-[NOTE]
-====
-At the time of writing (2024-07-17) the latest cert-manager chart version is `v1.15.1`
-====
 
 
 [subs="+attributes",console]
@@ -134,7 +127,7 @@ helm install --wait \
     --namespace cert-manager \
     --create-namespace \
     --set crds.enabled=true \
-    --version 1.15.1 \
+    --version 1.18.2 \
     cert-manager jetstack/cert-manager
 ----
 
@@ -156,7 +149,7 @@ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm
 helm install --wait \
   --namespace open-telemetry \
   --create-namespace \
-  --version 0.65.0 \
+  --version 0.97.1 \
   --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
   my-opentelemetry-operator open-telemetry/opentelemetry-operator
 ----

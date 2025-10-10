@@ -33,12 +33,12 @@ Needed for specific features.
 
 | `open-telemetry/opentelemetry-operator` chart
 | `≥ 0.104`
-| Example: `0.90.0`
+| Example: `0.97.1`
 | OTEL
 
 | `prometheus-community/kube-prometheus-stack` chart
 | `≥ v0.69`
-| Example: `75.17.1`
+| Example: `77.13.0`
 | Metrics
 
 | `jaegertracing/jaeger-operator` chart
