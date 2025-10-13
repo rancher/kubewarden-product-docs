@@ -21,9 +21,10 @@ also parameters in `spec.paramKind`.
 Let's see a concrete example. These and others can be reused with Kubewarden's
 `cel-policy` with little effort.
 
-=== ValidatingAdmissionPolicy
+== ValidatingAdmissionPolicy
 
-The following ValidatingAdmissionPolicy is adapted from the https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#creating-a-validatingadmissionpolicy[Kubernetes
+The following ValidatingAdmissionPolicy is adapted from the
+https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#creating-a-validatingadmissionpolicy[Kubernetes
 docs].
 
 This policy checks whether the number of Replicas in Deployments is less than or
@@ -32,8 +33,6 @@ Namespace or Deployment and pick a smaller number via the use of a parameter.
 
 It's bound with a `ValidatingAdmissionPolicyBinding`. So, it only affects
 Namespaces that have a label `environment` set to `test`.
-
-== ValidatingAdmissionPolicy
 
 ../vap-policy-example.yaml
 [,yaml]
