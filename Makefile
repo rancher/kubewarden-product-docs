@@ -52,9 +52,10 @@ clean:
 	rm -rf build*
 	rm -rf tmp/*.log
 
+NPM_FLAGS = --no-color --no-progress
 .PHONY: environment
 environment:
-	npm ci || npm install
+	npm $(NPM_FLAGS) ci || npm $(NPM_FLAGS) install
 
 .PHONY: tmpdir
 tmpdir:

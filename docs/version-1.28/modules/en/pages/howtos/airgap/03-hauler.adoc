@@ -185,8 +185,9 @@ helm install --wait -n kubewarden \
 ----
 
 Finally, you need to configure each Policy Server to fetch policies from your
-private registry. See the xref:/howtos/policy-servers/private-registry[using
-private registry] section of the documentation.
+private registry. See the
+xref:/howtos/policy-servers/02-private-registry.adoc[using private registry]
+section of the documentation.
 
 Now you can create Kubewarden policies in your cluster. Policies must be
 available in your private registry.
