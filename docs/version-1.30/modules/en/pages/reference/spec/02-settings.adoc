@@ -14,7 +14,7 @@ Policy behavior isn't rigid, you can configure it by providing configuration
 details to the policy at runtime. The policy author has the freedom to define
 the structure of policy settings.
 
-Kubewarden takes care of serializing the policy settings into JSON and provides
+{project-name} takes care of serializing the policy settings into JSON and provides
 them to the policy each time it's invoked.
 
 == Settings validation
@@ -48,7 +48,7 @@ contents.
 [NOTE]
 ====
 
-Kubewarden's https://github.com/chimera-kube/policy-server[policy-server]
+{short-project-name}'s https://github.com/chimera-kube/policy-server[policy-server]
 validates all the policy settings provided by users at start time. The
 policy-server exits immediately with an error if at least one of its policies
 received wrong configuration parameters.

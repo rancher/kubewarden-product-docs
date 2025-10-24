@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 :title: PodSecurityPolicy migration
-:description: Discusses PSP migration to Kubewarden policies after Kubernetes v1.25.
+:description: Discusses PSP migration to {project-name} policies after Kubernetes v1.25.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "appvia", "psp", "pod security policy"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "appvia", "psp", "pod security policy"]
 :sidebar_label: PSP migration
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -15,19 +15,19 @@ include::partial$variables.adoc[]
 
 For Kubernetes ≥ v1.25.
 https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy]
-(PSP) is removed. Now you can use Kubewarden for admission control on your
+(PSP) is removed. Now you can use {project-name} for admission control on your
 Kubernetes clusters.
 
-Kubewarden has separate policies to achieve the same goal as a monolithic PSP
-configuration. Each Kubewarden policy definition functions as a different
+{short-project-name} has separate policies to achieve the same goal as a monolithic PSP
+configuration. Each {short-project-name} policy definition functions as a different
 configuration section in the specification of a PSP. The mapping of PSP
-configuration fields to their respective Kubewarden policies is in the
+configuration fields to their respective {short-project-name} policies is in the
 <<_mapping_kubewarden_policies_to_psp_fields,mapping table>> below.
 
-With Kubewarden, operators have granular control of policy configuration in
+With {short-project-name}, operators have granular control of policy configuration in
 their clusters.
 
-With a Kubewarden instance, you can deploy policies to replace the
+With a {short-project-name} instance, you can deploy policies to replace the
 `PodSecurityPolicy` object. We consider these rules in this example:
 
 * a PSP disabling privileged escalation
@@ -69,10 +69,10 @@ spec:
 
 ======
 
-== Kubewarden replacements for PSP
+== {short-project-name} replacements for PSP
 
-Now we will create Kubewarden policies to achieve the same goal.
-You enforce each rule with a separate Kubewarden policy.
+Now we will create {short-project-name} policies to achieve the same goal.
+You enforce each rule with a separate {short-project-name} policy.
 So, in this example, you need a separate policy for the enforcement of each of:
 
 * privileged escalation
@@ -488,12 +488,12 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 ======
 
-== Mapping Kubewarden policies to PSP fields
+== Mapping {short-project-name} policies to PSP fields
 
-This table maps PSP configuration fields to corresponding Kubewarden policies.
+This table maps PSP configuration fields to corresponding {short-project-name} policies.
 
 |===
-| PSP field | Kubewarden equivalent policy
+| PSP field | {short-project-name} equivalent policy
 
 | https://kubernetes.io/docs/concepts/security/pod-security-policy/#privileged[privileged]
 | https://github.com/kubewarden/pod-privileged-policy[pod-privileged-policy]
@@ -570,22 +570,22 @@ This table maps PSP configuration fields to corresponding Kubewarden policies.
 
 == PSP migration script
 
-The Kubewarden team has developed a script for PSP migration. It uses the
+The {short-project-name} team has developed a script for PSP migration. It uses the
 migration tool from https://github.com/appvia/psp-migration[AppVia]. The
 AppVia tool reads a PSP YAML configuration. It then generates the corresponding
-policies. It does this for Kubewarden and other policy engines.
+policies. It does this for {short-project-name} and other policy engines.
 
 [CAUTION]
 ====
 
 The AppVia migration tool is out of control of the Kuberwarden maintainers.
-This means that it's possible it generates out-of-date Kubewarden policies. Use
+This means that it's possible it generates out-of-date {short-project-name} policies. Use
 with caution. We need a pull request for AppVia for which work is ongoing.
 Contact us for more information if you need to.
 ====
 
 
-The script is available in the Kubewarden
+The script is available in the {short-project-name}
 https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]
 repository. It downloads the AppVia migration tool into the working directory
 to use. It processes the PSPs defined in the `kubectl` default context. Then it
@@ -668,7 +668,7 @@ spec:
 
 ======
 
-Kubewarden policies can be applied directly to a cluster using the following command:
+{short-project-name} policies can be applied directly to a cluster using the following command:
 
 [subs="+attributes",shell]
 ----

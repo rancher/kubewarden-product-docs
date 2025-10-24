@@ -2,16 +2,16 @@ include::partial$variables.adoc[]
 = Verify Rancher Application Collection images
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Verify Rancher Application Collection images with Kubewarden.
+:description: Verify Rancher Application Collection images with {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher", "installation"]
 :doc-type: ["howto"]
-:keywords: ["rancher", "application collection", "appco", "signature", "verification", "verify"]
+:keywords: ["{project-name}", "rancher", "application collection", "appco", "signature", "verification", "verify"]
 :sidebar_label: Verify Images
 :current-version: {page-origin-branch}
 
 This section describes how to verify applications and images from the
-https://apps.rancher.io/[Rancher Application Collection] with Kubewarden.
+https://apps.rancher.io/[Rancher Application Collection] with {project-name}.
 
 You perform image verification by deploying the
 https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[Verify

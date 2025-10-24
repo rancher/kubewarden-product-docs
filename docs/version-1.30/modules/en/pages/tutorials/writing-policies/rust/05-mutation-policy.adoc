@@ -19,7 +19,7 @@ They can:
 * Accept a request without changing the incoming object
 * Mutate the incoming object as they need to and accept the request
 
-Writing a Kubewarden mutation policy is uncomplicated.
+Writing a {project-name} mutation policy is uncomplicated.
 You'll use the validating policy created in the previous sections,
 and with a few changes,
 turn it into a mutating one.

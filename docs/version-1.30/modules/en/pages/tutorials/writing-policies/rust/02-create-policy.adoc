@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Creating a policy
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Creating a Kubewarden policy using Rust.
+:description: Creating a {project-name} policy using Rust.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "creating-policies"]
 :doc-type: ["tutorial"]

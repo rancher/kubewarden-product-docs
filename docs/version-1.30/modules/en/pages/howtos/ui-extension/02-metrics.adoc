@@ -2,15 +2,15 @@ include::partial$variables.adoc[]
 = Monitoring
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Monitoring and metrics for {short-project-name}.
+:description: Monitoring and metrics for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "user interface extension", "metrics", "monitoring"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "user interface extension", "metrics", "monitoring"]
 :current-version: {page-origin-branch}
 
 Rancher has a Cluster Tool for monitoring that leverages Grafana and
-Prometheus. You can use this tool, integrating it with {short-project-name}, to
+Prometheus. You can use this tool, integrating it with {project-name}, to
 view overall metrics for a Policy Server or metrics for a given policy.
 
 [CAUTION]

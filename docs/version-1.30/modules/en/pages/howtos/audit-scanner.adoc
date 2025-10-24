@@ -6,14 +6,14 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "audit scanner"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
 :sidebar_label: Audit Scanner
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-Beginning with version `v1.7.0`, Kubewarden has a new feature called "Audit Scanner".
+Beginning with version `v1.7.0`, {project-name} has a new feature called "Audit Scanner".
 A new component, called "audit-scanner", constantly checks the resources declared in the
-cluster, flagging the ones that do not adhere with the deployed Kubewarden policies.
+cluster, flagging the ones that do not adhere with the deployed {project-name} policies.
 
 Policies evolve over the time: new ones are deployed and the existing ones can be
 updated, both in terms of version and configuration settings.
@@ -25,7 +25,7 @@ with a tool to consistently verify the compliance state of their clusters.
 
 == Installation
 
-The audit scanner component is available since Kubewarden `v1.7.0`. Therefore,
+The audit scanner component is available since {short-project-name} `v1.7.0`. Therefore,
 make sure you are installing the Helm chart with app version `v1.7.0` or
 higher.
 
@@ -45,7 +45,7 @@ Custom Resource Definitions (CRDs) available. If the necessary
 PolicyReport CRDs are already in the cluster, you cannot install them
 using the kubewarden-crds chart. In such case, you can disable the
 installation of PolicyReport CRDs by setting `installPolicyReportCRDs` to
-`false` in the chart. This means that the Kubewarden stack will not manage
+`false` in the chart. This means that the {short-project-name} stack will not manage
 those CRDs, and the responsibility will be with the administrator.
 +
 See more info about the CRDs at the https://github.com/kubernetes-sigs/wg-policy-prototypes[policy work group
@@ -68,7 +68,7 @@ The audit scanner is enabled by default. If you want to disable it, set the
 ====
 
 +
-For more information about the installation of Kubewarden see the xref:quick-start.adoc[Quick Start guide]
+For more information about the installation of {short-project-name} see the xref:quick-start.adoc[Quick Start guide]
 
 By default, the Audit Scanner is implemented as a
 https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob]

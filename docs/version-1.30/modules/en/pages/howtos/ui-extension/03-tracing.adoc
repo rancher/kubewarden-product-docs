@@ -2,15 +2,15 @@ include::partial$variables.adoc[]
 = Tracing
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Tracing for {short-project-name}.
+:description: Tracing for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "tracing"]
 :doc-type: ["hosto"]
-:keywords: ["kubewarden", "kubernetes", "tracing"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
 :current-version: {page-origin-branch}
 
 Tracing allows collection of fine-grained details about policy evaluations.
-It's a useful tool for debugging issues in your {short-project-name} deployment
+It's a useful tool for debugging issues in your {project-name} deployment
 and policies.
 
 {short-project-name} uses https://www.jaegertracing.io/[Jaeger] to receive,

@@ -17,7 +17,7 @@ and not only based on the details provided by the admission request.
 The Policy Server hosting the policy retrieves Kubernetes resources. RBAC rules
 applied to the Policy Server Service Account regulates access to Kubernetes.
 
-The `default` Policy Server deployed by Kubewarden Helm charts has access to
+The `default` Policy Server deployed by {project-name} Helm charts has access to
 the following Kubernetes resources:
 
 * Namespaces
@@ -46,17 +46,17 @@ means information might be stale or missing.
 
 | Rego
 | ✅
-| Since Kubewarden 1.9 release
+| Since {short-project-name} 1.9 release
 
 | WASI
 | ✅
-| Since Kubewarden 1.10.0 release, only for Go SDK
+| Since {short-project-name} 1.10.0 release, only for Go SDK
 |===
 
 == Constraints
 
-Kubewarden's priority is to reduce the number of queries against the Kubernetes
-API server. Kubewarden considers two restraints:
+{short-project-name}'s priority is to reduce the number of queries against the Kubernetes
+API server. {short-project-name} considers two restraints:
 
 * Memory usage: The Policy Server process caches data fetched from Kubernetes
   in memory. The more data fetched, the more the Policy Server Pods consume
@@ -67,7 +67,7 @@ API server. Kubewarden considers two restraints:
 
 === Listing multiple resources
 
-Kubewarden policies can fetch multiple resources at the same time. For example,
+{short-project-name} policies can fetch multiple resources at the same time. For example,
 they can make a query like "get all the Pods defined inside of the `default`
 namespace that have the label `color` set to ``green``".
 
@@ -91,11 +91,11 @@ Finally, the current code has the following limitation. Given these two queries:
 * `kubectl get pods -n default -l color=green`
 
 Policy Server creates two watches and duplicates all the Pods of the second
-query. This limitation is to be removed in future releases of Kubewarden.
+query. This limitation is to be removed in future releases of {short-project-name}.
 
 === Fetching a specific resource
 
-Kubewarden policies can get a specific resource defined inside of the cluster.
+{short-project-name} policies can get a specific resource defined inside of the cluster.
 For example, they can make a query like "get the Pod named `psql-0` defined
 inside of the `db` namespace".
 
@@ -108,7 +108,7 @@ Fresh data is always served. This causes more load on the Kubernetes API server
 evaluating an admission request.
 
 The direct, or cached, query behavior is configured on a per-query level by the
-policy author using the Kubewarden SDKs.
+policy author using the {short-project-name} SDKs.
 
 == ClusterAdmissionPolicies
 

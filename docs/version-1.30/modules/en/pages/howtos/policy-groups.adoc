@@ -2,12 +2,12 @@ include::partial$variables.adoc[]
 = How to use policy groups
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: How to use Kubewarden policy groups
+:description: How to use {project-name} policy groups
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:keywords: ["{project-name}", "kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
 :sidebar_label: Policy Groups
 :sidebar_position: 36
 :current-version: {page-origin-branch}

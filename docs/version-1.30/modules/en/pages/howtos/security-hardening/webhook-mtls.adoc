@@ -4,13 +4,13 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Enable mTLS with K3s
 :description: Harden the webhook configuration.
-:keywords: kubewarden, kubernetes, security
+:keywords: ["{project-name}", kubewarden, kubernetes, security]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, security
 
 This guide shows you how to enable mutual Transport Layer Security (mTLS) for
-{short-project-name} stack webhooks when using https://k3s.io/[K3s] as your
+{project-name} stack webhooks when using https://k3s.io/[K3s] as your
 Kubernetes distribution.
 
 For more information on how to harden the webhooks, refer to the
@@ -146,12 +146,12 @@ curl -sfL https://get.k3s.io | sh -
 
 Wait for the installation to complete.
 
-== Install the Kubewarden stack
+== Install the {short-project-name} stack
 
 === Prerequisites
 
 The certificate of the root CA, that issued the Kubernetes client certificate,
-needs to be available to the Kubewarden stack.
+needs to be available to the {short-project-name} stack.
 
 The root CA is available at `/etc/rancher/k3s/admission/certs/rootCA.crt` on
 the Kubernetes node. You need its content in a `ConfigMap` under the
@@ -176,9 +176,9 @@ kubectl create configmap -n kubewarden api-server-mtls \
 
 The name of the resulting `ConfigMap` is `api-server-mtls`.
 
-=== Install the Kubewarden stack
+=== Install the {short-project-name} stack
 
-Install the Kubewarden stack as described in the
+Install the {short-project-name} stack as described in the
 xref:/quick-start.adoc[quickstart guide]. Follow all the steps, but when
 installing the `kubewarden-controller` Helm chart, make sure to enable the
 following values:

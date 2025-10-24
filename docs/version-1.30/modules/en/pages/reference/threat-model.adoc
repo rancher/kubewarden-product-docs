@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Threat Model
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: The Kubernetes Admission Control Threat Model and Kubewarden.
+:description: The Kubernetes Admission Control Threat Model and {project-name}.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["security", "threat-model"]
 :doc-type: ["reference"]
@@ -13,9 +13,9 @@ include::partial$variables.adoc[]
 
 The https://github.com/kubernetes/community/tree/master/sig-security[Kubernetes
 Security Special Interest Group (SIG)] has defined an Admission Control Threat
-Model for Kubernetes. The Kubewarden team continuously evaluates Kubewarden
+Model for Kubernetes. The {project-name} team continuously evaluates {short-project-name}
 against this threat model, and works to provide secure defaults. It's
-recommended that Kubewarden administrators read and understand the threat
+recommended that {short-project-name} administrators read and understand the threat
 model, and use it to devise their own circumstance specific threat model as
 needed.
 
@@ -39,12 +39,12 @@ causing an effective denial of service to the admission controller.
 Webhook fails closed.
 if the webhook doesn't respond in time,
 for any reason, the API server should reject the request.
-This is Kubewarden's default behavior.
+This is {short-project-name}'s default behavior.
 
 Failing closed means that if, for any reason,
-Kubewarden stops responding or crashes,
+{short-project-name} stops responding or crashes,
 the API server rejects the request by default.
-This is even if the request is normally accepted by Kubewarden.
+This is even if the request is normally accepted by {short-project-name}.
 
 === Threat 2 - Attacker passes workloads which require complex processing causing timeouts
 
@@ -57,7 +57,7 @@ timeouts as the admission controller uses compute power to process the workloads
 ==== Mitigation
 
 Webhook fails closed and authenticate callers.
-This is Kubewarden's default behavior.
+This is {short-project-name}'s default behavior.
 
 === Threat 3 - Attacker exploits misconfiguration of webhook to bypass
 
@@ -84,7 +84,7 @@ RBAC rights should be strictly controlled.
 ==== To-do
 
 Most of RBAC isn't within the scope of the current discussion. However, the
-following is coming in due course, to help Kubewarden users:
+following is coming in due course, to help {short-project-name} users:
 
 * Directions around minimum RBAC to be implemented.
 * Provision & documentation of a policy that detects and could block RBAC
@@ -99,7 +99,7 @@ An attacker gains access to valid client credentials for the admission controlle
 ==== Mitigation
 
 Webhook fails closed.
-This is Kubewarden's default behavior.
+This is {short-project-name}'s default behavior.
 
 === Threat 6 - Attacker gains access to a cluster admin credential
 
@@ -120,7 +120,7 @@ between the API server and the admission controller webhook.
 
 ==== Mitigation
 
-Since the webhook uses TLS encryption for all traffic, Kubewarden is safe.
+Since the webhook uses TLS encryption for all traffic, {short-project-name} is safe.
 
 === Threat 8 - Attacker carries out a MITM attack on the webhook
 
@@ -133,7 +133,7 @@ admission controller webhook.
 ==== Mitigation
 
 Configure the cluster with mTLS authentication for the Webhooks and enable the
-mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
+mTLS feature in the {short-project-name} stack. Alternatively, setup mTLS using a CNI
 that supports Network Policies. Refer to
 xref:/reference/security-hardening/webhooks-hardening.adoc["Secure webhooks with
 mutual TLS"] for more information.
@@ -152,7 +152,7 @@ admission controller webhook, by spoofing.
 ==== Mitigation
 
 Configure the cluster with mTLS authentication for the Webhooks and enable the
-mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a CNI
+mTLS feature in the {short-project-name} stack. Alternatively, setup mTLS using a CNI
 that supports Network Policies. Refer to
 xref:/reference/security-hardening/webhooks-hardening.adoc["Secure webhooks with
 mutual TLS"] for more information.
@@ -182,7 +182,7 @@ RBAC rights are strictly controlled
 ==== To-do
 
 Most of the RBAC is out of scope regarding this decision. However, the
-Kubewarden team aims to:
+{short-project-name} team aims to:
 
 * Warn users via our docs and _suggest_ the minimum RBAC to be used.
 * Provide a policy which detects RBAC changes and *perhaps* block them.
@@ -275,38 +275,38 @@ sends sensitive data to an external system.
 ==== Mitigation
 
 * Configure the cluster with mTLS authentication for the Webhooks and enable
-  the mTLS feature in the Kubewarden stack. Alternatively, setup mTLS using a
+  the mTLS feature in the {short-project-name} stack. Alternatively, setup mTLS using a
   CNI that supports Network Policies.
 
-* By default, Kubewarden policies don't have network access and run in a
+* By default, {short-project-name} policies don't have network access and run in a
   restrictive environment, strictly controlling external access on Webhooks.
 
-== Kubewarden threats
+== {short-project-name} threats
 
-=== Kubewarden threat 1 - Bootstrapping of trust for admission controller
+=== {short-project-name} threat 1 - Bootstrapping of trust for admission controller
 
 ==== Scenario
 
 Assuming a trusted but new Kubernetes cluster, an attacker is able to
-compromise the Kubewarden stack before deployment and enforcement any of the
+compromise the {short-project-name} stack before deployment and enforcement any of the
 policies securing.
 
 For example, by:
 
 * using unsigned and malicious images for:
- ** Kubewarden-controller
+ ** {short-project-name}-controller
  ** policy-server
- ** any of the Kubewarden dependencies
+ ** any of the {short-project-name} dependencies
  ** any optional dependencies (Grafana, Prometheus, and others)
 * by compromising the Helm charts payload
 
 ==== Mitigation
 
-. Kubewarden provides a Software Bill Of Materials, which lists all images
+. {short-project-name} provides a Software Bill Of Materials, which lists all images
   needed. This aids with Zero-Trust. The Kubernetes Administrator must verify
-  the Kubewarden images, its dependencies' images, and charts out of the
+  the {short-project-name} images, its dependencies' images, and charts out of the
   Kubernetes cluster, in a trusted environment. You can do this with `cosign`,
   for example. Incidentally, this is part of the implementation needed for
   air-gapped installations.
-. Use signed Helm charts, and verified digests instead of tags for Kubewarden
+. Use signed Helm charts, and verified digests instead of tags for {short-project-name}
   images in those Helm charts. This doesn't secure dependencies though.

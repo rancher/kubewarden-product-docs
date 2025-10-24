@@ -10,6 +10,6 @@ include::partial$variables.adoc[]
 :sidebar_label: Policy communication specification
 :current-version: {page-origin-branch}
 
-The policy evaluator interacts with Kubewarden policies using a well-defined
+The policy evaluator interacts with {project-name} policies using a well-defined
 API. The purpose of this section is to document the API used by the host (be it
-`policy-server` or `kwctl`) to communicate with Kubewarden's policies.
+`policy-server` or `kwctl`) to communicate with {short-project-name}'s policies.

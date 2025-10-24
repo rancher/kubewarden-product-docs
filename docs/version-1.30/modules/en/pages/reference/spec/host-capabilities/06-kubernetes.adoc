@@ -10,8 +10,8 @@ include::partial$variables.adoc[]
 :sidebar_label: Kubernetes capabilities
 :current-version: {page-origin-branch}
 
-Kubewarden context aware policies require access to resources from the Kubernetes cluster where they are running.
-For that, the Kubewarden SDKs expose functions that use the waPC communication protocol to talk with the host system asking for data about the cluster.
+{project-name} context aware policies require access to resources from the Kubernetes cluster where they are running.
+For that, the {short-project-name} SDKs expose functions that use the waPC communication protocol to talk with the host system asking for data about the cluster.
 
 == waPC protocol contract
 

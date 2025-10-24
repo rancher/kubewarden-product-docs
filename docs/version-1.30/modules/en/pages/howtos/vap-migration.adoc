@@ -2,14 +2,12 @@ include::partial$variables.adoc[]
 = ValidatingAdmissionPolicy migration
 :revdate: 2025-10-10
 :page-revdate: {revdate}
-:description: Discusses how to migrate from Kubernetes VAP policies to Kubewarden.
+:description: Discusses how to migrate from Kubernetes VAP policies to {project-name}.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
-:sidebar_label: ValidatingAdmissionPolicy migration
-:sidebar_position: 35
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 Starting from Kubernetes v1.26, the https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy]
@@ -18,12 +16,12 @@ written with the https://cel.dev/[Common Expression Language (CEL)], extended wi
 some https://kubernetes.io/docs/reference/using-api/cel/[Kubernetes-specific extensions].
 ValidatingAdmissionPolicy reached stability in Kubernetes v1.30.
 
-Kubewarden provides a CEL policy that is capable of running Kubernetes VAP policies without any modifications.
-You can read more about the CEL policy in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[this section] of Kubewarden's documentation.
+{project-name} provides a CEL policy that is capable of running Kubernetes VAP policies without any modifications.
+You can read more about the CEL policy in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[this section] of {short-project-name}'s documentation.
 xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[This paragraph]
-explains the benefits of running VAP policies using Kubewarden.
+explains the benefits of running VAP policies using {short-project-name}.
 
-This guide explains how to use the `kwctl` tool to migrate a VAP policy to Kubewarden.
+This guide explains how to use the `kwctl` tool to migrate a VAP policy to {short-project-name}.
 
 == Migration steps
 
@@ -87,7 +85,7 @@ spec:
 
 ======
 
-You can migrate the policy to Kubewarden by following these steps:
+You can migrate the policy to {short-project-name} by following these steps:
 
 .`kwctl` command for policy migration
 [%collapsible]
