@@ -2,15 +2,15 @@ include::partial$variables.adoc[]
 = Certificate rotation
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: How Kubewarden controller manages its certificates
+:description: How {project-name} controller manages its certificates
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "certificates"]
 :doc-type: ["explanation"]
-:keywords: ["kubewarden", "certificate", "controller", "reconciliation"]
+:keywords: ["{project-name}", "kubewarden", "certificate", "controller", "reconciliation"]
 :sidebar_label: Certificate rotation
 :sidebar_position: 21
 
-Kubewarden v1.17.0 removed the cert-manager dependency. The controller is able
+{project-name} v1.17.0 removed the cert-manager dependency. The controller is able
 to manage all the certificates used by all the components. Now, the
 controller has a new reconciliation loop that ensures the certificates are
 always up-to-date and the webhook configuration is correct.
@@ -19,11 +19,11 @@ The Helm chart installation does the first certificate generation. It
 generates the root CA with ten years until expiration. The Helm chart
 installation also generates the controller webhook web server certificate,
 signed by the root CA. The API server use this to communicate with the
-Kubewarden controller to validate the CRDs. It has a one year expiration.
+{short-project-name} controller to validate the CRDs. It has a one year expiration.
 
 Once the controller starts, its reconciler renews the certificates
 automatically when they're about to expire. It also updates all the
-certificates and webhook configurations used by the entire Kubewarden stack.
+certificates and webhook configurations used by the entire {short-project-name} stack.
 
 [NOTE]
 ====

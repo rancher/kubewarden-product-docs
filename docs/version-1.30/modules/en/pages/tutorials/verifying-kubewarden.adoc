@@ -1,23 +1,21 @@
 include::partial$variables.adoc[]
-= Verifying Kubewarden
+= Verifying {project-name}
 :revdate: 2025-10-08
 :page-revdate: {revdate}
-:description: Verifying Kubewarden.
+:description: Verifying {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["security", "verifying-kubewarden"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "security", "verification"]
-:sidebar_label: Verifying Kubewarden
-:sidebar_position: 30
 :current-version: {page-origin-branch}
 
-The Kubewarden stack provides different attestations and assurances:
+The {project-name} stack provides different attestations and assurances:
 
 - Provenance attestations: Inform of the build process, build dependencies, and aids in replicating the builds. Implement https://slsa.dev/spec/v1.0/[SLSA] Standard (level 3 in our case).
-- SBOMs attestations: Contain the software dependencies. Help downstream consumers ascertain vulnerabilities of Kubewarden and its dependencies.
+- SBOMs attestations: Contain the software dependencies. Help downstream consumers ascertain vulnerabilities of {short-project-name} and its dependencies.
 - Signed artifacts: Indicate if an artifact is authentic or not, providing supply chain security. This includes the deliverables, but also the provenance and SBOM attestations.
 
-Kubewarden artifacts, provenance attestations and SBOMs are signed using https://docs.sigstore.dev[Sigstore],
+{short-project-name} artifacts, provenance attestations and SBOMs are signed using https://docs.sigstore.dev[Sigstore],
 with the keyless workflow. This means that the signing certificate contains the
 following info, where `*` matches any following characters:
 
@@ -43,17 +41,17 @@ and the version tag. If you follow this best practice, you can use the cosign
 CLI flag `--certificate-identity` with the full URL.
 ====
 
-The Kubewarden team is also making efforts to improve the secure supply chain
+The {short-project-name} team is also making efforts to improve the secure supply chain
 and to make the whole stack SLSA level 3 compliant. Therefore, the main
 artifacts also include SBOM and provenance files. In the following sections, we
-will show how to verify the different artifacts produced by the Kubewarden team
+will show how to verify the different artifacts produced by the {short-project-name} team
 and how to ensure the secure supply chain of the artifacts using SBOM and
 provenance files.
 
 [#container-images]
 == Container images
 
-To verify the keyless-signed container images produced by the Kubewarden team,
+To verify the keyless-signed container images produced by the {short-project-name} team,
 you can use the `cosign` CLI tool. For example, to verify the
 `kubewarden/policy-server` image, you can execute the following command:
 
@@ -75,7 +73,7 @@ The following checks were performed on each of these signatures:
 You can then verify that the certificate in the returned JSON contains the
 correct issuer, subject, and `github_workflow_repository` extensions.
 
-The same applies to all other images produced by the Kubewarden team, such as
+The same applies to all other images produced by the {short-project-name} team, such as
 `kubewarden/kubewarden-controller` and `kubewarden/audit-scanner`.
 
 All container images also have SBOM and provenance files that can be used to
@@ -93,7 +91,7 @@ https://docs.docker.com/build/metadata/attestations/attestation-storage/[Docker 
 and use tools like `crane` or `docker` itself to download the files from the registry.
 
 When downloading the tarball with attestation files from the release page of
-the Kubewarden components, extract them, verify the signature for the checksum
+the {short-project-name} components, extract them, verify the signature for the checksum
 file, and then check the attestation files:
 
 [,console]
@@ -158,11 +156,11 @@ issuer, subject, and `github_workflow_repository` extensions.
 
 The chart attestations are pushed to the OCI registry as an artifact layer. See the xref:#container-images[container images] section on how to verify them.
 
-Kubewarden charts ship `imagelist.txt` and (`policylist.txt` when relevant) inside
+{short-project-name} charts ship `imagelist.txt` and (`policylist.txt` when relevant) inside
 of the chart. Hence, if you already verified the chart, you can use those lists
 to verify the consumed container images and policies.
 
-Kubewarden also follows the usual practices with regards to Helm charts. Hence, one
+{short-project-name} also follows the usual practices with regards to Helm charts. Hence, one
 can also find all the images in the Helm charts with a plugin such as
 https://github.com/cvila84/helm-image[helm-image], or with the following script:
 
@@ -219,7 +217,7 @@ example with `gh attestation verify kwctl-linux-x86_64 --repo kubewarden/kwctl`.
 
 == Policies
 
-Policies maintained by the Kubewarden team are also signed using the Sigstore project. Similar to
+Policies maintained by the {short-project-name} team are also signed using the Sigstore project. Similar to
 usual container images, one can verify them using `cosign`:
 
 ----

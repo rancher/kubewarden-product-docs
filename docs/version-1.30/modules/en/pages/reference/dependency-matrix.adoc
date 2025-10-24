@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Dependency matrix
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Dependency matrix of Kubewarden.
+:description: Dependency matrix of {project-name}.
 :doc-persona: [“kubewarden-all”]
 :doc-topic: [“operator-manual”, “dependencies”]
 :doc-type: [“reference”]
@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
-This page lists the dependencies of Kubewarden, with their relevant
+This page lists the dependencies of {project-name}, with their relevant
 version constraints. Versions outside of the provided ranges may work but are
 not tested.
 
@@ -19,7 +19,7 @@ not tested.
 
 At the time of writing, the https://opentelemetry.io[OpenTelemetry] stack keeps
 improving. However, it’s not yet stable, and unannounced,
-backwards-incompatible changes still happen. The Kubewarden developers endeavor
+backwards-incompatible changes still happen. The {short-project-name} developers endeavor
 to track OpenTelemetry stack changes and adjust to them. The project tests
 against a known working range of OpenTelemetry, metrics and tracing stack.
 
@@ -64,5 +64,5 @@ Needed for specific features.
 
 == Rancher
 
-Kubewarden tests against the monitoring and tracing Helm charts provided in the
+{short-project-name} tests against the monitoring and tracing Helm charts provided in the
 Rancher charts repository.

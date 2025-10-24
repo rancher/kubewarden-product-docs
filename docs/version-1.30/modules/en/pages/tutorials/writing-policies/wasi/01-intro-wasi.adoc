@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = WASI
 :revdate: 2025-10-10
 :page-revdate: {revdate}
-:description: Using WASI to develop Kubewarden policies.
+:description: Using WASI to develop {project-name} policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "wasi"]
 :doc-type: ["tutorial"]
@@ -10,22 +10,22 @@ include::partial$variables.adoc[]
 :sidebar_label: WASI
 :current-version: {page-origin-branch}
 
-The https://wasi.dev/[WebAssembly System Interface (WASI)] is a WebAssembly standard providing a set of interfaces allowing execution of WebAssembly outside of browser.
+The https://wasi.dev/[WebAssembly System Interface (WASI)] is a WebAssembly standard providing a set of interfaces allowing execution of WebAssembly outside of the browser.
 
 [CAUTION]
 ====
 
 Authors writing regular policies should never use plain WASI system interfaces to write policies.
 
-This page is for Kubewarden maintainers or low level policy authors who want to experiment with bleeding edge WASM platforms.
+This page is for {project-name} maintainers or low level policy authors who want to experiment with bleeding edge WASM platforms.
 ====
 
 
 Using WASI, you can have a WebAssembly module that interacts with system primitives like STDOUT, STDERR, STDIN, environment variables and more.
 
-Many of the compilers used to compile Kubewarden policies produce WebAssembly modules that target WASI interfaces.
-However, Kubewarden policies use the https://github.com/wapc[waPC] project to implement bi-directional communication between the policy and the policy runtime (`kwctl` or `policy-server`).
-Kubewarden use of the communication protocol is described xref:reference/spec/01-intro-spec.adoc[here].
+Many of the compilers used to compile {short-project-name} policies produce WebAssembly modules that target WASI interfaces.
+However, {short-project-name} policies use the https://github.com/wapc[waPC] project to implement bi-directional communication between the policy and the policy runtime (`kwctl` or `policy-server`).
+{short-project-name} use of the communication protocol is described xref:reference/spec/01-intro-spec.adoc[here].
 
 There are special cases when the waPC project can't be used yet.
 In these circumstances you can write a policy using the interfaces provided by WASI.
@@ -33,7 +33,7 @@ In these circumstances you can write a policy using the interfaces provided by W
 [IMPORTANT]
 ====
 
-Kubewarden supports WASI policies from the Kubewarden 1.7.0 release forward.
+{short-project-name} supports WASI policies from the {short-project-name} 1.7.0 release forward.
 ====
 
 
@@ -51,7 +51,7 @@ use xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[host
 capabilities] and to write
 xref:/explanations/context-aware-policies.adoc[context-aware] policies.
 
-Currently, only the Kubewarden Go and JavaScript/TypeScript SDKs expose them to
+Currently, only the {short-project-name} Go and JavaScript/TypeScript SDKs expose them to
 WASI policies.
 
 If this is of interest to you, please get in touch. We can then prioritize the
@@ -70,7 +70,7 @@ Starting from the 1.21 release, the official Go compiler is able to produce WebA
 However, these modules can't yet export functions to the WebAssembly runtime.
 This limitation, tracked by https://github.com/golang/go/issues/42372[this dedicated issue], prevents the adoption of the waPC protocol.
 
-The Kubewarden project team advise that you write Kubewarden Go policies using the TinyGo compiler, as described xref:tutorials/writing-policies/go/01-intro-go.adoc[here].
+The {short-project-name} project team advise that you write {short-project-name} Go policies using the TinyGo compiler, as described xref:tutorials/writing-policies/go/01-intro-go.adoc[here].
 
 However, certain complex Go code bases can't be compiled using the TinyGo compiler.
 This includes, for example, code bases like https://github.com/google/cel-go[CEL-go] or https://github.com/kyverno/kyverno/[Kyverno].
@@ -132,7 +132,7 @@ The format of the `SettingsValidationResponse` and the settings validation proce
 
 == Policy metadata
 
-Each Kubewarden policy must be annotated via the `kwctl annotate` command.
+Each {short-project-name} policy must be annotated via the `kwctl annotate` command.
 The policy metadata of a plain WASI policy must have this value:
 
 [subs="+attributes",yaml]

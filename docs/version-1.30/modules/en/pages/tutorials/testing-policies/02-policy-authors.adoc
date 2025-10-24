@@ -2,21 +2,20 @@ include::partial$variables.adoc[]
 = Testing for policy authors
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: An introduction to testing Kubewarden policies for policy authors.
+:description: An introduction to testing {project-name} policies for policy authors.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "policy testing", "policy author", "rust", "go", "assemblyscript", "development environment"]
-:sidebar_label: Policy authors
 :current-version: {page-origin-branch}
 
-Kubewarden policies are regular programs compiled as WebAssembly (Wasm).
+{project-name} policies are regular programs compiled as WebAssembly (Wasm).
 As with any kind of program, good test coverage is important.
 
 Policy authors can use their favorite development environments.
 You can use familiar tools, and testing frameworks to verify development.
 
-These Kubewarden policies are examples written in
+These {short-project-name} policies are examples written in
 xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] and
 xref:tutorials/writing-policies/go/01-intro-go.adoc[Go]:
 
@@ -33,12 +32,12 @@ You can also write tests that execute against the Wasm binary containing your po
 To do this without having to deploy a Kubernetes cluster you can use these tools:
 
 * https://github.com/bats-core/bats-core[bats]: is to write tests and automate their execution.
-* https://github.com/kubewarden/kwctl[`kwctl`]: Kubewarden's default CLI tool that helps you with policy-related operations; pull, inspect, annotate, push, and run.
+* https://github.com/kubewarden/kwctl[`kwctl`]: {short-project-name}'s default CLI tool that helps you with policy-related operations; pull, inspect, annotate, push, and run.
 
 To use `kwctl run` you need the following:
 
 . The Wasm binary file reference of the policy to run.
-The Kubewarden policy can be loaded from:
+The {short-project-name} policy can be loaded from:
  ** the local filesystem (`file://`)
  ** a HTTP(s) server (`https://`
  ** an OCI registry (`registry://`).

@@ -2,14 +2,14 @@ include::partial$variables.adoc[]
 = Rancher UI extension quickstart
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: UI extension quickstart for {short-project-name}.
+:description: UI extension quickstart for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "installation"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "rancher ui extension"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "rancher ui extension"]
 :current-version: {page-origin-branch}
 
-This section describes installing the {short-project-name} UI as an extension
+This section describes installing the {project-name} UI as an extension
 of https://github.com/rancher/rancher[Rancher Manager].
 
 == Install {short-project-name} UI Extension

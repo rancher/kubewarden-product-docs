@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["architecture"]
 :doc-type: ["explanation"]
-:keywords: ["kubewarden", "kubernetes", "architecture"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "architecture"]
 :sidebar_label: Architecture
 :sidebar_position: 61
 :current-version: {page-origin-branch}
@@ -147,8 +147,8 @@ longer adhere to the deployed {project-name} policies.
   }
 }%%
 graph LR
-    accTitle: Kubewarden architecture
-    accDescr: A diagram showing the architecture of Kubewarden components.
+    accTitle: Admission Controller architecture
+    accDescr: A diagram showing the architecture of Admission Controller components.
     subgraph " "
       direction LR
       subgraph " "
@@ -156,8 +156,8 @@ graph LR
           k8s(("Kubernetes"))
           registry[("OCI registry")]
         end
-        subgraph kw["`**Kubewarden**`"]
-          controller("`**KW controller**`")
+        subgraph kw["`**Admission Controller**`"]
+          controller("`**Controller**`")
           subgraph policy-server["`**policy-server**`"]
             direction LR
             kw-policy-1{{"Policy 1"}}

@@ -1,20 +1,20 @@
 include::partial$variables.adoc[]
-= Kubewarden in a Large-Scale Environment
+= {project-name} in a Large-Scale Environment
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Kubewarden in a Large-Scale Environment
-:keywords: kubewarden, kubernetes, policyservers, production
+:description: {project-name} in a Large-Scale Environment
+:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, production]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, policy-servers, production
 :sidebar_label: Deployment at scale
 :sidebar_position: 21
 
-This section details a real-world deployment of Kubewarden in a demanding, large-scale environment. It illustrates how to configure Kubewarden for high availability and performance and what to expect under heavy load.
+This section details a real-world deployment of {project-name} in a demanding, large-scale environment. It illustrates how to configure {short-project-name} for high availability and performance and what to expect under heavy load.
 
 [IMPORTANT]
 ====
-If you want to see more tips on how to run Kubewarden in production, check out the xref:/howtos/production-deployments.adoc[Production deployments] documentation.
+If you want to see more tips on how to run {short-project-name} in production, check out the xref:/howtos/production-deployments.adoc[Production deployments] documentation.
 ====
 
 == Environment Overview
@@ -30,9 +30,9 @@ The infrastructure consists of approximately 20 Kubernetes clusters. The largest
 ** Deployments: 8,000
 ** Services: 13,000
 
-== Kubewarden Configuration
+== {short-project-name} Configuration
 
-To meet the demands of this environment, Kubewarden is configured with a focus on workload isolation and high availability.
+To meet the demands of this environment, {short-project-name} is configured with a focus on workload isolation and high availability.
 
 * Policy Enforcement: 22 `ClusterAdmissionPolicies` are enforced across the clusters, with no namespace-specific `AdmissionPolicies`.
 * PolicyServer Architecture: Two separate `PolicyServer` deployments are used to isolate workloads:

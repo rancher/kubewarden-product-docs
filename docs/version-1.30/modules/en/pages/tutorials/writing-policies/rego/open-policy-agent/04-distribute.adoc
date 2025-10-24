@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
-= Distributing an OPA policy with Kubewarden
+= Distributing an OPA policy with {project-name}
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Distributing an OPA policy with Kubewarden.
+:description: Distributing an OPA policy with {project-name}.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "distribute"]
 :doc-type: ["tutorial"]
@@ -39,7 +39,7 @@ annotations:
   io.kubewarden.policy.title: no-default-namespace
   io.kubewarden.policy.version: 0.1.0 # should match the OCI tag
   io.kubewarden.policy.description: This policy will reject any resource created inside the default namespace
-  io.kubewarden.policy.author: The Kubewarden Authors
+  io.kubewarden.policy.author: The {project-name} Authors
   io.kubewarden.policy.url: https://github.com/kubewarden/some-policy
   io.kubewarden.policy.source: https://github.com/kubewarden/some-policy
   io.kubewarden.policy.license: Apache-2.0

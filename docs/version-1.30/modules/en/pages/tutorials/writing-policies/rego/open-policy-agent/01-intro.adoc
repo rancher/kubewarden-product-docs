@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Introduction to Open Policy Agent
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Introduction to Open Policy Agent and Kubewarden.
+:description: Introduction to Open Policy Agent and {project-name}.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "introduction"]
 :doc-type: ["tutorial"]
@@ -38,4 +38,4 @@ They have to return a valid `AdmissionReview` object as the evaluation results.
 All policies can be compiled to the `wasm` target (WebAssembly) with the official `opa` CLI tool.
 
 In terms of policy execution,
-you can read more about the xref:tutorials/writing-policies/rego/02-builtin-support.adoc[OPA built-in support] implemented in Kubewarden.
+you can read more about the xref:tutorials/writing-policies/rego/02-builtin-support.adoc[OPA built-in support] implemented in {short-project-name}.

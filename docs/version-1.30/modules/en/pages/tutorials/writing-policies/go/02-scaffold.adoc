@@ -2,13 +2,11 @@ include::partial$variables.adoc[]
 = Creating a new validation policy
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Creating a new validation policy for Kubewarden using Go.
+:description: Creating a new validation policy for {project-name} using Go.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "creating a new validation policy"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "writing policies in Go", "new validation policy"]
-:sidebar_label: New validation policy
-:sidebar_position: 16
 :current-version: {page-origin-branch}
 
 This tutorial covers creating a policy that validates the labels of Pod objects.
@@ -96,7 +94,7 @@ A real policy would use a repository path, like `github.com/kubewarden/go-policy
 Provided the necessary tools are in place a `make test` command uses Docker to pull a TinyGo compiler image using it to build and test the policy template.
 
 The default `make` command builds the `policy.wasm` target. Then `make test` runs the defined Go tests.
-The command `make e2e-tests` runs tests using https://github.com/bats-core/bats-core[bats] within a Kubewarden cluster.
+The command `make e2e-tests` runs tests using https://github.com/bats-core/bats-core[bats] within a {short-project-name} cluster.
 After cloning the `go-policy-template`, running these commands checks you have the tools in place for the tutorial.
 
 .Output from the `make` commands

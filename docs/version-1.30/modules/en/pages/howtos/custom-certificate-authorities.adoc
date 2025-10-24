@@ -2,11 +2,11 @@ include::partial$variables.adoc[]
 = Custom certificate authorities
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with Kubewarden.
+:description: Using custom certificate authorities with {project-name}.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "custom-certificate-authorities"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "custom certificate authorities"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom certificate authorities"]
 :sidebar_label: Custom Certificate Authorities
 :sidebar_position: 50
 :current-version: {page-origin-branch}
@@ -18,12 +18,12 @@ By default, HTTPS is used with host TLS verification for this.
 
 The system's certificate authority (CA) store is used to
 validate the trusted chain of certificates from the OCI registry.
-In a standard Kubewarden installation, the `policy-server` uses the
+In a standard {project-name} installation, the `policy-server` uses the
 CA store shipped with its Linux container.
 On the client side, `kwctl` uses your operating system CA store.
 
 If you are using the
-https://github.com/kubewarden/kubewarden-controller[Kubewarden Controller],
+https://github.com/kubewarden/kubewarden-controller[Controller],
 you can configure the PolicyServer via its
 xref:/howtos/policy-servers/01-custom-cas.adoc[`spec` fields].
 

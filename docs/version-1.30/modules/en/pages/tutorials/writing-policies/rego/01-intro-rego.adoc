@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Rego
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Writing Kubewarden policies using Rego.
+:description: Writing {project-name} policies using Rego.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "introduction"]
 :doc-type: ["tutorial"]
@@ -17,7 +17,7 @@ Rego support is available from these releases:
 * kwctl: v0.2.0
 * policy-server: v0.2.0
 
-Rego policies support context aware data from the Kubewarden 1.9 release.
+Rego policies support context aware data from the {project-name} 1.9 release.
 ====
 
 
@@ -30,7 +30,7 @@ Open Policy Agent and Gatekeeper.
 
 The next couple of sections shows how the two frameworks are different,
 even though using the same language.
-If you're more interested in the Kubewarden implementation,
+If you're more interested in the {short-project-name} implementation,
 you can directly visit the framework-specific documentation linked below.
 
 * xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
@@ -89,7 +89,7 @@ The idea of context-aware policies can also extend to custom resources,
 so your policy might want to evaluate a request based on currently used custom resources as well.
 
 Both OPA and Gatekeeper support context-aware policies,
-starting from the Kubewarden 1.9 release.
+starting from the {short-project-name} 1.9 release.
 
 More details about context aware policies are
 xref:reference/spec/05-context-aware-policies.adoc[here].
@@ -97,6 +97,6 @@ xref:reference/spec/05-context-aware-policies.adoc[here].
 === Mutating policies
 
 Gatekeeper has support for mutating policies,
-but Kubewarden hasn't yet implemented mutating policies with Gatekeeper compatibility.
-You can use policies that use the Kubewarden SDK to write mutating policies,
-but currently, you can't run Gatekeeper mutating policies in Kubewarden.
+but {short-project-name} hasn't yet implemented mutating policies with Gatekeeper compatibility.
+You can use policies that use the {short-project-name} SDK to write mutating policies,
+but currently, you can't run Gatekeeper mutating policies in {short-project-name}.

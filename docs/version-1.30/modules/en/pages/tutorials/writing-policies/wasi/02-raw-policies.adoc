@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing raw policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using Kubewarden for writing raw policies.
+:description: Using {project-name} for writing raw policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "raw-policies"]
 :doc-type: ["tutorial"]
@@ -215,7 +215,7 @@ func validateCliSettings(settings *Settings) SettingsValidationResponse {
 }
 ----
 
-You also need to update the `ValidationResponse` struct and the `MutateRequest` function in `kw_sdk.go` to remove the Kubernetes-specific types and use Kubewarden types instead:
+You also need to update the `ValidationResponse` struct and the `MutateRequest` function in `kw_sdk.go` to remove the Kubernetes-specific types and use {short-project-name} types instead:
 
 [,go]
 ----

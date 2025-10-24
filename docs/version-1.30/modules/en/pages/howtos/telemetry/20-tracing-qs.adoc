@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Tracing quickstart
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A tracing quickstart for {short-project-name}.
+:description: A tracing quickstart for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "tracing", "quick-start"]
 :doc-type: ["howto"]
@@ -24,7 +24,7 @@ correctly.
 
 
 Tracing lets you collect fine grained details about policy evaluations. It can
-be a useful tool for debugging issues in your {short-project-name} deployment
+be a useful tool for debugging issues in your {project-name} deployment
 and policies.
 
 You use https://www.jaegertracing.io/[Jaeger] -- used to receive, store and

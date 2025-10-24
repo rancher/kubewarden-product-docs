@@ -26,7 +26,7 @@ know the GitHub organization under where the container image is published. You
 can read more about the host capabilities for Sigstore
 xref:reference/spec/host-capabilities/02-signature-verifier-policies.adoc[here].
 
-To achieve this in CEL, we use the https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[Kubewarden's CEL extension
+To achieve this in CEL, we use the https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{project-name}'s CEL extension
 libraries for host capabilities]
 in the policy, particularly the https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[`githubAction`
 function].

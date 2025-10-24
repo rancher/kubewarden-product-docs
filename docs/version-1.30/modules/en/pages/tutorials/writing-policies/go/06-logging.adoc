@@ -2,13 +2,11 @@ include::partial$variables.adoc[]
 = Logging
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A tutorial introduction to logging when using Go to write a Kubewarden policy.
+:description: A tutorial introduction to logging when using Go to write a {project-name} policy.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "logging"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "writing policies", "golang", "go", "logging"]
-:sidebar_label: Logging
-:sidebar_position: 48
 :current-version: {page-origin-branch}
 
 The Go SDK integrates with the

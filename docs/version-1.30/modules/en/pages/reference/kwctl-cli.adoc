@@ -4,8 +4,6 @@ include::partial$variables.adoc[]
 = kwctl CLI
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:sidebar_label: kwctl CLI Reference
-:sidebar_position: 120
 :title: kwctl CLI
 :description: kwctl CLI reference documentation
 :keywords: cli, reference, kwctl
@@ -45,28 +43,28 @@ This document contains the help content for the `kwctl` command-line program.
 [[kwctl]]
 === `kwctl`
 
-Tool to manage Kubewarden policies
+Tool to manage {project-name} policies
 
 *Usage:* `kwctl [OPTIONS] <COMMAND>`
 
 ==== Subcommands
 
-* `annotate` — Add Kubewarden metadata to a WebAssembly module
-* `bench` — Benchmarks a Kubewarden policy
+* `annotate` — Add {short-project-name} metadata to a WebAssembly module
+* `bench` — Benchmarks a {short-project-name} policy
 * `completions` — Generate shell completions
 * `digest` — Fetch digest from the OCI manifest of a policy
 * `docs` — Generates the markdown documentation for kwctl commands
 * `info` — Display system information
-* `inspect` — Inspect Kubewarden policy
+* `inspect` — Inspect {short-project-name} policy
 * `load` — load policies from a tar.gz file
 * `policies` — Lists all downloaded policies
-* `pull` — Pulls a Kubewarden policy from a given URI
-* `push` — Pushes a Kubewarden policy to an OCI registry
-* `rm` — Removes a Kubewarden policy from the store
-* `run` — Runs a Kubewarden policy from a given URI
+* `pull` — Pulls a {short-project-name} policy from a given URI
+* `push` — Pushes a {short-project-name} policy to an OCI registry
+* `rm` — Removes a {short-project-name} policy from the store
+* `run` — Runs a {short-project-name} policy from a given URI
 * `save` — save policies to a tar.gz file
 * `scaffold` — Scaffold a Kubernetes resource or configuration file
-* `verify` — Verify a Kubewarden policy from a given URI using Sigstore
+* `verify` — Verify a {short-project-name} policy from a given URI using Sigstore
 
 ==== Options
 
@@ -76,7 +74,7 @@ Tool to manage Kubewarden policies
 [[kwctl-annotate]]
 === `kwctl annotate`
 
-Add Kubewarden metadata to a WebAssembly module
+Add {short-project-name} metadata to a WebAssembly module
 
 *Usage:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
 
@@ -93,21 +91,21 @@ Add Kubewarden metadata to a WebAssembly module
 [[kwctl-bench]]
 === `kwctl bench`
 
-Benchmarks a Kubewarden policy.
+Benchmarks a {short-project-name} policy.
 
 The policy can be specified in the following ways:
 - URI: e.g., `registry://ghcr.io/kubewarden/policies/psp-policy:latest` or `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - SHA prefix: e.g., `c3b80a10f9c3` (requires the policy to be already pulled)
 - Local WASM file: e.g., `file://home/tux/new-policy/psp-policy.wasm`
-- Local YAML file: e.g., `file://home/tux/cluster-admission-policy.yaml` (contains declarations of Kubewarden Custom Resources like `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Local YAML file: e.g., `file://home/tux/cluster-admission-policy.yaml` (contains declarations of {short-project-name} Custom Resources like `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Default Behavior:
 If the schema is omitted, `file://` is assumed, rooted in the current directory.
 
-Notes on Kubewarden Custom Resources:
+Notes on {short-project-name} Custom Resources:
 - Flags `--request-path`, `--settings-path`, and `--settings-json` are ignored; settings are read from the Custom Resource definition.
 - The `--execution-mode` flag applies to all policies in the YAML file.
-- The `--raw` flag cannot be used, as Kubewarden's Custom Resources do not support `raw` policies.
+- The `--raw` flag cannot be used, as {short-project-name}'s Custom Resources do not support `raw` policies.
 
 Only the following attributes of the Custom Resource Definition (CRD) are evaluated:
 - Policy module
@@ -122,7 +120,7 @@ A YAML file may contain multiple Custom Resource declarations. In this case, `kw
 
 ==== Arguments
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy URI, SHA prefix or YAML file containing Kubewarden policy resources. Supported schemes: registry://, https://, file://. If schema is omitted, file:// is assumed, rooted on the current directory.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy URI, SHA prefix or YAML file containing {short-project-name} policy resources. Supported schemes: registry://, https://, file://. If schema is omitted, file:// is assumed, rooted on the current directory.
 
 ==== Options
 
@@ -203,7 +201,7 @@ Display system information
 [[kwctl-inspect]]
 === `kwctl inspect`
 
-Inspect Kubewarden policy
+Inspect {short-project-name} policy
 
 *Usage:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
 
@@ -240,7 +238,7 @@ Lists all downloaded policies
 [[kwctl-pull]]
 === `kwctl pull`
 
-Pulls a Kubewarden policy from a given URI
+Pulls a {short-project-name} policy from a given URI
 
 *Usage:* `kwctl pull [OPTIONS] <uri>`
 
@@ -256,7 +254,7 @@ Pulls a Kubewarden policy from a given URI
 * `--fulcio-cert-path <PATH>` — Path to the Fulcio certificate. Can be repeated multiple times
 * `--github-owner <VALUE>` — GitHub owner expected in the certificates generated in CD pipelines
 * `--github-repo <VALUE>` — GitHub repository expected in the certificates generated in CD pipelines
-* `-o`, `--output-path <PATH>` — Output file. If not provided will be downloaded to the Kubewarden store
+* `-o`, `--output-path <PATH>` — Output file. If not provided will be downloaded to the {short-project-name} store
 * `--rekor-public-key-path <PATH>` — Path to the Rekor public key. Can be repeated multiple times
 * `--sources-path <PATH>` — YAML file holding source information (https, registry insecure hosts, custom CA's...)
 * `-a`, `--verification-annotation <KEY=VALUE>` — Annotation in key=value format. Can be repeated multiple times
@@ -266,7 +264,7 @@ Pulls a Kubewarden policy from a given URI
 [[kwctl-push]]
 === `kwctl push`
 
-Pushes a Kubewarden policy to an OCI registry
+Pushes a {short-project-name} policy to an OCI registry
 
 *Usage:* `kwctl push [OPTIONS] <policy> <uri>`
 
@@ -291,7 +289,7 @@ The 'io.kubewarden.policy.source' annotation is propagated as 'org.opencontainer
 [[kwctl-rm]]
 === `kwctl rm`
 
-Removes a Kubewarden policy from the store
+Removes a {short-project-name} policy from the store
 
 *Usage:* `kwctl rm <uri_or_sha_prefix>`
 
@@ -302,21 +300,21 @@ Removes a Kubewarden policy from the store
 [[kwctl-run]]
 === `kwctl run`
 
-Run one or more Kubewarden policies locally.
+Run one or more {short-project-name} policies locally.
 
 The policy can be specified in the following ways:
 - URI: e.g., `registry://ghcr.io/kubewarden/policies/psp-policy:latest` or `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - SHA prefix: e.g., `c3b80a10f9c3` (requires the policy to be already pulled)
 - Local WASM file: e.g., `file://home/tux/new-policy/psp-policy.wasm`
-- Local YAML file: e.g., `file://home/tux/cluster-admission-policy.yaml` (contains declarations of Kubewarden Custom Resources like `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Local YAML file: e.g., `file://home/tux/cluster-admission-policy.yaml` (contains declarations of {short-project-name} Custom Resources like `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Default Behavior:
 If the schema is omitted, `file://` is assumed, rooted in the current directory.
 
-Notes on Kubewarden Custom Resources:
+Notes on {short-project-name} Custom Resources:
 - Flags `--request-path`, `--settings-path`, and `--settings-json` are ignored; settings are read from the Custom Resource definition.
 - The `--execution-mode` flag applies to all policies in the YAML file.
-- The `--raw` flag cannot be used, as Kubewarden's Custom Resources do not support `raw` policies.
+- The `--raw` flag cannot be used, as {short-project-name}'s Custom Resources do not support `raw` policies.
 
 Only the following attributes of the Custom Resource Definition (CRD) are evaluated:
 - Policy module
@@ -331,7 +329,7 @@ A YAML file may contain multiple Custom Resource declarations. In this case, `kw
 
 ==== Arguments
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy URI, SHA prefix or YAML file containing Kubewarden policy resources. Supported schemes: registry://, https://, file://. If schema is omitted, file:// is assumed, rooted on the current directory.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy URI, SHA prefix or YAML file containing {short-project-name} policy resources. Supported schemes: registry://, https://, file://. If schema is omitted, file:// is assumed, rooted on the current directory.
 
 ==== Options
 
@@ -385,7 +383,7 @@ Scaffold a Kubernetes resource or configuration file
 * `admission-request` — Scaffold an AdmissionRequest object
 * `artifacthub` — Output an artifacthub-pkg.yml file from a metadata.yml file
 * `manifest` — Output a Kubernetes resource manifest
-* `vap` — Convert a Kubernetes `ValidatingAdmissionPolicy` into a Kubewarden `ClusterAdmissionPolicy`
+* `vap` — Convert a Kubernetes `ValidatingAdmissionPolicy` into a {short-project-name} `ClusterAdmissionPolicy`
 * `verification-config` — Output a default Sigstore verification configuration file
 
 [[kwctl-scaffold-admission-request]]
@@ -399,7 +397,7 @@ Scaffold an AdmissionRequest object
 
 * `--object <PATH>` — The file containing the new object being admitted
 * `--old-object <PATH>` — The file containing the existing object
-* `-o`, `--operation <TYPE>` — Kubewarden Custom Resource type +
+* `-o`, `--operation <TYPE>` — {short-project-name} Custom Resource type +
   Possible values: `CREATE`
 
 [[kwctl-scaffold-artifacthub]]
@@ -441,7 +439,7 @@ Output a Kubernetes resource manifest
 * `-s`, `--settings-path <PATH>` — File containing the settings for this policy
 * `--sources-path <PATH>` — YAML file holding source information (https, registry insecure hosts, custom CA's...)
 * `--title <VALUE>` — Policy title
-* `-t`, `--type <VALUE>` — Kubewarden Custom Resource type +
+* `-t`, `--type <VALUE>` — {short-project-name} Custom Resource type +
   Possible values: `ClusterAdmissionPolicy`, `AdmissionPolicy`
 * `-a`, `--verification-annotation <KEY=VALUE>` — Annotation in key=value format. Can be repeated multiple times
 * `--verification-config-path <PATH>` — YAML file holding verification config information (signatures, public keys...)
@@ -450,7 +448,7 @@ Output a Kubernetes resource manifest
 [[kwctl-scaffold-vap]]
 === `kwctl scaffold vap`
 
-Convert a Kubernetes `ValidatingAdmissionPolicy` into a Kubewarden `ClusterAdmissionPolicy`
+Convert a Kubernetes `ValidatingAdmissionPolicy` into a {short-project-name} `ClusterAdmissionPolicy`
 
 *Usage:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
 
@@ -471,7 +469,7 @@ Output a default Sigstore verification configuration file
 [[kwctl-verify]]
 === `kwctl verify`
 
-Verify a Kubewarden policy from a given URI using Sigstore
+Verify a {short-project-name} policy from a given URI using Sigstore
 
 *Usage:* `kwctl verify [OPTIONS] <uri>`
 

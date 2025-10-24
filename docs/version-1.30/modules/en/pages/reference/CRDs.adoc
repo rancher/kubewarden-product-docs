@@ -2,17 +2,17 @@ include::partial$variables.adoc[]
 = Custom Resource Definitions (CRD)
 :revdate: 2025-10-08
 :page-revdate: {revdate}
-:description: Kubewarden's Custom Resource Definitions (CRD)
+:description: {project-name}'s Custom Resource Definitions (CRD)
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["operator-manual", "crd"]
 :doc-type: ["reference"]
 :doctype: book
-:keywords: ["kubewarden", "kubernetes", "custom resource definitions", "crd"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom resource definitions", "crd"]
 :sidebar_label: Custom Resources Definitions (CRD)
 :sidebar_position: 5
 :current-version: {page-origin-branch}
 
-You can find the definitions for the Kubewarden Custom Resources both on this page and
+You can find the definitions for the {project-name} Custom Resources both on this page and
 https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[here at docs.crds.dev].
 
 ////

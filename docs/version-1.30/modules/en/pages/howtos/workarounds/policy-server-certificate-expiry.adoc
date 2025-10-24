@@ -6,15 +6,15 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "workarounds", "policy server certificates"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "policy server certificates"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "policy server certificates"]
 :sidebar_label: Certificate Rotation
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
 [IMPORTANT]
-.Workaround for Kubewarden v1.16.0 and earlier
+.Workaround for {project-name} v1.16.0 and earlier
 ====
-This workaround is only needed for Kubewarden v1.16.0 and earlier. Starting from
+This workaround is only needed for {short-project-name} v1.16.0 and earlier. Starting from
 v1.17.0, the controller automatically renews the policy server certificates.
 ====
 

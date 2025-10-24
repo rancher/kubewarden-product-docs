@@ -6,11 +6,11 @@ include::partial$variables.adoc[]
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
 :doc-topic: [“explanations”, “audit-scanner”, “policy-reports”]
 :doc-type: [“explanation”]
-:keywords: [“kubewarden”, “kubernetes”, “audit scanner”]
+:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “audit scanner”]
 :sidebar_label: Policy Reports
 :current-version: {page-origin-branch}
 
-When using the Kubewarden Audit Scanner, you store the results of policy scans
+When using the {project-name} Audit Scanner, you store the results of policy scans
 using the
 https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport]
 Custom Resource.
@@ -219,8 +219,8 @@ screenshot below:
 
 image::policy-reporter_dashboard.png[Policy Reporter dashboard example]
 
-Kubewarden ships the Policy Reporter UI with a preconfigured filter that only
-shows Kubewarden policies, along with expanded information:
+{short-project-name} ships the Policy Reporter UI with a preconfigured filter that only
+shows {short-project-name} policies, along with expanded information:
 
 image::policy-reporter_policyreports.png[Policy Reporter PolicyReports example]
 

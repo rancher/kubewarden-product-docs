@@ -1,31 +1,31 @@
 include::partial$variables.adoc[]
-= Migrating Gatekeeper Policies to Kubewarden
+= Migrating Gatekeeper Policies to {project-name}
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-description: "How to migrate Gatekeeper policies to Kubewarden"
-keywords: [kubewarden, gatekeeper]
+description: "How to migrate Gatekeeper policies to {short-project-name}"
+keywords: ["{project-name}", kubewarden, gatekeeper]
 doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 doc-type: [howto]
 doc-topic: [operator-manual]
 
 This guide shows you how to convert an existing Gatekeeper policy into a
-Kubewarden policy. This process involves two main steps:
+{project-name} policy. This process involves two main steps:
 . Compile the Rego program into a WebAssembly (Wasm) module.
-. Distribute the WebAssembly module as a Kubewarden policy.
+. Distribute the WebAssembly module as a {short-project-name} policy.
 
 The xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego policies
 tutorial] covers most of the build process for compiling Rego code into a
 WebAssembly module. This guide focuses on the step-by-step process of
 extracting Gatekeeper Custom Resource Definitions (CRDs) and migrating them
-into a functional Kubewarden policy. It uses a basic Gatekeeper demo policy.
+into a functional {short-project-name} policy. It uses a basic Gatekeeper demo policy.
 
 == Prerequisites
 
 * link:https://github.com/open-policy-agent/opa/releases[opa]: you use this tool
   to build the code into wasm. This guide was written using the `v1.5.1` version.
 * link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: tool you use to
-  prepare and run Kubewarden web assembly module
+  prepare and run {short-project-name} web assembly module
 * link:https://github.com/bats-core/bats-core[`bats`]: tool used to run end-to-end
   tests. If you decided to write such kind of tests
 * link:https://github.com/mikefarah/yq[`yq`]: tool used to extract data from yaml files
@@ -33,18 +33,18 @@ into a functional Kubewarden policy. It uses a basic Gatekeeper demo policy.
 == Before migrating your policies
 
 Before starting the process of migrating Gatekeeper policies, consider using
-already available policies in the Kubewarden
+already available policies in the {short-project-name}
 link:https://artifacthub.io/packages/search?kind=13[catalog]. Some of the
 link:https://github.com/kubewarden/rego-policies-library[policies] are publicly
-available OPA and Gatekeeper policies migrated to Kubewarden.
+available OPA and Gatekeeper policies migrated to {short-project-name}.
 
 Also, take a look at our
 xref:/explanations/comparisons/opa-comparison.adoc[comparison]
-documentation between Kubewarden and Gatekeeper.
+documentation between {short-project-name} and Gatekeeper.
 
-== Step 1: Initialize Your Kubewarden policy project
+== Step 1: Initialize Your {short-project-name} policy project
 
-First, use the Kubewarden Gatekeeper
+First, use the {short-project-name} Gatekeeper
 link:https://github.com/kubewarden/gatekeeper-policy-template[template] to create
 a basic policy project structure. This provides Makefile targets for building
 and testing your policy. After you create the policy code from the template,
@@ -67,13 +67,13 @@ PASS: 2/2
 == Step 2: Migrate Gatekeeper policy code
 
 Now, begin migrating the Gatekeeper policy. This involves converting a
-`ConstraintTemplate` and its associated `Constraint` resources into a Kubewarden
-policy. In a Kubewarden context, consider the `ConstraintTemplate` as the core
+`ConstraintTemplate` and its associated `Constraint` resources into a {short-project-name}
+policy. In a {short-project-name} context, consider the `ConstraintTemplate` as the core
 policy code, while the `Constraint` instances translate into policy instances
-running within Kubewarden.
+running within {short-project-name}.
 
 First, copy the Rego code from your `ConstraintTemplate` into the `policy.rego`
-file the Kubewarden template generated. For this example, you should use the
+file the {short-project-name} template generated. For this example, you should use the
 following basic
 link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[demo policy]
 from the Gatekeeper repository.
@@ -124,10 +124,10 @@ Copy the Rego code snippet from the `rego` field into your `policy.rego` file:
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== Adapt Rego code for Kubewarden
+=== Adapt Rego code for {short-project-name}
 
 You need to make sure the `package` name used inside of the Rego code is `policy`.
-This is the value expected in many places by the Kubewarden Gatekeeper template.
+This is the value expected in many places by the {short-project-name} Gatekeeper template.
 
 If you don't change it, you will have errors when building the policy and running its end-to-end tests.
 
@@ -238,7 +238,7 @@ the default CI jobs expect them to be defined. Instead, you should replace the
 commands that call `opa` and `bats` with a "no-op" operation. For example, you can
 use an `echo` command to print an explanation for why the tests aren't being run.
 
-The Kubewarden Gatekeeper template includes both Rego unit tests and end-to-end
+The {short-project-name} Gatekeeper template includes both Rego unit tests and end-to-end
 (e2e) tests using Bats and `kwctl`. If you plan to include tests, both sets
 need to be adapted for your policy.
 
@@ -481,7 +481,7 @@ spec:
 === Define Policy Settings
 
 This policy has parameters, which Gatekeeper defines within the
-`Constraint`. You need to update the `settings` section in the generated Kubewarden
+`Constraint`. You need to update the `settings` section in the generated {short-project-name}
 policy manifest to include these required parameters. In the following example,
 beyond defining the settings, you can test the policy from the OCI registry:
 

@@ -2,11 +2,11 @@ include::partial$variables.adoc[]
 = Using custom certificate authorities
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with Kubewarden policy servers.
+:description: Using custom certificate authorities with {project-name} policy servers.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "custom certificate authorities"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom certificate authorities"]
 :sidebar_label: Using Custom CAs
 :current-version: {page-origin-branch}
 

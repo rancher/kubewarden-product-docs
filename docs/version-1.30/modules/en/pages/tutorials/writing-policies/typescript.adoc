@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Typescript
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Writing Kubewarden policies with Typescript
+:description: Writing {project-name} policies with Typescript
 :doc-persona: ["kubewarden-developer"]
 :doc-topic: ["root-branch"]
 :doc-type: ["tutorial"]
@@ -26,7 +26,7 @@ is a *subset* of TypeScript designed for WebAssembly.
 
 == Current state
 
-Currently, there's no Kubewarden SDK for AssemblyScript.
+Currently, there's no {project-name} SDK for AssemblyScript.
 Resources permitting, we hope to have on in the near future.
 
 However, there are limitations affecting AssemblyScript:
@@ -39,7 +39,7 @@ See https://github.com/AssemblyScript/assemblyscript/issues/292[this issue]
 == Example
 
 https://github.com/kubewarden/pod-privileged-policy/tree/assemblyscript-implementation[This GitHub repository branch]
-has a Kubewarden Policy written in AssemblyScript.
+has a {short-project-name} Policy written in AssemblyScript.
 
 This repository has a series of GitHub Actions that automate the following tasks:
 

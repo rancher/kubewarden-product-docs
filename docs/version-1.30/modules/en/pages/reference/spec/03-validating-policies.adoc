@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Validating policies
 :current-version: {page-origin-branch}
 
-The Kubewarden policy server receives:
+The {project-name} policy server receives:
 
 * Kubernetes
 https://godoc.org/k8s.io/api/admission/v1#AdmissionReview[`AdmissionReview`]

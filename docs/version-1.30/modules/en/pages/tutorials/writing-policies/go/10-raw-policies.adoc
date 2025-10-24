@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing raw policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Writing raw Kubewarden policies using Go.
+:description: Writing raw {project-name} policies using Go.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "raw-policies"]
 :doc-type: ["tutorial"]

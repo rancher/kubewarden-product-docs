@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing the validation logic
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A tutorial on writing validation logic for a Kubewarden policy using Go.
+:description: A tutorial on writing validation logic for a {project-name} policy using Go.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "validation-logic"]
 :doc-type: ["tutorial"]
@@ -39,9 +39,9 @@ while one using `gjson` is around 300&nbsp;KB.
 
 Apart from size,
 the policy using Kubernetes objects take much more time during first execution.
-Following invocations are fast because Kubewarden uses Wasmtime's cache feature.
+Following invocations are fast because {project-name} uses Wasmtime's cache feature.
 The first execution can take about 20 seconds with `kwctl`, later executions, 1 to 2 seconds.
-So, Kubewarden Policy Server has a slower start-up time but then policy evaluation times aren't usually effected by the usage of Kubernetes objects.
+So, {short-project-name} Policy Server has a slower start-up time but then policy evaluation times aren't usually effected by the usage of Kubernetes objects.
 ====
 
 
@@ -325,7 +325,7 @@ This is where you iterate over the different test cases using the following code
 
 . Create a `BasicSettings` object by using the data provided by the `testCase`.
 . Create a `Pod` object, assign to it the labels defined in `testCase`.
-. Create a `payload` object. Do this using a helper function of the Kubewarden SDK: `kubewarden_testing.BuildValidationRequest`.
+. Create a `payload` object. Do this using a helper function of the {short-project-name} SDK: `kubewarden_testing.BuildValidationRequest`.
 This function takes as input the object the request is about, the `Pod`,
 and the object that describes the settings, the `BasicSettings` instance.
 . Finally, the code invokes your `validate` function and performs a check on the result.
@@ -407,7 +407,7 @@ You might be wondering why the output of the unit tests features lines like
 
 The `logger` statements in the policy produce this output.
 This happens only when the code runs outside the WebAssembly context.
-This doesn't happen when the policy evaluates in Kubewarden,
+This doesn't happen when the policy evaluates in {short-project-name},
 in that context the `logger` statements emit OpenTelemetry events instead.
 ====
 

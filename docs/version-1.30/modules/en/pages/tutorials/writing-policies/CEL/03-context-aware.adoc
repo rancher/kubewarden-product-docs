@@ -10,13 +10,13 @@ include::partial$variables.adoc[]
 :sidebar_label: Context-aware policies
 :current-version: {page-origin-branch}
 
-Kubewarden's `cel-policy` supports the xref:reference/spec/05-context-aware-policies.adoc[context
+{project-name}'s `cel-policy` supports the xref:reference/spec/05-context-aware-policies.adoc[context
 awareness] feature. The
 policy has the capability to read cluster information and take decisions based
 on other existing resources besides the resource that triggered the policy
 evaluation via admission request.
 
-To achieve this, we can use the https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[Kubewarden's CEL extension
+To achieve this, we can use the https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{short-project-name}'s CEL extension
 libraries for host capabilities]
 included in the policy.
 
@@ -62,7 +62,7 @@ spec:
 ----
 
 Now, we need to write the CEL code that will fetch the existing Ingresses in
-the cluster. For that, we use the [Kubewarden CEL extension
+the cluster. For that, we use the [{short-project-name} CEL extension
 library](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
 Particularly, the `kw.k8s` host capabilities, which allows us to query the
 cluster for GroupVersionKinds. You can see the available docs for the CEL

@@ -1,12 +1,12 @@
 include::partial$variables.adoc[]
-= Using Pod Security Admission with Kubewarden
+= Using Pod Security Admission with {project-name}
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using Pod Security Admission with Kubewarden, since the Kubernetes 1.25 release.
+:description: Using Pod Security Admission with {project-name}, since the Kubernetes 1.25 release.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-admission-with-kubewarden"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "pod security admission", "pod security policy", "kubernetes"]
+:keywords: ["{project-name}", "kubewarden", "pod security admission", "pod security policy", "kubernetes"]
 :sidebar_label: Pod Security Admission
 :sidebar_position: 30
 :current-version: {page-origin-branch}
@@ -31,13 +31,13 @@ At the time of writing, with Kubernetes 1.28, the PSA controller has  the follow
 * No mutation capabilities
 * Higher level objects (like `Deployment`, `Job`) are evaluated only when the `audit` or `warn` modes are enabled
 
-Kubewarden can be used to *integrate* a PSA profile to avoid these limitations.
+{short-project-name} can be used to *integrate* a PSA profile to avoid these limitations.
 
 [NOTE]
 ====
 
-You could use Kubewarden to replace the old PSP configuration as shown in xref:howtos/psp-migration.adoc[PSP migration].
-However, the goal of this article is to show how Kubewarden can complement the new PSA.
+You could use {short-project-name} to replace the old PSP configuration as shown in xref:howtos/psp-migration.adoc[PSP migration].
+However, the goal of this article is to show how {short-project-name} can complement the new PSA.
 ====
 
 
@@ -199,14 +199,14 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-h4bx7 -o json | jq 
 ]
 ----
 
-This is where Kubewarden can help.
+This is where {short-project-name} can help.
 You can use the https://artifacthub.io/packages/kubewarden/user-group-psp/user-group-psp[`user-group-policy`] policy to mutate the Deployment definition.
 This configures a default user for containers omitting that information.
 
 [NOTE]
 ====
 
-You need the Kubewarden stack in the Kubernetes cluster for this example.
+You need the {short-project-name} stack in the Kubernetes cluster for this example.
 See the xref:quick-start.adoc[QuickStart] for more details.
 ====
 
@@ -305,7 +305,7 @@ EOF
 
 ======
 
-Now the deployment is mutated by Kubewarden's policy which allows the Pod to be started.
+Now the deployment is mutated by {short-project-name}'s policy which allows the Pod to be started.
 The container defined inside the Pod has a default `runAsUser` value:
 
 [subs="+attributes",shell]
@@ -326,10 +326,10 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-nv8fj -o json | jq 
 }
 ----
 
-The Kubewarden integration can do more in this scenario.
+The {short-project-name} integration can do more in this scenario.
 It can check the value of the `runAsUser` provided.
 
-This resource is rejected by the Kubewarden policy from earlier:
+This resource is rejected by the {short-project-name} policy from earlier:
 
 .kubectl command to show resource rejection
 [%collapsible]
@@ -393,4 +393,4 @@ kubectl get deploy -n my-namespace nginx-deployment -o json | jq ".status.condit
 PSA provides an easy way to secure Kubernetes clusters.
 The main goal of PSA is simplicity and it doesn't have the power and flexibility of the earlier PSP.
 
-Using Kubewarden together with PSA helps fill this gap.
+Using {short-project-name} together with PSA helps fill this gap.

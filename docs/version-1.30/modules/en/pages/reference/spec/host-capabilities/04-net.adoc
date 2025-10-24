@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Network capabilities
 :current-version: {page-origin-branch}
 
-Kubewarden policies cannot make network request from within the WebAssembly execution context.
+{project-name} policies cannot make network request from within the WebAssembly execution context.
 
 Network operations can be done by leveraging a series of capabilities exposed by the host.
 

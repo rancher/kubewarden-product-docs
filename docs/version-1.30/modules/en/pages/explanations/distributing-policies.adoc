@@ -2,18 +2,16 @@ include::partial$variables.adoc[]
 = Distributing policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A description of how Kubewarden policies are distributed from OCI-compliant repositories.
+:description: A description of how {project-name} policies are distributed from OCI-compliant repositories.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["oci", "kubewarden", "policy", "wasm", "webassembly"]
-:sidebar_label: Distributing policies
-:sidebar_position: 30
+:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-Kubewarden policies are WebAssembly (Wasm) binaries evaluated by the Kubewarden Policy Server.
+{project-name} policies are WebAssembly (Wasm) binaries evaluated by the {short-project-name} Policy Server.
 
-The Kubewarden policy server loads policies from these sources:
+The {short-project-name} policy server loads policies from these sources:
 
 * Local filesystem
 * HTTP(s) server
@@ -24,7 +22,7 @@ The Kubewarden policy server loads policies from these sources:
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Google container registry]
 
-Kubewarden recommends distributing Kubewarden policies via a regular
+{short-project-name} recommends distributing {short-project-name} policies via a regular
 OCI-compliant registry. Container registries are a mandatory requirement for
 any Kubernetes cluster. Having a single place to store, and secure, all the
 artifacts required by a cluster is beneficial.
@@ -36,20 +34,20 @@ specification permits storing any binary blob inside a regular OCI-compliant
 container registry.
 
 The target OCI-compliant registry *must support artifacts* to successfully push
-a Kubewarden Policy to it.
+a {short-project-name} Policy to it.
 
 You can use the https://github.com/kubewarden/kwctl[`kwctl`] CLI to push a
-Kubewarden Policy to an OCI-compliant registry.
+{short-project-name} Policy to an OCI-compliant registry.
 
 == Annotating the policy
 
-You also annotate a policy with `kwctl`. The process of annotating a Kubewarden
+You also annotate a policy with `kwctl`. Annotating a {short-project-name}
 policy is done by adding Wasm custom sections to the policy binary. This means
 that the policy packages its own metadata.
 
 The `kwctl annotate` command requires two inputs:
 
-* the Kubewarden policy to annotate, a local file in the filesystem.
+* the {short-project-name} policy to annotate, a local file in the filesystem.
 * the annotations file, a file containing a YAML description of the policy metadata.
 This file is usually located in the root project folder of your policy.
 
@@ -170,5 +168,5 @@ metadata provided by annotations to correctly execute a policy. By default,
 `kwctl push` refuses to push such a policy to an OCI registry. If you need an
 unannotated policy, use the `-&#x200D;-&#x200D;force` flag of `kwctl push`.
 
-You can reference a policy from the Kubewarden Policy Server or `kwctl` as
+You can reference a policy from the {short-project-name} Policy Server or `kwctl` as
 `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

@@ -2,18 +2,16 @@ include::partial$variables.adoc[]
 = Policy metadata
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Using policy metadata when developing a Kubewarden policy.
+:description: Using policy metadata when developing a {project-name} policy.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "policy-metadata"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes policy development", "policy metadata"]
-:sidebar_label: Policy metadata
-:sidebar_position: 90
 :current-version: {page-origin-branch}
 
-The Kubewarden metadata file, `metadata.yaml`,
+The {project-name} metadata file, `metadata.yaml`,
 is a configuration file containing important information and settings
-related to the policies used within Kubewarden.
+related to the policies used within {short-project-name}.
 This documentation is overview of the purpose and usage of the metadata file.
 
 The policy `metadata.yaml` file has defaults for the policy,

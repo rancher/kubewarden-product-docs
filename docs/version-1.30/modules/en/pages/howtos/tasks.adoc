@@ -2,29 +2,27 @@ include::partial$variables.adoc[]
 = Common tasks
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Description of some common tasks undertaken after installing Kubewarden. Provides examples of these tasks using kwctl
+:description: Description of some common tasks undertaken after installing {project-name}. Provides examples of these tasks using kwctl
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]
-:keywords: ["kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
-:sidebar_label: Common tasks
-:sidebar_position: 10
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :current-version: {page-origin-branch}
 
-This describes tasks that can be performed after you xref:quick-start.adoc#installation[install Kubewarden] in your Kubernetes cluster.
+This describes tasks that can be performed after you xref:quick-start.adoc#installation[install {project-name}] in your Kubernetes cluster.
 
 Each task can be done separately; they are shown here in a logical ordering.
 
 == Test Policies
 
-Kubewarden has two tools to help you find policies and test them locally:
+{short-project-name} has two tools to help you find policies and test them locally:
 
-* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub] using their package filter for Kubewarden policies.
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub] using their package filter for {short-project-name} policies.
 * https://github.com/kubewarden/kwctl[`kwctl`] CLI tool
 
 === Artifact hub
 
-Artifact hub hosts policies contributed by the community. For example, you can find substitutes to the https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[deprecated Kubernetes Pod Security Policies], created by the Kubewarden developers.
+Artifact hub hosts policies contributed by the community. For example, you can find substitutes to the https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[deprecated Kubernetes Pod Security Policies], created by the {short-project-name} developers.
 
 As shown in the screenshot below, once you find a policy of interest, select the `Install` button and use `kwctl` to fetch the policy for your cluster.
 
@@ -32,7 +30,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 
 [NOTE]
 ====
-Previously, Kubewarden policies could be found at the https://hub.kubewarden.io[Kubewarden Policy Hub]. This has been https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retired]. Policies are now available from https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
+Previously, {short-project-name} policies could be found at the https://hub.kubewarden.io[{short-project-name} Policy Hub]. This has been https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retired]. Policies are now available from https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
 ====
 
 
@@ -70,8 +68,8 @@ You can list all the `kwctl` options and sub-commands by running the following c
 ----
 $ kwctl --help
 kwctl 0.2.5
-Kubewarden Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage Kubewarden policies
+{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {short-project-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -82,18 +80,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add Kubewarden metadata to a WebAssembly module
+    annotate       Add {short-project-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect Kubewarden policy
+    inspect        Inspect {short-project-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a Kubewarden policy from a given URI
-    push           Pushes a Kubewarden policy to an OCI registry
-    rm             Removes a Kubewarden policy from the store
-    run            Runs a Kubewarden policy from a given URI
+    pull           Pulls a {short-project-name} policy from a given URI
+    push           Pushes a {short-project-name} policy to an OCI registry
+    rm             Removes a {short-project-name} policy from the store
+    run            Runs a {short-project-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a Kubewarden policy from a given URI using Sigstore
+    verify         Verify a {short-project-name} policy from a given URI using Sigstore
 ----
 
 Here are a few command usage examples:
@@ -257,5 +255,5 @@ After the `ClusterAdmissionPolicy` is deployed, all requests sent to your cluste
 
 == Next steps
 
-* xref:tutorials/writing-policies/index.adoc[Writing Policies] explains how to write policies in different languages and generate WebAssembly binaries, so they can be used by Kubewarden.
+* xref:tutorials/writing-policies/index.adoc[Writing Policies] explains how to write policies in different languages and generate WebAssembly binaries, so they can be used by {short-project-name}.
 * xref:../explanations/distributing-policies.adoc[Distributing Policies] explains how to publish policies to https://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCI registries].

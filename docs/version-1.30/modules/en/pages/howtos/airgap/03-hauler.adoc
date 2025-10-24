@@ -2,26 +2,26 @@ include::partial$variables.adoc[]
 = Air gap installation with Hauler
 :revdate: 2025-08-28
 :page-revdate: {revdate}
-:description: Air gap installation for Kubewarden using Hauler
-:keywords: kubewarden, kubernetes, air gap installation, hauler
+:description: Air gap installation for {project-name} using Hauler
+:keywords: ["{project-name}", kubewarden, kubernetes, air gap installation, hauler]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, air gap, installation, hauler
 
-This guide shows you how to install Kubewarden in air-gapped environments using
+This guide shows you how to install {project-name} in air-gapped environments using
 link:https://docs.hauler.dev/docs/intro[Hauler]. Hauler is a tool that helps
 users run workloads in air-gapped environments. It moves the required resources
 for apps into those air-gapped environments.
 
-Kubewarden uses Hauler capabilities by providing a manifest file with all the
-required resources to run Kubewarden in a private environment. This
+{short-project-name} uses Hauler capabilities by providing a manifest file with all the
+required resources to run {short-project-name} in a private environment. This
 documentation describes how you can use it. Refer to the Hauler documentation
 to learn more about it.
 
 The basic workflow using the Hauler manifest is:
 
-. Get it from a Kubewarden release page
-. Load all the resources required to run Kubewarden into a local store
+. Get it from a {short-project-name} release page
+. Load all the resources required to run {short-project-name} into a local store
 . Export them into a file
 . Move the file into the private environment
 . Load the resources into Hauler running inside the private environment
@@ -30,7 +30,7 @@ The basic workflow using the Hauler manifest is:
 
 == Download Hauler manifest from Helm chart release page
 
-Download `hauler_manifest.yml` from the Kubewarden
+Download `hauler_manifest.yml` from the {short-project-name}
 link:https://github.com/kubewarden/helm-charts/releases/[release page].
 
 Synchronize the resources defined in the manifest to your Hauler store:
@@ -44,7 +44,7 @@ Hauler downloads all the resources from the manifest to the local store. This
 process takes a few minutes. When complete, you can see the synchronized
 resources with the `hauler store info` command.
 
-== Generate the tarball file with all Kubewarden resources
+== Generate the tarball file with all {short-project-name} resources
 
 Run the Hauler command to export all the resources previously loaded in the
 store to a file:
@@ -57,7 +57,7 @@ hauler store save --filename kubewarden-resources.tar.zst
 [NOTE]
 ====
 
-Kubewarden container images support x86_64 and Arm architectures. Therefore,
+{short-project-name} container images support x86_64 and Arm architectures. Therefore,
 when you save the resource into the file, you can see warning messages like
 this:
 
@@ -78,7 +78,7 @@ which platform architecture you want to save into the file.
 
 == Transfer the tarball into your isolated environment
 
-Now that you have all the Kubewarden resources in
+Now that you have all the {short-project-name} resources in
 `kubewarden-resources.tar.zst`, copy it into your air-gapped environment and
 load it into the Hauler store there:
 
@@ -89,7 +89,7 @@ hauler store load --filename kubewarden-resources.tar.zst
 hauler store info
 ----
 
-Now all the resources required to install Kubewarden are in the Hauler store in
+Now all the resources required to install {short-project-name} are in the Hauler store in
 your isolated environment.
 
 == Populate private registry
@@ -130,17 +130,17 @@ hauler store serve registry
 
 This starts a registry at the `localhost:5000` address. From this point, you
 can use other commands like Skopeo to copy all the container images, policy
-modules and Helm charts used by Kubewarden into your private registry.
+modules and Helm charts used by {short-project-name} into your private registry.
 
-== Install Kubewarden
+== Install {short-project-name}
 
 Now that your private registry has everything required, you can install
-Kubewarden. The difference from a standard Kubewarden installation is that you
+{short-project-name}. The difference from a standard {short-project-name} installation is that you
 need to change the registry in the container images and policies to be the
 private registry. Additionally, you need to install the Helm charts from OCI
 artifacts.
 
-Install the Kubewarden stack:
+Install the {short-project-name} stack:
 
 [source,shell]
 ----
@@ -190,7 +190,7 @@ private registry. See the
 xref:/howtos/policy-servers/02-private-registry.adoc[using private registry]
 section of the documentation.
 
-Now you can create Kubewarden policies in your cluster. Policies must be
+Now you can create {short-project-name} policies in your cluster. Policies must be
 available in your private registry.
 
 [source,yaml]

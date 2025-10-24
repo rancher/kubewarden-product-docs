@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Custom OpenTelemetry Collector
 :revdate: 2025-10-10
 :page-revdate: {revdate}
-:description: How to use a custom OpenTelemetry Collector with {short-project-name}.
+:description: How to use a custom OpenTelemetry Collector with {project-name}.
 :keywords: kubewarden, kubernetes, metrics, tracing, opentelemetry
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
@@ -19,7 +19,7 @@ cluster.
 
 First, begin by installing the dependencies of OpenTelemetry Collector.
 
-You need encrypted communication between the {short-project-name} components
+You need encrypted communication between the {project-name} components
 and the collector. You can use https://cert-manager.io/[cert-manager] to manage
 all the certificates required for secure communication.
 

@@ -2,19 +2,17 @@ include::partial$variables.adoc[]
 = Policy evaluation timeout protection
 :revdate: 2025-07-28
 :page-revdate: {revdate}
-:description: Policy evaluation timeout protection for Kubewarden
+:description: Policy evaluation timeout protection for {project-name}
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-evaluation-timeout"]
 :doc-type: ["reference"]
 :keywords: ["kubewarden", "kubernetes", "policy timeout protection"]
-:sidebar_label: Policy evaluation timeout
-:sidebar_position: 90
 :current-version: {page-origin-branch}
 
 [IMPORTANT]
 ====
 
-This feature is available starting from Kubewarden v1.5.0 for per-Policy-Server
+This feature is available starting from {project-name} v1.5.0 for per-Policy-Server
 timeout, and from v1.29.0 for per-Policy timeout.
 
 ====
@@ -25,13 +23,13 @@ can take.
 
 == Purpose
 
-You can write Kubewarden policies using both traditional programming languages
+You can write {short-project-name} policies using both traditional programming languages
 (like xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go],
 xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] and
 xref:../tutorials/writing-policies/index.adoc[others]) or using the special
 query language
 xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Both
-approaches have merits so a goal of Kubewarden is to let the policy authors
+approaches have merits so a goal of {short-project-name} is to let the policy authors
 choose the best tool for their needs.
 
 When using a traditional
@@ -70,7 +68,7 @@ timeout.
 
 ### Per Policy
 
-Starting with Kubewarden v1.29.0, every Kubewarden Policy can set its own
+Starting with {short-project-name} v1.29.0, every {short-project-name} Policy can set its own
 timeout value via its `spec.timeoutEvalSeconds` attribute. This is not to be
 confused with `spec.timeoutSeconds`, used for the Webhook timeout (see section
 [below](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
@@ -118,7 +116,7 @@ spec:
 
 === Per Policy Server
 
-Starting with Kubewarden v1.5.0, Policy Servers come with a configurable
+Starting with {short-project-name} v1.5.0, Policy Servers come with a configurable
 evaluation timeout, enabled by default. Interruption of a request evaluation
 takes place after 2 seconds. This configuration affects all policies scheduled
 in that Policy Server. The per-Policy configurable `spec.timeoutEvalSeconds`
@@ -163,9 +161,9 @@ spec:
 
 == Comparison with Kubernetes Dynamic Admission Controller timeout
 
-Kubewarden is a https://en.wikipedia.org/wiki/Webhook[webhook] implementation of the https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetes Dynamic Admission Controller].
+{short-project-name} is a https://en.wikipedia.org/wiki/Webhook[webhook] implementation of the https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetes Dynamic Admission Controller].
 
-Internally, the Kubernetes API server makes an HTTP request to  Kubewarden's
+Internally, the Kubernetes API server makes an HTTP request to  {short-project-name}'s
 Policy Server describing an event that's about to happen. After the HTTP
 request, Kubernetes API Server waits for an answer.. However, the Kubernetes
 API server doesn't wait forever. After a certain amount of time it considers
@@ -191,7 +189,7 @@ ____
 That means that, regardless of the policy evaluation timeout feature, each
 Kubernetes admission request is subject to a timeout.
 
-Every Kubewarden Policy can set its own timeout value via the `timeoutSeconds`
+Every {short-project-name} Policy can set its own timeout value via the `timeoutSeconds`
 attribute of the `ClusterAdmissionPolicy` and `AdmissionPolicy` custom resources.
 By default, the timeout value is 10 seconds.
 
@@ -211,11 +209,11 @@ to two different timeouts:
 ====
 
 Now you can examine the following scenarios to better understand the
-differences between Kubernetes' Webhook timeout and Kubewarden's policy
+differences between Kubernetes' Webhook timeout and {short-project-name}'s policy
 evaluation timeout.
 
 
-=== Kubewarden policy evaluation timeout is disabled
+=== {short-project-name} policy evaluation timeout is disabled
 
 Assume you have a Policy Server that has the policy evaluation timeout feature
 turned off, and no policy scheduled on it has set their
@@ -235,7 +233,7 @@ Policy Server runs out of computational resources. It's unable to respond
 to the Kubernetes API server. This is equal to a Denial Of Service (DOS)
 attack on the Policy Server.
 
-=== Kubewarden policy evaluation timeout is enabled
+=== {short-project-name} policy evaluation timeout is enabled
 
 Assume a scenario where the same Policy Server now has the policy evaluation
 timeout feature enabled, either globally in the Policy Server, or in the Policy
@@ -246,7 +244,7 @@ The Kubernetes API server sends an admission request for evaluation by this
 buggy policy. As a result, policy evaluation enters an infinite loop.
 Meanwhile, the Kubernetes API server is waiting for a response.
 
-After two seconds, Kubewarden's policy evaluation timeout feature interrupts
+After two seconds, {short-project-name}'s policy evaluation timeout feature interrupts
 the policy evaluation and produces a rejection response. The response contains
 a message explaining that rejection happened because the policy evaluation
 didn't complete in time.
@@ -254,7 +252,7 @@ didn't complete in time.
 [NOTE]
 ====
 
-Setting Kubewarden's policy evaluation timeout to a value as high as the
+Setting {short-project-name}'s policy evaluation timeout to a value as high as the
 Kubernetes' webhook timeout isn't a good choice.
 
 While the policy evaluation is still interrupted, reducing the chances of a DOS

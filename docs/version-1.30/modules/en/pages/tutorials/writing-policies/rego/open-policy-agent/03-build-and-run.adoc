@@ -1,13 +1,12 @@
 include::partial$variables.adoc[]
-= Build and run a OPA policy for Kubewarden
+= Build and run a OPA policy for {short-project-name}
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Build and run a OPA policy for Kubewarden.
+:description: Build and run a OPA policy for {project-name}.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "build-and-run"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "build and run", "open policy agent", "opa", "rego"]
-:sidebar_label: Build and run
 :current-version: {page-origin-branch}
 
 In the previous section you wrote your Rego policy.

@@ -1,14 +1,13 @@
 include::partial$variables.adoc[]
-= Kubewarden vs OPA Gatekeeper
+= {project-name} vs OPA Gatekeeper
 :revdate: 2025-07-09
 :page-revdate: {revdate}
 :page-aliases: explanations/opa-comparison.adoc
-:description: A brief comparison of the difference between Kubewarden and OPA Gatekeeper.
+:description: A brief comparison of the difference between {project-name} and OPA Gatekeeper.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["explanations", "kubewarden-vs-opa_gatekeeper"]
 :doc-type: ["explanation"]
-:keywords: ["kubewarden", "kubernetes", "opa gatekeeper", "comparison"]
-:sidebar_label: Kubewarden vs OPA Gatekeeper
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "opa gatekeeper", "comparison"]
 :current-version: {page-origin-branch}
 
 [IMPORTANT]
@@ -22,14 +21,14 @@ at the bottom of the page.
 
 ====
 
+Both OPA Gatekeeper and Kubewarden, from which {project-name} is derived, are open source projects, 
+and part of CNCF.
 
-Both OPA Gatekeeper and Kubewarden are open source projects, and part of CNCF.
-
-This table provides a comparison between OPA Gatekeeper and Kubewarden. Topics
+This table provides a comparison between OPA Gatekeeper and {short-project-name}. Topics
 requiring more information have links to further explanation.
 
 |===
-| Feature | OPA Gatekeeper | Kubewarden
+| Feature | OPA Gatekeeper | {short-project-name}
 
 | Validation
 | ✅
@@ -95,10 +94,10 @@ https://open-policy-agent.github.io/gatekeeper/website/docs/mutation[here]).
 ====
 
 
-You can write Kubewarden policies using different paradigms. Policy authors can
+You can write {short-project-name} policies using different paradigms. Policy authors can
 use both traditional programming languages (like Go, Rust and others) or
 https://en.wikipedia.org/wiki/Domain-specific_language[Domain Specific
-Languages] like Rego and CEL. In Kubewarden's you write validating and mutating
+Languages] like Rego and CEL. In {short-project-name}'s you write validating and mutating
 policies the same way.
 
 [CAUTION]
@@ -110,7 +109,7 @@ open source project, part of the Open Policy Agent project, uses Rego.
 Despite using the same language, policies written for kube-mgmt aren't
 compatible with OPA Gatekeeper and vice versa.
 
-Kubewarden can use Rego policies written for both Open Policy
+{short-project-name} can use Rego policies written for both Open Policy
 Agent and for OPA Gatekeeper. More information is
 xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[here].
 
@@ -122,10 +121,10 @@ xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[here].
 Sometimes a policy needs data about the current state of the cluster to make a
 validation or mutation decision. For example, a policy validating Ingress
 resources might need to know other Ingress resources already defined in the
-cluster to ensure no clashes happen. Kubewarden calls these policies "context
+cluster to ensure no clashes happen. {short-project-name} calls these policies "context
 aware".
 
-Both OPA Gatekeeper and Kubewarden support these types of policies.
+Both OPA Gatekeeper and {short-project-name} support these types of policies.
 
 When deploying OPA Gatekeeper, a Kubernetes administrator decides which type of
 cluster data to make available to the policies at evaluation time.
@@ -136,7 +135,7 @@ policies deployed.
 For example, if an OPA Gatekeeper policy requires access to Kubernetes Secrets,
 all the other policies deployed are able to read this data as well.
 
-Conversely, Kubewarden provides a granular access to cluster resources.
+Conversely, {short-project-name} provides a granular access to cluster resources.
 Each policy has access only to the resources that the Kubernetes administrator
 specifies. Attempting to read unauthorized data is immediately blocked and
 reported to the cluster administrators.
@@ -146,7 +145,7 @@ reported to the cluster administrators.
 OPA Gatekeeper has a cluster wide Custom Resource, permitting policy
 definition, and how and where to enforce them.
 
-Kubewarden has two different types of Custom Resources used to declare
+{short-project-name} has two different types of Custom Resources used to declare
 policies. One works at the Cluster level, the other is namespaced. The name of
 the namespaced Custom Resource is `AdmissionPolicy`.
 
@@ -159,24 +158,24 @@ This allows Kubernetes administrators to delegate policy-related work.
 
 == Policy distribution
 
-OPA Gatekeeper and Kubewarden policies have policy source code (Rego for OPA
-Gatekeeper, CEL for Kubewarden) in the Custom Resource defining a policy in
+OPA Gatekeeper and {short-project-name} policies have policy source code (Rego for OPA
+Gatekeeper, CEL for {short-project-name}) in the Custom Resource defining a policy in
 Kubernetes.
 
-Also, Kubewarden policies can have the source code of the policy managed like
+Also, {short-project-name} policies can have the source code of the policy managed like
 container images (for Rego, Go, Rust, ...). Once built, they're pushed into
 container registries as OCI artifacts.
 
-You can sign and verify Kubewarden policies using container image tools like
+You can sign and verify {short-project-name} policies using container image tools like
 `cosign`, from the https://sigstore.dev[Sigstore project].
 
-You can distribute Kubewarden policies among geographically distributed
+You can distribute {short-project-name} policies among geographically distributed
 container registries using the traditional tools and processes adopted for
 container images.
 
 == CI/CD integration
 
-Both OPA Gatekeeper and Kubewarden are managed using GitOps methodologies.
+Both OPA Gatekeeper and {short-project-name} are managed using GitOps methodologies.
 
 However, for OPA Gatekeeper, there's a coupling between the policy's Rego code
 and the Custom Resource used to deploy it in Kubernetes.
@@ -192,7 +191,7 @@ files used to declare the OPA Gatekeeper policy. The CI/CD pipeline must
 synchronize the Rego source code to test with the code defined in the OPA
 Gatekeeper Custom Resource. You can do this using third party tools.
 
-Kubewarden policies have CI/CD pipelines like traditional microservices.
+{short-project-name} policies have CI/CD pipelines like traditional microservices.
 Usually their source code lives in a Git repository and then, using traditional
 CI/CD systems, unit tests run against it. You write unit tests using the
 testing frameworks of the language used to write the policy. Once all the tests
@@ -209,12 +208,12 @@ policy configuration.
 The pipeline tests the policy against different types of requests. You can do
 the testing using the https://github.com/kubewarden/kwctl[`kwctl`] CLI tool,
 without requiring a running Kubernetes cluster. The `kwctl` CLI tool uses the
-same evaluation engine used by the Kubewarden stack deployed in a Kubernetes
+same evaluation engine used by the {short-project-name} stack deployed in a Kubernetes
 cluster.
 
 == Policy enforcement modes
 
-Both OPA Gatekeeper and Kubewarden can deploy policies using two different
+Both OPA Gatekeeper and {short-project-name} can deploy policies using two different
 operation modes:
 
 * `deny`: violation of a policy rejects the request
@@ -223,16 +222,16 @@ operation modes:
 == Deployment mode
 
 The same server evaluates all the OPA Gatekeeper policies. Conversely,
-Kubewarden allows definition of multiple evaluation servers. You define these
+{short-project-name} allows definition of multiple evaluation servers. You define these
 servers by a Custom Resource called `PolicyServer`.
 
-When declaring a Kubewarden policy, the Kubernetes administrator decides which
+When declaring a {short-project-name} policy, the Kubernetes administrator decides which
 `PolicyServer` host it.
 
 [NOTE]
 ====
 
-The `PolicyServer` object is a high level abstraction introduced by Kubewarden.
+The `PolicyServer` object is a high level abstraction introduced by {short-project-name}.
 Behind the scenes a `Deployment` with a specific replica size is created.
 
 Each `PolicyServer` can have a different replica size from others.
@@ -249,18 +248,18 @@ This allows interesting scenarios like the following ones:
 As policies are added, removed, and reconfigured the resources already in the
 cluster might become non-compliant.
 
-Both OPA Gatekeeper and Kubewarden have a scanner that operates in the
+Both OPA Gatekeeper and {short-project-name} have a scanner that operates in the
 background. This scanner evaluates resources already defined in the cluster and
 flags non-compliant ones.
 
-The only difference between OPA Gatekeeper and Kubewarden is how the scanner
+The only difference between OPA Gatekeeper and {short-project-name} is how the scanner
 results get saved.
 
 OPA Gatekeeper adds the violation details to the `status` field of a given
 `Constraint` Custom Resource (see
 https://open-policy-agent.github.io/gatekeeper/website/docs/audit#constraint-status[here]).
 
-Kubewarden instead stores the results inside of a set of the Policy Report
+{short-project-name} instead stores the results inside of a set of the Policy Report
 Custom Resources defined by the
 https://github.com/kubernetes-sigs/wg-policy-prototypes/tree/master/policy-report[Policy
 Report working group].

@@ -1,17 +1,17 @@
 include::partial$variables.adoc[]
-= Managing Kubewarden with Rancher Fleet
+= Managing {project-name} with Rancher Fleet
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Managing Kubewarden with Rancher Fleet.
+:description: Managing {project-name} with Rancher Fleet.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher-fleet"]
 :doc-type: ["howto"]
-:keywords: ["kubernetes", "kubewarden", "rancher fleet"]
+:keywords: ["{project-name}","kubernetes", "kubewarden", "rancher fleet"]
 :sidebar_label: Rancher Fleet
 :sidebar_position: 130
 :current-version: {page-origin-branch}
 
-You can manage Kubewarden Helm charts,
+You can manage {project-name} Helm charts,
 like other Helm charts, with https://fleet.rancher.io/[Rancher Fleet].
 Rancher Fleet uses Kubernetes CRDs
 to define a GitOps approach to managing Kubernetes clusters.
@@ -19,7 +19,7 @@ It does this by defining https://fleet.rancher.io/concepts[Fleet Bundles].
 
 == Installing
 
-The Kubewarden charts are standard charts,
+The {short-project-name} charts are standard charts,
 they depend transitively on each other:
 
 `kubewarden-crds` ← `kubewarden-controller` ← `kubewarden-defaults`
@@ -47,10 +47,10 @@ they no longer appear.
 [CAUTION]
 ====
 
-When removing the GitRepo, all 3 Kubewarden charts get removed at once.
+When removing the GitRepo, all 3 {short-project-name} charts get removed at once.
 This means the `kubewarden-crds` chart gets removed.
 
-Kubewarden uses a pre-delete helm hook job in `kubewarden-controller` chart that deletes the default policy-server.
+{short-project-name} uses a pre-delete helm hook job in `kubewarden-controller` chart that deletes the default policy-server.
 This pre-delete hook is necessary to vacate the webhooks of the policies before deleting the PolicyServer.
 This is true any Policy Engine.
 If not, the cluster may have webhooks for policies that don't exist anymore
@@ -73,8 +73,8 @@ Then remove `kubewarden-controller` in the same way,
 and lastly, remove `kubewarden-crds`.
 
 Another option is to add 2 GitRepos, one for the CRDs only,
-and another for the rest of the Kubewarden charts.
-This lets you remove the Kubewarden charts first and the Kubewarden CRDs last.
+and another for the rest of the {short-project-name} charts.
+This lets you remove the {short-project-name} charts first and the {short-project-name} CRDs last.
 
 == Example
 
