@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Publish policies to Artifact Hub
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A brief introduction to publishing Kubewarden policies on Artifact Hub.
+:description: A brief introduction to publishing {project-name} policies on Artifact Hub.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 https://artifacthub.io/[Artifact Hub] is a website where users can find,
 install, and publish packages and configurations for https://cncf.io[CNCF] projects.
 
-Kubewarden policies can be published on Artifact Hub and made
+{project-name} policies can be published on Artifact Hub and made
 discoverable to the wide audience of CNCF users.
 
 [NOTE]
@@ -29,7 +29,7 @@ host your policies.
 ====
 
 
-This document focuses on the steps required to make a Kubewarden policy
+This document focuses on the steps required to make a {short-project-name} policy
 discoverable on Artifact Hub.
 
 == Prepare your Git repository
@@ -103,7 +103,7 @@ panel context"_.
 
 Then press the _"Add"_ button and fill the form:
 
-* Choose _"Kubewarden policies"_ as kind.
+* Choose _"{short-project-name} policies"_ as kind.
 * Enter a _"Name"_ and _"Display name"_ of your choice.
 * Enter the URL to your Git repository.
 * Enter `artifacthub` as the branch to track.

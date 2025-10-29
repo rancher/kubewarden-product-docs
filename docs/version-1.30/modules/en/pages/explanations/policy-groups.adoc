@@ -2,12 +2,12 @@ include::partial$variables.adoc[]
 = Policy Groups
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A description of Kubewarden policy groups
+:description: A description of {project-name} policy groups
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:keywords: ["{project-name}", "kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
 :sidebar_label: Policy Groups
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -97,10 +97,10 @@ This section covers the main configuration fields of a policy group.
 
 === The `policies` attribute
 
-The policies field is a map of ordinary policies. Kubewarden calls policies by
+The policies field is a map of ordinary policies. {project-name} calls policies by
 the policy group, to determine whether accept of reject the resource under
 evaluation. The definitions of these policies are a simplified version of
-ordinary Kubewarden policies, containing only the `module`, `settings` and
+ordinary {short-project-name} policies, containing only the `module`, `settings` and
 `contextAwareResources` attributes. These elements are necessary for the
 policies to function within a policy group.
 

@@ -2,12 +2,12 @@ include::partial$variables.adoc[]
 = Secure supply chain
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: A secure supply chain infrastructure using Kubewarden.
+:description: A secure supply chain infrastructure using {project-name}.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "secure-supply-chain"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["kubewarden", "kubernetes", "secure supply chain", "infrastructure"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "secure supply chain", "infrastructure"]
 :sidebar_label: Secure supply chain
 :sidebar_position: 40
 :current-version: {page-origin-branch}
@@ -24,7 +24,7 @@ with the https://github.com/SigStore/fulcio[fulcio] and
 https://github.com/sigstore/rekor[rekor] infrastructure offered by the Sigstore
 project.
 
-Cluster operators can configure {short-project-name} to only run policies
+Cluster operators can configure {project-name} to only run policies
 signed by trusted entities. Policy developers can sign their policies and
 publish them in a registry.
 
@@ -195,7 +195,7 @@ jobs:
 [NOTE]
 ====
 
-Policy developers can use the Kubewarden policy templates. They have GitHub
+Policy developers can use the {short-project-name} policy templates. They have GitHub
 actions to build, test, sign and publish policies.
 
 ====
@@ -326,7 +326,7 @@ Configuration Reference]. It's used to verify a policy using `kwctl`. The
 `ConfigMap` should define allowable configurations under the
 `verification-config` field.
 
-For example, you want to run policies signed by the Kubewarden GitHub
+For example, you want to run policies signed by the {short-project-name} GitHub
 organization. Then a sample `ConfigMap` for this scenario would be:
 
 .$ cat kubewarden_signatures.yaml
@@ -379,9 +379,9 @@ $ kwctl scaffold verification-config > verification_config.yaml
 ----
 $ kwctl scaffold verification-config > verification_config.yaml
 $ cat verification_config.yaml
-# Default Kubewarden verification config
+# Default {short-project-name} verification config
 #
-# With this config, the only valid policies are those signed by Kubewarden
+# With this config, the only valid policies are those signed by {short-project-name}
 # infrastructure.
 #
 # This config can be saved to its default location (for this OS) with:
@@ -421,9 +421,9 @@ $ kubectl get configmap -o yaml my-signatures-configuration
 apiVersion: v1
 data:
   verification-config: |+
-    # Default Kubewarden verification config
+    # Default {short-project-name} verification config
     #
-    # With this config, the only valid policies are those signed by Kubewarden
+    # With this config, the only valid policies are those signed by {short-project-name}
     # infrastructure.
     #
     # This config can be saved to its default location (for this OS) with:
@@ -691,7 +691,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-This last example tests if a given policy came from the Kubewarden organization:
+This last example tests if a given policy came from the {short-project-name} organization:
 
 [subs="+attributes",console]
 ----

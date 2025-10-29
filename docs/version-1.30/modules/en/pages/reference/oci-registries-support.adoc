@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
-= OCI registry support for Kubewarden
+= OCI registry support for {short-project-name}
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: OCI registry support for Kubewarden.
+:description: OCI registry support for {project-name}.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -11,17 +11,17 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-You distribute your Kubewarden policies as
+You distribute your {project-name} policies as
 https://opencontainers.org[OCI Artifacts]
 using regular Open Container Initiative (OCI) registries.
 
-Kubewarden policy storage is alongside container images.
+{short-project-name} policy storage is alongside container images.
 They don't require extra setup or maintenance
 other than that needed for regular container images.
 
 [NOTE]
 ====
-You can add a registry that works with Kubewarden or
+You can add a registry that works with {short-project-name} or
 correct any registry inaccuracies by using the
 "Edit this page" button at the bottom of the page
 ====
@@ -46,7 +46,7 @@ correct any registry inaccuracies by using the
 
 == Tools that work with OCI registries
 
-The Kubewarden project recommends:
+The {short-project-name} project recommends:
 
 * https://github.com/kubewarden/kwctl[`kwctl`] (our CLI tool).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
@@ -56,7 +56,7 @@ The Kubewarden project recommends:
 
 === Docker Hub
 
-Currently, Docker Hub doesn't support OCI artifacts so can't be used to store Kubewarden policies.
+Currently, Docker Hub doesn't support OCI artifacts so can't be used to store {short-project-name} policies.
 Docker Inc. has announced that Docker Hub will support OCI artifacts in the
 https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[future].
 

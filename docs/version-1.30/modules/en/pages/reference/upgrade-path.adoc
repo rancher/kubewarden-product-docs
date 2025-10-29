@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Upgrade path
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Upgrade path for the Kubewarden stack.
+:description: Upgrade path for the {project-name} stack.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["operator-manual", "upgrade-path"]
 :doc-type: ["reference"]
@@ -11,13 +11,13 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== Kubewarden stack versioning
+== {project-name} stack versioning
 
-The Kubewarden project uses https://semver.org/[Semantic versioning] to define
+The {short-project-name} project uses https://semver.org/[Semantic versioning] to define
 the "stack" version of all its components: the version follows the
 `MAJOR.MINOR.PATCH` pattern. The supported version is the latest release.
 
-The Kubewarden components that follow the rules for the "stack" version are:
+The {short-project-name} components that follow the rules for the "stack" version are:
 
 * `kubewarden-crds` chart, in their appVersion field.
 
@@ -43,7 +43,7 @@ Therefore, if the `kubewarden-controller` version running is `1.1.x`, the
 == Helm chart versions
 
 Helm charts define the `version` field and the `appVersion` field. The
-`appVersion` field informs of the Kubewarden "stack" version as mentioned
+`appVersion` field informs of the {short-project-name} "stack" version as mentioned
 before. The `version` field also follows https://semver.org/[semantic
 versioning] and describes backwards-compatible changes in the chart templates
 and `values.yaml`.
@@ -68,7 +68,7 @@ the two `MAJOR` versions.
 %%{init: "theme": "neutral"}%%
 flowchart LR;
   accTitle: Upgrade path support graph
-  accDescr: A diagram showing recommended and supported upgrade paths for Kubewarden.
+  accDescr: A diagram showing recommended and supported upgrade paths for {short-project-name}.
   1.0.0(1.0.0)-->1.0.1(1.0.1);
   1.0.1-->1.0.2(1.0.2);
   1.0.2-->1.1.0(1.1.0);
@@ -85,27 +85,27 @@ flowchart LR;
 
 == Upgrade order
 
-Kubewarden users should upgrade the stack starting with the `kubewarden-crds`
+{short-project-name} users should upgrade the stack starting with the `kubewarden-crds`
 chart, then the `kubewarden-controller` chart. After that, upgrade the
 `policy-server` (via `kubewarden-defaults` chart or bumping the images of
 custom ones) and `kwctl`.
 
 == Downgrades
 
-Downgrades are *not* supported, and Kubewarden doesn't test them. Nevertheless,
+Downgrades are *not* supported, and {short-project-name} doesn't test them. Nevertheless,
 there's a reasonable expectation that they should work.
 
 == SDKs, policies
 
 Policy SDKs for the different languages and policies maintained by the
-Kubewarden team follow their own semantic versioning. Kubewarden supports the
+{short-project-name} team follow their own semantic versioning. {short-project-name} supports the
 latest release. There is no need for an upgrade path for them, just a bump to
 the latest release.
 
-Changes to the Kubewarden stack may mean that policies and SDKs receive updates
-to use the latest Kubewarden features. Kubewarden takes care to perform these
+Changes to the {short-project-name} stack may mean that policies and SDKs receive updates
+to use the latest {short-project-name} features. {short-project-name} takes care to perform these
 updates in a backwards-compatible manner.
 
-For example, a Kubewarden minor version adding support for Audit Scanner
+For example, a {short-project-name} minor version adding support for Audit Scanner
 (`v1.7.0`) means that policies gained a new `spec.backgroundAudit` field. This
 is optional, backwards-compatible and set to `true` by default.

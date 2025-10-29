@@ -2,15 +2,14 @@ include::partial$variables.adoc[]
 = Testing for cluster operators
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: An introduction to testing Kubewarden policies for cluster operators.
+:description: An introduction to testing {project-name} policies for cluster operators.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "cluster-operators"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
-:sidebar_label: Cluster operators
 :current-version: {page-origin-branch}
 
-As a Kubernetes cluster operator, you'll want to perform testing for Kubewarden policies you want to use.
+As a Kubernetes cluster operator, you'll want to perform testing for {project-name} policies you want to use.
 
 You'll have questions like:
 
@@ -21,13 +20,13 @@ You'll have questions like:
  ** change the configuration parameters of the policy?
  ** and so forth?
 
-Kubewarden has a utility, https://github.com/kubewarden/kwctl[`kwctl`],
+{short-project-name} has a utility, https://github.com/kubewarden/kwctl[`kwctl`],
 that permits testing of the policies outside of Kubernetes.
 
 To use `kwctl` you invoke it with following inputs:
 
 . A WebAssembly binary file URI of the policy to be run.
-The Kubewarden policy can load from the:
+The {short-project-name} policy can load from the:
  ** local filesystem `file://`
  ** a HTTP(s) server `https://`
  ** an OCI registry `registry://`.

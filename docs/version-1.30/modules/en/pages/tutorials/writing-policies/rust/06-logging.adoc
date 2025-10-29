@@ -2,11 +2,11 @@ include::partial$variables.adoc[]
 = Logging
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: How to use logging functionality when writing a Kubewarden policy in Rust.
+:description: How to use logging functionality when writing a {project-name} policy in Rust.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
 :doc-type: ["tutorial"]
-:keywords: ["Kubewarden", "kubernetes", "logging"]
+:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
 :sidebar_label: Logging
 :current-version: {page-origin-branch}
 
@@ -15,7 +15,7 @@ The `policy-server` or `kwctl` forwards those log entries with the appropriate i
 
 The logging library chosen for the Rust SDK is
 https://github.com/slog-rs/slog[`slog`].
-It's a popular, well known crate and integrates cleanly with Kubewarden.
+It's a popular, well known crate and integrates cleanly with {project-name}.
 
 == Initialize logger
 

@@ -4,8 +4,8 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Use cases
 :sidebar_position: 74
-:description: A description of certain use cases for {short-project-name}.
-:keywords: Kubewarden, documentation, use cases, case studies
+:description: A description of certain use cases for {project-name}.
+:keywords: {project-name}, documentation, use cases, case studies
 :doc-persona: kubewarden-all
 :doc-type: explanation
 :doc-topic: explanation
@@ -14,7 +14,7 @@ These are a few example use cases for {project-name}'s xref:/personas.adoc[perso
 
 == Case A: As a Kubernetes operator, I want to ensure my cluster is safe and compliant.
 
-I deploy {short-project-name} and its default configuration with its
+I deploy {project-name} and its default configuration with its
 `kubewarden-defaults` Helm chart, in the `kubewarden` Namespace. This deploys a
 default PolicyServer and recommended ClusterAdmissionPolicies in the
 `kubewarden` namespace, solely under the control of the Kubernetes operator.

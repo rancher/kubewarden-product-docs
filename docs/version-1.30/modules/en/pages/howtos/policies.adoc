@@ -2,11 +2,11 @@ include::partial$variables.adoc[]
 = Configuring policies
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Dependency matrix of Kubewarden.
+:description: Dependency matrix of {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policies"]
 :doc-type: ["howto"]
-:keywords: ["policies", "ClusterAdmissionPolicies", "AdmissionPolicies", "configuration", "namespaces"]
+:keywords: ["{project-name}", "policies", "ClusterAdmissionPolicies", "AdmissionPolicies", "configuration", "namespaces"]
 :sidebar_label: Configuring policies
 :sidebar_position: 90
 :current-version: {page-origin-branch}

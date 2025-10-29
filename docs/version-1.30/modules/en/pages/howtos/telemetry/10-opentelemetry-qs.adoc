@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Open Telemetry quick start
 :revdate: 2025-10-10
 :page-revdate: {revdate}
-:description: An Open Telemetry quickstart for {short-project-name}.
+:description: An Open Telemetry quickstart for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "opentelemetry", "quick-start"]
 :doc-type: ["howto"]
@@ -14,7 +14,7 @@ https://opentelemetry.io/[OpenTelemetry] is a Cloud Native Computing Foundation
 (CNCF) framework for observability. It enables your microservices to provide
 metrics, logs and traces.
 
-{short-project-name}'s components, using the OpenTelemetry SDK, report data to
+{project-name}'s components, using the OpenTelemetry SDK, report data to
 an OpenTelemetry collector — called the agent.
 
 This guide explains how to deploy the OpenTelemetry collector in `sidecar` mode

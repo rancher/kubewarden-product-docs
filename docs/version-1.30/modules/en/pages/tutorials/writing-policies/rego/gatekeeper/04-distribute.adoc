@@ -1,17 +1,16 @@
 include::partial$variables.adoc[]
-= Distributing a Gatekeeper policy with Kubewarden
+= Distributing a Gatekeeper policy with {project-name}
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Distributing a Gatekeeper policy with Kubewarden.
+:description: Distributing a Gatekeeper policy with {project-name}.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "distribute"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "gatekeeper", "rego"]
-:sidebar_label: Distribute
 :current-version: {page-origin-branch}
 
 Policies have to be annotated for them to be pushed,
-and eventually executed by the Kubewarden `policy-server` in a Kubernetes cluster.
+and eventually executed by the {project-name} `policy-server` in a Kubernetes cluster.
 
 Annotating and distributing a Gatekeeper policy is similar to distributing an Open Policy Agent one.
 
@@ -33,7 +32,7 @@ annotations:
   io.kubewarden.policy.title: no-default-namespace
   io.kubewarden.policy.version: 0.1.0 # should match the OCI tag
   io.kubewarden.policy.description: This policy will reject any resource created inside the default namespace
-  io.kubewarden.policy.author: The Kubewarden Authors
+  io.kubewarden.policy.author: The {short-project-name} Authors
   io.kubewarden.policy.url: https://github.com/kubewarden/some-policy
   io.kubewarden.policy.source: https://github.com/kubewarden/some-policy
   io.kubewarden.policy.license: Apache-2.0

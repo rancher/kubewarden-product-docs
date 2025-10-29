@@ -1,17 +1,15 @@
 include::partial$variables.adoc[]
-= Installing kwctl (Kubewarden CLI)
+= Installing kwctl ({project-name} CLI)
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:sidebar_label: Install kwctl
-:sidebar_position: 15
 :title: Installing kwctl
 :description: Installing kwctl
-:keywords: kubewarden, kubernetes, install kwctl, install, kwctl
+:keywords: ["{project-name}", kubewarden, kubernetes, install kwctl, install, kwctl]
 :doc-persona: kubewarden-all
 :doc-type: howto
 :doc-topic: install-kwctl
 
-`kwctl` is the command-line interface (CLI) tool for Kubewarden. Below are installation instructions for some operating systems.
+`kwctl` is the command-line interface (CLI) tool for {project-name}. Below are installation instructions for some operating systems.
 
 [tabs]
 ====
@@ -179,7 +177,7 @@ Windows::
 Install for Windows
 
 . Download `kwctl`:
-    .. Open your browser and go to the https://github.com/kubewarden/kwctl/releases/latest[Kubewarden releases page].
+    .. Open your browser and go to the https://github.com/kubewarden/kwctl/releases/latest[{short-project-name} releases page].
     .. Download the `kwctl-windows-x86_64.zip` file.
 
 . Extract the files from the downloaded zip file. It will contain:

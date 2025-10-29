@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Metrics reference
 :revdate: 2025-07-09
 :page-revdate: {revdate}
-:description: Metrics reference documentation for Kubewarden.
+:description: Metrics reference documentation for {project-name}.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-Kubewarden exposes relevant platform metrics allowing cluster administrators and
+{short-project-name} exposes relevant platform metrics allowing cluster administrators and
 policy developers to identify patterns and potential issues.
 
 == Policy Server

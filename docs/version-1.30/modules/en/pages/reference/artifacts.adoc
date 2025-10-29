@@ -1,8 +1,6 @@
 include::partial$variables.adoc[]
-:sidebar_label: Artifacts
-:sidebar_position: 20
-:title: Kubewarden artifacts
-:description: List of Kubewarden artifacts
+:title: {project-name} artifacts
+:description: List of {project-name} artifacts
 :keywords: [artifacts, support, airgap, images]
 :doc-persona: [kubewarden-operator]
 :doc-type: [reference]
@@ -12,10 +10,10 @@ include::partial$variables.adoc[]
 :revdate: 2025-07-09
 :page-revdate: {revdate}
 
-== Verifying Kubewarden
+== Verifying {project-name}
 
 There is a tutorial on xref:/tutorials/verifying-kubewarden.adoc[verifying
-Kubewarden] demonstrating how to verify Kubewarden artifacts.
+{short-project-name}] demonstrating how to verify {short-project-name} artifacts.
 
 == Binaries
 
@@ -35,6 +33,6 @@ in `ghcr.io` under https://github.com/orgs/kubewarden/packages.
 
 == Helm charts via HTTPS
 
-Kubewarden publishes Helm charts in the Helm chart HTTPS repository at
+{short-project-name} publishes Helm charts in the Helm chart HTTPS repository at
 https://charts.kubewarden.io. They're without SLSA, or signatures, but this
 type of Helm repository provides searching.

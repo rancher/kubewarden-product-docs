@@ -4,17 +4,17 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: ArgoCD Installation
 :sidebar_position: 35
-:description: How to install Kubewarden with ArgoCD
-:keywords: [kubewarden, gitops, argocd]
+:description: How to install {project-name} with ArgoCD
+:keywords: ["{project-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]
 :doc-topic: [argocd-installation]
 
 If you are using ArgoCD to manage your Kubernetes resources, you may be
-interested in installing Kubewarden using ArgoCD. This is possible, but there
-are certain considerations to consider. Since Kubewarden v1.17.0, the
+interested in installing {project-name} using ArgoCD. This is possible, but there
+are certain considerations to consider. Since {short-project-name} v1.17.0, the
 cert-manager dependency has been removed. There is a new certificate reconciler
-that automatically renews the certificates. This means that the Kubewarden
+that automatically renews the certificates. This means that the {short-project-name}
 controller takes care of creating and renewing the certificates for you,
 including both the root CA and all the webhook certificates.
 
@@ -130,7 +130,7 @@ spec:
 [NOTE]
 ====
 In the example above, the key aspect is the `ignoreDifferences`
-configuration for the Kubewarden controller application. The rest of the
+configuration for the {short-project-name} controller application. The rest of the
 content is included to provide context on how the ArgoCD application should
 be configured and to offer a complete example.
 ====

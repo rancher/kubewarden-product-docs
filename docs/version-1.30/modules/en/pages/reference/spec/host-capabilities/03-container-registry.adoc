@@ -12,10 +12,10 @@ include::partial$variables.adoc[]
 
 Container registries can be used to distribute many types of OCI objects.
 From well-known container images to generic OCI Artifacts.
-OCI Artifacts are used to store objects such as Kubewarden policies,
+OCI Artifacts are used to store objects such as {project-name} policies,
 Helm charts, and more.
 
-These are the capabilities exposed by the Kubewarden host,
+These are the capabilities exposed by the {short-project-name} host,
 to interact with container registries.
 
 == Get OCI manifest digest
@@ -26,13 +26,13 @@ opposed to `tags` which are mutable.
 
 === Caching
 
-Computing the digest involves a series of network requests between the Kubewarden policy host and the remote registry.
+Computing the digest involves a series of network requests between the {short-project-name} policy host and the remote registry.
 These operations can be time expensive,
 so the results are cached for 1 minute.
 
 === Authentication
 
-Interactions with private registries require the Kubewarden policy host to authenticate against the remote registry.
+Interactions with private registries require the {short-project-name} policy host to authenticate against the remote registry.
 
 The policy host will use the same set of credentials used to fetch policies
 from the remote registry.
@@ -73,13 +73,13 @@ platforms. Or a single image manifest for the image.
 
 === Caching
 
-Fetching this information involves network requests between the Kubewarden
+Fetching this information involves network requests between the {short-project-name}
 policy host and the remote registry. These operations can be time expensive so
 the results are cached for 1 minute.
 
 === Authentication
 
-Interactions with private registries require the Kubewarden policy host to
+Interactions with private registries require the {short-project-name} policy host to
 authenticate against the remote registry.
 
 The policy host uses the same set of credentials as that used to fetch policies
@@ -205,13 +205,13 @@ configuration information used by the container runtime to run it.
 
 === Caching
 
-Fetching this information involves network requests between the Kubewarden
+Fetching this information involves network requests between the {short-project-name}
 policy host and the remote registry. These operations can be time expensive so
 the results are cached for 1 minute.
 
 === Authentication
 
-Interactions with private registries require the Kubewarden policy host to
+Interactions with private registries require the {short-project-name} policy host to
 authenticate against the remote registry.
 
 The policy host uses the same set of credentials as that used to fetch policies
