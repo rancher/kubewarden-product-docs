@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Glossary
-:revdate: 2025-07-09
+:revdate: 2025-11-03
 :page-revdate: {revdate}
 :description: {project-name} glossary
 :doc-persona: ["kubewarden-all"]
@@ -24,10 +24,10 @@ the namespace in which the AdmissionPolicy is defined.
 
 An <<_admissionpolicy,AdmissionPolicy>> which targets cluster-wide resources.
 
-=== ClusterPolicyReport
+=== ClusterReport
 
-A <<_policyreport,PolicyReport>> and a ClusterPolicyReport store results of
-policy scans. Which one is used, depends on the scope of the resource.
+A <<_report,Report>> and a ClusterReport store results of policy scans. Which
+one is used, depends on the scope of the resource.
 
 == K
 
@@ -47,9 +47,9 @@ this is how a {short-project-name} controller informs Kubernetes where to find a
 
 == P
 
-=== PolicyReport
+=== Report
 
-A PolicyReport and a <<_clusterpolicyreport,ClusterPolicyReport>> store results of
+A Report and a <<_clusterreport,ClusterReport>> store results of
 policy scans. Which one is used depends on the scope of the resource.
 
 [#_policy_server]

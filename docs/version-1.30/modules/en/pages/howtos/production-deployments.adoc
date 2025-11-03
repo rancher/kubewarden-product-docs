@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Configuring the {project-name} stack for production
-:revdate: 2025-07-09
+:revdate: 2025-11-03
 :page-revdate: {revdate}
 :description: Configuring {project-name} stack for production
 :keywords: ["{project-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
@@ -468,6 +468,6 @@ scan times in big clusters, you may need to increase the policy server
 resources available to avoid impacting the admission controller performance.
 ====
 
-Set `disableStore: true` to reduce load if you consume audit results
-from logs and do not require policy `Reports` nor `ClusterReports` custom
-resources in the cluster.
+Set `disableStore: true` to reduce load if you consume audit results from logs
+and don't require policy `Reports` nor `ClusterReports` custom resources in the
+cluster.

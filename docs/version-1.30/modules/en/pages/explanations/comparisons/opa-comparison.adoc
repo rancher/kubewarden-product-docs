@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = {project-name} vs OPA Gatekeeper
-:revdate: 2025-07-09
+:revdate: 2025-11-03
 :page-revdate: {revdate}
 :page-aliases: explanations/opa-comparison.adoc
 :description: A brief comparison of the difference between {project-name} and OPA Gatekeeper.
@@ -259,7 +259,5 @@ OPA Gatekeeper adds the violation details to the `status` field of a given
 `Constraint` Custom Resource (see
 https://open-policy-agent.github.io/gatekeeper/website/docs/audit#constraint-status[here]).
 
-{short-project-name} instead stores the results inside of a set of the Policy Report
-Custom Resources defined by the
-https://github.com/kubernetes-sigs/wg-policy-prototypes/tree/master/policy-report[Policy
-Report working group].
+{short-project-name} instead stores the results inside of a set of the Reports
+Custom Resources defined by https://openreports.io[openreports.io].

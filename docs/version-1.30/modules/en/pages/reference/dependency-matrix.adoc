@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Dependency matrix
-:revdate: 2025-07-09
+:revdate: 2025-11-03
 :page-revdate: {revdate}
 :description: Dependency matrix of {project-name}.
 :doc-persona: [“kubewarden-all”]
@@ -57,7 +57,12 @@ Needed for specific features.
 | CRD dependency | Version | Helm chart `version` | Feature
 
 | `policyreports.wgpolicyk8s.io` CRDs
-| `v1alpha1`
+| `v1beta1`
+| In `kubewarden-defaults` chart or manually installed
+| Audit Scanner
+
+| `openreports.io` CRDs
+| `v1alpha2`
 | In `kubewarden-defaults` chart or manually installed
 | Audit Scanner
 |===
