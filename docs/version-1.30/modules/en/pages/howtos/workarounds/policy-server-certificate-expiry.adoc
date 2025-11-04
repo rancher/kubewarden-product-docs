@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
-= Policy Server certificate rotation issue
-:revdate: 2025-07-09
+= Policy Server certificate rotation issue for release ≤ v1.16.0
+:revdate: 2025-11-04
 :page-revdate: {revdate}
 :description: How-to work around Policy Server certificate expiry issue
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
@@ -14,17 +14,25 @@ include::partial$variables.adoc[]
 [IMPORTANT]
 .Workaround for {project-name} v1.16.0 and earlier
 ====
-This workaround is only needed for {short-project-name} v1.16.0 and earlier. Starting from
-v1.17.0, the controller automatically renews the policy server certificates.
+
+This workaround is only needed for {short-project-name} v1.16.0 and earlier.
+Starting from v1.17.0, the controller automatically renews the policy server
+certificates.
+
 ====
 
-During the release process for v1.14, a bug related to the policy server certificate rotation was discovered.
-The Root CA is configured to expire in 10 years, but each policy-server certificate secret has a one-year expiry.
-However, the controller is currently unable to renew them automatically.
+During the release process for v1.14, the {short-project-name} discovered a bug
+related to the policy server certificate rotation. The Root CA configuration is
+for 10-year expiry, but each policy-server certificate secret has a one-year
+expiry. However, the controller is currently unable to renew them
+automatically.
 
-In the v1.14 release, we have ensured that policy-server secrets are created with a 10-year expiry.
+In the v1.14 release, the {short-project-name} ensured that policy-server
+secrets are created with a 10-year expiry.
 
-For future releases we'll implement an automated renewal process.
+An automated renewal process is in place for release ≥ v1.16.0.
 
-Until then, users can manually delete the expired certificate secret (policy-server-default) and trigger a controller reconciliation.
-You do this by adding, removing, or updating a policy or by adjusting the number of replicas of a PolicyServer.
+Until then, users can manually delete the expired certificate secret
+(policy-server-default) and trigger a controller reconciliation. You do this by
+adding, removing, or updating a policy or by adjusting the number of replicas
+of a PolicyServer.
