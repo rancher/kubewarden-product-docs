@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Reusing ValidatingAdmissionPolicies
-:revdate: 2025-10-10
+:revdate: 2025-11-03
 :page-revdate: {revdate}
 :description: Example: Reusing ValidatingAdmissionPolicies
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
@@ -168,7 +168,7 @@ Notice the commented numbers on both the YAML manifests. Let's expand on them:
 | 6   | `---`                             | `failurePolicy`                          | Webhook behavior, for Kubernetes API Webhook error or timeout, or for matchConditions evaluation. Not to confuse with (1).
 | 7   | `validationActions`               | `mode`                                   | `mode` has as options `protect` and `monitor`. Auditing is more full featured in {short-project-name}, see (9).
 | 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Define ways to constraint using Selectors. {short-project-name}'s policies have them as `namespaceSelector` and `objectSelector`.
-| 9   | `auditAnnotations` (not pictured) | `backgroundAudit`, annotations           | Use {short-project-name} fields instead to set the policy usage in xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], and its category and severity for PolicyReports.
+| 9   | `auditAnnotations` (not pictured) | `backgroundAudit`, annotations           | Use {short-project-name} fields instead to set the policy usage in xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], and its category and severity for OpenReports.
 |     | `matchConditions`                 | `matchConditions`                        | {short-project-name}'s policies have `matchConditions` (not pictured in this example).
 |     | `---`                             | {short-project-name}-only features                 | For other features, see the rest of tutorial CEL examples.
 |===
