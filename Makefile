@@ -20,6 +20,7 @@ rancher-dsc-local: tmpdir environment
 	npx antora --version | tee -a tmp/rancher-dsc-local-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-rancher-dsc-local.yml  2>&1 | tee -a tmp/rancher-dsc-local-build.log
+	@if [ $$(which suse-pd-apset 2>/dev/null) ]; then suse-pd-apset build-rancher-dsc-local; fi
 
 .PHONY: local-community
 local-community: tmpdir environment
@@ -30,6 +31,7 @@ local-community: tmpdir environment
 		2>&1 | tee -a tmp/local-community-build.log
 	# Now maintain the default product build configuration
 	bin/switch-prod-comm product | tee tmp/local-community-build.log
+	@if [ $$(which suse-pd-apset 2>/dev/null) ]; then suse-pd-apset build-local-community; fi
 
 .PHONY: remote
 remote: tmpdir environment
