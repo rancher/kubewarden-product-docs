@@ -1,6 +1,6 @@
 site:
   title: SUSE Security Admission Controller
-  start_page: 1.29@admission-controller:en:introduction.adoc
+  start_page: 1.30@admission-controller:en:introduction.adoc
 
 content:
   sources:
@@ -36,6 +36,8 @@ antora:
       mermaid_initialize_options: # <4>
     - require: ./product-docs-common/extensions/dynamic-loading-attributes/load-global-site-attributes.js
       attributefile: ./product-docs-common/global-attributes.yml
+      enabled: true
+    - require: ../product-docs-common/extensions/versions-latest-prerelease/vlp.js
       enabled: true
 
 output:
