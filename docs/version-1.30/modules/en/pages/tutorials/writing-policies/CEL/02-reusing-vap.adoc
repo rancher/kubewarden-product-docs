@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Reusing ValidatingAdmissionPolicies
-:revdate: 2025-11-03
+:revdate: 2025-11-17
 :page-revdate: {revdate}
 :description: Example: Reusing ValidatingAdmissionPolicies
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
@@ -58,14 +58,14 @@ spec:
   validations: # (5)
     - expression: |
         object.spec.replicas <= (
-          params.data.overrideReplicas != null && params.data.overrideReplicas < variables.maxReplicas
-          ? params.data.overrideReplicas
+          has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+          ? int(params.data.overrideReplicas)
           : variables.maxReplicas
         )
       messageExpression: |
         'The number of replicas must be less than or equal to ' +
-        string(params.data.overrideReplicas != null && params.data.overrideReplicas < variables.maxReplicas
-          ? params.data.overrideReplicas
+        string( has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+          ? int(params.data.overrideReplicas)
           : variables.maxReplicas)
 ---
 apiVersion: admissionregistration.k8s.io/v1
@@ -82,6 +82,7 @@ spec:
   paramRef: # (4)
     name: "replica-limit-override"
     namespace: "test"
+    parameterNotFoundAction: Deny
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -107,7 +108,7 @@ metadata:
     io.kubewarden.policy.severity: low # (9)
   name: "cel-policy-replica-example"
 spec:
-  module: registry://ghcr.io/kubewarden/policies/cel-policy:v1.0.0
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:v1.4.0
   failurePolicy: Fail # (6). Webhook behavior. Defaults to "Fail"
   mode: protect # (7). Defaults to "protect"
   rules: # (2)
@@ -115,6 +116,9 @@ spec:
       apiVersions: ["v1"]
       operations: ["CREATE", "UPDATE"]
       resources: ["deployments"]
+  contextAwareResources: # (10). Fine-grained perms for accessing resources
+    - apiVersion: v1
+      kind: ConfigMap
   settings:
     failurePolicy: Fail # (1). CEL behavior. Defaults to "Fail"
     variables: # (3)
@@ -128,17 +132,18 @@ spec:
     paramRef: # (4)
       name: "replica-limit-override"
       namespace: "test"
+      parameterNotFoundAction: Deny
     validations: # (5)
       - expression: |
           object.spec.replicas <= (
-            params.data.overrideReplicas != null && params.data.overrideReplicas < variables.maxReplicas
-            ? params.data.overrideReplicas
+            has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+            ? int(params.data.overrideReplicas)
             : variables.maxReplicas
           )
         messageExpression: |
           'The number of replicas must be less than or equal to ' +
-          string(params.data.overrideReplicas != null && params.data.overrideReplicas < variables.maxReplicas
-            ? params.data.overrideReplicas
+          string( has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+            ? int(params.data.overrideReplicas)
             : variables.maxReplicas)
   backgroundAudit: true # (9). Defaults to "true"
   namespaceSelector: # (8)
@@ -169,6 +174,7 @@ Notice the commented numbers on both the YAML manifests. Let's expand on them:
 | 7   | `validationActions`               | `mode`                                   | `mode` has as options `protect` and `monitor`. Auditing is more full featured in {short-project-name}, see (9).
 | 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Define ways to constraint using Selectors. {short-project-name}'s policies have them as `namespaceSelector` and `objectSelector`.
 | 9   | `auditAnnotations` (not pictured) | `backgroundAudit`, annotations           | Use {short-project-name} fields instead to set the policy usage in xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], and its category and severity for OpenReports.
+|10|`---`|`contextAwareResources` permissions|{short-project-name}}'s policies have fine-grained permissions for reading cluster Resources. Here it is used for reading the params.
 |     | `matchConditions`                 | `matchConditions`                        | {short-project-name}'s policies have `matchConditions` (not pictured in this example).
 |     | `---`                             | {short-project-name}-only features                 | For other features, see the rest of tutorial CEL examples.
 |===
