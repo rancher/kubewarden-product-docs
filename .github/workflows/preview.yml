@@ -42,7 +42,7 @@ jobs:
         with:
           path: build/site
       - name: Push the static site content to gh-pages branch
-        run: s
+        run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           mv build/site ../site-temp
