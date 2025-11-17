@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Rust
-:revdate: 2025-07-09
+:revdate: 2025-10-08
 :page-revdate: {revdate}
 :description: An introduction to writing Kubewarden policies with Rust.
 :doc-persona: ["kubewarden-policy-developer"]
@@ -30,7 +30,7 @@ Once you have installed `rustup` add the WebAssembly System Interface (WASI) tar
 
 [subs="+attributes",console]
 ----
-rustup target add wasm32-wasi
+rustup target add wasm32-wasip1
 ----
 
 == OSX dependencies

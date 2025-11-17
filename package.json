@@ -5,6 +5,7 @@
     "@asciidoctor/tabs": "^1.0.0-beta.6"
   },
   "dependencies": {
+    "semver": "^7.5.4",
     "@antora/lunr-extension": "^1.0.0-alpha.8",
     "@antora/pdf-extension": "^1.0.0-alpha.11",
     "@sntke/antora-mermaid-extension": "^0.0.6",
