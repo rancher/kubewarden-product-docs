@@ -1,14 +1,12 @@
 ---
 root_level: 0
 
-component_versions: '*'
-
-# component_version_filter:
-#   names: [shared, docs/version-1.29, docs/version-1.28]
+component_version_filter:
+  names: '*'
 
 asciidoc:
   attributes:
-    allow-uri-read: ''
+    allow-uri-read: 'true'
     page-origin-branch: Not relevant for pdf build.
     pdf-generation: ''
     toc: ''
@@ -19,5 +17,6 @@ asciidoc:
     pdf-fontsdir: ../../doc-suse-com/dsc-style-bundle/supplemental-files/rancher/pdf/fonts/SUSE
 
 build:
+  dir: build-rancher-dsc-local/pdfs
   command: |
     bundle exec asciidoctor-pdf -r asciidoctor-kroki --sourcemap --trace --theme ${pdf-theme} -a pdf-fontsdir=${pdf-fontsdir}
