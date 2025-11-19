@@ -56,6 +56,7 @@ NPM_FLAGS = --no-color --no-progress
 .PHONY: environment
 environment:
 	npm $(NPM_FLAGS) ci || npm $(NPM_FLAGS) install
+	bundle install
 
 .PHONY: tmpdir
 tmpdir:
