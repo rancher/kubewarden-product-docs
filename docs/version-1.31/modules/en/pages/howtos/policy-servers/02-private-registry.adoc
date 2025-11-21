@@ -1,13 +1,13 @@
 include::partial$variables.adoc[]
+
 = Configuring PolicyServers to use private registries
-:revdate: 2025-11-17
+:revdate: 2025-11-20
 :page-revdate: {revdate}
 :description: Configuring PolicyServers to use private registries in {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "private-registry"]
 :doc-type: ["howto"]
 :keywords: ["{project-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
-:sidebar_label: Using private registries
 :current-version: {page-origin-branch}
 
 It's possible to configure PolicyServers to use credentials of private OCI
@@ -46,6 +46,15 @@ kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker 
   --docker-password=mypass123 \
   --docker-server=myregistry.io
 ----
+
+[TIP]
+====
+
+Label the Secret as specified in
+xref:/howtos/rancher-backup-operator.adoc#_user_secrets[User secrets] for it to
+be part of backups done by Rancher Backup Operator
+
+====
 
 For more information on how to create the Docker Secrets, see the
 https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Kubernetes
