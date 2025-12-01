@@ -1,4 +1,5 @@
 include::partial$variables.adoc[]
+
 = ArgoCD Installation
 :revdate: 2025-11-17
 :page-revdate: {revdate}
@@ -11,12 +12,12 @@ include::partial$variables.adoc[]
 :doc-topic: [argocd-installation]
 
 If you're using ArgoCD to manage your Kubernetes resources, you may want to
-install Kubewarden using ArgoCD. This is possible, but there are certain
-considerations. Since Kubewarden v1.17.0, the cert-manager dependency is
-removed. There is a new certificate reconciler that automatically renews the
-certificates. This means that the Kubewarden controller takes care of creating
-and renewing the certificates for you. This includes both the root CA and all
-webhook certificates.
+install {project-name} using ArgoCD. This is possible, but there are certain
+considerations. Since {short-project-name} v1.17.0, the cert-manager dependency
+is removed. There is a new certificate reconciler that automatically renews the
+certificates. This means that the {short-project-name} controller takes care of
+creating and renewing the certificates for you. This includes both the root CA
+and all webhook certificates.
 
 The initial root CA and webhook certificate creation is during the Helm chart
 installation using the available Helm functions. So, during Helm chart
@@ -133,7 +134,10 @@ spec:
 
 [NOTE]
 ====
+
 In the example, the key aspect is the `ignoreDifferences` configuration for the
-Kubewarden controller application. The rest of the content provides context on
-how to configure the ArgoCD application and to provide a complete example.
+{short-project-name} controller application. The rest of the content provides
+context on how to configure the ArgoCD application and to provide a complete
+example.
+
 ====

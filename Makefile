@@ -47,6 +47,24 @@ remote-community: tmpdir environment
 		2>&1 | tee -a tmp/remote-community-build.log
 	bin/switch-prod-comm product | tee -a tmp/remote-community-build.log
 
+.PHONY: first-local
+first-local: tmpdir environment
+	bin/switch-prod-comm product | tee tmp/first-local-build.log
+	npx antora --version | tee -a tmp/first-local-build.log
+	npx antora --stacktrace --log-format=pretty --log-level=info \
+		kw-rancher-first-local.yml \
+		2>&1 | tee -a tmp/remote-community-build.log
+	bin/switch-prod-comm product | tee -a tmp/first-local-build.log
+
+.PHONY: original-local
+original-local: tmpdir environment
+	bin/switch-prod-comm product | tee tmp/original-local-build.log
+	npx antora --version | tee -a tmp/original-local-build.log
+	npx antora --stacktrace --log-format=pretty --log-level=info \
+		kw-rancher-original-local.yml \
+		2>&1 | tee -a tmp/remote-community-build.log
+	bin/switch-prod-comm product | tee -a tmp/original-local-build.log
+
 .PHONY: clean
 clean:
 	rm -rf build*

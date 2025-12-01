@@ -46,7 +46,7 @@ Custom Resource Definitions (CRDs) available. If the necessary
 PolicyReport CRDs are already in the cluster, you can't install them
 using the kubewarden-crds chart. In that case, you can disable the
 installation of PolicyReport CRDs by setting `installPolicyReportCRDs` to
-`false` in the chart. This means that the Kubewarden stack won't manage
+`false` in the chart. This means that the {project-name} stack won't manage
 those CRDs, and the responsibility is the administrators.
 +
 See more information about the CRDs at the https://github.com/kubernetes-sigs/wg-policy-prototypes[policy work group

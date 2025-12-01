@@ -1,4 +1,5 @@
 include::partial$variables.adoc[]
+
 = Audit Scanner - Policy Reports
 :revdate: 2025-11-17
 :page-revdate: {revdate}
@@ -16,7 +17,7 @@ scans using the https://openreports.io/[OpenReports] Custom Resources.
 [CAUTION]
 ====
 
-Since Kubewarden 1.30,
+Since {project-name} 1.30,
 link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport]
 Custom Resources ship as defaults but are marked as deprecated.
 

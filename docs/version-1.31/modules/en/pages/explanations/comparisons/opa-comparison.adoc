@@ -1,4 +1,5 @@
 include::partial$variables.adoc[]
+
 = {project-name} vs OPA Gatekeeper
 :revdate: 2025-11-17
 :page-revdate: {revdate}
@@ -21,7 +22,7 @@ at the bottom of the page.
 
 ====
 
-Both OPA Gatekeeper and Kubewarden, from which {project-name} is derived, are open source projects, 
+Both OPA Gatekeeper and Kubewarden, from which {project-name} is derived, are open source projects,
 and part of CNCF.
 
 This table provides a comparison between OPA Gatekeeper and {short-project-name}. Topics
