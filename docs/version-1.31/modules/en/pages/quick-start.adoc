@@ -11,11 +11,13 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
+ifndef::backend-pdf[]
 ++++
 <head>
 <script async src="https://artifacthub.io/artifacthub-widget.js"></script>
 </head>
 ++++
+endif::backend-pdf[]
 
 The {project-name} stack comprises:
 
@@ -583,14 +585,27 @@ https://github.com/topics/kubewarden-policy[GitHub], or reuse existing Rego
 policies as shown in the xref:tutorials/writing-policies/rego/01-intro-rego.adoc[following
 chapters].
 
+ifdef::backend-pdf[]
+
+There is a
+link:https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[complete
+list] of available policies at ArtifactHub.
+
+endifdef::backend-pdf[]
+
+ifndef::backend-pdf[]
 .Full list of available policies on ArtifactHub
 [%collapsible,subs="+macros"]
 ======
 
 ++++
 
-<div class="artifacthub-widget-group" data-url="https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1" data-theme="light" data-header="false" data-stars="false" data-color="#fe7c3f" data-responsive="true" data-loading="true"></div>
+<div class="artifacthub-widget-group"
+data-url="https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1"
+data-theme="light" data-header="false" data-stars="false" data-color="#fe7c3f"
+data-responsive="true" data-loading="true"></div>
 
 ++++
 
 ======
+endif::backend-pdf[]
