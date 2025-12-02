@@ -13,11 +13,6 @@ include::partial$variables.adoc[]
 :slug: /
 :current-version: {page-origin-branch}
 
-* xref:latest@rancher-manager:en:/about-rancher/overview.adoc#_run_kubernetes_everywhere[link to rancher-manager]
-* xref:dev@admission-controller:en:introduction.adoc#_benefits_and_value[link to dev]
-* xref:latest@admission-controller:en:introduction.adoc#_benefits_and_value[link to latest]
-* xref:latest@admission-controller:en:xintroduction.adoc#_benefits_and_value[link to broken]
-
 {project-name} is a Kubernetes Policy Engine.
 It aims to be the Universal Policy Engine for Kubernetes.
 
