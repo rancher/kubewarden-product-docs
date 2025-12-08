@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :sidebar_label: Webhooks
-:description: Limit access to {project-name} webhooks
+:description: Limit access to webhooks in a Kubernetes cluster by defining network policies that work with Calico and Cilium, and review their examples
 :keywords: kubewarden, kubernetes, security
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: reference

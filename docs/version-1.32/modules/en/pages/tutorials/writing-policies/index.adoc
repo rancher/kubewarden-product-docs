@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing {project-name} policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An introduction to writing {project-name} policies.
+:description: Configure Kubernetes admission policies as plug-ins using Kubewardens well-defined API with ease, leveraging its flexibility for more streamlined deployments
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies"]
 :doc-type: ["tutorial"]

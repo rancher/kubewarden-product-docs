@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Integrating with GitHub Actions
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Integrating with GitHub actions when developing policies for {project-name} in Go.
+:description: Configure tasks for developing policies in Go by automating them through integration with GitHub Actions, which leverages workflows and jobs defined within the
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "github-action-integration"]
 :doc-type: ["tutorial"]

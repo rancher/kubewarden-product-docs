@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Open Telemetry quick start
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An Open Telemetry quickstart for {project-name}.
+:description: Configure your Kubernetes cluster with the official Helm chart to enable observability and monitoring through OpenTelemetry deployment
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "opentelemetry", "quick-start"]
 :doc-type: ["howto"]

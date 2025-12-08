@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = How to use policy groups
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: How to use {project-name} policy groups
+:description: Learn how to create and implement policy combinations with logical expressions in Kubernetes using Kubewarden
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["howto"]

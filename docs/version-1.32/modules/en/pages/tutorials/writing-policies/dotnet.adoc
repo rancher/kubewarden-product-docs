@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = C#
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: {project-name} policies using C# and .NET
+:description: Developers creating policies for Kubewarden with C# and .NET can deploy both validating and mutating policies using the SDK s experimental WebAssembly (WASM)
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "c#"]
 :doc-type: ["tutorial"]

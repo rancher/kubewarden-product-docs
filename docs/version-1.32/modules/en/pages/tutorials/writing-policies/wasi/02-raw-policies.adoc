@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing raw policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Using {project-name} for writing raw policies.
+:description: Learn how to configure and deploy custom raw policies in Kubernetes environments with Kubewardens policy development tools
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "raw-policies"]
 :doc-type: ["tutorial"]

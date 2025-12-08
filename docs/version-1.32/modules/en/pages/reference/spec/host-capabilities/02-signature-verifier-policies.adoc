@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Signature verifier policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Signature verifier policies.
+:description: Implement secure supply chains in your clusters by utilizing signature-verifier policies that check and verify container images
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "signature-verifier-policies"]
 :doc-type: ["reference"]

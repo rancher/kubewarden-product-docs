@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Dependency matrix
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Dependency matrix of {project-name}.
+:description: Learn how to configure and deploy Kubewarden, a Kubernetes governance tool, with specific dependencies that include the OpenTelemetry stack for metrics
 :doc-persona: [“kubewarden-all”]
 :doc-topic: [“operator-manual”, “dependencies”]
 :doc-type: [“reference”]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Quick start
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Getting started with {project-name}, installing the {project-name} stack and taking care of prerequisites and authentication
+:description: Deploy a secure Kubernetes cluster with Kubewarden by installing its stack and configuring prerequisites securely, then learn the specifics
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Air gap installation with Hauler
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Air gap installation for {project-name} using Hauler
+:description: Configure Hauler capabilities to generate a manifest file with all necessary resources needed for running Kubewarden in private environments via a secure
 :keywords: ["{project-name}", kubewarden, kubernetes, air gap installation, hauler]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

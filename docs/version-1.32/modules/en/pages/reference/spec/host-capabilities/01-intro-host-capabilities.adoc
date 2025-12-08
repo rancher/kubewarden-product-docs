@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Host capabilities specification
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Host capabilities specification.
+:description: Learn about the extra capabilities available from the host environment within your Kubewarden policies during policy evaluation
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "introduction"]
 :doc-type: ["reference"]

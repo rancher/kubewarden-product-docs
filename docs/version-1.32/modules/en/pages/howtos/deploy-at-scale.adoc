@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = {project-name} in a Large-Scale Environment
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: {project-name} in a Large-Scale Environment
+:description: Learn how to configure Kubewarden for high availability and performance in large-scale Kubernetes environments through its configuration options
 :keywords: [kubewarden, "{project-name}", kubernetes, policyservers, production]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

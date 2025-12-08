@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Creating a policy
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Creating a {project-name} policy using Rust.
+:description: Learn how to create a Kubewarden policy for Kubernetes clusters by following this step-by-step tutorial that covers writing policies in Rust
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "creating-policies"]
 :doc-type: ["tutorial"]

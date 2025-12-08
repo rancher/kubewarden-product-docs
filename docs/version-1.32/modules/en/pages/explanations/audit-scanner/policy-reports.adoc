@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 = Audit Scanner - Policy Reports
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: The policy reports that the Audit Scanner produces.
+:description: Learn how to store and query policy scan results using Audit Scanner reports within Kubewarden and integrate them into your workflow
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
 :doc-topic: [“explanations”, “audit-scanner”, “policy-reports”]
 :doc-type: [“explanation”]

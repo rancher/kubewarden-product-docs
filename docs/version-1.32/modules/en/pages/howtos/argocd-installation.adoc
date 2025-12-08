@@ -5,7 +5,7 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: ArgoCD Installation
 :sidebar_position: 35
-:description: How to install {project-name} with ArgoCD
+:description: Configure ArgoCD to ignore certificate creation and resolve unsynchronized secret errors continuously
 :keywords: ["{project-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]

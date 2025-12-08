@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Policy metadata
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Using policy metadata when developing a {project-name} policy.
+:description: Learn to configure and use policy metadata when developing effective Kubernetes policies with Kubewarden
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "policy-metadata"]
 :doc-type: ["tutorial"]

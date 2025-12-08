@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Policy Groups
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A description of {project-name} policy groups
+:description: Learn how to create and configure policy groups within your Kubewarden cluster to simplify complex policies by combining existing admission policies
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]

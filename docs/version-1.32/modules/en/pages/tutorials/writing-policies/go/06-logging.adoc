@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Logging
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tutorial introduction to logging when using Go to write a {project-name} policy.
+:description: Configure a logger in your Go policy to enable logging of structured information from both validate and validate settings entry points
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "logging"]
 :doc-type: ["tutorial"]

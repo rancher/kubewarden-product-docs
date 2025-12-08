@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Defining policy settings
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Defining policy setting for a {project-name} policy written in Go.
+:description: Learn how to define and implement policy settings validation for a Kubewarden policy written in Go, including its implementation details
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "defining-policy-settings"]
 :doc-type: ["tutorial"]

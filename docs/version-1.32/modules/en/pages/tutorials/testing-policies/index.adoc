@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Policy testing
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tutorial about testing policies in {project-name}.
+:description: Learn how to test and tune policies with Kubewarden from both the policy developers and the cluster operators perspectives
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "introduction"]
 :doc-type: ["tutorial"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Certificate rotation
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: How {project-name} controller manages its certificates
+:description: Learn how to manage certificates for your Kubewarden stack with automated renewal and updates to minimize downtime, reducing downtime risks
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "certificates"]
 :doc-type: ["explanation"]
