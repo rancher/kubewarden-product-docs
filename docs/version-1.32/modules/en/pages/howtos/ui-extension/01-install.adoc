@@ -109,7 +109,8 @@ Helm repository with the {short-project-name} UI chart for installation.
   `+https://cluster-ip/dashboard/c/local/uiplugins+`).
 . On the top right, select *Manage Extension Catalogs*.
   image:ui_airgap_01.png[Manage Catalogs]
-. Select the *Import Extension Catalog* button. image:ui_airgap_02.png[Import
+. Select the *Import Extension Catalog* button.
+  image:ui_airgap_02.png[Import Catalogs]
   Catalogs]
 . Enter the image address in the *Catalog Image Reference* field.
 . Select the secret you just created from the *Pull Secrets* drop-down menu.
@@ -117,7 +118,8 @@ Helm repository with the {short-project-name} UI chart for installation.
 . Click *Load*. The extension will now be *Pending*.
 . Return to the *Extensions* page.
 . Select the *Available* tab, and click the *Reload* button to make sure that
-  the list of extensions is up to date. image:ui_airgap_04.png[Install
+  the list of extensions is up to date.
+  image:ui_airgap_04.png[Install
   {short-project-name}]
 . Find the {short-project-name} extension you just added, and select the
   *Install* button.

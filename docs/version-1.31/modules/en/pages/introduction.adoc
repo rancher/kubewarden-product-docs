@@ -15,10 +15,6 @@ include::partial$variables.adoc[]
 {project-name} is a Kubernetes Policy Engine.
 It aims to be the Universal Policy Engine for Kubernetes.
 
-ifdef::backend-html5[]
-Here is a link:../../../pdfs/admission-controller/{current-version}/admission-controller.pdf[pdf].
-endif::[]
-
 {intro-paragraph}
 
 == How does {project-name} help?

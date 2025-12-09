@@ -18,7 +18,7 @@ rancher-dsc: tmpdir environment
 rancher-dsc-local: tmpdir environment
 	bin/switch-prod-comm product | tee tmp/rancher-dsc-local-build.log
 	npx antora --version | tee -a tmp/rancher-dsc-local-build.log
-	npx antora --stacktrace --log-format=pretty --log-level=info \
+	npx antora --stacktrace --log-format=pretty --log-level=debug \
 		kw-rancher-dsc-local.yml  2>&1 | tee -a tmp/rancher-dsc-local-build.log
 
 .PHONY: local-community
