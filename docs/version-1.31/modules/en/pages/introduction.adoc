@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Introduction
 :sidebar_position: 1
 :slug: /
-:current-version: {page-origin-branch}
+:current-version: {page-component-version}
 
 {project-name} is a Kubernetes Policy Engine.
 It aims to be the Universal Policy Engine for Kubernetes.

@@ -1,4 +1,5 @@
 include::partial$variables.adoc[]
+
 = Emergency disable
 :revdate: 2025-11-17
 :page-revdate: {revdate}
@@ -26,7 +27,7 @@ kubectl scale deployment kubewarden-controller \
   -n kubewarden
 ----
 
-[tip]
+[TIP]
 ====
 Ensure you use the name of the Namespace where the {short-project-name} stack is deployed.
 Here, the stack is deployed in the `kubewarden` Namespace.
@@ -58,7 +59,7 @@ kubectl scale deployment kubewarden-controller \
   -n kubewarden
 ----
 
-[tip]
+[TIP]
 ====
 - Ensure you use the name of the Namespace where the {short-project-name} stack is deployed.
   Here, the stack is deployed in the `kubewarden` Namespace.

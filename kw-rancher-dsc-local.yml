@@ -6,7 +6,7 @@ content:
   sources:
     - url: ./
       branches: [HEAD]
-      start_paths: [shared, docs/version-*]
+      start_paths: [shared, docs/*]
 
 ui:
   bundle:
@@ -21,6 +21,7 @@ asciidoc:
     page-pagination: ""
     tabs-sync-option: ""
   extensions:
+    - asciidoctor-kroki
     - "@asciidoctor/tabs"
 
 antora:

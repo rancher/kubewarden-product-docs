@@ -1,9 +1,24 @@
+---
 root_level: 0
+
+component_version_filter:
+  names: '*@*'
 
 asciidoc:
   attributes:
+    kroki-default-format: png
+    allow-uri-read: true
+    page-origin-branch: Not relevant for pdf build.
+    pdf-generation: ''
+    toc: ''
+    toclevels: 3
+    text-align: left
     source-highlighter: rouge
-    pdf-theme: ./pdf-theme.yml
+    pdf-theme: ../../doc-suse-com/dsc-style-bundle/supplemental-files/rancher/pdf/pdf-a4-theme.yml
+    pdf-fontsdir: ../../doc-suse-com/dsc-style-bundle/supplemental-files/rancher/pdf/fonts/SUSE
 
 build:
-  command: bundle exec asciidoctor-pdf --destination-dir ./build-pdf --trace --sourcemap
+  dir: build-rancher-dsc-local/pdfs
+  publish: false
+  command: |
+    bundle exec asciidoctor-pdf -r asciidoctor-kroki --sourcemap --trace --theme ${pdf-theme} -a pdf-fontsdir=${pdf-fontsdir}
