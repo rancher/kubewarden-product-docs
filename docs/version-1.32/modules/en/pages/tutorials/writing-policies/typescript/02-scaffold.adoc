@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Creating a new validation policy
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Creating a new validation policy for {project-name} using TypeScript.
+:description: Learn how to create a validation policy for Kubernetes in TypeScript, rejecting hosts based on invalid hostname configurations
 :keywords: {project-name}, kubewarden, kubernetes, writing policies in TypeScript, new validation policy
 :doc-type: tutorial
 :doc-topic: {project-name}, kubewarden, writing-policies, typescript, creating a new validation policy

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Monitoring
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Monitoring and metrics for {project-name}.
+:description: Learn how to configure and view metrics for a Policy Server, or for specific policies, using Ranchers Cluster Tool in conjunction with Grafana and Prometheus
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]

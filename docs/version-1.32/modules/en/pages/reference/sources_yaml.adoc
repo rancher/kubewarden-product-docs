@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Reference for sources.yaml
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Reference for sources.yaml
+:description: Learn how to configure and secure your sources.yaml file to specify an insecure registry host and verify server identity
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "sources.yaml"]
 :doc-type: ["reference"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Distributing policy
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Distributing {project-name} policies developed with Go.
+:description: Learn how to distribute Kubewarden policies using Go, and access centralized resources for policy authoring and dissemination
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Rancher UI extension quickstart
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: UI extension quickstart for {project-name}.
+:description: Install the UI as a global Rancher UI extension for policy control within your Kubernetes cluster, and learn how to do it
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "installation"]
 :doc-type: ["howto"]

@@ -4,7 +4,7 @@ include::partial$variables.adoc[]
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :page-aliases: explanations/opa-comparison.adoc
-:description: A brief comparison of the difference between {project-name} and OPA Gatekeeper.
+:description: Compare and contrast OPA Gatekeeper and Kubernetes policy management tools for optimal cluster security
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["explanations", "kubewarden-vs-opa_gatekeeper"]
 :doc-type: ["explanation"]

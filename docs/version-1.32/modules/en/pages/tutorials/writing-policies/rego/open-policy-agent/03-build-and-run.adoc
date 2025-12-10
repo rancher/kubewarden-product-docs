@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Build and run a OPA policy for {short-project-name}
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Build and run a OPA policy for {project-name}.
+:description: Build and run an Open Policy Agent (OPA) policy for Kubernetes using Kubewarden tools with a Rego policy bundle
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "build-and-run"]
 :doc-type: ["tutorial"]

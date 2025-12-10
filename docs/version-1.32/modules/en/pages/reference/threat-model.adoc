@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Threat Model
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: The Kubernetes Admission Control Threat Model and {project-name}.
+:description: Learn how to configure your cluster securely by understanding the Kubernetes Admission Control Threat Model and implementing its secure defaults
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["security", "threat-model"]
 :doc-type: ["reference"]

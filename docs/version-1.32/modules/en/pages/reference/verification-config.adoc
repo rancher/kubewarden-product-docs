@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-:description: Verification configuration for {project-name}.
+:description: Learn how to configure and validate signature requirements for Kubernetes images in the verification-config format with Kubewarden, ensuring proper validation
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "verification-config"]
 :doc-type: ["reference"]

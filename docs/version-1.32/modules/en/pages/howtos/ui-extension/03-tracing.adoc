@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Tracing
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Tracing for {project-name}.
+:description: Learn how to configure and use tracing tools such as OpenTelemetry Collector and Jaeger Query UI to collect fine-grained details on policy evaluations
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "tracing"]
 :doc-type: ["hosto"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing validation logic
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Writing validation logic in Rust for a {project-name} policy
+:description: Learn how to write validation logic in Rust for a Kubernetes policy through this step-by-step tutorial on implementing your own validation code
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "validation-logic"]
 :doc-type: ["tutorial"]

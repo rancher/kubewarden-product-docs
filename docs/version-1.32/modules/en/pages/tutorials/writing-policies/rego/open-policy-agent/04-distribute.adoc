@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Distributing an OPA policy with {project-name}
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Distributing an OPA policy with {project-name}.
+:description: Configure and distribute your Rego policy with the Open Policy Agent by annotating it, pushing it to an OCI registry, then create a ClusterAdmissionPolicy
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "distribute"]
 :doc-type: ["tutorial"]

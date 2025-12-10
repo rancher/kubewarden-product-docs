@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing policies in Go
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tutorial introduction to writing policies in Go.
+:description: Learn how to write validation policies using TinyGo, a Go compiler that generates WebAssembly binaries for use in Kubernetes environments
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "introduction"]
 :doc-type: ["tutorial"]

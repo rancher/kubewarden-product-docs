@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Using custom certificate authorities
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with {project-name} policy servers.
+:description: Learn how to configure custom certificate authorities on policy servers for secure cluster admission policy artifact retrieval
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
 :doc-type: ["howto"]

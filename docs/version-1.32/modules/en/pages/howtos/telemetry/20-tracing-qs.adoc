@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Tracing quickstart
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tracing quickstart for {project-name}.
+:description: Enable tracing support for Policy Server by configuring OpenTelemetry and installing the Jaeger components within your Kubernetes deployment to collect
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "tracing", "quick-start"]
 :doc-type: ["howto"]

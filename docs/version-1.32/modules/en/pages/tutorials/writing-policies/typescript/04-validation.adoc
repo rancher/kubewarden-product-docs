@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing the validation logic
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tutorial on writing validation logic for a {project-name} policy using TypeScript.
+:description: Learn how to write and customize validation logic for Kubewarden policies using TypeScript with the help of this tutorial on writing custom validators
 :keywords: "{project-name}", kubewarden, kubernetes, writing policies, typescript
 :doc-type: tutorial
 :doc-topic: {project-name}, kubewarden, writing-policies, typescript, validation-logic

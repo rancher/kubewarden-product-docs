@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Creating a new policy
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Creating a new OPA policy for {project-name}.
+:description: Learn how to write and compile Rego policies in Open Policy Agent (OPA) for evaluating Kubernetes resources and enforcing namespace-based permissions
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "create-policy"]
 :doc-type: ["tutorial"]

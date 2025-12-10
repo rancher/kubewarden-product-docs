@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = End-to-end testing
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tutorial introduction to end-to-end testing for writing {project-name} policies in the Go language.
+:description: Learn how to write end-to-end tests for Kubewarden policies in Go by running actual WebAssembly binaries
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "end-to-end-testing"]
 :doc-type: ["tutorial"]

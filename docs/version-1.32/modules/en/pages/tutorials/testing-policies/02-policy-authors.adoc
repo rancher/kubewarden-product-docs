@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Testing for policy authors
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An introduction to testing {project-name} policies for policy authors.
+:description: Configure and test WebAssembly-based policies using familiar development tools, testing frameworks, and CI pipelines to verify their functionality
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]

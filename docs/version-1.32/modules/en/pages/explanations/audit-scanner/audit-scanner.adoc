@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = What is the Audit Scanner?
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An overview of the {project-name} Audit Scanner.
+:description: Learn how to configure the Audit Scanner in Kubernetes to identify non-compliant workloads and generate detailed reports
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "audit-scanner"]
 :doc-type: ["explanation"]

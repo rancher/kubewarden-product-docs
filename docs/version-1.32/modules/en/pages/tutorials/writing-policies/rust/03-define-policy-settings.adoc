@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Defining policy settings
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Defining policy settings for a {project-name} policy developed using Rust
+:description: Configure policy settings for a policy developed in Rust by defining its structure, writing validation functions, and creating unit tests
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "policy-settings"]
 :doc-type: ["tutorial"]

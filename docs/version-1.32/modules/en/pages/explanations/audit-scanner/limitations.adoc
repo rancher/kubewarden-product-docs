@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Audit Scanner - Limitations
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: The limitation of the audit scanner
+:description: Learn how to configure and evaluate policies using the audit scanners capabilities within Kubewarden for Kubernetes environments
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "audit-scanner", "limitations"]
 :doc-type: ["explanation"]

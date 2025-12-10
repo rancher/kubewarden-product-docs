@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Other languages
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Writing {project-name} policies in other languages
+:description: Learn how to write Kubewarden policies using any programming language that supports WebAssembly modules targeting the WASI interface
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "other-languages"]
 :doc-type: ["tutorial"]

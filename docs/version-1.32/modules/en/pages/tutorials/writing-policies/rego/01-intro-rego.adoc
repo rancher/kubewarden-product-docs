@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Rego
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Writing {project-name} policies using Rego.
+:description: Learn how to configure and deploy context-aware Kubernetes policies using either Rego with Open Policy Agent or Gatekeeper, by understanding the key differences
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "introduction"]
 :doc-type: ["tutorial"]

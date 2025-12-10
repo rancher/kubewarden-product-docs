@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Configuring PolicyServers for production
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Configuring PolicyServers for production
+:description: Learn how to configure PolicyServers for production-ready Kubernetes environments, then review the associated step-by-step guide on pod disruption
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "production", "poddisruptionbudget", "affinity", "limits", "priorityClass"]
 :doc-type: ["howto"]

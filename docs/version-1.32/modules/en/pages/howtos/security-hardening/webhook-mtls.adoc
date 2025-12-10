@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :sidebar_label: Enable mTLS with K3s
-:description: Harden the webhook configuration.
+:description: Configure mTLS for webhook notifications in Kubernetes to enable secure communication between webhooks and the Kubernetes API server
 :keywords: ["{project-name}", kubewarden, kubernetes, security]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

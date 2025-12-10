@@ -4,7 +4,7 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Security hardening
 :sidebar_position: 50
-:description: Harden the {project-name} installation
+:description: Learn how to secure your Kubernetes installation by applying hardening tips and best practices for network policy configuration and sensitive data storage
 :keywords: ["{project-name}", kubewarden, kubernetes, security]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

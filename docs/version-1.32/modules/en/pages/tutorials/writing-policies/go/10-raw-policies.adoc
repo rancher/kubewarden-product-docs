@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Writing raw policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Writing raw {project-name} policies using Go.
+:description: Learn how to write and deploy raw policies in Go by defining custom data types for requests and settings, then validate user input against predefined lists
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "raw-policies"]
 :doc-type: ["tutorial"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Distributing a Gatekeeper policy with {project-name}
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Distributing a Gatekeeper policy with {project-name}.
+:description: Configure a Gatekeeper policy by annotating it with metadata in a YAML file and pushing it to an OCI registry
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "distribute"]
 :doc-type: ["tutorial"]

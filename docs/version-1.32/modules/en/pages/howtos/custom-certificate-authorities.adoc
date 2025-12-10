@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Custom certificate authorities
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with {project-name}.
+:description: Learn how to configure custom certificate authorities with SUSE products in Kubernetes environments for secure policy distribution
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "custom-certificate-authorities"]
 :doc-type: ["howto"]

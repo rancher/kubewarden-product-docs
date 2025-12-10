@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Metrics quickstart
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Metrics quickstart in {project-name}.
+:description: Learn how to configure and deploy metrics reporting on the Policy Server within a Kubernetes environment using Helm charts
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]

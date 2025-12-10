@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Testing for cluster operators
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An introduction to testing {project-name} policies for cluster operators.
+:description: Configure Kubernetes cluster policies with kwctl, validating policy settings to ensure smooth upgrades and configuration changes dont disrupt operations
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "cluster-operators"]
 :doc-type: ["tutorial"]

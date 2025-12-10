@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = ValidatingAdmissionPolicy migration
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Discusses how to migrate from Kubernetes VAP policies to {project-name}.
+:description: Learn how to migrate Kubernetes VAP policies to a seamless CEL policy integration using the kwctl tool for smooth cluster management, ensuring continued cluster
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]

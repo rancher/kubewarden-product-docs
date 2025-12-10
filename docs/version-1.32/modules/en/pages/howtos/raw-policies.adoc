@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Raw policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: {project-name} support for 'raw' policies.
+:description: Learn how to write and execute raw policies outside a Kubernetes cluster using the Kubernetes policy compliance tool, Kubeconfigs
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
 :doc-type: ["howto"]

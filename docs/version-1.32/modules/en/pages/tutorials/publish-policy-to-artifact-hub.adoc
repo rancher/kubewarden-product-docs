@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Publish policies to Artifact Hub
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A brief introduction to publishing {project-name} policies on Artifact Hub.
+:description: Configure Artifact Hub publishing layouts to discover policies across a wide audience of Cloud Native Computing Foundation (CNCF) users, then follow the steps
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]

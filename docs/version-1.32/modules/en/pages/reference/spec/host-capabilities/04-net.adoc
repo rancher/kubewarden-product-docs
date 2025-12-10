@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Network capabilities
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Network capabilities.
+:description: Leverage network capabilities exposed by the host through a series of APIs for DNS lookups and IP address retrieval
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "network-capabilities"]
 :doc-type: ["reference"]

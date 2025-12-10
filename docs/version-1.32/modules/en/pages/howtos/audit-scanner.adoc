@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Audit Scanner
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: How-to install and use Audit Scanner.
+:description: Learn how to install and configure the Audit Scanner feature in Kubewarden to verify cluster compliance with deployed policies consistently
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]

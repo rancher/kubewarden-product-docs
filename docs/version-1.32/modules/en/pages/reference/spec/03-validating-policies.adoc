@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Validating policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Validating policies
+:description: Learn how to configure and validate Kubernetes policies using Kubewarden, a policy engine that enforces compliance in Kubernetes environments
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "validating-policies"]
 :doc-type: ["reference"]

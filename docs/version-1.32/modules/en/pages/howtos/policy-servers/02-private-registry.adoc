@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 = Configuring PolicyServers to use private registries
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Configuring PolicyServers to use private registries in {project-name}.
+:description: Learn how to configure PolicyServers to use private registries by creating a Secret and setting its imagePullSecret field with the Secrets name
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "private-registry"]
 :doc-type: ["howto"]
