@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Mutating policies
-:revdate: 2025-11-25
+:revdate: 2025-12-10
 :page-revdate: {revdate}
-:description: Learn how to configure mutating policies in Kubernetes to control and modify request behavior by setting the ClusterAdmissionPolicy.mutating field to either
+:description: Learn how to configure mutating policies in Kubernetes using {project-name} to control and modify request behavior.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["mutating-policies"]
 :doc-type: ["explanation"]
