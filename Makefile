@@ -1,4 +1,3 @@
-.PHONY: all test
 
 .PHONY: local
   local: tmpdir environment
@@ -81,7 +80,8 @@ tmpdir:
 
 .PHONY: checkmake
 checkmake:
-	@if [ $$(which checkmake 2>/dev/null) ]; then checkmake Makefile; \
+	@if [ $$(which checkmake 2>/dev/null) ]; then \
+		checkmake --config=tmp/checkmake.ini Makefile; \
 		if [ $$? -ne 0 ]; then echo "checkmake failed"; exit 1; \
 		else echo "checkmake passed"; \
 		fi; \
@@ -90,3 +90,10 @@ checkmake:
 .PHONY: preview
 preview:
 	npx http-server build-rancher-dsc-local/site -c-1
+
+.PHONY: all
+all:
+
+.PHONY: test
+test:
+
