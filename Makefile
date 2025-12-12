@@ -45,10 +45,6 @@ remote-community: tmpdir environment
 		kw-remote-community-playbook.yml \
 		2>&1 | tee -a tmp/remote-community-build.log
 	bin/switch-prod-comm product | tee -a tmp/remote-community-build.log
-	rm -f build-remote-community/site/kubewarden/latest
-	rm -f build-remote-community/site/kubewarden/dev
-	cp -pr build-remote-community/site/kubewarden/1.31 build-remote-community/site/kubewarden/latest
-	cp -pr build-remote-community/site/kubewarden/1.32 build-remote-community/site/kubewarden/dev
 
 .PHONY: first-local
 first-local: tmpdir environment
