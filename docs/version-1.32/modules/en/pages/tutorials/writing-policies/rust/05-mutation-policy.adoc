@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Creating a new mutation policy
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Creating a new mutation policy using Rust
+:description: Learn how to configure a new mutation policy in Rust by adding annotation functionality to an existing validating policy and modifying its validate function
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
 :doc-type: ["tutorial"]

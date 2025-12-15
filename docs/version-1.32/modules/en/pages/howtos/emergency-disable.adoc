@@ -5,7 +5,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Emergency disable
 :sidebar_position: 31
 :title: Emergency disable
-:description: How to temporarily disable {project-name} policies during emergencies
+:description: Learn how to temporarily disable cluster admission policies during emergencies, then perform critical actions with minimal disruption
 :keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
 :doc-persona: kubewarden-operator
 :doc-type: howto

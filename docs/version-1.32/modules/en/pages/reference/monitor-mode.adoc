@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Monitor mode
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: The {project-name} monitor mode and how to activate it.
+:description: Learn how to activate monitor mode for policies and its implications on resource tracing, logging, and metrics in policy administration
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "monitor-mode"]
 :doc-type: ["reference"]

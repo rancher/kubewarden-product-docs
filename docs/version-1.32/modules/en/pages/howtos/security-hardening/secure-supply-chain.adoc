@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Secure supply chain
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A secure supply chain infrastructure using {project-name}.
+:description: Learn how to secure your Kubernetes infrastructure by configuring validated supply chains through policies and artifacts with tools like Sigstore and Cosign
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "secure-supply-chain"]
 :doc-type: ["howto"]

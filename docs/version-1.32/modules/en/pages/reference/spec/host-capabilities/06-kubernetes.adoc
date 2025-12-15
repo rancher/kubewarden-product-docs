@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Kubernetes capabilities
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Kubernetes capabilities.
+:description: Access and retrieve Kubernetes cluster information using Kubewarden policy SDKs via the waPC communication protocol
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "kubernetes-capabilities"]
 :doc-type: ["reference"]

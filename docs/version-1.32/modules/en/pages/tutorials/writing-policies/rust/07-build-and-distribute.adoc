@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Building and distributing policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Building and distributing {project-name} policies developed with Rust.
+:description: Learn how to build, compile, and distribute policies in Rust by automating tasks such as unit testing and code linting using WebAssembly
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
 :doc-type: ["tutorial"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Sigstore host capabilities
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Example: Sigstore CEL policy
+:description: Configure Sigstore host capabilities within CEL policies for Kubernetes admission control through learning and setup processes
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "sigstore", "signature", "verification"]
 :doc-type: ["tutorial"]

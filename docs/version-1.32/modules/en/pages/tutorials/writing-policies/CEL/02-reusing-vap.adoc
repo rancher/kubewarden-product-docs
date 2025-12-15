@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Reusing ValidatingAdmissionPolicies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Example: Reusing ValidatingAdmissionPolicies
+:description: Learn how to reuse and adapt Validating Admission Policies in Kubernetes using CEL expressions and parameter overrides, then apply them in your cluster
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "ValidatingAdmissionPolicies"]
 :doc-type: ["tutorial"]

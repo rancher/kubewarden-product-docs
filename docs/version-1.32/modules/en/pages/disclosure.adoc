@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
 
 = Security disclosure
-:revdate: 2025-11-25
+:revdate: 2025-12-10
 :page-revdate: {revdate}
-:description: Security disclosure.
+:description: How to responsibly report security vulnerabilities in Kubewarden via email or GitHub, so that maintainers can provide swift fixes.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["security", "disclosure"]
 :doc-type: ["explanation"]

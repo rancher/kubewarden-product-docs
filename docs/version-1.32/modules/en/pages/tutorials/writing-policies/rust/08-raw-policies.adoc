@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Raw policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: {project-name} support for raw policies using Rust.
+:description: Learn to create, configure, and extend raw policies in Rust using the Kubewarden SDK and implement custom validation logic for Kubernetes clusters
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["writing-policies", "rust", "raw-policies"]
 :doc-type: ["tutorial"]

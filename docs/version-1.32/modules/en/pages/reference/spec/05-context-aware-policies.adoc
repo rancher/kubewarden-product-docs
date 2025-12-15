@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Context aware policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Context aware policies.
+:description: Learn how to configure context-aware policies for Kubernetes clusters with Kubewardens SDKs, optimizing resource fetching to reduce the load on the API server
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "context-aware-policies"]
 :doc-type: ["reference"]

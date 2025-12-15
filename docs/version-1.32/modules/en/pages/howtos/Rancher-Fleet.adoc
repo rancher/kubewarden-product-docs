@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Managing {project-name} with Rancher Fleet
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Managing {project-name} with Rancher Fleet.
+:description: Learn how to manage Helm charts with Rancher Fleets GitOps approach using declarative YAML configurations
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher-fleet"]
 :doc-type: ["howto"]

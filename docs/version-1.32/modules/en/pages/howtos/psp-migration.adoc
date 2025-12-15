@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 :title: PodSecurityPolicy migration
-:description: Discusses PSP migration to {project-name} policies after Kubernetes v1.25.
+:description: Migrate from PodSecurityPolicy (PSP) to Kubewarden policies for admission control in Kubernetes clusters
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
 :doc-type: ["howto"]

@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Configuring policies
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Dependency matrix of {project-name}.
+:description: Learn how to customize reject messages for cluster operators by targeting specific Namespaces with policies configured in Kubewarden
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policies"]
 :doc-type: ["howto"]

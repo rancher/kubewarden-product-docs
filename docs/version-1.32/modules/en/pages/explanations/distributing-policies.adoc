@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Distributing policies
-:revdate: 2025-11-25
+:revdate: 2025-12-10
 :page-revdate: {revdate}
-:description: A description of how {project-name} policies are distributed from OCI-compliant repositories.
+:description: Understand effective distribution and annotation of policies for Kubernetes clusters using {project-name} and OCI-compliant registries.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]

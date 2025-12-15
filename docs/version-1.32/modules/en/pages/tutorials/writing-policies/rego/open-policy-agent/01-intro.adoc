@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 = Introduction to Open Policy Agent
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Introduction to Open Policy Agent and {project-name}.
+:description: Learn how to write effective Rego policies for Kubernetes using the Open Policy Agent, which is a general-purpose authorization and compliance framework
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "introduction"]
 :doc-type: ["tutorial"]
