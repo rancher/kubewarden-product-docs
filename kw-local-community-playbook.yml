@@ -1,6 +1,6 @@
 site:
   title: Kubewarden
-  start_page: 1.30@kubewarden:en:introduction.adoc
+  start_page: 1.31@kubewarden:en:introduction.adoc
 
 content:
   sources:
@@ -18,7 +18,7 @@ ui:
 asciidoc:
   attributes:
     # page-draft-preview-only: 'You can have anything here, just not empty - so this is true, if empty string, or absent, then - false'
-    kw-build-type: 'community' # 'community' or 'product'
+    kw-build-community: true
     page-pagination: ''
     tabs-sync-option: ''
   extensions:

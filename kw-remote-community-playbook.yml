@@ -1,10 +1,13 @@
 site:
   title: Kubewarden
-  start_page: 1.30@kubewarden:en:introduction.adoc
+  start_page: 1.31@kubewarden:en:introduction.adoc
+
+urls:
+  html_extension_style: default
 
 content:
   sources:
-    #- url: https://github.com/rancher/kubewarden-product-docs.git
+    # - url: https://github.com/rancher/kubewarden-product-docs.git
     - url: ./
       branches: HEAD
       # Branches need to be HEAD, not [main]. For remote community build to
@@ -20,8 +23,8 @@ ui:
 
 asciidoc:
   attributes:
-    page-draft-preview-only: 'true'
-    kw-build-type: 'community' # 'community' or 'product'
+    # page-draft-preview-only: 'true'
+    kw-build-community: true
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
@@ -39,9 +42,8 @@ antora:
     - require: ./product-docs-common/extensions/dynamic-loading-attributes/load-global-site-attributes.js
       attributefile: ./product-docs-common/global-attributes.yml
       enabled: true
-    - require: ../product-docs-common/extensions/versions-latest-prerelease/vlp.js
+    - require: ./product-docs-common/extensions/versions-latest-prerelease/vlp.js
       enabled: true
-
 
 output:
   dir: build-remote-community/site

@@ -1,6 +1,6 @@
 site:
   title: SUSE Security Admission Controller
-  start_page: 1.30@admission-controller:en:introduction.adoc
+  start_page: 1.31@admission-controller:en:introduction.adoc
 
 content:
   sources:
@@ -16,7 +16,6 @@ ui:
 
 asciidoc:
   attributes:
-    kw-build-type: "product" # 'community' or 'product'
     kw-rancher-product-name: "SUSE® Rancher Prime Policy Manager"
     kw-community-product-name: "Kubewarden"
     page-pagination: ""
