@@ -17,7 +17,6 @@ ui:
 asciidoc:
   attributes:
     page-draft-preview-only: 'You can have anything here, just not empty - so this is true, if empty string, or absent, then - false'
-    kw-build-type: "product" # 'community' or 'product'
     page-pagination: ""
     tabs-sync-option: ""
   extensions:

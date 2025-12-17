@@ -1,4 +1,9 @@
-:build-type: {kw-build-type}
+ifdef::kw-build-community[]
+:build-type: community
+endif::[]
+ifndef::kw-build-community[]
+:build-type: product
+endif::[]
 
 // The source of truth for the kw-product-name and kw-community-name values are in the playbooks
 // for the product-docs-playbook repository. Those below are a convenience for local builds.
