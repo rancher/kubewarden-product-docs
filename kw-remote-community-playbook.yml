@@ -24,7 +24,8 @@ ui:
 asciidoc:
   attributes:
     # page-draft-preview-only: 'true'
-    build-community: true
+    kw-build-community: true
+    build-environment: netlify
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
