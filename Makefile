@@ -28,7 +28,7 @@ local-community: tmpdir environment
 		kw-local-community-playbook.yml \
 		2>&1 | tee -a tmp/local-community-build.log
 	# Now maintain the default product build configuration
-	bin/switch-prod-comm product | tee tmp/local-community-build.log
+	bin/switch-prod-comm product | tee -a tmp/local-community-build.log
 
 .PHONY: remote
 remote: tmpdir environment

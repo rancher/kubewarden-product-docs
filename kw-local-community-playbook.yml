@@ -19,6 +19,7 @@ asciidoc:
   attributes:
     # page-draft-preview-only: 'You can have anything here, just not empty - so this is true, if empty string, or absent, then - false'
     kw-build-community: true
+    build-environment: netlify
     page-pagination: ''
     tabs-sync-option: ''
   extensions:
