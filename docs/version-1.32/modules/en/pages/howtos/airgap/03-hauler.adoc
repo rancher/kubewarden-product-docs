@@ -105,7 +105,7 @@ hauler store copy registry://localhost:5000
 ----
 
 You can also run Hauler to start a registry with all the resources from the
-store. This registry is insecure, you'll need to adapt the cluster
+store. This registry is insecure, and you need to adapt the cluster
 configuration:
 
 [source,shell]

@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :current-version: {page-origin-branch}
 
-This describes commontasks for after you
+This describes common tasks for after you
 xref:quick-start.adoc#installation[install {project-name}] in your Kubernetes
 cluster.
 
@@ -22,7 +22,7 @@ The separate tasks are in a logical ordering.
 locally:
 
 * https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact
-  Hub], using their package filter for {short-project-name} policies.
+  Hub], using their package filter for {short-project-name} policies
 * https://github.com/kubewarden/kwctl[`kwctl`], a CLI tool
 
 === Artifact hub
@@ -67,7 +67,7 @@ _As a policy author_
 * _End-to-end testing of your policy_: Test your policy against crafted
   Kubernetes requests and ensure your policy behaves as you expect. You can
   even test context-aware policies that require access to a running cluster.
-* _Embed metadata in your Wasm module_: the binary contains annotations of the
+* _Embed metadata in your Wasm module_: The binary contains annotations of the
   permissions it needs to be executed. You can inspect and modify these
   annotations with `kwctl`.
 * _Publish policies to OCI registries_: The binary is a fully compliant OCI
@@ -79,8 +79,8 @@ _As a cluster administrator_
   server, show all static information about the policy.
 * _Dry-run of a policy in your cluster_: Test the policy against crafted
   Kubernetes requests and ensure the policy behaves as you expect given the
-  input data you provide. You can even test context-aware policies that require
-  access to a running cluster, also in a dry-run mode.
+  input data you provide. You can also test context-aware policies that require
+  access to a running cluster in a dry-run mode.
 * _Generate initial `ClusterAdmissionPolicy` scaffolding for your policy_:
   Generate a `YAML` file with all the required settings, which can be applied
   to your Kubernetes cluster using `kubectl`.
@@ -89,7 +89,7 @@ _As a cluster administrator_
 
 `kwctl` binaries for the stable releases are available from the
 https://github.com/kubewarden/kwctl/releases[GitHub repository]. To build
-`kwctl` from the GitHub https://github.com/kubewarden/kwctl[repo], you will
+`kwctl` from the GitHub https://github.com/kubewarden/kwctl[repo], you
 need a https://www.rust-lang.org/tools/install[Rust] development environment.
 
 ==== Usage
@@ -188,7 +188,7 @@ $ kwctl policies
 * _Evaluate the policy_: Assess the policy and, if available, find the
 right configuration values to match your requirements.
 +
-You will need some familiarity with the
+You need some familiarity with the
 https://kubernetes.io/docs/reference/[Kubernetes REST APIs].
 
  ** Command: `kwctl run -r <"Kubernetes Admission request" file path> -s <"JSON document" file path> <policy URI>`
@@ -280,7 +280,7 @@ spec:
 ====
 By default, the `name` value is set to `generated-policy`.
 You might want to edit it before you deploy the `ClusterAdmissionPolicy`.
-The name in the immediately previous example is set to `privileged-pods`.
+The name in the previous example is set to `privileged-pods`.
 ====
 
 * Deploy the `ClusterAdmissionPolicy` to your Kubernetes cluster

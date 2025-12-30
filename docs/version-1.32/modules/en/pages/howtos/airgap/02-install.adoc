@@ -190,7 +190,7 @@ helm install --wait -n kubewarden \
 
 To download the recommended policies installed by the `kubewarden-defaults`
 Helm Chart from a registry other than `global.cattle.systemDefaultRegistry`,
-can use the `recommendedPolicies.defaultPoliciesRegistry` configuration.
+use the `recommendedPolicies.defaultPoliciesRegistry` configuration.
 This configuration lets users specify a registry dedicated to pulling the OCI
 artifacts of the policies. It’s particularly useful when their container image
 repository doesn’t support OCI artifacts.
