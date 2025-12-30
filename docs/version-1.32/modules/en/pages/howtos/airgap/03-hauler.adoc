@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
+
 = Air gap installation with Hauler
-:revdate: 2025-11-25
+:revdate: 2025-12-30
 :page-revdate: {revdate}
 :description: Air gap installation for {project-name} using Hauler
 :keywords: ["{project-name}", kubewarden, kubernetes, air gap installation, hauler]
@@ -13,7 +14,7 @@ link:https://docs.hauler.dev/docs/intro[Hauler]. Hauler is a tool that helps
 users run workloads in air-gapped environments. It moves the required resources
 for apps into those air-gapped environments.
 
-{short-project-name} uses Hauler capabilities by providing a manifest file with all the
+{short-project-name} provides a manifest file with all the
 required resources to run {short-project-name} in a private environment. This
 documentation describes how you can use it. Refer to the Hauler documentation
 to learn more about it.
@@ -104,7 +105,7 @@ hauler store copy registry://localhost:5000
 ----
 
 You can also run Hauler to start a registry with all the resources from the
-store. This registry is insecure, you will need to adapt the cluster
+store. This registry is insecure, you'll need to adapt the cluster
 configuration:
 
 [source,shell]
@@ -135,10 +136,10 @@ modules and Helm charts used by {short-project-name} into your private registry.
 == Install {short-project-name}
 
 Now that your private registry has everything required, you can install
-{short-project-name}. The difference from a standard {short-project-name} installation is that you
-need to change the registry in the container images and policies to be the
-private registry. Additionally, you need to install the Helm charts from OCI
-artifacts.
+{short-project-name}. The difference from a standard {short-project-name}
+installation is that you need to change the registry in the container images
+and policies to be the private registry. Additionally, you need to install the
+Helm charts from OCI artifacts.
 
 Install the {short-project-name} stack:
 
@@ -170,9 +171,9 @@ helm install --wait -n kubewarden kubewarden-controller oci://<REGISTRY.YOURDOMA
 ----
 
 It's necessary to define `auditScanner.policyReporter` and four other values to
-enable the sub-chart and to configure the registry and repository where the
-Policy Reporter images are stored. For more information about the policy report
-sub-chart values, refer to
+enable the sub-chart and to configure the registry and repository with the
+location of the Policy Reporter image store. For more information about the
+policy report sub-chart values, refer to
 link:https://kyverno.github.io/policy-reporter-docs/getting-started/helm.html[Policy
 Reporter documentation].
 
@@ -185,12 +186,11 @@ helm install --wait -n kubewarden \
   --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
 ----
 
-Finally, you need to configure each Policy Server to fetch policies from your
-private registry. See the
-xref:/howtos/policy-servers/02-private-registry.adoc[using private registry]
-section of the documentation.
+Finally, configure each Policy Server to fetch policies from your private
+registry. See the xref:/howtos/policy-servers/02-private-registry.adoc[using
+private registry] section of the documentation.
 
-Now you can create {short-project-name} policies in your cluster. Policies must be
+Now create {short-project-name} policies in your cluster. Policies must be
 available in your private registry.
 
 [source,yaml]
