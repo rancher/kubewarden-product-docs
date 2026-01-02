@@ -181,7 +181,7 @@ kubectl apply -f policy-server.yaml
 
 [IMPORTANT]
 ====
-The Policy Server instance deployed will have access to Kubernetes resources that could be leveraged by context aware policies.
+The Policy Server instance deployed will have access to Kubernetes resources that could be used by context aware policies.
 The access level to the Kubernetes resources is determined by the Service Account used to run the Policy Server workload.
 
 In the previous example, no Service Account is defined inside of the Deployment specification; hence the `default` Service Account is going to be used.
