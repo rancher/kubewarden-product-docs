@@ -3,10 +3,7 @@ site:
   start_page: 1.31@kubewarden:en:introduction.adoc
 
 urls:
-  html_extension_style: indexify
-  redirect_facility: static
-  latest_version_segment: latest
-  latest_prerelease_version_segment: dev
+  html_extension_style: default
 
 content:
   sources:
