@@ -1,13 +1,18 @@
 ---
-name: 📝 Documentation Feedback
+name: 📝 Documentation feedback
 about: Report an error, suggest an improvement, or request new content.
 title: '[Docs] '
-labels: documentation/feedback
+labels: docs/feedback
 assignees: ''
 ---
-## 📄 Documentation link
 
-**URL:** ## 🎯 Feedback type
+## 📄 Links
+
+The documentation with this issue is at:
+
+**URL:**
+
+## 🎯 Feedback type
 
 - [ ] ❌ **Technical error:** A code example or command isn't working.
 - [ ] 🔍 **Clarity/typo:** A sentence is confusing, or there's a grammatical error.
@@ -17,8 +22,8 @@ assignees: ''
 
 ## 📝 Description
 
-## 🛠 Proposed change (optional)
+## 🛠 Proposed change
 
-## 📸 Screenshots, logs (optional)
+## 📸 Screenshots, logs
 
 ## 👤 Additional context
