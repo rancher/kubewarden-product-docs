@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Tracing
-:description: Enable tracing for fine-grained details about policy evaluations and debug issues related to the SUSE Security Admission Controller deployment.
+:description: Enable tracing for fine-grained details about policy evaluations and debug issues related to the {project-name} deployment.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]

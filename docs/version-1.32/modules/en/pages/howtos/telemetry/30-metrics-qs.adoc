@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Metrics quickstart
-:description: Configure metrics reporting on the Policy Server using Prometheus and Admission Controller enabled through Helm charts for data collection.
+:description: Configure metrics reporting on the Policy Server using Prometheus and {project-name} enabled through Helm charts for data collection.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]

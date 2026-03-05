@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Monitoring
-:description: Configure monitoring for Rancher environments by integrating with the SUSE Security Admission Controller and Prometheus.
+:description: Configure monitoring for Rancher environments by integrating with the {project-name} and Prometheus.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]

@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Verifying {project-name}
-:description: Verify different artifacts produced by the Admission Controller team to ensure a secure supply chain through use of SBOMs and provenance files.
+:description: Verify different artifacts produced by the {project-name} team to ensure a secure supply chain through use of SBOMs and provenance files.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]

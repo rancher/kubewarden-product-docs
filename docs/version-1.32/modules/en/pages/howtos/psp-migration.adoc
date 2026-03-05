@@ -9,7 +9,7 @@ include::partial$variables.adoc[]
 :current-version: {page-origin-branch}
 
 = {title}
-:description: Configure Admission Controller policies in your Kubernetes clusters to achieve granular control over policy configuration, replacing PodSecurityPolicy (PSP).
+:description: Configure {project-name} policies in your Kubernetes clusters to achieve granular control over policy configuration, replacing PodSecurityPolicy (PSP).
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 

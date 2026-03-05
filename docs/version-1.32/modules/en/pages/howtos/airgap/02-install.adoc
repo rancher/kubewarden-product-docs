@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Air gap installation
-:description: Configure a private registry with Admission Controller images and policies to install SUSE Security Admission Controller in an air-gapped environment.
+:description: Configure a private registry with {project-name} images and policies to install {project-name} in an air-gapped environment.
 :revdate: 2025-12-30
 :page-revdate: {revdate}
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]

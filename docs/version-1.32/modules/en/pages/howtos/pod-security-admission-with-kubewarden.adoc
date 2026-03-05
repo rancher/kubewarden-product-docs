@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Using Pod Security Admission with {project-name}
-:description: Configure Pod Security Admission in a Kubernetes cluster with Admission Controllers to secure pods.
+:description: Configure Pod Security Admission in a Kubernetes cluster with {project-name}s to secure pods.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
