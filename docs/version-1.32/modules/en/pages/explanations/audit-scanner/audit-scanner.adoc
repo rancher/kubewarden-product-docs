@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = What is the Audit Scanner?
+:description: Learn about the Audit Scanner's role in continuously verifying cluster compliance with admission controller policies across your clusters.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An overview of the {project-name} Audit Scanner.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "audit-scanner"]
 :doc-type: ["explanation"]

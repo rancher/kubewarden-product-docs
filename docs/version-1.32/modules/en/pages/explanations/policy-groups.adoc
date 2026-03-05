@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Policy Groups
+:description: Learn about creating complex policies by combining simpler ones through Policy Groups, specifically using AdmissionPolicyGroup and ClusterAdmissionPolicyGroup definitions.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A description of {project-name} policy groups
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]

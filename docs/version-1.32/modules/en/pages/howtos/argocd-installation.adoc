@@ -1,11 +1,11 @@
 include::partial$variables.adoc[]
 
 = ArgoCD Installation
+:description: Configure your ArgoCD application to manage Kubernetes resources effectively by setting specific configuration options for certificate creation and renewal securely.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :sidebar_label: ArgoCD Installation
 :sidebar_position: 35
-:description: How to install {project-name} with ArgoCD
 :keywords: ["{project-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]
