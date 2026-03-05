@@ -2,10 +2,10 @@
 
 include::partial$variables.adoc[]
 = kwctl CLI
+:description: Explore the `kwctl` command-line tool to manage {project-name} policies and perform tasks like loading policies.
 :revdate: 2025-12-10
 :page-revdate: {revdate}
 :title: kwctl CLI
-:description: kwctl CLI reference documentation
 :keywords: cli, reference, kwctl
 :doc-persona: kubewarden-operator
 :doc-type: reference

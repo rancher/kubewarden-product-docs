@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = How to use policy groups
+:description: Implement policy groups with specific rules that reject non-compliant Pods based on image signatures and other criteria.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: How to use {project-name} policy groups
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["howto"]

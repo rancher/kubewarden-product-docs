@@ -1,12 +1,12 @@
 include::partial$variables.adoc[]
 :title: {project-name} artifacts
-:description: List of {project-name} artifacts
 :keywords: [artifacts, support, airgap, images]
 :doc-persona: [kubewarden-operator]
 :doc-type: [reference]
 :doc-topic: [operator-manual, artifacts, registry, images]
 
 = {title}
+:description: Verify {project-name} artifacts and access related binaries, Helm charts, for efficient security management.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 

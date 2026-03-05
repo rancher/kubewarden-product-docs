@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
 
 = Air gap installation with Hauler
+:description: Use Hauler to install {project-name} in air-gapped environments.
 :revdate: 2025-12-30
 :page-revdate: {revdate}
-:description: Air gap installation for {project-name} using Hauler
 :keywords: ["{project-name}", kubewarden, kubernetes, air gap installation, hauler]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

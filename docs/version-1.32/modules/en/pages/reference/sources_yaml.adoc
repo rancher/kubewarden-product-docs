@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Reference for sources.yaml
+:description: Configure your sources.yaml file to work with PolicyServer CRs by specifying the path and format for source authorities, as well as insecure sources.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Reference for sources.yaml
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "sources.yaml"]
 :doc-type: ["reference"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Configuring policies
+:description: Configure policies by selecting specific Namespaces or setting custom rejection messages, and negate results using AdmissionPolicyGroup.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Dependency matrix of {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policies"]
 :doc-type: ["howto"]
