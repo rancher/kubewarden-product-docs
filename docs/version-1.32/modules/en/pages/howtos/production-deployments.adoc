@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Configuring the {project-name} stack for production
+:description: Configure tolerations and affinity rules for optimal scheduling and reliability within the {project-name} stack in a Kubernetes cluster.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Configuring {project-name} stack for production
 :keywords: ["{project-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
@@ -194,9 +194,9 @@ name of the deleted PriorityClass will not be created by Kubernetes.
 as they process Admission Requests destined for the Kubernetes API via the
 Validating and Mutating Webhooks.
 
-As with other Dynamic Admission Controllers, this process happens before
+As with other Dynamic {project-name}s, this process happens before
 requests reach the Kubernetes API server. Latency or service delays by the
-Dynamic Admission Controller may introduce cluster inconsistency, Denial
+Dynamic {project-name} may introduce cluster inconsistency, Denial
 of Service, or deadlock.
 
 {short-project-name} provides several ways to increase the reliability of
