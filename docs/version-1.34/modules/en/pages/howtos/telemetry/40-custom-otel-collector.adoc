@@ -337,7 +337,7 @@ image::jaeger-custom-otel-collector.png[The Jaeger dashboard]
 
 To access the Jaeger UI with Traefik, port-forward the Traefik Service:
 
-[console]
+[source,console]
 ----
 kubectl -n traefik port-forward service/traefik 8080:80
 ----
