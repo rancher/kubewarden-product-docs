@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Context aware policies
+:description: Developers can create context-aware policies that fetch Kubernetes cluster information at runtime to determine AdmissionRequest acceptance criteria.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A description of {project-name} context aware policies, what they are and how they are useful.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "context-aware-policies"]
 :doc-type: ["explanation"]

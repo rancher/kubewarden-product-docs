@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Signature verifier policies
+:description: Implement secure policies for your cluster using the provided verifier policy, or build upon it with your chosen language SDK.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Signature verifier policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "signature-verifier-policies"]
 :doc-type: ["reference"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Defining policy settings
+:description: Define and implement effective policy settings structures through {project-name} policies in src/types.ts and src/index.ts files.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Defining policy settings for a {project-name} policy written in TypeScript.
 :keywords: "{project-name}", kubewarden, kubernetes, defining policy settings, TypeScript
 :doc-type: tutorial
 :doc-topic: {project-name}, kubewarden, writing-policies, typescript, defining-policy-settings

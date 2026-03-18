@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Audit Scanner
+:description: Verify the compliance state of your clusters using the Audit Scanner feature within {project-name}, to ensure their proper configuration.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: How-to install and use Audit Scanner.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]

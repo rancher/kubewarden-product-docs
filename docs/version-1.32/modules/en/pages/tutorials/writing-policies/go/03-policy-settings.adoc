@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Defining policy settings
+:description: Modify the code in the settings.go file to define policy settings, including implementation of custom functions for marshaling and unmarshaling regular expressions.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Defining policy setting for a {project-name} policy written in Go.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "defining-policy-settings"]
 :doc-type: ["tutorial"]

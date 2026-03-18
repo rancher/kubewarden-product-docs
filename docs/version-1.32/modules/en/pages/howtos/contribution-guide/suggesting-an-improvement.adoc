@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Suggesting a documentation improvement
+:description: Initiate a documentation improvement by opening a GitHub issue with clear details about what's missing, outdated, erroneous, or requires a quality review.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Suggesting a doc improvement.
 :doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
 :doc-topic: ["contribution-guide", "docs-contribution", "improvement"]
 :doc-type: ["howto"]

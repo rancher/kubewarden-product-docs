@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Using custom certificate authorities
+:description: Configure PolicyServer to use either custom certificate authorities or insecure sources in conjunction with specified registries.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Using custom certificate authorities with {project-name} policy servers.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
 :doc-type: ["howto"]

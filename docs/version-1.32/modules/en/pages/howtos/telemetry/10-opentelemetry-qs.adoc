@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Open Telemetry quick start
+:description: Configure and deploy the OpenTelemetry collector in sidecar mode using the official Kubernetes Helm chart for simple and enhanced deployment.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An Open Telemetry quickstart for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "opentelemetry", "quick-start"]
 :doc-type: ["howto"]

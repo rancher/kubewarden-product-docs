@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
 
 = Backup and restore with Rancher Backup Operator
+:description: Configure and manage backups and restores using the rancher-backup operator on any Kubernetes cluster.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Backup and restore with Rancher Backup Operator
 :keywords: "{project-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
@@ -143,5 +143,3 @@ restore-default   PV              default-location-backup-43f3ccb7-5624-4eed-9c3
 
 See the Rancher documentation for more
 link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_restore[restore examples].
-
-
