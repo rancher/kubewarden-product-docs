@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Writing {project-name} policies
+:description: Develop admission controller policies by exposing well-defined functionalities via a specific API using any supported programming language.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: An introduction to writing {project-name} policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies"]
 :doc-type: ["tutorial"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Writing the validation logic
+:description: Learn how to write and test validation logic in Go by extracting relevant information from incoming payloads and creating setting objects.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: A tutorial on writing validation logic for a {project-name} policy using Go.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "validation-logic"]
 :doc-type: ["tutorial"]

@@ -1,5 +1,4 @@
 include::partial$variables.adoc[]
-:description: Verification configuration for {project-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "verification-config"]
 :doc-type: ["reference"]
@@ -8,6 +7,7 @@ include::partial$variables.adoc[]
 :current-version: {page-origin-branch}
 
 = Verification configuration format
+:description: Configure verification configuration formats for secure container image signing using a policy-server or policy to verify provenance and signatures.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 

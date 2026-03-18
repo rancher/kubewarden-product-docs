@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Distributing a Gatekeeper policy with {project-name}
+:description: Distribute Gatekeeper policies across Kubernetes clusters by annotating policy files with metadata and deploying them via ClusterAdmissionPolicy.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
-:description: Distributing a Gatekeeper policy with {project-name}.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "distribute"]
 :doc-type: ["tutorial"]

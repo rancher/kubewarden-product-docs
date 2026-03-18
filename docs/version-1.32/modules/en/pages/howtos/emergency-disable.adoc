@@ -1,11 +1,11 @@
 include::partial$variables.adoc[]
 = Emergency disable
+:description: Learn how to disable the {project-name} in emergency situations, stopping and deleting related configurations, and then restore.
 :revdate: 2025-11-25
 :page-revdate: {revdate}
 :sidebar_label: Emergency disable
 :sidebar_position: 31
 :title: Emergency disable
-:description: How to temporarily disable {project-name} policies during emergencies
 :keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
 :doc-persona: kubewarden-operator
 :doc-type: howto
