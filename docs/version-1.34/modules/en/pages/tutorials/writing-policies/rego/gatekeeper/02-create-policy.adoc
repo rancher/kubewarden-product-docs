@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Creating a new Gatekeeper Rego policy
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Creating a new Gatekeeper rego policy.
+:description: Implement Gatekeeper Rego policies to reject resources targeting the default namespace by creating and testing a new policy.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "gatekeeper", "create-policy"]
 :doc-type: ["tutorial"]

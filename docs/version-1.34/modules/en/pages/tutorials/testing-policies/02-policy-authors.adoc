@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Testing for policy authors
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: An introduction to testing {project-name} policies for policy authors.
+:description: Learn how to test policy authors with kwctl, either using bats or standard testing, specifically for {project-name} policies in Wasm.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Swift
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: {project-name} policies with Swift
+:description: Learn how to use the Swift compiler with WebAssembly support through SwiftWasm to access tools for building {project-name} policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "swift"]
 :doc-type: ["tutorial"]

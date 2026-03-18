@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Mutating policies
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Explains mutating policies in the context of {project-name}
+:description: Rebuild requests by configuring and managing mutating policies within ClusterAdmissionPolicy according to predefined settings.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["mutating-policies"]
 :doc-type: ["explanation"]

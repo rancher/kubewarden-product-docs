@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Validation using JSON queries
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Validation using JSON queries with {project-name} policies in Go.
+:description: Implement validation logic using JSON queries by extracting relevant data from a Kubernetes object's JSON representation.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "validation-using-json"]
 :doc-type: ["tutorial"]

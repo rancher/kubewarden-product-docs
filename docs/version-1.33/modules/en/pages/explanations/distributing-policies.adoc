@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Distributing policies
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: A description of how {project-name} policies are distributed from OCI-compliant repositories.
+:description: Distribute policies securely via an OCI-compliant registry using tools like kwctl, and ensure cluster security through {project-name} policy management.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Creating a policy
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Creating a {project-name} policy using Rust.
+:description: Learn to create and configure validation policies that control Pod creation requests based on customizable rejection criteria.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "creating-policies"]
 :doc-type: ["tutorial"]

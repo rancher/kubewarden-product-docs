@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Policy metadata
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Using policy metadata when developing a {project-name} policy.
+:description: Configure policy metadata in the metadata.yaml file to define policy settings, author information, and resource permissions.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "policy-metadata"]
 :doc-type: ["tutorial"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Quick start
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Getting started with {project-name}, installing the {project-name} stack and taking care of prerequisites and authentication
+:description: Understand the {project-name} stack by learning how to deploy and manage its main components, including PolicyServers and ClusterAdmissionPolicy resources.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]

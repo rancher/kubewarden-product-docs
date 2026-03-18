@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Verify Rancher Application Collection images
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Verify Rancher Application Collection images with {project-name}.
+:description: Configure PolicyServers to authenticate with and pull images from Rancher Application Collection using a Docker Config Secret.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher", "installation"]
 :doc-type: ["howto"]

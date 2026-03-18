@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Rego
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Writing {project-name} policies using Rego.
+:description: Learn about Rego language basics, including its use in conjunction with Open Policy Agent and Gatekeeper frameworks to implement policies as code.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "introduction"]
 :doc-type: ["tutorial"]

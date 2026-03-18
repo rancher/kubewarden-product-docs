@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Tracing
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Tracing for {project-name}.
+:description: Enable tracing for fine-grained details about policy evaluations and debug issues related to the {project-name} deployment.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "tracing"]
 :doc-type: ["hosto"]

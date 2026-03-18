@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Writing validation logic
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Writing validation logic in Rust for a {project-name} policy
+:description: Write validation logic to check the validity of incoming requests by parsing payloads and verifying Pod objects.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "validation-logic"]
 :doc-type: ["tutorial"]

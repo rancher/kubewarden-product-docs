@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
 
 = Common tasks
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Description of some common tasks undertaken after installing {project-name}. Provides examples of these tasks using kwctl
+:description: Manage policies in your Kubernetes cluster with {project-name} using the kwctl CLI tool.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]

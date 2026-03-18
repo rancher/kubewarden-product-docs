@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Raw policies
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: {project-name} support for 'raw' policies.
+:description: Configure raw policies as a generic policy evaluation engine using {project-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
 :doc-type: ["howto"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Metrics reference
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Metrics reference documentation for {project-name}.
+:description: Explore cluster metrics and patterns with {project-name}'s exposed platform metrics to inform decision-making processes.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Kubernetes capabilities
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Kubernetes capabilities.
+:description: Explore Kubernetes capabilities using {project-name}'s context-aware policies and the waPC protocol to access cluster resources.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "kubernetes-capabilities"]
 :doc-type: ["reference"]

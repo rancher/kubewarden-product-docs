@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = C#
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: {project-name} policies using C# and .NET
+:description: Explore and write validation and mutation of admission control policies using .NET Core SDK with WASI support on WebAssembly platforms like Kubernetes.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "c#"]
 :doc-type: ["tutorial"]

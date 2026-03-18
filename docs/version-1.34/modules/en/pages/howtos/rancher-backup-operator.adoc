@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
 
 = Backup and restore with Rancher Backup Operator
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Backup and restore with Rancher Backup Operator
+:description: Configure and manage backups and restores using the rancher-backup operator on any Kubernetes cluster.
 :keywords: "{project-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Build and run a OPA policy for {short-project-name}
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Build and run a OPA policy for {project-name}.
+:description: Build a custom OPA policy for your project by constructing a Rego policy package, compiling it into a WASM target, and integrating with kwctl.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "build-and-run"]
 :doc-type: ["tutorial"]
