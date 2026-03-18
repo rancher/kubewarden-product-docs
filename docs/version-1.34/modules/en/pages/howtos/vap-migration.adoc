@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = ValidatingAdmissionPolicy migration
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Discusses how to migrate from Kubernetes VAP policies to {project-name}.
+:description: Migrate a ValidatingAdmissionPolicy to {project-name} via the kwctl command's migration steps for a smooth policy transition.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]

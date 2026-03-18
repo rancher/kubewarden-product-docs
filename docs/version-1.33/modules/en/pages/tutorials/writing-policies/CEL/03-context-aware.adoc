@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Context-aware CEL policies
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Example: context-aware CEL policy
+:description: Configure context-aware policies to ensure unique Ingress rules across hosts, preventing conflicts with {project-name}'s CEL extension libraries.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
 :doc-type: ["tutorial"]

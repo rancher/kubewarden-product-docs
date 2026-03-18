@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Writing raw policies
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Using {project-name} for writing raw policies.
+:description: Write raw policies that evaluate arbitrary JSON documents by defining custom validation and mutation logic for.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "raw-policies"]
 :doc-type: ["tutorial"]

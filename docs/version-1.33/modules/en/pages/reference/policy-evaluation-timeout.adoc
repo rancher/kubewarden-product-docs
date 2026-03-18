@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Policy evaluation timeout protection
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Policy evaluation timeout protection for {project-name}
+:description: Configure policy evaluation timeouts to ensure timely completion and prevent resource exhaustion with the Policy Server's built-in protection feature.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-evaluation-timeout"]
 :doc-type: ["reference"]

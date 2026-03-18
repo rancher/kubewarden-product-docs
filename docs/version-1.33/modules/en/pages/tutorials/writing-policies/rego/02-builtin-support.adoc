@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Builtin support
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: The {project-name} provided support for executing wasm binaries.
+:description: Determine which built-in functions are available for WebAssembly modules and understand their implementation and use in Rego policy development.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "built-in-support"]
 :doc-type: ["tutorial"]

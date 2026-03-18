@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Validating policies
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Validating policies
+:description: Evaluate your validation requests using policy-specific settings to determine acceptance or rejection of Kubernetes AdmissionReview objects.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "validating-policies"]
 :doc-type: ["reference"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Raw policies
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: {project-name} support for raw policies using Rust.
+:description: Learn about raw policies that evaluate arbitrary JSON documents, as well as view examples of policy implementation in Rust.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["writing-policies", "rust", "raw-policies"]
 :doc-type: ["tutorial"]

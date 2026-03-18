@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Configuring the {project-name} stack for production
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Configuring {project-name} stack for production
+:description: Configure tolerations and affinity rules for optimal scheduling and reliability within the {project-name} stack in a Kubernetes cluster.
 :keywords: ["{project-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto

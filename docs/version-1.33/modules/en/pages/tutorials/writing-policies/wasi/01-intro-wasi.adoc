@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = WASI
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Using WASI to develop {project-name} policies.
+:description: Write WASI policies that interact with system primitives when a limitation in the Go compiler prevents using the waPC communication mechanism.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "wasi"]
 :doc-type: ["tutorial"]

@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Introduction to CEL
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: An introduction to writing {project-name} policies with CEL.
+:description: Learn about CEL (Computation Expression Language) as a fast, portable, and safe expression language designed for Kubernetes validation rules and extensions to the Kubernetes API.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "introduction"]
 :doc-type: ["tutorial"]

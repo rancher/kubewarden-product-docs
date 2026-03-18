@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Monitoring
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Monitoring and metrics for {project-name}.
+:description: Configure monitoring for Rancher environments by integrating with the {project-name} and Prometheus.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]

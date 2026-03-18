@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
 
 = Air gap installation
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Air gap installation for {project-name}.
+:description: Configure a private registry with {project-name} images and policies to install {project-name} in an air-gapped environment.
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
 :doc-topic: [“operator-manual”, “air gap”, “installation”]
 :doc-type: [“howto”]
@@ -22,7 +22,7 @@ sections describe the process.
 [NOTE]
 ====
 We recommend using link:https://docs.hauler.dev/docs/intro[Hauler].
-See our xref:03-hauler.adoc[Hauler documentation page].
+See our xref:/howtos/airgap/03-hauler.adoc[Hauler documentation page].
 
 Alternatively, you can use the manual process listed below.
 ====

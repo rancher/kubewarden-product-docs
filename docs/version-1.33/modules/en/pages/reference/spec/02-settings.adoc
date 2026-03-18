@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Policy settings
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Policy settings.
+:description: Configure policy settings using {project-name}'s for validation and serialization of policy data.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "settings"]
 :doc-type: ["reference"]

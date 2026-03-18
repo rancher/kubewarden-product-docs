@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Writing raw policies
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Writing raw OPA policies for {project-name}.
+:description: Learn how to write raw policies that evaluate arbitrary JSON documents and enforce access control rules in your system.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "raw-policies"]
 :doc-type: ["tutorial"]

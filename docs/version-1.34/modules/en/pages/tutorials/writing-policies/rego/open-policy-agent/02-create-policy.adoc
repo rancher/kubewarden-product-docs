@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Creating a new policy
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: Creating a new OPA policy for {project-name}.
+:description: Create a policy that evaluates all namespaced resources and forbids their creation in the default namespace for hands-on learning.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "rego", "open-policy-agent", "create-policy"]
 :doc-type: ["tutorial"]

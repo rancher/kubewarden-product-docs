@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Monitor mode
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: The {project-name} monitor mode and how to activate it.
+:description: Configure ClusterAdmissionPolicies or AdmissionPolicies for monitor mode to track and analyze policy actions without modifying incoming requests.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "monitor-mode"]
 :doc-type: ["reference"]

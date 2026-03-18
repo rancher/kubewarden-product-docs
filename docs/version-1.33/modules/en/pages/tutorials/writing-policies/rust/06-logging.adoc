@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Logging
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: How to use logging functionality when writing a {project-name} policy in Rust.
+:description: Configure logging capabilities for your policy by using the {project-name}'s integration with the SLOG library and initializing.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
 :doc-type: ["tutorial"]

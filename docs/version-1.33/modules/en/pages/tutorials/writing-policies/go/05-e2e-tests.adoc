@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = End-to-end testing
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: A tutorial introduction to end-to-end testing for writing {project-name} policies in the Go language.
+:description: Discover how to write and automate end-to-end tests running against the WebAssembly binary produced by TinyGo with bats and kwctl.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "golang", "end-to-end-testing"]
 :doc-type: ["tutorial"]

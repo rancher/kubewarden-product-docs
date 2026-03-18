@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Publish policies to Artifact Hub
-:revdate: 2026-03-12
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: A brief introduction to publishing {project-name} policies on Artifact Hub.
+:description: Publish {project-name} policies to Artifact Hub by creating a well-formatted Git repository layout and configuring GitHub Actions for automated packaging, facilitating continuous integration.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]

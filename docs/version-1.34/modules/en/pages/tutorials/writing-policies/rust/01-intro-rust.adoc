@@ -1,8 +1,8 @@
 include::partial$variables.adoc[]
 = Rust
-:revdate: 2026-03-13
+:revdate: 2026-03-18
 :page-revdate: {revdate}
-:description: An introduction to writing {project-name} policies with Rust.
+:description: Learn how to write admission controller policies in Rust with SUSE's security admission controllers simplified SDK and template projects.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "introduction"]
 :doc-type: ["tutorial"]
