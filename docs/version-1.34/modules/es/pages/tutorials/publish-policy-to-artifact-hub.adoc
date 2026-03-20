@@ -1,0 +1,98 @@
+include::partial$variables.adoc[]
+= Publicar directivas en Artifact Hub
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Publicar {project-name} directivas en Artifact Hub creando un diseño de repositorio Git bien formateado y configurando GitHub Actions para empaquetado automatizado, facilitando la integración continua.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "publishing policies", "artifact hub"]
+:sidebar_label: Publicar en Artifact Hub
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+https://artifacthub.io/[Artifact Hub] es un sitio web donde los usuarios pueden encontrar, instalar y publicar paquetes y configuraciones para proyectos de https://cncf.io[CNCF].
+
+Las {project-name} directivas pueden publicarse en Artifact Hub y hacerse descubribles para la amplia audiencia de usuarios de CNCF.
+
+[NOTE]
+====
+Artifact Hub es una plataforma de agregación de contenido y no aloja realmente los artefactos que se publican en él.
+
+Artifact Hub requiere que alojes físicamente los repositorios de imágenes de contenedor en un registro de contenedores o en un servidor web.
+Consulta la sección xref:explanations/distributing-policies.adoc[distribución de directivas] para más información sobre cómo alojar tus directivas.
+====
+
+
+Este documento se centra en los pasos necesarios para hacer que una directiva {short-project-name} sea descubrible en Artifact Hub.
+
+== Prepara tu repositorio Git
+
+Artifact Hub rastrea los repositorios Git en busca de archivos de metadatos especiales.
+
+Existen diferentes tipos de diseños que puede tener el repositorio Git. Todos están documentados en profundidad en la https://artifacthub.io/docs/topics/repositories/#kubewarden-policies-repositories[documentación oficial de Artifact Hub].
+
+Artifact Hub es flexible y te permite organizar tu código de estas maneras:
+
+* Tener un repositorio Git dedicado a Artifact Hub: este repositorio no contendrá ningún código fuente de directiva. Será una colección de los archivos YAML requeridos por Artifact Hub.
+
+* Añade un directorio de Artifact Hub en el repositorio Git que contiene la fuente de tu directiva. Esta es una iteración del enfoque anterior, centrándose en una sola directiva, la que está definida en el repositorio Git. Este enfoque permite mantener múltiples versiones de la directiva publicadas en Artifact Hub.
+
+* Añade los archivos `artifacthub-pkg.yml` y `artifacthub-repo.yml` a la raíz del repositorio Git que contiene el código fuente de la directiva. Este enfoque es el más sencillo. La única limitación es que solo la última versión de la directiva será visible en Artifact Hub.
+
+El último enfoque se utiliza en nuestras plantillas de directivas oficiales. El repositorio Git que se ha creado incluye el archivo `artifacthub-repo.yml`, y nuestras acciones de GitHub generan y envían el `artifacthub-pkg.yml` a una rama `artifacthub` para que Artifact Hub lo consuma.
+
+== Pasos de Publicación
+
+Antes de publicar una directiva en Artifact Hub, debes crear una cuenta https://artifacthub.io/[allí].
+
+Antes de publicar la directiva, asegúrate de que tu repositorio Git tenga el diseño adecuado, con un `metadata.yml` bien formateado y con las anotaciones obligatorias.
+
+Si quieres hacer esto manualmente, puedes crear el archivo `artifacthub-pkg.yml` haciendo un `kwctl scaffold artifacthub` (con la versión `>= 1.23`). Este comando toma el `metadata.yml` en la vía actual y genera un `artifacthub-pkg.yml`. El `artifacthub-pkg.yml` contiene campos como `version:`, `createdAt:`, que deben coincidir con un formato específico y estar actualizados. El formato del `artifacthub-pkg.yml` se describe https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml[aquí].
+
+Si utilizas nuestras acciones de GitHub >= `v4.0.0`, el flujo de trabajo de lanzamiento puede configurarse con la entrada `artifacthub: true`. Si está configurado así, después de un lanzamiento exitoso (después de que la directiva se haya construido, firmado y enviado con éxito), nuestras acciones de GitHub tienen un último trabajo que genera el `artifacthub-pkg.yml` para ti, luego comitea y envía los cambios a la rama `artifacthub`. Los archivos canónicos son siempre los que están en la rama `main`. Para el comportamiento de versiones anteriores de nuestras acciones de GitHub, consulta la documentación de versiones anteriores a 1.23.
+
+Finalmente, asegúrate de que tu directiva esté publicada dentro de un registro de contenedores o en un servidor web.
+
+[NOTE]
+====
+En este momento, el contenido del archivo `artifacthub-repo.yml` no es relevante.
+====
+
+
+Una vez que todo esté en su lugar, inicia sesión en Artifact Hub y ve a tu https://artifacthub.io/control-panel/repositories?page=1[plano de control].
+
+Decide si quieres publicar la directiva como usuario o bajo una organización de Artifact Hub a la que pertenezcas. Esto se hace eligiendo el contexto correcto _"del panel de control"_.
+
+Luego, presiona el botón _"Añadir"_ y completa el formulario:
+
+* Elige _"{short-project-name} directivas"_ como tipo.
+* Introduce un _"Nombre"_ y _"Nombre para mostrar"_ de tu elección.
+* Introduce la URL de tu repositorio Git.
+* Introduce `artifacthub` como la rama a rastrear.
+
+Finalmente, presiona el botón _"Añadir"_. Esto te llevará de vuelta a la página _"Repositorios"_, donde verás tu repositorio recién creado.
+
+Cada repositorio tiene varios campos de información. Encuentra la propiedad _"ID"_ del repositorio que acabas de crear y cópiala.
+
+Regresa a tu repositorio Git y edita el `artifacthub-repo.yml`. Asegúrate de que la clave `repositoryID` que se encuentra dentro del documento tenga el valor que acabas de copiar de la página web de Artifact Hub.
+
+[TIP]
+====
+El formato del archivo `artifacthub-repo.yml` está definido https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml[aquí].
+
+Ahora es un buen momento para hacer algunas personalizaciones adicionales a este archivo.
+====
+
+
+Una vez que hayas terminado con los cambios, confirma el archivo `artifacthub-repo.yml` actualizado y súbelo. Durante el próximo escaneo, Artifact Hub encontrará este archivo y añadirá la insignia https://artifacthub.io/docs/topics/repositories/#verified-publisher[_"Editor Verificado"_] a tu repositorio de Artifact Hub.
+
+== Manteniendo Artifact Hub en Sincronía
+
+No olvides actualizar el contenido del archivo `artifacthub-pkg.yml` cada vez que publiques una nueva versión de tu directiva. Por ejemplo, debes actualizar el campo `io.kubewarden.policy.version` (que normalmente coincide con la etiqueta OCI de la directiva), y cualquier otra anotación que desees cambiar.
+
+[NOTE]
+====
+El contenido del archivo `artifacthub-repo.yml` no necesita ser cambiado.
+====
+
