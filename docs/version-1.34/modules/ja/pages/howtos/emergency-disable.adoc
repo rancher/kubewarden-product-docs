@@ -1,0 +1,65 @@
+include::partial$variables.adoc[]
+= 緊急無効化
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: 緊急無効化
+:sidebar_position: 31
+:title: 緊急無効化
+:description: 緊急時に{project-name}を無効化する方法を学び、関連する設定を停止および削除し、その後復元します。
+:keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
+:doc-persona: kubewarden-operator
+:doc-type: HOWTO(操作方法)
+:doc-topic: オペレーター・マニュアル
+
+緊急時には、オペレーションチームが{project-name}によってブロックされるアクションを実行する必要がある場合があります。
+
+この文書では、オペレーションチームがクラスターの障害に対処できるようにするために{short-project-name}を無効化する方法を説明します。状況が解決した後、オペレーションチームは{short-project-name}を再起動できます。
+
+== {short-project-name}を無効化
+
+まず、{short-project-name}コントローラーを停止します。これを行うには、そのデプロイメントをゼロにスケールします：
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=0 \
+  -n kubewarden
+----
+
+[tip]
+====
+{short-project-name}スタックがデプロイされているネームスペースの名前を使用していることを確認してください。
+ここでは、スタックが`kubewarden`ネームスペースにデプロイされています。
+====
+
+次に、{short-project-name}によって作成されたすべての`ValidatingWebhookConfigurations`と`MutatingWebhookConfigurations`を削除します：
+
+[source,console]
+----
+# Delete all the ValidatingWebhookConfiguration created by {short-project-name}
+kubectl delete validatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+
+# Delete all the MutatingWebhookConfiguration created by {short-project-name}
+kubectl delete mutatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+----
+
+== {short-project-name}を復元
+
+緊急事態が終了したら、{short-project-name}コントローラーを復元することによって{short-project-name}スタックを復元します：
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=1 \
+  -n kubewarden
+----
+
+[tip]
+====
+- {short-project-name}スタックがデプロイされているネームスペースの名前を使用していることを確認してください。
+  ここでは、スタックが`kubewarden`ネームスペースにデプロイされています。
+- コントローラーを元の値にスケールバックすることを確認してください。この例では、コントローラーのレプリカが1つだけ実行されていると仮定しています。
+====
+コントローラーが実行されると、デプロイされたポリシーを調整します。以前に削除された`ValidatingWebhookConfiguration`と`MutatingWebhookConfiguration`リソースが再作成され、ポリシーが強制されます。

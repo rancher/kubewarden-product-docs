@@ -1,0 +1,14 @@
+include::partial$variables.adoc[]
+= 本番環境用のポリシーサーバーの設定
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 本番環境用のポリシーサーバーの設定です。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "production", "poddisruptionbudget", "affinity", "limits", "priorityClass"]
+:doc-type: ["howto"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "policyservers", "production", "poddisruptionbudget", "affinity", "limits", "priorityClass"]
+:sidebar_label: 本番環境のデプロイメント
+:current-version: {page-origin-branch}
+
+`PolicyServer`の設定セクションをxref:/howtos/production-deployments.adoc#_policyserver_production_configuration[本番環境のデプロイメント]のドキュメントでご参照ください。
