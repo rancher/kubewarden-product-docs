@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+
+= Exigences pour l'installation de {project-name} dans une installation isolée physiquement
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez les exigences d'installation pour {project-name} dans des environnements isolés physiquement, y compris les registres privés pris en charge et les détails de compatibilité.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manuel-opérateur", "isolation physique", "exigences"]
+:doc-type: ["howto"]
+:keywords: ["Kubewarden", "kubernetes", "installation isolée physiquement"]
+:sidebar_label: Configuration requise
+:current-version: {page-origin-branch}
+
+. Registre privé qui prend en charge les artefacts OCI. C'est nécessaire pour stocker les images de conteneurs et les politiques. Il existe une liste des registres pris en charge par l'Open Container Initiative (OCI) xref:reference/oci-registries-support.adoc[ici].
+. https://github.com/kubewarden/kwctl[`kwctl`] 1.3.1 ou version supérieure.
+. docker v20.10.6 ou version supérieure.
