@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= Scanner de auditoria - Limitações
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Saiba sobre as limitações ao usar o scanner de auditoria para avaliar políticas e tipos de eventos em um ambiente Kubernetes, incluindo seu uso para a avaliação de políticas e de tipos de eventos.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner", "limitations"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "audit scanner"]
+:sidebar_label: Limitações
+:current-version: {page-origin-branch}
+
+== Tipos de eventos suportados
+
+As políticas podem inspecionar `CREATE`, `UPDATE` e `DELETE` eventos.
+
+O scanner de auditoria não pode simular `UPDATE` eventos, pois não sabe qual parte do recurso precisa ser alterada.
+
+Portanto, o scanner de auditoria ignora uma política que se preocupa apenas com `UPDATE` eventos.
+
+[NOTE]
+====
+
+A versão 1.7.0 do scanner de auditoria suporta apenas `CREATE` eventos. O tratamento de `DELETE` eventos está chegando em breve.
+
+====
+
+
+== Políticas que dependem de informações do usuário e do grupo de usuários
+
+Cada objeto de solicitação de admissão do Kubernetes tem informações sobre qual usuário (ou ServiceAccount) iniciou o evento e a qual grupo eles pertencem.
+
+Todos os eventos simulados pelo scanner de auditoria originam-se do mesmo usuário e grupo codificados. Por causa disso, políticas que dependem desses valores para tomar suas decisões não produzirão resultados significativos.
+
+Para esses casos, configure a política como não auditável.
+
+== Políticas que dependem de dados externos
+
+As políticas podem solicitar e usar dados externos ao realizar uma avaliação. Você pode avaliar essas políticas com as verificações de auditoria, mas os resultados podem mudar dependendo dos dados externos.
+
+== Uso de `*` pelas políticas
+
+Os recursos personalizados `AdmissionPolicy` e `ClusterAdmissionPolicy` têm os seguintes campos:
+
+[subs="+attributes",yaml]
+----
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+----
+
+Os atributos `apiGroups`, `apiVersions` e `resources` podem usar o caractere curinga `*`. Esse símbolo curinga faz com que a política corresponda a todos os valores usados no campo. O scanner de auditoria ignora políticas que usam o símbolo `*`.
