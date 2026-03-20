@@ -1,0 +1,24 @@
+include::partial$variables.adoc[]
+
+= Configurando PolicyServers com proxies
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: Configurando PolicyServers com proxies
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "policy-servers", "production", "proxy", "proxies", "socks"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "policyservers", "production", "proxy", "proxies", "socks"]
+:sidebar_label: Usando proxies
+:current-version: {page-origin-branch}
+
+Os PolicyServers respeitam as variáveis de ambiente padrão para lidar com configurações de proxy. O PolicyServer usa o proxy configurado ao baixar políticas.
+Isso inclui operações do Sigstore ao verificar políticas e imagens.
+
+Essas variáveis são:
+
+* `HTTP_PROXY` ou `http_proxy`: servidor proxy para requisições HTTP
+* `HTTPS_PROXY` ou `https_proxy`: servidor proxy para requisições HTTPS
+* `NO_PROXY` ou `no_proxy`: lista de hosts separados por vírgula a serem excluídos do proxy
+
+Consulte a referência do CRD xref:reference/CRDs.adoc#_policyserverspec[`PolicyServer.spec.env`] para definir essas variáveis de ambiente.
