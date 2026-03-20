@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= Organização da documentação
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Organização
+:sidebar_position: 75
+:description: Acesse documentação abrangente organizada em tutoriais, explicações, procedimentos e materiais de referência para o {project-name}.
+:keywords: ["gerente de política de admissão", "{project-name}", documentação, organização]
+:doc-persona: [kubewarden-all]
+:doc-type: [explicação]
+:doc-topic: [explicação]
+
+{project-name} organiza a documentação do projeto da seguinte forma:
+
+* xref:/introduction.adoc[Introdução]
+* xref:/quick-start.adoc[Início rápido]
+* _Tutoriais_—aprendendo por meio de exemplos.
+* _Explicações_—conceitos subjacentes.
+* _Procedimentos_—realizando tarefas {short-project-name}.
+* _Referência_
+* Organização—esta página
+* xref:/personas.adoc[Personas]—para quem é {short-project-name}?
+* xref:/disclosure.adoc[Segurança]
+* xref:/glossary.adoc[Glossário]
+
+A maior parte do material está nas quatro seções, _Tutoriais_, _Explicações_, _Procedimentos_ e _Referência_. Pode haver sobreposição, pois as seções não são mutuamente exclusivas. O projeto {short-project-name} tenta seguir a estrutura de documentação link:https://diataxis.fr/[Diátaxis].
+
+== Navegação
+
+O menu de conteúdos à esquerda sempre indica sua localização atual no documento.
+O menu de seções à direita mostra as seções da página atual. Há também um recurso de 'breadcrumbs' no topo do painel de conteúdo principal em cada página.
+
+== Pesquisar
+
+Uma caixa de busca está no painel de cabeçalho de cada página.
+
+== Editando
+
+Um link para a fonte da página no GitHub está na parte inferior de cada página.
+
+== Outros recursos
+
+Também são mantidos:
+
+* link:https://github.com/kubewarden/rfc[RFCs] para o projeto.
+* Uma série de link:https://www.kubewarden.io/blog/[postagens de blog] relacionadas a {community-name} lançamentos.
+* Itens relacionados à gestão da link:https://github.com/kubewarden/community[comunidade] de {community-name}.
