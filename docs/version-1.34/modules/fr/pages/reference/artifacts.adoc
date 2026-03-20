@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+:title: {project-name} artefacts
+:description: Vérifiez {project-name} artefacts et accédez aux binaires associés, aux graphiques Helm, pour une gestion efficace de la sécurité.
+:keywords: [artefacts, support, airgap, images]
+:doc-persona: [kubewarden-operator]
+:doc-type: [référence]
+:doc-topic: [manuel-opérateur, artefacts, registre, images]
+
+= {title}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+== Vérification de {project-name}
+
+Il existe un tutoriel sur xref:/tutorials/verifying-kubewarden.adoc[vérification
+{short-project-name}] démontrant comment vérifier les artefacts {short-project-name}.
+
+== Fichiers binaires
+
+Notre outil CLI `kwctl` est publié via https://github.com/kubewarden/kwctl/releases[GitHub releases].
+
+== Artefacts OCI
+
+Pour les artefacts de l'Open Container Initiative (OCI), le projet publie tout dans `ghcr.io` sous https://github.com/orgs/kubewarden/packages.
+
+- https://github.com/orgs/kubewarden/packages/policies[`kubewarden/packages/policies/*`] sont les artefacts de stratégie Wasm OCI.
+- https://github.com/orgs/kubewarden/packages/charts[`kubewarden/packages/charts/*`] sont les charts Helm en tant qu'artefacts OCI. Ils suivent les normes SLSA.
+- les images de conteneur publiées en tant qu'images OCI : `kubewarden-controller`, `policy-server`, `audit-scanner`, `kubectl`.
+- il y a aussi `packages/tests/*` contenant des artefacts utilisés dans les tests e2e.
+
+== Charts Helm via HTTPS
+
+{short-project-name} publie des charts Helm dans le dépôt HTTPS des charts Helm à https://charts.kubewarden.io.. Ils sont sans SLSA, ni signatures, mais ce type de dépôt Helm permet la recherche.
