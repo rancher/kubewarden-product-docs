@@ -1,0 +1,143 @@
+include::partial$variables.adoc[]
+= Rancherアプリケーションコレクションのイメージを確認する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Docker Config Secretを使用してRancherアプリケーションコレクションからイメージを認証および取得するために、PolicyServersを構成します。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "rancher", "installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "rancher", "アプリケーションコレクション", "appco", "署名", "確認", "確認する"]
+:sidebar_label: イメージを確認する
+:current-version: {page-origin-branch}
+
+このセクションでは、https://apps.rancher.io/[Rancherアプリケーションコレクション]からのアプリケーションとイメージを{project-name}で確認する方法について説明します。
+
+イメージの確認は、https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[イメージ署名の確認]ポリシーをデプロイし、PolicyServersを構成してアプリケーションコレクションからイメージの署名レイヤーを取得することによって行います。
+
+[IMPORTANT]
+====
+
+アプリケーションコレクションにアクセスするには、アクセストークンまたはサービスアカウント認証が必要です。
+
+====
+
+
+== Rancherアプリケーションコレクションへの認証
+
+https://docs.apps.rancher.io/get-started/authentication/[アプリケーションコレクションのドキュメント]に従って、アクセストークンを作成し、アプリケーションコレクションレジストリから取得するようにクラスターを構成します。Docker Config Secretを使用します：
+
+[subs="+attributes",console]
+----
+$ kubectl create secret docker-registry application-collection \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<mymail> \
+  --docker-password=<mytoken>
+----
+
+== PolicyServerがRancherアプリケーションコレクションから取得できるようにSecretを作成します。
+
+使用中のPolicyServerは、署名を含むイメージレイヤーを取得できるように構成が必要です。
+
+Policy Serversのためのxref:/howtos/policy-servers/02-private-registry.adoc[プライベートレジストリのハウツー]に従って、*PolicyServerネームスペース内でDocker Config Secretを作成します。*これを行うには、前の`application-collection`と同じ内容のSecretをインスタンス化します。
+
+`default`のPolicyServerは、`kubewarden-defaults` Helmチャートで`kubewarden`ネームスペースの下にインストールされている場合、次のようになります：
+
+[subs="+attributes",console]
+----
+$ kubectl create secret docker-registry application-collection-kw -n kubewarden \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<mymail> \
+  --docker-password=<mytoken>
+----
+
+== PolicyServersが新しいSecretを使用するように構成します。
+
+もし`kubewarden-defaults` HelmチャートからPolicyServer `default`を使用している場合、imagePullSecret `application-collection-kw`で構成します。これは同じネームスペースにあり、チャートの次の値を設定することによって行われます：
+
+[subs="+attributes",console]
+----
+$ helm upgrade -i --wait --namespace kubewarden \
+  --create-namespace kubewarden-defaults kubewarden/kubewarden-defaults \
+  --reuse-values \
+  --set policyServer.imagePullSecret=application-collection-kw
+----
+
+他のPolicyServerを使用している場合は、それらのxref:reference/CRDs.adoc#_policyserverspec[`spec.imagePullSecret`]を設定してください。SecretはPolicyServerと同じネームスペースに存在する必要があります。
+
+== ポリシーを適用する。
+
+https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[イメージ署名を確認]ポリシーを利用することで、ClusterAdmissionPolicyを適用できます。このポリシーは`dp.apps.rancher.io/containers/*`からのすべてのコンテナイメージをチェックします。ポリシーはOCIレジストリとアーティファクトをサポートしています。
+
+ポリシーの設定は、（執筆時点の）アプリケーションコレクションからのhttps://docs.apps.rancher.io/howto-guides/verify-signatures-with-kubewarden/[公開鍵]を、`pubKeys`の配列内で使用して構成できます。
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    artifacthub/pkg: verify-image-signatures/verify-image-signatures/0.2.9
+  name: check-appcollection-signatures
+spec:
+  backgroundAudit: true
+  mode: protect
+  module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.9
+  mutating: true
+  policyServer: default
+  # On first policy call, the policy-server downloads the image layers to
+  # verify the signatures. Later on it's cached. It may be useful to increase
+  # this timeout:
+  timeoutSeconds: 30 # default 10 seconds.
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+  settings:
+    modifyImagesWithDigest: true
+    rule: PublicKey
+    signatures:
+      - image: dp.apps.rancher.io/containers/*
+        pubKeys:
+          # Note: this array constitutes an AND in validation, not an OR.
+          - |-
+            -----BEGIN PUBLIC KEY-----
+            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA02FtEt5gBywiyxbmkVsb
+            CujcBg5lur0kpEbfDk10gCcs9shVEqEO3ZsOXHursgoaDAWqdPtsYhsgczGeJz9w
+            Aw+r6BuRV8YOkE37A8s/7IOQUW0tlqtnt11OKhIiZ9+e5l3ed2H1ymKQO3dgreSy
+            rShqYdA3hrItswyp41ApF6zhjSPlR6lAmq3X4wMYLAPptmzfxigTnR4hxB5UNPhs
+            i2qA4vLrUM/i+NohECuLr1EAymvupH26HLEdM+eZnlQn+WbhIP5Grc4ba7XrBv7K
+            kywgTC7CxkiJZR0mUcUD2wTX/Je8Ewj6oPSalx09e2jtzvmU5Kr9XUyMF7Zsj5CA
+            IwIDAQAB
+            -----END PUBLIC KEY-----
+EOF
+----
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f mypolicy.yml
+$ kubectl get admissionpolicies -n default # wait for status active
+----
+
+テストするには、アプリケーションコレクションから署名されたイメージを持つPodをデプロイしてください。
+
+[subs="+attributes",console]
+----
+$ kubectl run nginx --image [dp.apps.rancher.io/containers/nginx:1.24.0](http://dp.apps.rancher.io/containers/nginx:1.24.0) --overrides='{"spec": {"imagePullSecrets":[{"name": "application-collection"}]}}'
+ pod/nginx created
+----
+
+ポリシーサーバーPodのログを確認することで、検証が行われたことを確認できます。

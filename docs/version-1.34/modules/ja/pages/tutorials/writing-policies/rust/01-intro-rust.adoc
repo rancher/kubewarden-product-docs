@@ -1,0 +1,43 @@
+include::partial$variables.adoc[]
+= Rust
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: SUSEのセキュリティアドミッションコントローラーの簡素化されたSDKとテンプレートプロジェクトを使用して、Rustでアドミッションコントローラーのポリシーを書く方法を学びましょう。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "introduction"]
+:sidebar_label: Rust
+:current-version: {page-origin-branch}
+
+https://www.rust-lang.org/[Rust]は、WebAssemblyモジュールを生成できる最も成熟したプログラミング言語です。
+WebAssemblyはRustの世界では第一級の市民であり、Rustエコシステムの多くのツールやクレートはすぐに使用できます。
+
+{project-name}は、ポリシーを記述するための処理を簡素化するhttps://crates.io/crates/kubewarden-policy-sdk[Rust SDK]を提供します。
+また、https://github.com/kubewarden/rust-policy-template[テンプレートプロジェクト]があり、https://github.com/cargo-generate/cargo-generate[`cargo-generate`]ユーティリティでポリシープロジェクトの雛形を作成できます。
+
+このドキュメントは、Rustを使用して{short-project-name}ポリシーを書くためにこれらのプロジェクトを使用する方法を示しています。
+{short-project-name}のRust SDKの詳細は含まれていません。
+詳細はhttps://docs.rs/kubewarden-policy-sdk/0.1.0[クレートのドキュメント]にあります。
+
+== Rustの依存関係を取得する
+
+https://github.com/rust-lang/rustup[rustup]を使用してRustコンパイラとそのツールをインストールします。
+rustup https://rust-lang.github.io/rustup/installation/index.html[インストールドキュメント]を参照してください。
+
+`rustup`をインストールしたら、WebAssemblyシステムインターフェース（WASI）ターゲットを追加します：
+
+[subs="+attributes",console]
+----
+rustup target add wasm32-wasip1
+----
+
+== OSXの依存関係
+
+`cargo-generate`を使用するには、Xcodeツールセットを追加する必要があります。
+Xcodeを通じてインストールされていない場合、次のコマンドで必要な依存関係を取得できます：
+
+[subs="+attributes",console]
+----
+xcode-select --install
+----

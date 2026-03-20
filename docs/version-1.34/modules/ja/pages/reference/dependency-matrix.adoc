@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= 依存関係マトリックス
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}の依存関係について、バージョン制約を含めて学びます。
+:doc-persona: [“kubewarden-all”]
+:doc-topic: [“operator-manual”, “dependencies”]
+:doc-type: [“reference”]
+:keywords: [“dependency”, “dependencies”, “CRD”, “charts”, “matrix”]
+:sidebar_label: 依存関係マトリックス
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+このページでは、{project-name}の依存関係とその関連するバージョン制約を一覧表示します。提供された範囲外のバージョンも動作する可能性がありますが、テストは行われていません。
+
+== OpenTelemetry、メトリクスおよびトレーシングの依存関係
+
+執筆時点で、https://opentelemetry.io[OpenTelemetry]スタックは改善を続けています。しかし、まだ安定しておらず、未発表の後方互換性のない変更が発生することがあります。{short-project-name}の開発者は、OpenTelemetryスタックの変更を追跡し、それに適応するよう努めています。プロジェクトは、既知の動作範囲のOpenTelemetry、メトリクスおよびトレーシングスタックに対してテストを行います。
+
+== オプションの依存関係
+
+特定の機能に必要です。
+
+[cols=”,^,^,^"]
+|===
+| チャート依存関係 | Helmチャート `appVersion`| Helmチャート `version`| 機能
+
+| `open-telemetry/opentelemetry-operator`チャート
+| `≥ 0.104`
+| 例: `0.97.1`
+| OTEL
+
+| `prometheus-community/kube-prometheus-stack`チャート
+| `≥ v0.69`
+| 例: `77.13.0`
+| Metrics
+
+| `jaegertracing/jaeger-operator`チャート
+| `≥ 1.49 < 2`
+| 例: `2.57.0`
+| トレース
+
+| `kyverno/policy-reporter`チャート
+| `≥ 2 < 4`
+| `kubewarden-controller`チャートのサブチャートとして
+| ポリシーレポートUI
+|===
+
+[cols=",^,^,^"]
+|===
+| CRD依存関係 | バージョン | Helmチャート `version`| 機能
+
+| （廃止予定、削除予定）`policyreports.wgpolicyk8s.io` CRD
+| `v1beta1`
+| `kubewarden-defaults`チャート内または手動でインストールされた
+| 監査スキャナー
+
+| `openreports.io` CRDs
+| `v1alpha2`
+| `kubewarden-defaults`チャート内または手動でインストールされた
+| 監査スキャナー
+|===
+
+== Rancher
+
+{short-project-name}は、Rancherチャートリポジトリで提供されている監視およびトレーシング用Helmチャートに対してテストを行います。
