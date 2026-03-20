@@ -1,0 +1,22 @@
+include::partial$variables.adoc[]
+= Teste de políticas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprenda a criar e testar {project-name} políticas com {project-name} para gerenciamento seguro de clusters.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["teste-de-políticas", "introdução"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "pessoas", "autor da política", "operador de cluster"]
+:sidebar_label: Teste de políticas
+:current-version: {page-origin-branch}
+
+== Personas de teste de políticas
+
+Esta seção aborda o tema do teste de {project-name} políticas.
+Existem duas personas interessadas em testar políticas:
+
+* *Desenvolvedor de políticas*: você está escrevendo uma {short-project-name} política e quer ter certeza de que seu código se comporta como você espera.
+* *Operador de cluster*: você encontrou uma {short-project-name} política e quer testar e ajustar as configurações da política antes de implantá-la.
+Você quer continuar testando essas configurações em seus pipelines de CI/CD e outras tarefas administrativas.
+
+As próximas seções da documentação mostram como essas personas podem testar {short-project-name} políticas.
