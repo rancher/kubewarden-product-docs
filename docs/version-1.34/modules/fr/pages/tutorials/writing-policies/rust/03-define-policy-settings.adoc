@@ -1,0 +1,112 @@
+include::partial$variables.adoc[]
+= Définir les paramètres de stratégie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Définissez les paramètres et la structure de la stratégie dans votre code pour établir une base pour valider l'intégrité de la stratégie grâce à une gestion efficace des paramètres. Assurez-vous que tous les changements sont suivis, tels que qui a effectué le changement, quand, et ce qui a été changé.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "rédaction de stratégies", "rust", "paramètres de stratégie"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction de stratégies", "paramètres de stratégie", "rust"]
+:sidebar_label: Définir les paramètres de stratégie
+:current-version: {page-origin-branch}
+
+== La structure des paramètres de stratégie
+
+Tout d'abord, définissez la structure qui contient les paramètres de stratégie.
+
+Ouvrez le fichier `demo/src/settings.rs` et changez la définition de `Settings`
+`struct` pour qu'elle ressemble à :
+
+[subs="+attributes",rust]
+----
+pub(crate) struct Settings {
+    pub invalid_names: HashSet<String>,
+}
+----
+
+Cela place automatiquement la liste des noms invalides dans une collection Set.
+
+== La fonction de validation des paramètres de stratégie
+
+Ensuite, écrivez une fonction de validation des paramètres pour vous assurer que la stratégie est toujours exécutée avec au moins un nom invalide.
+
+Vous le faites en changeant l'implémentation du trait `Validatable`.
+
+Changez l'implémentation de l'échafaudage définie dans `src/settings.rs` pour qu'elle ressemble à :
+
+[subs="+attributes",rust]
+----
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        if self.invalid_names.is_empty() {
+            Err(String::from("No invalid name specified. Specify at least one invalid name to match"))
+        } else {
+            Ok(())
+        }
+    }
+}
+----
+
+== Ajouter des tests unitaires
+
+Maintenant, vous pouvez écrire un test unitaire pour vous assurer que la validation des paramètres fonctionne.
+Vous pouvez le faire de la manière https://doc.rust-lang.org/stable/book/ch11-00-testing.html[habituelle en Rust].
+
+Il y a déjà quelques tests par défaut en bas du fichier `src/settings.rs`
+. Remplacez le code généré automatiquement par celui-ci :
+
+[subs="+attributes",rust]
+----
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use kubewarden_policy_sdk::settings::Validatable;
+
+    #[test]
+    fn accept_settings_with_a_list_of_invalid_names() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("bad_name1"));
+        invalid_names.insert(String::from("bad_name2"));
+
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn reject_settings_without_a_list_of_invalid_names() -> Result<(), ()> {
+        let invalid_names = HashSet::<String>::new();
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_err());
+        Ok(())
+    }
+}
+----
+
+Vous pouvez maintenant exécuter les tests unitaires en faisant :
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+Cela produit une sortie similaire à celle-ci :
+
+[subs="+attributes",console]
+----
+   Compiling demo v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src/lib.rs (target/debug/deps/demo-bea8e11b21717093)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

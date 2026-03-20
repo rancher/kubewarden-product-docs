@@ -1,0 +1,41 @@
+include::partial$variables.adoc[]
+= C#
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explorez et rédigez des validations et des mutations de stratégies de contrôle d'admission en utilisant le SDK .NET Core avec le support WASI sur des plateformes WebAssembly comme Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "c#"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction de stratégies", "c#", ".net"]
+:sidebar_label: C#
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+Actuellement, .NET Core a un support expérimental pour la plateforme WebAssembly WASI.
+Ceci provient du projet https://github.com/SteveSandersonMS/dotnet-wasi-sdk[`dotnet-wasi-sdk`].
+
+[NOTE]
+====
+
+Vous n'avez pas besoin d'une installation Windows pour écrire ou exécuter du code .NET Core.
+Tout peut également être fait sur une machine Linux ou macOS.
+====
+
+
+== État actuel
+
+Les auteurs de stratégies peuvent utiliser les ressources suivantes :
+
+* https://github.com/kubewarden/policy-sdk-dotnet[{project-name} .NET Core SDK] : cela fournit un ensemble d'objets et de fonctions qui simplifient le traitement des stratégies.
+* https://github.com/kubewarden/policy-sdk-dotnet/tree/main/example[{short-project-name} exemple de stratégie] : ceci est un exemple d'une stratégie fonctionnelle.
+
+Aucune limitation n'est connue.
+Le SDK permet d'écrire à la fois des stratégies de validation et de mutation.
+
+Il est possible d'utiliser la bibliothèque https://www.nuget.org/packages/KubernetesClient.Models[`KubernetesClient.Models`] pour traiter les objets Kubernetes.
+
+== Modèle de projet
+
+Actuellement, nous n'avons pas de modèle de projet qui puisse générer une stratégie C#.
+
+Veuillez https://github.com/kubewarden/policy-sdk-dotnet/issues[ouvrir un problème] si vous êtes intéressé.

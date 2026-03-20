@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Support intégré
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Déterminez quelles fonctions intégrées sont disponibles pour les modules WebAssembly et comprenez leur mise en œuvre et leur utilisation dans le développement de stratégies Rego.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-de-stratégies", "rego", "support-intégré"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "support wasm intégré"]
+:sidebar_label: Support intégré
+:current-version: {page-origin-branch}
+
+En plus de créer une stratégie pour la cible `wasm`, celle-ci doit être exécutée.
+
+L'équipe de l'Open Policy Agent (OPA) a une page que vous pouvez consulter pour https://www.openpolicyagent.org/docs/latest/policy-reference/#built-in-functions[support intégré].
+
+Lors de la construction d'une stratégie Rego dans un module WebAssembly, certaines de ces fonctions intégrées se trouvent dans le fichier Wasm lui-même.
+Ce sont les intégrés marqués d'une coche verte sur la page des intégrés liée.
+Le composant d'exécution WebAssembly évaluant le module fournit les autres.
+
+Les intégrés marqués comme `SDK-dependent` sont ceux que l'hôte doit mettre en œuvre, dans ce cas, {project-name}.
+OPA et Gatekeeper peuvent les utiliser en fonction des besoins de la stratégie.
+Dans tous les cas, ces intégrés sont exposés à la stratégie et toute stratégie, qu'elle soit nouvelle ou existante, pourrait en dépendre.
+
+Il existe encore certains intégrés qui ne sont pas encore fournis par {short-project-name}, cependant, en fonction des stratégies observées publiquement, ceux déjà pris en charge devraient suffire pour la plupart des utilisateurs de Kubernetes.
+
+https://github.com/kubewarden/policy-evaluator/issues/56[Ce problème GitHub] suit les intégrés Rego que nous devons encore mettre en œuvre.
+N'hésitez pas à commenter là-bas pour aider à prioriser notre travail.
+
+== Exécution de stratégies avec des intégrés manquants
+
+Lorsqu'une stratégie est exécutée avec `kwctl` ou avec `policy-server`, la liste des intégrés utilisés par la stratégie est inspectée.
+Si certains intégrés utilisés sont manquants, le programme interrompt l'exécution en enregistrant une erreur fatale signalant ces intégrés manquants.
