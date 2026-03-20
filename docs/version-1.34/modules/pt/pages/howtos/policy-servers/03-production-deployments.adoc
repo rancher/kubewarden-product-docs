@@ -1,0 +1,14 @@
+include::partial$variables.adoc[]
+= Configurando PolicyServers para produção
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurando PolicyServers para produção.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policyservers", "produção", "orçamento-de-disrupção-de-pod", "afinidade", "limites", "classe-de-prioridade"]
+:doc-type: ["howto"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "policyservers", "produção", "orçamento-de-disrupção-de-pod", "afinidade", "limites", "classe-de-prioridade"]
+:sidebar_label: Implantações de produção
+:current-version: {page-origin-branch}
+
+Por favor, consulte a seção de configuração `PolicyServer` na documentação de xref:/howtos/production-deployments.adoc#_policyserver_production_configuration[Implantações de produção].

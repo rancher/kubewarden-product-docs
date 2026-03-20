@@ -1,0 +1,32 @@
+include::partial$variables.adoc[]
+
+= Divulgação de segurança
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Pesquisadores de segurança investigativos trabalham com a equipe do {project-name} para identificar vulnerabilidades usando protocolos de divulgação responsável.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["security", "disclosure"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "security", "disclosure"]
+:sidebar_label: Divulgação de segurança
+:sidebar_position: 80
+:current-version: {page-origin-branch}
+
+A equipe do {project-name} aprecia o trabalho investigativo sobre vulnerabilidades de segurança realizado por pesquisadores de segurança éticos e bem-intencionados. {short-project-name} segue a prática de [divulgação responsável](https://pt.wikipedia.org/wiki/Divulga%C3%A7%C3%A3o_respons%C3%A1vel) para proteger da melhor forma a base de usuários do {short-project-name} do impacto de problemas de segurança. Do lado do {short-project-name}, isso significa:
+
+* {short-project-name} responde a incidentes de segurança com prioridade.
+* {short-project-name} libera correções para problemas assim que for prático, priorizando pelo risco.
+* {short-project-name} sempre informa a comunidade de forma transparente sobre qualquer incidente que os afete.
+
+Se você encontrou uma vulnerabilidade de segurança no {short-project-name}, a maneira mais fácil de relatar uma vulnerabilidade é através da https://github.com/kubewarden/community/security/advisories[aba de Segurança no GitHub]. Esse mecanismo permite que os mantenedores se comuniquem privadamente com você, e você não precisa criptografar suas mensagens.
+
+Alternativamente, você pode divulgá-la de forma responsável enviando um e-mail para xref:mailto:cncf-kubewarden-maintainers@lists.cncf.io.adoc[cncf-kubewarden-maintainers@lists.cncf.io] em uma mensagem *não criptografada*. Por favor, não discuta potenciais vulnerabilidades em público sem validar conosco primeiro.
+
+Você também pode vir conversar em nosso https://kubernetes.slack.com/archives/C03L52JRAFM[slack-room] no servidor Slack do Kubernetes.
+
+Após o recebimento, a equipe de segurança:
+
+* Revisa o relatório, verifica a vulnerabilidade e responde com confirmação e/ou solicitações de mais informações.
+* Após resolver o bug de segurança relatado, {short-project-name} notifica o Pesquisador, que é então bem-vindo a divulgar publicamente, se desejar.
+
+Por favor, consulte o https://github.com/kubewarden/community[repositório da comunidade] para saber mais sobre a governança e a política de segurança do projeto.
