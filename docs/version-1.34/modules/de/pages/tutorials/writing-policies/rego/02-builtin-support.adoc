@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Integrierte Unterstützung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Bestimmen Sie, welche integrierten Funktionen für WebAssembly-Module verfügbar sind, und verstehen Sie deren Implementierung und Verwendung in der Entwicklung von Rego-Richtlinien.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "built-in-support"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "integrierte Wasm-Unterstützung"]
+:sidebar_label: Integrierte Unterstützung
+:current-version: {page-origin-branch}
+
+Zusätzlich zur Erstellung einer Richtlinie für das `wasm` Ziel muss sie ausgeführt werden.
+
+Das Team des Open Policy Agent (OPA) hat eine Seite, die Sie für https://www.openpolicyagent.org/docs/latest/policy-reference/#built-in-functions[integrierte Unterstützung] überprüfen können.
+
+Beim Erstellen einer Rego-Richtlinie in ein WebAssembly-Modul sind bestimmte dieser integrierten Funktionen in der Wasm-Datei selbst enthalten.
+Es sind die integrierten Funktionen, die auf der verlinkten Seite mit einem grünen Häkchen markiert sind.
+Die WebAssembly-Laufzeit, die das Modul auswertet, stellt die anderen bereit.
+
+Die als `SDK-dependent` markierten integrierten Funktionen sind die, die der Host implementieren muss, in diesem Fall {project-name}.
+OPA und Gatekeeper können sie je nach den Anforderungen der Richtlinie verwenden.
+In jedem Fall sind diese integrierten Funktionen der Richtlinie zugänglich, und jede neue oder bestehende Richtlinie könnte von ihnen abhängen.
+
+Es gibt immer noch bestimmte integrierte Funktionen, die von {short-project-name} noch nicht bereitgestellt werden, jedoch sollten die bereits unterstützten Funktionen für die meisten Kubernetes-Nutzer ausreichend sein, basierend auf den in der Öffentlichkeit gesehenen Richtlinien.
+
+https://github.com/kubewarden/policy-evaluator/issues/56[Dieses GitHub-Issue] verfolgt die Rego-integrierten Funktionen, die wir noch implementieren müssen.
+Fühlen Sie sich frei, dort zu kommentieren, um unsere Arbeit zu priorisieren.
+
+== Ausführen von Richtlinien mit fehlenden integrierten Funktionen
+
+Wenn eine Richtlinie mit `kwctl` oder mit `policy-server` ausgeführt wird, wird die Liste der von der Richtlinie verwendeten integrierten Funktionen überprüft.
+Wenn eine der verwendeten integrierten Funktionen fehlt, stoppt das Programm die Ausführung und protokolliert einen fatalen Fehler, der die fehlenden integrierten Funktionen meldet.

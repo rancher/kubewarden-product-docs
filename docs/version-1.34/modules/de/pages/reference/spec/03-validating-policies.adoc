@@ -1,0 +1,237 @@
+include::partial$variables.adoc[]
+= Richtlinien validieren
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Bewerten Sie Ihre Validierungsanfragen mithilfe von richtlinenspezifischen Einstellungen, um die Annahme oder Ablehnung von Kubernetes AdmissionReview-Objekten zu bestimmen.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["richtlinien-schreiben", "spezifikation", "richtlinien-validierung"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "richtlinienspezifikation", "richtlinienvalidierung"]
+:sidebar_label: Richtlinien validieren
+:current-version: {page-origin-branch}
+
+Der {project-name} Richtlinienserver erhält:
+
+* Kubernetes
+https://godoc.org/k8s.io/api/admission/v1#AdmissionReview[`AdmissionReview`]
+Objekte vom Kubernetes API-Server.
+Er leitet dann den Wert seines `request` Attributs, vom Typ https://godoc.org/k8s.io/api/admission/v1#AdmissionRequest[`AdmissionRequest`], an die Richtlinie zur Bewertung weiter.
+
+oder:
+
+* Ein JSON `request` Attribut, das das Freiform-Anforderungsdokument enthält, im Falle einer Roh-Richtlinie. Überprüfen Sie den Abschnitt xref:../../howtos/raw-policies.adoc[Roh-Richtlinien]
+für weitere Details.
+
+Die Richtlinie bewertet das `request` und gibt an, ob sie es akzeptieren sollte oder nicht. Wenn eine Anfrage abgelehnt wird, kann die Richtlinie die Erklärungsnachricht und einen Fehlercode bereitstellen, die dem Endbenutzer angezeigt werden.
+
+Nach der Konvention des `policy-server` Projekts muss der Gast eine Funktion mit dem Namen `validate` über das waPC-Gast-SDK bereitstellen, damit der `policy-server` (waPC-Host) sie aufrufen kann.
+
+Die `validate` Funktion erhält ein `ValidationRequest` JSON-Objekt und gibt ein `ValidationResponse` JSON-Objekt zurück.
+
+== Das `ValidationRequest` Objekt
+
+Das `ValidationRequest` ist ein JSON-Objekt, das von der `validate` Funktion empfangen wird.
+Es sieht aus wie:
+
+[subs="+attributes",yaml]
+----
+{
+  "request": <AdmissionReview.request data> | <RawReviewRequest.request data>,
+  "settings": {
+    # your policy configuration
+  }
+}
+----
+
+Der `settings` Schlüssel verweist auf ein Freiform-JSON-Dokument, das die richtlinenspezifischen Einstellungen enthält. Das vorherige Kapitel konzentrierte sich auf Richtlinien und Einstellungen.
+
+== Ein Beispiel
+
+Betrachten Sie folgendes Kubernetes `AdmissionReview`:
+
+.Erweitern, um `AdmissionReview` zu sehen
+[%collapsible]
+======
+
+[subs="+attributes",yaml]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    # Random uid uniquely identifying this admission call
+    "uid": "705ab4f5-6393-11e8-b7cc-42010a800002",
+
+    # Fully-qualified group/version/kind of the incoming object
+    "kind": {"group":"autoscaling","version":"v1","kind":"Scale"},
+    # Fully-qualified group/version/kind of the resource being modified
+    "resource": {"group":"apps","version":"v1","resource":"deployments"},
+    # subresource, if the request is to a subresource
+    "subResource": "scale",
+
+    # Fully-qualified group/version/kind of the incoming object in the original request to the API server.
+    # This only differs from `+kind+` if the webhook specified `+matchPolicy: Equivalent+` and the
+    # original request to the API server was converted to a version the webhook registered for.
+    "requestKind": {"group":"autoscaling","version":"v1","kind":"Scale"},
+    # Fully-qualified group/version/kind of the resource being modified in the original request to the API server.
+    # This only differs from `+resource+` if the webhook specified `+matchPolicy: Equivalent+` and the
+    # original request to the API server was converted to a version the webhook registered for.
+    "requestResource": {"group":"apps","version":"v1","resource":"deployments"},
+    # subresource, if the request is to a subresource
+    # This only differs from `+subResource+` if the webhook specified `+matchPolicy: Equivalent+` and the
+    # original request to the API server was converted to a version the webhook registered for.
+    "requestSubResource": "scale",
+
+    # Name of the resource being modified
+    "name": "my-deployment",
+    # Namespace of the resource being modified, if the resource is namespaced (or is a Namespace object)
+    "namespace": "my-namespace",
+
+    # operation can be CREATE, UPDATE, DELETE, or CONNECT
+    "operation": "UPDATE",
+
+    "userInfo": {
+      # Username of the authenticated user making the request to the API server
+      "username": "admin",
+      # UID of the authenticated user making the request to the API server
+      "uid": "014fbff9a07c",
+      # Group memberships of the authenticated user making the request to the API server
+      "groups": ["system:authenticated","my-admin-group"],
+      # Arbitrary extra info associated with the user making the request to the API server.
+      # This is populated by the API server authentication layer and should be included
+      # if any SubjectAccessReview checks are performed by the webhook.
+      "extra": {
+        "some-key":["some-value1", "some-value2"]
+      }
+    },
+
+    # object is the new object being admitted.
+    # It is null for DELETE operations.
+    "object": {"apiVersion":"autoscaling/v1","kind":"Scale",...},
+    # oldObject is the existing object.
+    # It is null for CREATE and CONNECT operations.
+    "oldObject": {"apiVersion":"autoscaling/v1","kind":"Scale",...},
+    # options contains the options for the operation being admitted, like meta.k8s.io/v1 CreateOptions, UpdateOptions, or DeleteOptions.
+    # It is null for CONNECT operations.
+    "options": {"apiVersion":"meta.k8s.io/v1","kind":"UpdateOptions",...},
+
+    # dryRun indicates the API request is running in dry run mode and will not be persisted.
+    # Webhooks with side effects should avoid actuating those side effects when dryRun is true.
+    # See http://k8s.io/docs/reference/using-api/api-concepts/#make-a-dry-run-request for more details.
+    "dryRun": false
+  }
+}
+----
+
+======
+
+Das `ValidationRequest` Objekt würde so aussehen:
+
+.Erweitern, um das `ValidationRequest` zu sehen
+[%collapsible]
+======
+
+[subs="+attributes",yaml]
+----
+{
+  "request": {
+    # Random uid uniquely identifying this admission call
+    "uid": "705ab4f5-6393-11e8-b7cc-42010a800002",
+
+    # Fully-qualified group/version/kind of the incoming object
+    "kind": {"group":"autoscaling","version":"v1","kind":"Scale"},
+    # Fully-qualified group/version/kind of the resource being modified
+    "resource": {"group":"apps","version":"v1","resource":"deployments"},
+    # subresource, if the request is to a subresource
+    "subResource": "scale",
+
+    # Fully-qualified group/version/kind of the incoming object in the original request to the API server.
+    # This only differs from `+kind+` if the webhook specified `+matchPolicy: Equivalent+` and the
+    # original request to the API server was converted to a version the webhook registered for.
+    "requestKind": {"group":"autoscaling","version":"v1","kind":"Scale"},
+    # Fully-qualified group/version/kind of the resource being modified in the original request to the API server.
+    # This only differs from `+resource+` if the webhook specified `+matchPolicy: Equivalent+` and the
+    # original request to the API server was converted to a version the webhook registered for.
+    "requestResource": {"group":"apps","version":"v1","resource":"deployments"},
+    # subresource, if the request is to a subresource
+    # This only differs from `+subResource+` if the webhook specified `+matchPolicy: Equivalent+` and the
+    # original request to the API server was converted to a version the webhook registered for.
+    "requestSubResource": "scale",
+
+    # Name of the resource being modified
+    "name": "my-deployment",
+    # Namespace of the resource being modified, if the resource is namespaced (or is a Namespace object)
+    "namespace": "my-namespace",
+
+    # operation can be CREATE, UPDATE, DELETE, or CONNECT
+    "operation": "UPDATE",
+
+    "userInfo": {
+      # Username of the authenticated user making the request to the API server
+      "username": "admin",
+      # UID of the authenticated user making the request to the API server
+      "uid": "014fbff9a07c",
+      # Group memberships of the authenticated user making the request to the API server
+      "groups": ["system:authenticated","my-admin-group"],
+      # Arbitrary extra info associated with the user making the request to the API server.
+      # This is populated by the API server authentication layer and should be included
+      # if any SubjectAccessReview checks are performed by the webhook.
+      "extra": {
+        "some-key":["some-value1", "some-value2"]
+      }
+    },
+
+    # object is the new object being admitted.
+    # It is null for DELETE operations.
+    "object": {"apiVersion":"autoscaling/v1","kind":"Scale",...},
+    # oldObject is the existing object.
+    # It is null for CREATE and CONNECT operations.
+    "oldObject": {"apiVersion":"autoscaling/v1","kind":"Scale",...},
+    # options contains the options for the operation being admitted, like meta.k8s.io/v1 CreateOptions, UpdateOptions, or DeleteOptions.
+    # It is null for CONNECT operations.
+    "options": {"apiVersion":"meta.k8s.io/v1","kind":"UpdateOptions",...},
+
+    # dryRun indicates the API request is running in dry run mode and will not be persisted.
+    # Webhooks with side effects should avoid actuating those side effects when dryRun is true.
+    # See http://k8s.io/docs/reference/using-api/api-concepts/#make-a-dry-run-request for more details.
+    "dryRun": false
+  },
+  "settings": {
+    # policy settings
+  }
+}
+----
+
+======
+
+== Das `ValidationResponse` Objekt
+
+Die `validate` Funktion gibt das Ergebnis ihrer Validierung mit einem `ValidationResponse` Objekt zurück.
+
+Das `ValidationResponse` hat diese Struktur:
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "accepted": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+
+  # optional, ignored if accepted
+  "code": <integer>,
+
+  # optional, used by mutation policies
+  "mutated_object": <string>
+}
+----
+
+Sie können diese `message` und `code` Attribute angeben, wenn die Anfrage nicht akzeptiert wird. Der `message` ist ein freiformatierter Fehlertext, und `code` stellt einen HTTP-Fehlercode dar.
+
+Der Kubernetes API-Server ignoriert die `message` und `code` Werte bei der Annahme der Anfrage.
+
+Bei Ablehnung der Anfrage und wenn `message` oder `code` vorhanden sind, gibt der Kubernetes API-Server diese Informationen zurück. Die Informationen sind Teil des Körpers des Fehlers, und der Server gibt sie an den Kubernetes API-Client zurück, der die abgelehnte Anfrage gestellt hat.
+
+Das `mutated_object` ist ein optionales Feld, das nur von mutierenden Richtlinien verwendet wird.
+Dies ist das Thema des nächsten Kapitels.
