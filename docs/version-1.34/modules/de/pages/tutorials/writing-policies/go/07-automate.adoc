@@ -1,0 +1,74 @@
+include::partial$variables.adoc[]
+= Integration mit GitHub Actions
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie GitHub Actions für automatisierte Aufgaben, Unit-Tests, End-to-End-Tests und CI/CD-Workflows integrieren können.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "richtlinien-schreiben", "golang", "github-action-integration"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "github", "integration"]
+:sidebar_label: GitHub Actions
+:sidebar_position: 56
+:current-version: {page-origin-branch}
+
+== Automatisierung
+
+In diesem Abschnitt wird beschrieben, wie Sie GitHub Actions zur Automatisierung von Aufgaben nutzen können.
+
+Das Projektgerüst enthält bereits alle GitHub Actions, die Sie benötigen.
+Sie finden die Actions in den `.github/workflows/test.yml` und `.github/workflows/release.yml` Dateien.
+
+Sie können diese Prinzipien anpassen, um ein anderes CI-System zu verwenden.
+
+== Tester
+
+Die Automatisierung der Unit-Tests und der End-to-End-Tests funktioniert sofort.
+Es verwendet die in `.github/workflows/test.yml` definierten Jobs.
+
+== Freigabe
+
+Das Projektgerüst hat einen `release` Job in `.github/workflows/release.yml`.
+
+Dieser Job führt die folgenden Schritte aus:
+
+* Code auschecken
+* Die WebAssembly-Richtlinie erstellen
+* Die Richtlinie in ein Open Container Initiative (OCI) Registry pushen
+* Ein neues GitHub-Release erstellen
+
+Um den Job zu aktivieren, passen Sie die `oci-target` Aktions-Eingabe für den wiederverwendbaren Workflow (`reusable-release-policy-go.yml`) an, der in der `release.yml` Datei aufgerufen wird.
+
+Der Job verhält sich unterschiedlich, je nach dem Commit, der seine Ausführung ausgelöst hat.
+
+Regelmäßige Commits führen zur Erstellung eines OCI-Artefakts namens `<policy-name>:latest`.
+Für diese Commits wird kein GitHub-Release erstellt.
+
+Das Erstellen eines Tags, das dem Schema `v*` entspricht, führt zu:
+
+* Erstellung eines OCI-Artefakts namens `<policy-name>:<tag>`.
+* Erstellung eines GitHub-Releases mit dem Namen `Release <full tag name>`.
+Das Release umfasst die Assets, den Quellcode der Richtlinie und die WebAssembly-Binärdatei.
+
+=== Ein Beispiel
+
+Angenommen, es gibt eine Richtlinie mit dem Namen `safe-labels`, die als `ghcr.io/kubewarden/policies/safe-labels` veröffentlicht werden muss.
+
+Der Inhalt des `jobs.push-to-oci-registry.env`-Abschnitts von `ci.yml` sollte folgendermaßen aussehen:
+
+[subs="+attributes",yaml]
+----
+jobs:
+  push-to-oci-registry:
+    runs-on: ubuntu-latest
+    env:
+      WASM_BINARY_NAME: policy.wasm
+      OCI_TARGET: ghcr.io/kubewarden/policies/safe-labels
+----
+
+Das Pushen eines Tags mit dem Namen `v0.1.0` führt zur Erstellung und Veröffentlichung des OCI-Artefakts namens `ghcr.io/kubewarden/policies/safe-labels:v0.1.0`.
+
+Es wird ein GitHub-Release mit dem Namen `Release v0.1.0` erstellt.
+Das Release umfasst die folgenden Assets:
+
+* Quellcode komprimiert als `zip` und `tar.gz`
+* Eine Datei mit dem Dateinamen `policy.wasm`; dies ist die tatsächliche WebAssembly-Richtlinie.
