@@ -1,0 +1,32 @@
+include::partial$variables.adoc[]
+
+= セキュリティ開示
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 調査を行うセキュリティ研究者は、責任ある開示プロトコルを使用して脆弱性を特定するために{project-name}のチームと協力します。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["セキュリティ", "開示"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "セキュリティ", "開示"]
+:sidebar_label: セキュリティ開示
+:sidebar_position: 80
+:current-version: {page-origin-branch}
+
+{project-name}のチームは、善意の倫理的なセキュリティ研究者によって行われるセキュリティ脆弱性に関する調査作業を評価しています。{short-project-name}は、[責任ある開示](https://en.wikipedia.org/wiki/Responsible_disclosure)の実践に従い、{short-project-name}のユーザーベースをセキュリティ問題の影響から最もよく保護します。{short-project-name}の側では、これは次のことを意味します：
+
+* {short-project-name}はセキュリティインシデントに優先的に対応します。
+* {short-project-name}は、リスクに基づいて優先順位を付け、実行可能な限り早く問題の修正をリリースします。
+* {short-project-name}は、影響を受けるコミュニティに対して、インシデントについて常に透明に知らせます。
+
+{short-project-name}にセキュリティ脆弱性を見つけた場合、脆弱性を報告する最も簡単な方法は、https://github.com/kubewarden/community/security/advisories[GitHubのセキュリティタブ]を通じて報告することです。このメカニズムにより、メンテナーはあなたとプライベートにコミュニケーションを取ることができ、メッセージを暗号化する必要はありません。
+
+また、xref:mailto:cncf-kubewarden-maintainers@lists.cncf.io.adoc[cncf-kubewarden-maintainers@lists.cncf.io]に*暗号化されていない*メッセージでメールを送信することによって、責任を持って開示することもできます。まず私たちと確認せずに、公共の場で潜在的な脆弱性について議論しないでください。
+
+Kubernetes Slackサーバーのhttps://kubernetes.slack.com/archives/C03L52JRAFM[slack-room]でお話しすることもできます。
+
+セキュリティチームは、受領後：
+
+* 報告書をレビューし、脆弱性を確認し、確認および/またはさらなる情報リクエストで応答します。
+* 報告されたセキュリティバグに対処した後、{short-project-name}は研究者に通知し、研究者はその後、任意で公開開示することができます。
+
+プロジェクトのガバナンスとセキュリティポリシーについて詳しく知るには、https://github.com/kubewarden/community[コミュニティリポジトリ]を参照してください。
