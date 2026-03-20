@@ -1,0 +1,26 @@
+include::partial$variables.adoc[]
+
+= エンタープライズレベルのサポート
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: さまざまなインターフェースを通じて、{project-name}ソリューションのエンタープライズサポートに関する情報へアクセスできます。
+:keywords: [ {project-name}, Kubewarden, サポート, ]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [サポート]
+
+ifeval::["{build-type}" == "community"]
+これらの組織は、{project-name}のエンタープライズサポートを提供します：
+
+[cols="1,1"]
+|===
+| 組織 | 提供
+
+| link:https://suse.com[SUSE]
+| SUSEは、CNCF {kw-community-name}の完全なエンタープライズサポートをlink:https://apps.rancher.io/applications/suse-security-admission-controller[SUSE Security Admission Controller]を通じて提供します。これは、{kw-community-name}SUSE Linux BCIベースのイメージの上に構築された、キュレーションされた信頼できるバージョンです。このソリューションは、エンタープライズグレードのKubernetes環境に対して、強化されたセキュリティ、安定性、および互換性を確保します。
+|===
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+SUSEは、CNCF {kw-community-name}の完全なエンタープライズサポートをlink:https://apps.rancher.io/applications/suse-security-admission-controller[SUSE Security Admission Controller]を通じて提供します。これは、{kw-community-name}SUSE Linux BCIベースのイメージの上に構築された、キュレーションされた信頼できるバージョンです。このソリューションは、エンタープライズグレードのKubernetes環境に対して、強化されたセキュリティ、安定性、および互換性を確保します。
+endif::[]
