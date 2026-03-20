@@ -1,0 +1,42 @@
+include::partial$variables.adoc[]
+= Especificación de capacidades del host
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Durante la evaluación, comprende las capacidades del host ofrecidas por el entorno para {project-name} políticas.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "introduction"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificación de políticas", "capacidades del host"]
+:sidebar_label: Especificación de capacidades del host
+:current-version: {page-origin-branch}
+
+Durante la evaluación, {project-name} las políticas pueden acceder a capacidades adicionales ofrecidas por el entorno del host.
+Este mecanismo utiliza un enfoque similar al tradicional
+https://en.wikipedia.org/wiki/Remote_procedure_call[RPC].
+
+Esto es lo que sucede cuando se emite una solicitud por una {short-project-name} política:
+
+* {short-project-name}Política:
+ ** Invoca la capacidad ofrecida por el entorno del host.
+ ** La invocación es una operación bloqueante,
+por lo tanto, el código de la política esperará hasta que el host proporcione una respuesta.
+* Entorno del host:
+ ** Se recibe una invocación de capacidad.
+ ** El host realiza la operación.
+ ** El host proporciona una respuesta a la política, que puede ser un éxito o un fallo.
+* {short-project-name}Política:
+ ** El código recibe la respuesta del host y reanuda la ejecución.
+ ** La respuesta del host se maneja en consecuencia.
+
+La función de capacidades del host se implementa utilizando
+https://wapc.io/[waPC].
+Cada capacidad utiliza estos detalles:
+
+* Nombre de la función waPC: El nombre de la capacidad expuesta por el host.
+* Carga útil de entrada: El cuerpo de la solicitud realizada por la política.
+Esto siempre está codificado en formato JSON.
+* Carga útil de salida: El cuerpo de la respuesta que proviene del host. Esto siempre está codificado en formato JSON.
+
+Cuando algo sale mal, el host responde con un error.
+Esto se hace utilizando el tipo de error del lenguaje de programación utilizado por la política.
+El error es una cadena UTF-8 que contiene un mensaje de explicación.
