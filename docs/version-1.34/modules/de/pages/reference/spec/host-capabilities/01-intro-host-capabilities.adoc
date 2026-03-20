@@ -1,0 +1,39 @@
+include::partial$variables.adoc[]
+= Spezifikation der Hostfähigkeiten
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Verstehen Sie während der Bewertung die von der Hostumgebung für {project-name} Richtlinien angebotenen Hostfähigkeiten.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["Richtlinien schreiben", "Spezifikation", "Hostfähigkeiten", "Einführung"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "Richtlinienspezifikation", "Hostfähigkeiten"]
+:sidebar_label: Spezifikation der Hostfähigkeiten
+:current-version: {page-origin-branch}
+
+Während der Bewertung können {project-name} Richtlinien auf zusätzliche Fähigkeiten zugreifen, die von der Hostumgebung angeboten werden.
+Dieser Mechanismus verwendet einen Ansatz, der dem traditionellen https://en.wikipedia.org/wiki/Remote_procedure_call[RPC] ähnlich ist.
+
+Das passiert, wenn eine Anfrage von einer {short-project-name} Richtlinie gestellt wird:
+
+* {short-project-name} Richtlinie:
+ ** Ruft die von der Hostumgebung angebotene Fähigkeit auf.
+ ** Der Aufruf ist eine blockierende Operation, daher wartet der Richtliniencode, bis der Host eine Antwort bereitstellt.
+* Hostumgebung:
+ ** Ein Aufruf einer Fähigkeit wird empfangen.
+ ** Der Host führt die Operation aus.
+ ** Der Host gibt der Richtlinie eine Antwort, die entweder ein Erfolg oder ein Fehler sein kann.
+* {short-project-name} Richtlinie:
+ ** Der Code erhält die Antwort vom Host und setzt die Ausführung fort.
+ ** Die Antwort des Hosts wird entsprechend behandelt.
+
+Die Funktion der Hostfähigkeiten wird unter Verwendung von https://wapc.io/[waPC] implementiert.
+Jede Fähigkeit verwendet diese Details:
+
+* waPC Funktionsname: Der Name der vom Host bereitgestellten Fähigkeit.
+* Eingabedaten: Der Inhalt der Anfrage, die von der Richtlinie gestellt wurde.
+Dies ist immer im JSON-Format kodiert.
+* Ausgabedaten: Der Inhalt der Antwort, die vom Host bereitgestellt wird. Dies ist immer im JSON-Format kodiert.
+
+Wenn etwas schiefgeht, antwortet der Host mit einem Fehler.
+Dies geschieht unter Verwendung des Fehlertyps der Programmiersprache, die von der Richtlinie verwendet wird.
+Der Fehler ist eine UTF-8-Zeichenkette, die eine Erklärungsnachricht enthält.
