@@ -1,0 +1,126 @@
+include::partial$variables.adoc[]
+
+= Rancher Backup Operatorを使用したバックアップと復元
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 任意のKubernetesクラスターでrancher-backupオペレーターを使用してバックアップと復元を構成および管理します。
+:keywords: "{project-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: HOWTO(操作方法)
+:doc-topic: operator-manual, rancher-backup-operator
+:current-version: {page-origin-branch}
+
+`rancher-backup`オペレーターは、任意のKubernetesクラスター上でRancherのバックアップと復元に使用できます。
+
+バージョン`v9.0.0`以降、`rancher-backup`は{project-name}をサポートしています。これには以下のものが含まれます：
+
+- デフォルトのRancherネームスペース`cattle-kubewarden-system`（または`cattle-kubewarden-*`）と、デフォルトの{short-project-name}ネームスペース`kubewarden`。
+- {short-project-name}に必要なリソースは、Helmチャートを介してインストールされます。
+- {short-project-name}のCRDは、{short-project-name}コントローラーによって復元後に調整されます。
+- `policy-reporter`チャートの`kubewarden-controller`サブチャート、デフォルト値について。これにはGrafana統合やその他のプラグインは含まれません。
+
+== ユーザーシークレット
+
+バックアッププロセスには、正しくラベル付けされていない限り、xref:/howtos/policy-servers/02-private-registry.adoc#_creating_the_secret[プライベートレジストリ用のPolicyServersを構成するために使用されるなどの]ユーザー作成のシークレットは含まれません。そのためには、以下のいずれかの方法でシークレットにラベルを付けてください。次のいずれかです。
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker app.kubernetes.io/part-of=kubewarden
+----
+
+または:
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
+----
+
+== Rancher Backup Operatorのインストール
+
+リンクに従ってください：https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html[Rancher Manager]のドキュメント。Minikubeインストールでは、Minikubeが標準でサポートするタイプ`hostPath`のPersistentVolumesを使用して`standard`という名前のものを使用します。
+
+バックアップオペレーターに、値`optionalResources.kubewarden.enabled`を`true`に設定することで、{short-project-name}のユーザー定義CRもバックアップするよう指示する必要があります。
+
+インストールは次のようになります：
+
+[source,console]
+----
+helm repo add rancher-charts https://charts.rancher.io
+helm repo update
+helm install --wait --create-namespace -n cattle-resources-system \
+    rancher-backup-crd rancher-charts/rancher-backup-crd
+helm install --wait -n cattle-resources-system \
+    rancher-backup rancher-charts/rancher-backup \
+    --set persistence.enabled=true --set persistence.storageClass=standard \
+    --set optionalResources.kubewarden.enabled=true
+----
+
+== バックアップ
+
+`rancher-resource-set-full`を使用して{short-project-name}のシークレットをバックアップします。
+これには、Helmインストール時に作成されるTLSシークレットが含まれます。
+
+`rancher-resource-basic`を使用することを希望する場合は、必要なTLSシークレットをバックアップまたは手動で作成することを忘れないでください。
+
+ここに、`rancher-resource-set-full`を使用してデフォルトの場所に暗号化されていないバックアップを実行する例があります：
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Backup
+metadata:
+  name: default-location-backup
+spec:
+  resourceSetName: rancher-resource-set-full
+EOF
+backup.resources.cattle.io/default-location-backup created
+----
+
+`rancher-backup`のログまたはバックアップは、バックアップファイルの作成を示しています：
+
+[source,shell]
+----
+kubectl logs -n cattle-resources-system -l app.kubernetes.io/name=rancher-backup -f
+...
+INFO[2025/06/26 10:07:48] Processing backup default-location-backup
+INFO[2025/06/26 10:07:48] For backup CR default-location-backup, filename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z
+...
+INFO[2025/06/26 10:07:49] Done with backup
+----
+
+リソースを記述することで、そのステータスも確認できます：
+
+[source,shell]
+----
+kubectl get backups
+NAME                      LOCATION   TYPE       LATEST-BACKUP                                                                              RESOURCESET                 AGE    STATUS
+default-location-backup   PV         One-time   default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   rancher-resource-set-full   111s   Completed
+----
+
+バックアップの例については、Rancherのドキュメントを参照してくださいlink:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_backup[バックアップの例]。
+
+== 復元
+
+デフォルトの場所から暗号化されていないバックアップを復元するには、バックアップリソースを表示する際にLATEST-BACKUP列からファイル名を取得して、復元リソースを作成します：
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Restore
+metadata:
+  name: restore-default
+spec:
+  backupFilename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z.tar.gz
+EOF
+restore.resources.cattle.io/restore-default created
+
+kubectl get restores
+NAME              BACKUP-SOURCE   BACKUP-FILE                                                                                AGE   STATUS
+restore-default   PV              default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   6s    Completed
+----
+
+詳細については、Rancherのドキュメントを参照してくださいlink:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_restore[復元の例]。
+
+
