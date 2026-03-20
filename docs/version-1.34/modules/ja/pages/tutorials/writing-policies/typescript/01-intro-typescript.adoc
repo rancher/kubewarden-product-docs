@@ -1,0 +1,100 @@
+include::partial$variables.adoc[]
+= TypeScript/JavaScriptでのポリシーの作成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: TypeScript/JavaScriptを使用して効果的な{project-name}バリデーションポリシーを書く方法を学びましょう。
+:keywords: kubewarden、kubernetes、TypeScriptでのポリシー作成、JavaScriptでのポリシー作成
+:doc-type: チュートリアル
+:doc-topic: kubewarden、ポリシー作成、typescript、javascript、イントロダクション
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+TypeScript/JavaScriptのWebAssemblyサポートは急速に進化しています。
+このページは2025年11月に最終更新されました。
+====
+
+https://www.typescriptlang.org/[公式ウェブサイト]に記載されている通り：
+
+[quote]
+TypeScriptはJavaScriptに型を追加して拡張します。
+
+JavaScriptを理解することで、TypeScriptはエラーをキャッチし、コードを実行する前に修正を提供するのにかかる時間を節約します。
+
+{project-name}はhttps://github.com/bytecodealliance/javy[Javy]（バイトコードアライアンスプロジェクト）を使用して、JavaScriptとTypeScriptからWebAssemblyバイナリを構築します。
+
+[quote]
+JavyはあなたのJavaScriptコードを取り込み、WebAssemblyコンテキストで実行します。
+
+JavaScriptを実行できるWebAssemblyにコンパイルされた埋め込みQuickJSエンジンを特徴としています。
+
+このプロジェクトは、JavaScriptをWebAssemblyで実行する際の動作を埋め込んだりカスタマイズしたりするためのCLIとAPIのセットを提供します。
+
+{short-project-name}プロジェクトは現在、以下の理由でJavyを使用しています：
+
+* WebAssemblyにコンパイルされた成熟したJavaScriptエンジン（QuickJS）。
+* カスタムホスト関数を通じてxref:/tutorials/writing-policies/wasi/01-intro-wasi.adoc[WASIインターフェース]のサポート。
+* 他のJavaScriptからWebAssemblyへのソリューションと比較して、バイナリサイズが小さい。
+* バイトコードアライアンスによる積極的な開発とメンテナンス。
+
+== Javyの制限
+
+Javyは、特定の制約のあるサンドボックスWebAssembly環境でJavaScriptを実行します。
+
+* *WASI環境のみ*：アクセスはstdin/stdout/stderrおよび明示的に提供されたホスト機能に制限されています。
+* *Node.js APIはありません*：`fs`、`http`、または`crypto`のような標準Node.jsモジュールは利用できません。
+* *制限された標準ライブラリ*：コアJavaScript機能と明示的に有効化されたAPIのみがアクセス可能です。
+* *シングルスレッド実行*：Web Workersやマルチスレッドのサポートはありません。
+
+これらの制限にもかかわらず、Javyはホスト機能システムを通じて効果的な{short-project-name}バリデーションポリシーを書くための十分な機能を提供します。
+
+[WARNING]
+====
+STDOUTへの書き込みはポリシーを破ります - 代わりにSTDERRを使用してログを記録してください。
+====
+
+== ツール
+
+{short-project-name}ポリシーを書くには次が必要です：
+
+* *Node.js*：JavaScriptランタイム。
+* *npm*：依存関係管理のため。
+* *TypeScript*：型安全のために推奨されます（オプション）。
+
+[WARNING]
+====
+Node.js 18以上を使用していることを確認してください。古いバージョンはコンパイルツールチェーンと互換性がない場合があります。
+====
+
+これらのTypeScript/JavaScriptライブラリは、{short-project-name}ポリシーを書く際に役立ちます：
+
+* https://github.com/kubewarden/policy-sdk-js[{short-project-name} JavaScript SDK]：必要なコードの量を減らす構造と関数を提供します。また、テストヘルパーとすべてのホスト機能へのアクセスも提供します。
+* https://github.com/silverlyra/kubernetes-types[Kubernetes TypeScriptタイプ]：すべてのKubernetesリソースのTypeScript定義を提供し、型安全なポリシー開発を可能にします。
+
+{short-project-name}プロジェクトは、https://github.com/kubewarden/js-policy-template[テンプレートJavaScript/TypeScriptポリシープロジェクト]を提供し、{short-project-name}ポリシーを作成するために使用できます。
+
+== ツールチェーンの取得
+
+ツールチェーンを取得する最も簡単な方法は、Javyプラグインを含む{short-project-name} JavaScript SDKを使用することです：
+
+[source,console]
+----
+npm install kubewarden-policy-sdk
+----
+
+Javyプラグインのバイナリは自動的に含まれており、次の場所にあります：
+
+[source,console]
+----
+node_modules/kubewarden-policy-sdk/plugin/javy-plugin-kubewarden.wasm
+----
+
+== チュートリアルの前提条件
+
+このチュートリアルでは、開発マシンにこれらのツールが必要です：
+
+* *Node.js*：依存関係管理のためにnpmを使用したバージョン18以上。
+* https://github.com/bats-core/bats-core[`bats`]：テストを書くために使用され、実行を自動化します。
+* https://github.com/kubewarden/kwctl/releases[`kwctl` ≥ v1.30]：Kubernetesの外でポリシーを実行するために{short-project-name}が提供するCLIツール、その他のアクションのために。これは、ドキュメントのxref:/tutorials/testing-policies/index.adoc[テストポリシーセクション]で説明されています。
+* https://github.com/bytecodealliance/javy[`javy` ≥ 6.0.0]：JavaScriptコードをWebAssemblyモジュールにコンパイルするためのCLIツールです。

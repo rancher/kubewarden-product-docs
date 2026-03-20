@@ -1,0 +1,61 @@
+include::partial$variables.adoc[]
+= ログ記録
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}のSLOGライブラリとの統合機能を利用して、ポリシーのログ記録機能を構成・初期化します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
+:doc-type: ["tutorial"]
+:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
+:sidebar_label: ログ記録
+:current-version: {page-origin-branch}
+
+ポリシーでログを記録できます。
+`policy-server`または`kwctl`は、適切な情報を付加したログエントリを転送します。
+
+Rust SDKに選ばれたログライブラリは、https://github.com/slog-rs/slog[`slog`]です。
+これは人気があり、よく知られたクレートで、{project-name}とクリーンに統合されます。
+
+== ロガーを初期化します。
+
+プロジェクトは、ポリシー内の必要な場所からログを記録できるグローバルなシンクを作成することを推奨しています。
+これには、`lazy_static`クレートを使用します：
+
+[subs="+attributes",rust]
+----
+use slog::{o, Logger};
+
+lazy_static! {
+    static ref LOG_DRAIN: Logger = Logger::root(
+        logging::KubewardenDrain::new(),
+        o!("policy" => "sample-policy")
+    );
+}
+----
+
+== ロガーを使用する
+
+今、`validate`または`validate_settings`関数内から、各サポートされているログレベルに対応する`slog`がエクスポートするマクロを使ってログを記録できます。
+
+[subs="+attributes",rust]
+----
+use slog::{info, o, warn, Logger};
+
+fn validate(payload: &[u8]) -> CallResult {
+    // ...
+    info!(LOG_DRAIN, "starting validation");
+    // ...
+    warn!(
+        LOG_DRAIN, "structured log";
+        "some_resource_name" => &some_resource_name
+    );
+    // ...
+}
+----
+
+`slog`ライブラリは、グローバル変数に初期化されたドレインにすべてのログを送信します。
+これは、ポリシーを実行しているポリシー評価者に同期します。
+これは`kwctl`または`policy-server`です。
+その後、ポリシー評価者はこの情報をログに記録し、Kubernetesリクエスト`uid`などのさらなる既知のコンテキスト情報を追加します。
+
+slogが提供するhttps://docs.rs/slog/2.7.0/slog/macro.log.html[ログ記録マクロ]に関する詳細情報は、そのhttps://docs.rs/slog/2.7.0/slog/index.html[ドキュメント]にあります。
