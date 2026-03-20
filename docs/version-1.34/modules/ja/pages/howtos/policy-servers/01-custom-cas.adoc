@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= カスタム認証局の使用
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: PolicyServerを設定して、指定されたレジストリと組み合わせてカスタム認証局または安全でないソースのいずれかを使用することができます。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "カスタム認証局"]
+:sidebar_label: カスタム認証局の使用
+:current-version: {page-origin-branch}
+
+== ポリシーレジストリ用のカスタム認証局
+
+PolicyServerがポリシーレジストリからClusterAdmissionPolicyアーティファクトを取得する際に使用する認証局を指定して構成することが可能です。次の`spec`フィールドは、デプロイされた`policy-server`実行可能ファイルをその目的に合わせて構成します。
+
+=== 安全でないソース
+
+[IMPORTANT]
+====
+
+`kwctl`と`policy-server`のデフォルトの動作は、システムCAストアに一致する信頼された証明書でHTTPSを強制することです。`insecure_sources`設定を使用することで、信頼されていない証明書を使用したり、TLSなしでレジストリと対話することができます。このアプローチは、プロダクションに近い環境では*強く非推奨*です。
+
+====
+
+特定のレジストリへの安全でない接続を受け入れるようにPolicyServerを構成するには、PolicyServerの`spec.insecureSources`フィールドを使用します。このフィールドは、安全でないURIのリストを受け入れます。次に例を示します。
+
+[subs="+attributes",yaml]
+----
+spec:
+  insecureSources:
+    - localhost:5000
+    - host.k3d.internal:5000
+----
+
+xref:howtos/custom-certificate-authorities.adoc[カスタム認証局]を参照して、`policy-server`実行可能ファイルが安全でないURIをどのように扱うかについての詳細情報を確認してください。
+
+=== カスタム認証局
+
+特定のURIのために、1つ以上の証明書のカスタム証明書チェーンでPolicyServerを構成することができます。これを行うには、フィールド`spec.sourceAuthorities`を使用します。
+
+このフィールドは、各URIに対してPEMエンコードされた証明書を含む文字列のリストを持つURIのマップです。次に例を示します。
+
+[subs="+attributes",yaml]
+----
+spec:
+  sourceAuthorities:
+    "registry-pre.example.com":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-1 PEM cert
+        -----END CERTIFICATE-----
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-2 PEM cert
+        -----END CERTIFICATE-----
+    "registry-pre2.example.com:5500":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre2 PEM cert
+        -----END CERTIFICATE-----
+----
+
+xref:howtos/custom-certificate-authorities.adoc[カスタム認証局]を参照して、`policy-server`実行可能ファイルがそれらをどのように扱うかについての詳細情報を確認してください。

@@ -1,0 +1,221 @@
+include::partial$variables.adoc[]
+= 新しいミューテーションポリシーを作成する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: カスタムアノテーションで受信オブジェクトをミューテートする新しい {project-name} ミューテーションポリシーを設定し、テストします。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "新しいミューテーションポリシーの作成", "ミューテーションポリシー", "rust"]
+:sidebar_label: 新しいミューテーションポリシーを作成する
+:current-version: {page-origin-branch}
+
+ミューテーションポリシーは、バリデーションポリシーに似ていますが、受信オブジェクトをミューテートする能力も持っています。
+
+具体的には、次のことができます：
+
+* リクエストを拒否する
+* 受信オブジェクトを変更せずにリクエストを受け入れる
+* 必要に応じて受信オブジェクトを変更し、リクエストを受け入れる
+
+{project-name} ミューテーションポリシーの作成は簡単です。
+前のセクションで作成したバリデーションポリシーを使用し、いくつかの変更を加えて、ミューテーションポリシーに変えます。
+
+あなたのポリシーは、以前に定義されたのと同じバリデーションロジックを使用しますが、有効な名前を持つすべてのポッドにアノテーションを追加します。
+
+このようなPodを作成しようとすると：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+このようなPodが作成されます：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  annotations:
+    kubewarden.policy.demo/inspected: true
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== ミューテーションコードを記述する
+
+ミューテーションコードは `validate` 関数にあります。
+この関数を変更して、https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.mutate_request.html[`mutate_request`]の代わりにhttps://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.accept_request.html[`accept_request`]を使ってリクエストを承認するようにしてください。
+
+これが `validate` における `lib.rs` 関数の例です：
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?;
+
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        // NOTE 1
+        Ok(mut pod) => {
+            let pod_name = pod.metadata.name.clone().unwrap_or_default();
+            if validation_request
+                .settings
+                .invalid_names
+                .contains(&pod_name)
+            {
+                kubewarden::reject_request(
+                    Some(format!("pod name {:?} is not accepted", pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                // NOTE 2
+                let mut new_annotations = pod.metadata.annotations.clone().unwrap_or_default();
+                new_annotations.insert(
+                    String::from("kubewarden.policy.demo/inspected"),
+                    String::from("true"),
+                );
+                pod.metadata.annotations = Some(new_annotations);
+
+                // NOTE 3
+                let mutated_object = serde_json::to_value(pod)?;
+                kubewarden::mutate_request(mutated_object)
+            }
+        }
+        Err(_) => {
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            kubewarden::accept_request()
+        }
+    }
+}
+----
+
+前のコードと比べて、3つの変更点があります：
+
+. `pod` オブジェクトをミュータブルとして定義しました。`mut` キーワードを参照してください。これは、その`metadata.annotations`属性を拡張するために必要です。
+// TODO: How best to describe the use of clone().
+. これは、既存の`annotations`を取得し、新しいものを追加し、最終的に更新された`annotations`オブジェクトを元の`pod`インスタンスに戻すコードです。
+. `pod`オブジェクトを一般的な`serde_json::Value`にシリアライズし、ミューテーションレスポンスを返します。
+
+これらの変更を行ったので、再度ユニットテストを実行しましょう：
+
+[subs="+attributes",console]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.95s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... FAILED
+
+failures:
+
+---- tests::accept_pod_with_valid_name stdout ----
+{"column":5,"file":"src/lib.rs","level":"info","line":34,"message":"starting validation","policy":"sample-policy"}
+thread 'tests::accept_pod_with_valid_name' panicked at src/lib.rs:98:9:
+Something mutated with test case: Pod creation with valid name
+note: run with `+RUST_BACKTRACE=1+` environment variable to display a backtrace
+
+
+failures:
+    tests::accept_pod_with_valid_name
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+ご覧の通り、`accept_pod_with_valid_name`はレスポンスにミューテートされたオブジェクトが含まれているため失敗します。
+私たちのコードは動作しているようです。
+
+== ユニットテストを更新する
+
+`accept_pod_with_valid_name`の`lib.rs`を次のように更新できます：
+
+[subs="+attributes",rust]
+----
+#[test]
+fn accept_pod_with_valid_name() -> Result<(), ()> {
+    let mut invalid_names = HashSet::new();
+    invalid_names.insert(String::from("bad_name1"));
+    let settings = Settings { invalid_names };
+
+    let request_file = "test_data/pod_creation.json";
+    let tc = Testcase {
+        name: String::from("Pod creation with valid name"),
+        fixture_file: String::from(request_file),
+        expected_validation_result: true,
+        settings,
+    };
+
+    let res = tc.eval(validate).unwrap();
+    // NOTE 1
+    assert!(
+        res.mutated_object.is_some(),
+        "Expected accepted object to be mutated",
+    );
+
+    // NOTE 2
+    let final_pod =
+        serde_json::from_value::<apicore::Pod>(res.mutated_object.unwrap()).unwrap();
+    let final_annotations = final_pod.metadata.annotations.unwrap();
+    assert_eq!(
+        final_annotations.get_key_value("kubewarden.policy.demo/inspected"),
+        Some((
+            &String::from("kubewarden.policy.demo/inspected"),
+            &String::from("true")
+        )),
+    );
+
+    Ok(())
+}
+----
+
+最初のテストと比較して、2つの変更があります：
+
+. リクエストがまだ受け入れられるように`assert!`ステートメントを変更しますが、ミューテートされたオブジェクトも含まれます。
+. レスポンスの一部であるミューテートされたオブジェクトから`Pod`インスタンスを作成しました。
+ミューテートされたPodオブジェクトが正しい`metadata.annotations`を持っていることを確認します。
+
+再度テストを実行します。今回はすべてが合格するはずです：
+
+[subs="+attributes",shell]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 1.25s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+ご覧の通り、ミューテーションポリシーの作成は簡単です。
