@@ -1,0 +1,21 @@
+include::partial$variables.adoc[]
+= Richtlinie verteilen
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie Richtlinien verteilen und verwandte Informationen für {project-name} abrufen, einschließlich Konfigurationsdetails.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "kubewarden-Richtlinien verteilen"]
+:sidebar_label: Richtlinie verteilen
+:sidebar_position: 080
+:current-version: {page-origin-branch}
+
+Es war ein langer und hoffentlich angenehmer Weg durch das Go-Tutorial, herzlichen Glückwunsch, dass Sie es bis hierher geschafft haben 🎉.
+
+Während dieses Tutorials haben Sie die https://github.com/kubewarden/safe-labels-policy[safe-labels-policy] nachgebildet.
+
+Es gibt nichts Besonderes zu tun, wenn es um die Verteilung einer Richtlinie geht.
+Wenn Sie dieser Anleitung gefolgt sind, haben Sie Ihre Richtlinie bereits mit der GitHub `release.yml` Aktion veröffentlicht, die im letzten Kapitel definiert ist.
+
+Das Thema der Verteilung von Richtlinien wird im Abschnitt xref:/explanations/distributing-policies.adoc["Richtlinien verteilen"] der Dokumentation von {project-name} ausführlicher behandelt.
