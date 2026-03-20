@@ -1,0 +1,194 @@
+include::partial$variables.adoc[]
+
+= {project-name} 対 OPA Gatekeeper
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:page-aliases: explanations/opa-comparison.adoc
+:description: Kubernetes 環境における OPA Gatekeeper と {project-name} のポリシー管理を比較し、あなたのユースケースに最適なアプローチを決定します。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["explanations", "kubewarden-vs-opa_gatekeeper"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "opa gatekeeper", "comparison"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+このページは2023年8月のものです。その後、両プロジェクトは進化している可能性があります。
+
+何かが欠けている、または不正確な場合は、https://github.com/kubewarden/docs/[問題を報告]するか、ページの下部にあるリンクを使用してPRをオープンしてください。
+
+====
+
+OPA Gatekeeper と、{project-name} の元となった Kubewarden は、オープンソースプロジェクトであり、CNCF の一部です。
+
+この表は OPA Gatekeeper と {short-project-name} の比較を提供します。さらなる情報が必要なトピックには、詳細な説明へのリンクがあります。
+
+|===
+| 機能 | OPA Gatekeeper | {short-project-name}
+
+| 検証
+| ✅
+| ✅
+
+| ミューテーション
+| ✅
+| ✅
+
+| ポリシー言語 <<_writing_policies,[1]>>
+| Rego
+| Rego、CEL、Go、Rust、...
+
+| コンテキスト認識 <<_context_aware,[2]>>
+| ✅
+| ✅
+
+| Kubernetes 統合 <<_kubernetes_integration,[3]>>
+| クラスター全体の CRD
+| クラスター全体およびネームスペース付きの CRD
+
+| ポリシー配布 <<_policy_distribution,[4]>>
+| Kubernetes CRに埋め込まれた
+| コンテナレジストリ、またはKubernetes CR（CEL）に埋め込まれた
+
+| CI/CD統合 <<_cicd_integration,[5]>>
+| ✅
+| ✅
+
+| ポリシー強制モード
+| 拒否、警告
+| 拒否、警告
+
+| デプロイメントモード <<_deployment_mode,[6]>>
+| 単一評価サーバー
+| 複数の評価サーバー
+
+| バックグラウンドチェック <<_background_checks,[7]>>
+| ✅
+| ✅
+|===
+
+== ポリシーの種類
+
+OPA GatekeeperとKubernetesの両方が、検証および変更ポリシーを記述できます。
+
+これらのポリシーは、カスタムリソースを含むあらゆる種類のKubernetesリソースを対象にできます。
+
+== ポリシーの記述
+
+OPA Gatekeeperポリシーは、https://www.openpolicyagent.org/docs/latest/#rego[Rego]を使用して記述します。Regoは、Open Policy Agentプロジェクトによって作成されたクエリ言語です。
+
+[IMPORTANT]
+====
+
+検証ポリシーを記述するためにのみRegoを使用できます。変更ポリシーはRegoを使用せず、YAMLで定義されたアドホックルールを使用します（https://open-policy-agent.github.io/gatekeeper/website/docs/mutation[こちら]を参照）。
+
+====
+
+
+異なるパラダイムを使用して{short-project-name}ポリシーを記述できます。ポリシー作成者は、従来のプログラミング言語（Go、Rustなど）やhttps://en.wikipedia.org/wiki/Domain-specific_language[ドメイン特化型言語]（RegoやCELなど）を使用できます。{short-project-name}では、検証ポリシーと変更ポリシーを同じ方法で記述します。
+
+[CAUTION]
+====
+
+https://github.com/open-policy-agent/kube-mgmt[kube-mgmt]オープンソースプロジェクトは、Open Policy Agentプロジェクトの一部であり、Regoを使用しています。
+
+同じ言語を使用しているにもかかわらず、kube-mgmt用に書かれたポリシーはOPA Gatekeeperと互換性がなく、OPA Gatekeeper用に書かれたポリシーもkube-mgmtと互換性がありません。
+
+{short-project-name}は、Open Policy AgentおよびOPA Gatekeeperの両方のために書かれたRegoポリシーを使用できます。詳細情報はxref:/tutorials/writing-policies/rego/01-intro-rego.adoc[こちら]です。
+
+====
+
+
+== コンテキスト認識
+
+場合によっては、ポリシーが検証または変更を行う決定をするために、クラスターの現在の状態に関するデータが必要です。例えば、Ingressリソースを検証するポリシーは、衝突が発生しないように、クラスター内で既に定義されている他のIngressリソースを知る必要があります。{short-project-name}はこれらのポリシーを「コンテキスト認識」と呼びます。
+
+OPA Gatekeeperと{short-project-name}の両方が、これらのタイプのポリシーをサポートしています。
+
+OPA Gatekeeperをデプロイする際、Kubernetes管理者は評価時にポリシーにどのタイプのクラスターデータを利用可能にするかを決定します。
+
+このデータがすべてのデプロイされたポリシーによってどのようにアクセス可能であるかを強調することが重要です。
+
+例えば、OPA GatekeeperポリシーがKubernetes Secretsへのアクセスを必要とする場合、デプロイされた他のすべてのポリシーもこのデータを読み取ることができます。
+
+逆に、{short-project-name}はクラスターリソースへのきめ細かいアクセスを提供します。
+各ポリシーは、Kubernetes管理者が指定したリソースにのみアクセスできます。許可されていないデータを読み取ろうとすると、直ちにブロックされ、クラスター管理者に報告されます。
+
+== Kubernetes統合
+
+OPA Gatekeeperには、ポリシーの定義と、それをどのように、どこで強制するかを定義できるクラスター全体のカスタムリソースがあります。
+
+{short-project-name}には、ポリシーを宣言するために使用される2種類のカスタムリソースがあります。1つはクラスター全体で機能し、もう1つはネームスペースに属します。ネームスペースに属するカスタムリソースの名前は`AdmissionPolicy`です。
+
+`AdmissionPolicy`リソースを介してデプロイされたポリシーは、それが属するネームスペース内で作成されたリソースにのみ影響を与えます。そのため、非管理者のKubernetesユーザーに、アクセスできるネームスペース内で`AdmissionPolicy`リソースを管理するために必要なRBAC権限を付与できます。
+
+これにより、Kubernetes管理者はポリシー関連の作業を委任できます。
+
+== ポリシー配布
+
+OPA Gatekeeperと{short-project-name}ポリシーは、Kubernetes内でポリシーを定義するカスタムリソースにポリシーソースコード（OPA Gatekeeper用のRego、{short-project-name}用のCEL）を持っています。
+
+また、{short-project-name}ポリシーは、コンテナイメージのように管理できるポリシーのソースコードを持つことができます（Rego、Go、Rust、...）。一度構築されると、それらはOCIアーティファクトとしてコンテナレジストリにプッシュされます。
+
+{short-project-name}ポリシーは、https://sigstore.dev[Sigstoreプロジェクト]からの`cosign`のようなコンテナイメージツールを使用して署名および検証できます。
+
+地理的に分散したコンテナレジストリ間で{short-project-name}ポリシーを配布することができ、これはコンテナイメージのために採用された従来のツールとプロセスを使用します。
+
+== CI/CD統合
+
+OPA Gatekeeperと{short-project-name}の両方は、GitOps手法を使用して管理されています。
+
+ただし、OPA Gatekeeperの場合、ポリシーのRegoコードとKubernetesにデプロイするために使用されるカスタムリソースとの間に結合があります。
+これにより、CI/CDパイプラインに追加のステップが導入されます。
+
+Regoには、ユニットテストスイートの作成を可能にするhttps://www.openpolicyagent.org/docs/latest/policy-testing/[テストツール]があります。テストを作成し、CI/CDパイプラインで実行することは、ポリシーが期待通りに動作することを保証するために不可欠です。
+
+これらのテストツールを使用するには、ポリシーのソースコードが専用のテキストファイルに存在する必要があります。OPA Gatekeeperポリシーを宣言するために使用されるYAMLファイルからソースコードを読むことは不可能です。CI/CDパイプラインは、テスト用のRegoソースコードをOPA Gatekeeperカスタムリソースに定義されたコードと同期させる必要があります。これをサードパーティツールを使用して行うことができます。
+
+{short-project-name}ポリシーは、従来のマイクロサービスのようなCI/CDパイプラインを持っています。
+通常、そのソースコードはGitリポジトリに存在し、その後、従来のCI/CDシステムを使用してユニットテストが実行されます。ポリシーを書くために使用される言語のテストフレームワークを使用して単体テストを作成します。すべてのテストが合格すると、ポリシーをWebAssemblyにコンパイルし、コンテナレジストリにプッシュします。この種のパイプラインは通常、ポリシーの作成者によって維持されます。
+
+Kubernetes管理者は、ポリシーの新しいリリースに反応する他の自動化パイプライン（https://docs.github.com/en/code-security/dependabot/working-with-dependabot[Dependabot]、https://www.mend.io/renovate/[Renovate bot]、https://www.updatecli.io/[updatecli]などの自動化ツールを使用）や、ポリシー設定の変更に反応するパイプラインを維持します。
+
+パイプラインは、さまざまな種類のリクエストに対してポリシーをテストします。https://github.com/kubewarden/kwctl[`kwctl`] CLIツールを使用してテストを行うことができ、稼働中のKubernetesクラスターは必要ありません。`kwctl` CLIツールは、Kubernetesクラスターにデプロイされた{short-project-name}スタックによって使用されるのと同じ評価エンジンを使用します。
+
+== ポリシー強制モード
+
+OPA Gatekeeperと{short-project-name}の両方は、2つの異なる操作モードを使用してポリシーをデプロイできます：
+
+* `deny`：ポリシーの違反はリクエストを拒否します。
+* `warn`：ポリシーの違反は拒否を引き起こさず、ログに記録されます。
+
+== デプロイメントモード
+
+同じサーバーがすべてのOPA Gatekeeperポリシーを評価します。逆に、{short-project-name}は複数の評価サーバーの定義を許可します。これらのサーバーは、`PolicyServer`というカスタムリソースによって定義されます。
+
+{short-project-name}ポリシーを宣言する際、Kubernetes管理者はどの`PolicyServer`がそれをホストするかを決定します。
+
+[NOTE]
+====
+
+`PolicyServer`オブジェクトは、{short-project-name}によって導入された高レベルの抽象化です。
+裏では、特定のレプリカサイズを持つ`Deployment`が作成されます。
+
+各`PolicyServer`は、他のものとは異なるレプリカサイズを持つことができます。
+
+====
+
+これにより、次のような興味深いシナリオが可能になります：
+
+* 重要なポリシーを専用のポリシーサーバープールにデプロイします。
+* 騒がしいテナントのポリシーを専用のポリシーサーバープールにデプロイします。
+
+== バックグラウンドチェック
+
+ポリシーが追加、削除、再構成されると、クラスター内のリソースが非準拠になる可能性があります。
+
+OPA Gatekeeperと{short-project-name}の両方には、バックグラウンドで動作するスキャナーがあります。このスキャナーは、クラスター内で既に定義されているリソースを評価し、非準拠のものにフラグを付けます。
+
+OPA Gatekeeperと{short-project-name}の唯一の違いは、スキャナーの結果がどのように保存されるかです。
+
+OPA Gatekeeperは、特定の`Constraint`カスタムリソースの`status`フィールドに違反の詳細を追加します（https://open-policy-agent.github.io/gatekeeper/website/docs/audit#constraint-status[こちら]を参照）。
+
+{short-project-name}は、https://openreports.io[openreports.io]によって定義された一連のレポートカスタムリソース内に結果を保存します。
