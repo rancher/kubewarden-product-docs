@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= Introdução ao CEL
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprenda sobre CEL (Linguagem de Expressão de Computação) como uma linguagem de expressão rápida, portátil e segura, projetada para regras de validação do Kubernetes e extensões da API do Kubernetes.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "cel", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas", "introdução"]
+:current-version: {page-origin-branch}
+
+A https://cel.dev[Common Expression Language (CEL)] é uma linguagem de expressão de propósito geral projetada para ser rápida, portátil e segura para execução. CEL, como linguagem, é segura em termos de memória, livre de efeitos colaterais, terminante (os programas não podem entrar em loop infinito) e tipada de forma forte e dinâmica. Você pode aprender mais sobre CEL em https://cel.dev[cel.dev] e praticá-la no https://playcel.undistro.io[playground do CEL].
+
+== CEL no Kubernetes
+
+CEL foi escolhida como a linguagem para regras de validação do Kubernetes, pois expressões CEL podem ser facilmente incorporadas em esquemas de CRD e compiladas e verificadas quanto ao tipo "antes do tempo" (quando CRDs são criadas e atualizadas). Por essas razões e suas características gerais, é um candidato perfeito para estender a API do Kubernetes.
+
+Marcada como estável com o Kubernetes 1.30, pode-se usar CEL em https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy[ValidatingAdmissionPolicies] e outras regras de validação. Para mais informações, veja a documentação do Kubernetes https://kubernetes.io/docs/reference/using-api/cel[aqui].
+
+=== Bibliotecas de funções do Kubernetes
+
+As regras de validação do Kubernetes CEL têm acesso a várias bibliotecas de funções:
+
+* https://github.com/google/cel-spec/blob/v0.7.0/doc/langdef.md#list-of-standard-definitions[Funções padrão do CEL]
+* https://github.com/google/cel-spec/blob/v0.7.0/doc/langdef.md#macros[Macros padrão do CEL]
+* https://pkg.go.dev/github.com/google/cel-go/ext#Strings[Biblioteca de funções de string estendida do CEL]
+* https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-cel-libraries[Bibliotecas de extensão do Kubernetes CEL], com funções suplementares para listas, regex, URLs, autorizadores, quantidades, tipos opcionais, comparações numéricas, etc.
+
+== CEL em {project-name}: `cel-policy`
+
+{short-project-name} fornece https://github.com/kubewarden/cel-policy[cel-policy].
+Esta é uma política que constrói e empacota o interpretador upstream https://pkg.go.dev/github.com/google/cel-go[cel-go], e também as diferentes bibliotecas listadas acima e disponíveis para CEL no Kubernetes a partir de `apiextensions-apiserver`.
+
+Além disso, `cel-policy` empacota uma *{short-project-name}biblioteca de extensão do CEL* que expõe as {short-project-name} capacidades do host como recursos nativos do CEL https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native CEL]:
+
+* Verificação do Sigstore
+* Interação OCI
+* Funções criptográficas
+* Operações de rede
+* Acesso aos recursos do Kubernetes
+
+Isso significa que `cel-policy` é um superconjunto do Kubernetes CEL, e compatível com versões anteriores. É possível reutilizar CEL escrito para Kubernetes vanilla, e/ou fazer uso dos recursos adicionados por {short-project-name}.
+
+O `cel-policy` é enviado compilado e se comporta como um interpretador CEL. Os usuários da política passam as expressões CEL desejadas no `spec.settings` da (Cluster)AdmissionPolicy, e graças aos recursos do CEL, a expressão é compilada e verificada quanto à correção ao criar ou atualizar a (Cluster)AdmissionPolicy. Isso significa que não há necessidade de compilações personalizadas do `cel-policy`.
+
+=== Benefícios do {short-project-name} do `cel-policy` em comparação com ValidatingAdmissionPolicies
+
+O {short-project-name} do `cel-policy`:
+
+* Seu código CEL é compatível com versões anteriores das ValidatingAdmissionPolicies.
+* Ao contrário das ValidatingAdmissionPolicies, não precisa de um vínculo como ValidatingAdmissionPolicyBinding, pois isso está incluído nas definições de (Cluster)Admissionpolicies do {short-project-name}.
+* Pode ser implantado em clusters que não têm suporte a ValidatingAdmissionPolicies.
+* É consciente do contexto e faz uso das permissões granulares de {short-project-name} para xref:../../../reference/spec/05-context-aware-policies.adoc[consciência de contexto].
+* É implantado como (Cluster)AdmissionPolicy.
+* Se beneficia do rastreamento e telemetria de {short-project-name} sobre políticas.
+* Será levado em consideração pelo Scanner de Auditoria.
+* Pode ser desenvolvido e testado fora do cluster graças ao kwctl.

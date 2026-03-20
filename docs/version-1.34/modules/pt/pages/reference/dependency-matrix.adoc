@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= Matriz de dependência
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Saiba mais sobre as dependências do {project-name}, incluindo suas restrições de versão.
+:doc-persona: [“kubewarden-all”]
+:doc-topic: [“manual-do-operador”, “dependências”]
+:doc-type: [“referência”]
+:keywords: [“dependência”, “dependências”, “CRD”, “charts”, “matriz”]
+:sidebar_label: Matriz de dependência
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+Esta página lista as dependências de {project-name}, com suas restrições de versão relevantes. Versões fora dos intervalos fornecidos podem funcionar, mas não foram testadas.
+
+== OpenTelemetry, dependências de métricas e rastreamento
+
+No momento da redação, a pilha https://opentelemetry.io[OpenTelemetry] continua melhorando. No entanto, ainda não está estável, e mudanças incompatíveis com versões anteriores, não anunciadas, ainda ocorrem. Os desenvolvedores do {short-project-name} se esforçam para acompanhar as mudanças na pilha OpenTelemetry e se ajustar a elas. O projeto testa contra um intervalo conhecido de funcionamento da pilha OpenTelemetry, métricas e rastreamento.
+
+== Dependências opcionais
+
+Necessárias para recursos específicos.
+
+[cols=”,^,^,^"]
+|===
+| Dependência do chart | Helm chart `appVersion` | Gráfico Helm `version` | Recurso
+
+| `open-telemetry/opentelemetry-operator` chart
+| `≥ 0.104`
+| Exemplo: `0.97.1`
+| OTEL
+
+| `prometheus-community/kube-prometheus-stack` chart
+| `≥ v0.69`
+| Exemplo: `77.13.0`
+| Métricas
+
+| `jaegertracing/jaeger-operator` chart
+| `≥ 1.49 < 2`
+| Exemplo: `2.57.0`
+| Seguimento
+
+| `kyverno/policy-reporter` chart
+| `≥ 2 < 4`
+| No `kubewarden-controller` chart como subchart
+| Interface de Relatórios de Políticas
+|===
+
+[cols=",^,^,^"]
+|===
+| Dependência de CRD | Versão | Helm chart `version` | Recurso
+
+| (descontinuado, remoção programada) `policyreports.wgpolicyk8s.io` CRDs
+| `v1beta1`
+| No `kubewarden-defaults` chart ou instalado manualmente
+| Scanner de Auditoria
+
+| `openreports.io` CRDs
+| `v1alpha2`
+| No `kubewarden-defaults` chart ou instalado manualmente
+| Scanner de Auditoria
+|===
+
+== Rancher
+
+{short-project-name} testa os charts Helm de monitoramento e rastreamento fornecidos no repositório de charts do Rancher.
