@@ -1,0 +1,44 @@
+include::partial$variables.adoc[]
+
+= 代理配置
+:description: 使用代理与 {project-name}。
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "proxy", "proxies"]
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "proxy"]
+
+对于 `kwctl` 和 `policy-server`，您可以配置 HTTP 和 HTTPS 代理，以及将域名从该代理配置中排除。
+
+您可以通过两种方式实现：* 为 `kwctl` 或 `policy-server` 设置环境变量 `HTTP_PROXY`、`HTTPS_PROXY`、`NO_PROXY`（及其小写对应项）。
+  要配置 PolicyServer CR，请设置其 `spec.env` 数组。* 通过 `--sources-path` 参数提供 `sources.yaml` 文件。
+  `sources.yaml` 文件优先于环境变量。
+  通过 `spec` 字段使用此配置在 PolicyServer CRs 中尚未开放。
+
+设置代理配置会影响：
+
+* 从 OCI 注册表拉取、推送和拉取并运行策略。
+* 来自上下文感知调用的主机能力，例如：
+** 容器注册表，例如获取 OCI 清单或清单摘要。
+   流量将通过配置的代理路由，而不是直接访问 OCI 注册表。
+** Sigstore 能力，例如验证无密钥签名。
+   流量将通过配置的代理路由，而不是直接访问 Sigstore 定义的服务。
+
+== 示例
+
+您可以为 `kwctl` 或 `policy-server` 设置以下环境变量（通过 PolicyServer `spec.env`）：
+
+[source,bash]
+----
+HTTP_PROXY="http://proxy.corp:3128"
+https_proxy="http://proxy.corp:3129"
+NO_PROXY="localhost,.corp"
+----
+
+使用此配置：* 通过 HTTP 的非安全流量，例如与不安全的 OCI 注册表之间的流量，将通过 `\http://proxy.corp:3128` 路由。
+  这会影响拉取策略，以及调用具有该储存库中容器的 OCI 镜像清单摘要的上下文感知能力的策略。* 通过 HTTPS 的加密流量将通过 `\https://proxy.corp:3129` 路由。
+  例如，这包括将策略推送和拉取到任何安全的 OCI 储存库，以及上述策略的上下文感知能力。* 来自 localhost 或任何 `.corp` 下域的流量不受前述配置的影响。
+
+
+== `sources.yaml` 文件
+
+有关更多详细信息，请查看 xref:/reference/sources_yaml.adoc[`sources.yaml`] 参考。
