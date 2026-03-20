@@ -1,0 +1,269 @@
+include::partial$variables.adoc[]
+
+= Tareas habituales
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Gestiona políticas en tu clúster de Kubernetes con {project-name} utilizando la herramienta CLI kwctl.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["common-tasks"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "directiva", "servidordirectiva", "directivadeadmisióncluster", "directivadeadmisión"]
+:current-version: {page-origin-branch}
+
+Esto describe tareas habituales para después de que tú
+xref:quick-start.adoc#installation[instales {project-name}] en tu clúster de Kubernetes.
+
+Las tareas separadas están en un orden lógico.
+
+== Probar directivas
+
+{short-project-name} utiliza dos herramientas para ayudarte a encontrar políticas y probarlas
+localmente:
+
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Hub de Artefactos], utilizando su filtro de paquetes para políticas de {short-project-name}
+* https://github.com/kubewarden/kwctl[`kwctl`], una herramienta CLI
+
+=== Hub de Artefactos
+
+El Hub de Artefactos alberga políticas contribuidas por la comunidad. Por ejemplo, puedes encontrar sustitutos a las https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[Directivas de Seguridad de Pods de Kubernetes obsoletas], creadas por los desarrolladores de {short-project-name}.
+
+Como se muestra en la captura de pantalla a continuación, una vez que encuentres una directiva de interés, selecciona el botón `Install` y utiliza `kwctl` para obtener la directiva para tu clúster.
+
+image::tasks-artifact-hub.png[Hub de Artefactos]
+
+[NOTE]
+====
+
+Anteriormente, las directivas de {short-project-name} podían encontrarse en el https://hub.kubewarden.io[{short-project-name} Hub de Políticas]. Esto ha sido
+https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retirado].
+Las políticas ahora están disponibles desde
+https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
+
+====
+
+
+=== `kwctl`Herramienta CLI de
+
+`kwctl` es la herramienta CLI de {short-project-name} para autores de directivas y administradores de clústeres para probar directivas antes de aplicarlas a un clúster de Kubernetes.
+
+Esta herramienta tiene una interfaz similar a la herramienta `docker` CLI.
+
+==== Casos de uso
+
+Puedes usar `kwctl` para ayudar en estos escenarios:
+
+_Como autor de directivas_
+
+* _Pruebas de extremo a extremo de tu directiva_: Prueba tu directiva contra solicitudes de Kubernetes elaboradas y asegúrate de que tu directiva se comporte como esperas. Incluso puedes probar directivas contextuales que requieren acceso a un clúster en funcionamiento.
+* _Incrustar metadatos en tu módulo Wasm_: El binario contiene anotaciones de los permisos que necesita para ser ejecutado. Puedes inspeccionar y modificar estas anotaciones con `kwctl`.
+* _Publicar directivas en registros OCI_ El binario es un objeto OCI completamente compatible y puede ser almacenado en registros OCI.
+
+_Como administrador de clúster_
+
+* _Inspeccionar directivas remotas_: Dada una directiva en un registro OCI o en un servidor HTTP, muestra toda la información estática sobre la directiva.
+* _Prueba en seco de una directiva en tu clúster_: Prueba la directiva contra solicitudes de Kubernetes elaboradas y asegúrate de que la directiva se comporte como esperas dado los datos de entrada que proporcionas. También puedes probar directivas contextuales que requieren acceso a un clúster en funcionamiento en modo de prueba en seco.
+* _Generar andamiaje inicial `ClusterAdmissionPolicy` para tu directiva_:
+  Genera un archivo `YAML` con todas las configuraciones requeridas, que se pueden aplicar a tu clúster de Kubernetes usando `kubectl`.
+
+==== Instalación
+
+Los binarios de `kwctl` para las versiones estables están disponibles en el https://github.com/kubewarden/kwctl/releases[repositorio de GitHub]. Para construir
+`kwctl` desde el repositorio de GitHub https://github.com/kubewarden/kwctl[repo], necesitas un entorno de desarrollo https://www.rust-lang.org/tools/install[Rust].
+
+==== Uso
+
+Puedes listar todas las opciones y subcomandos `kwctl` ejecutando el siguiente comando:
+
+[subs="+attributes",shell]
+----
+$ kwctl --help
+kwctl 0.2.5
+{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {short-project-name} policies
+
+USAGE:
+    kwctl [OPTIONS] <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help       Print help information
+    -v               Increase verbosity
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    annotate       Add {short-project-name} metadata to a WebAssembly module
+    completions    Generate shell completions
+    digest         Fetch the digest of its OCI manifest
+    help           Print this message or the help of the given subcommand(s)
+    inspect        Inspect {short-project-name} policy
+    policies       Lists all downloaded policies
+    pull           Pulls a {short-project-name} policy from a given URI
+    push           Pushes a {short-project-name} policy to an OCI registry
+    rm             Removes a {short-project-name} policy from the store
+    run            Runs a {short-project-name} policy from a given URI
+    scaffold       Scaffold a Kubernetes resource or configuration file
+    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+----
+
+Aquí tienes algunos ejemplos de uso de comandos:
+
+* _Lista las directivas_: lista todas las directivas almacenadas en el registro local `kwctl`
+ ** Comando: `kwctl policies`
+* _Obtén la directiva_: descarga y almacena la directiva dentro del almacén local `kwctl`
+ ** Comando: `kwctl pull <policy URI>`
++
+[subs="+attributes",shell]
+----
+$ kwctl pull registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+
+$ kwctl policies
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+| Policy                                                       | Mutating | Context aware | SHA-256      | Size     |
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+| registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 | no       | no            | 59e34f482b40 | 21.86 kB |
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+----
+* _Entiende cómo funciona la directiva_: inspecciona los metadatos de la directiva
+ ** Comando: `kwctl inspect <policy URI>`
++
+[subs="+attributes",shell]
+----
+  $ kwctl inspect registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+  Details
+  title:              pod-privileged
+  description:        Limit the ability to create privileged containers
+  author:             Flavio Castelli
+  url:                https://github.com/kubewarden/pod-privileged-policy
+  source:             https://github.com/kubewarden/pod-privileged-policy
+  license:            Apache-2.0
+  mutating:           false
+  context aware:      false
+  execution mode:     kubewarden-wapc
+  protocol version:   1
+
+  Annotations
+  io.kubewarden.kwctl 0.1.9
+
+  Rules
+  ────────────────────
+  ---
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    resources:
+      - pods
+    operations:
+      - CREATE
+  ────────────────────
+
+  Usage
+  This policy doesn't have a configuration. Once enforced, it will reject
+  the creation of Pods that have at least a privileged container defined.
+----
+* _Evalúa la directiva_: Evalúa la directiva y, si está disponible, encuentra los valores de configuración adecuados para cumplir con tus requisitos.
++
+Necesitas cierta familiaridad con las https://kubernetes.io/docs/reference/[APIs REST de Kubernetes].
+
+ ** Comando: `kwctl run -r <"Kubernetes Admission request" file path> -s <"JSON document" file path> <policy URI>`
+ ** Situación 1:
+  *** Solicitud de evaluación: Crea un pod sin contenedor 'privilegiado'
++
+[subs="+attributes",shell]
+----
+$ kwctl run registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 -r unprivileged-pod-request.json
+{"uid":"C6E115F4-A789-49F8-B0C9-7F84C5961FDE","allowed":true,"status":{"message":""}}
+----
+
+  *** Comando equivalente con el binario de la directiva descargado:
++
+[subs="+attributes",shell]
+----
+`$ kwctl run file://$PWD/pod-privileged-policy.wasm -r unprivileged-pod-request.json
+{"uid":"C6E115F4-A789-49F8-B0C9-7F84C5961FDE","allowed":true,"status":{"message":""}}
+----
+
+  *** Resultado: La directiva permite la solicitud
+ ** Situación 2:
+  *** Solicitud de evaluación: Crea un pod con al menos un contenedor 'privilegiado'
+  *** Comando:
++
+[subs="+attributes",shell]
+----
+kwctl run registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 -r privileged-pod-request.json
+----
+
+  *** Comando equivalente con el binario de la directiva descargado: `kwctl run file://$PWD/pod-privileged-policy.wasm -r privileged-pod-request.json`
+  *** Salida:
++
+[subs="+attributes",json]
+----
+{
+  "uid": "8EE6AF8C-C8C8-45B0-9A86-CB52A70EC50D",
+  "allowed": false,
+  "status": { "message": "User 'kubernetes-admin' cannot schedule privileged containers" }
+}
+----
+
+  *** Resultado: La directiva deniega la solicitud
+
++
+Para ejemplos más complejos, consulta la entrada del blog https://www.kubewarden.io/blog/2021/06/kwctl-intro-for-kubernetes-administrators/[Introduciendo `kwctl` a los Administradores de Kubernetes].
+
+== Aplicar directivas
+
+Aplicas una directiva definiendo un `ClusterAdmissionPolicy` y luego la despliegas en tu clúster utilizando `kubectl`.
+
+`kwctl` ayuda a generar un `ClusterAdmissionPolicy` de la directiva que deseas aplicar.
+
+Después de haber generado el `ClusterAdmissionPolicy` y aplicado a tu clúster, puedes seguir los pasos descritos en el xref:quick-start.adoc#_example_enforce_your_first_policy[Inicio Rápido] a continuación:
+
+* Genera el `ClusterAdmissionPolicy` de la directiva `manifest` y guárdalo en un archivo
+ ** Comando: `kwctl scaffold manifest -t ClusterAdmissionPolicy <policy URI> > <"policy name".yaml>`
++
+[subs="+attributes",shell]
+----
+$ kwctl scaffold manifest -t ClusterAdmissionPolicy registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+---
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9"
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+  mutating: false
+----
+
++
+
+[TIP]
+====
+Por defecto, el valor del `name` está establecido en `generated-policy`.
+Es posible que desees editarlo antes de desplegar el `ClusterAdmissionPolicy`.
+El nombre en el ejemplo anterior está establecido en `privileged-pods`.
+====
+
+* Despliega el `ClusterAdmissionPolicy` en tu clúster de Kubernetes
+ ** Comando: `kubectl apply -f <"policy name".yaml>`
++
+[subs="+attributes",shell]
+----
+$ kubectl apply -f pod-privileged-policy.yaml
+clusteradmissionpolicy.policies.kubewarden.io/privileged-pods created
+----
+
+Después de desplegar el `ClusterAdmissionPolicy`, todas las solicitudes enviadas a tu clúster son evaluadas por la directiva si están dentro de su alcance.
+
+== Pasos siguientes
+
+* xref:tutorials/writing-policies/index.adoc[Escribiendo Directivas] explica cómo escribir directivas en diferentes lenguajes y generar binarios de WebAssembly, para que puedan ser utilizados por {short-project-name}.
+* xref:../explanations/distributing-policies.adoc[Distribuyendo Directivas] explica cómo publicar directivas en https://github.com/opencontainers/distribution-spec/blob/main/spec.md[registros de OCI].
