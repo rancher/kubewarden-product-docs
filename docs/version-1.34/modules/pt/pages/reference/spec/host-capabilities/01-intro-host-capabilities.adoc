@@ -1,0 +1,39 @@
+include::partial$variables.adoc[]
+= Especificação das capacidades do host
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Durante a avaliação, entenda as capacidades do host oferecidas pelo ambiente para {project-name} políticas.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["escrevendo-políticas", "especificação", "capacidades-do-host", "introdução"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificação de políticas", "capacidades do host"]
+:sidebar_label: Especificação das capacidades do host
+:current-version: {page-origin-branch}
+
+Durante a avaliação, {project-name} as políticas podem acessar capacidades extras oferecidas pelo ambiente do host.
+Este mecanismo utiliza uma abordagem semelhante ao tradicional https://en.wikipedia.org/wiki/Remote_procedure_call[RPC].
+
+Isso é o que acontece quando uma solicitação é emitida por uma política {short-project-name}:
+
+* {short-project-name} Política:
+ ** Invoca a capacidade oferecida pelo ambiente do host.
+ ** A invocação é uma operação bloqueante, portanto, o código da política aguardará até que o host forneça uma resposta.
+* Ambiente do host:
+ ** Uma invocação de capacidade é recebida.
+ ** O host realiza a operação.
+ ** O host fornece uma resposta à política, que pode ser um sucesso ou uma falha.
+* {short-project-name} Política:
+ ** O código recebe a resposta do host e retoma a execução.
+ ** A resposta do host é tratada de acordo.
+
+O recurso de capacidades do host é implementado usando https://wapc.io/[waPC].
+Cada capacidade utiliza estes detalhes:
+
+* Nome da função waPC: O nome da capacidade exposta pelo host.
+* Carga útil de entrada: O corpo da solicitação feita pela política.
+Isso está sempre codificado em formato JSON.
+* Carga útil de saída: O corpo da resposta vinda do host. Isso está sempre codificado em formato JSON.
+
+Quando algo dá errado, o host responde com um erro.
+Isso é feito usando o tipo de erro da linguagem de programação utilizada pela política.
+O erro é uma string UTF-8 que contém uma mensagem de explicação.
