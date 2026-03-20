@@ -1,0 +1,90 @@
+include::partial$variables.adoc[]
+= 生のポリシーの作成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 任意のJSONドキュメントを評価し、システム内のアクセス制御ルールを強制する生のポリシーの書き方を学びましょう。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "raw-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "生のポリシー", "オープンポリシーエージェント", "opa", "rego"]
+:sidebar_label: 生のポリシー
+:current-version: {page-origin-branch}
+
+生のポリシーは、任意のJSONドキュメントを評価できるポリシーです。
+生のポリシーに関する詳細情報は、xref:howtos/raw-policies.adoc[生のポリシー]ページを参照してください。
+
+== 例
+
+次の例は、このチュートリアルのxref:tutorials/writing-policies/rego/open-policy-agent/02-create-policy.adoc[検証]ページを完了した場合、見覚えがあるはずです。
+
+[NOTE]
+====
+ポリシーを`raw`としてマークすることを忘れずに、`policyType`フィールドを`metadata.yml`設定で使用してください。
+詳細情報については、xref:tutorials/writing-policies//metadata.adoc[メタデータ]仕様を参照してください。
+====
+
+
+=== 検証
+
+次の形式のリクエストを受け入れるポリシーを作成します。
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "products"
+  }
+}
+----
+
+`admin`ユーザーのみがリソースを削除できることを検証します。
+
+https://github.com/kubewarden/opa-policy-template[OPAポリシーテンプレート]を使用してポリシーのスキャフォールディングを開始します。
+
+最初に`policy.rego`ファイルを次のように変更する必要があります：
+
+[,rego]
+----
+package validation
+
+deny[msg] {
+    input.request.action == "delete"
+    input.request.user != "admin"
+    msg := sprintf("user %v is not allowed to delete resources", [input.request.user])
+}
+----
+
+`utility/policy.rego`モジュールは、Kubernetes特有のコードを削除するために修正する必要があります。
+
+[,rego]
+----
+package policy
+
+import data.validation
+
+main = {
+    "response": response,
+}
+
+# OPA policy responses need the uid field to be set.
+# If the request doesn't contain a uid, set it to an empty string.
+default uid = ""
+
+uid = input.request.uid
+
+response = {
+    "uid": uid,
+    "allowed": false,
+    "status": {"message": reason},
+} {
+    reason = concat(", ", validation.deny)
+    reason != ""
+} else = {
+    "uid": uid,
+    "allowed": true,
+} {
+    true
+}
+----

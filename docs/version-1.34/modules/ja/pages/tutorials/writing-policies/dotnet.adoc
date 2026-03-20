@@ -1,0 +1,41 @@
+include::partial$variables.adoc[]
+= C#
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: WebAssemblyプラットフォーム（例えばKubernetes）上で、WASIサポートを備えた.NET Core SDKを使用して、Admission Controlポリシーの検証および変更について探求し、記述します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "c#"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "c#", ".net"]
+:sidebar_label: C#
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+.NET Coreは現在、WebAssembly WASIプラットフォームの実験的サポートを提供しています。
+これはhttps://github.com/SteveSandersonMS/dotnet-wasi-sdk[`dotnet-wasi-sdk`]プロジェクトからのものです。
+
+[NOTE]
+====
+
+.NET Coreコードを記述または実行するためにWindowsのインストールは必要ありません。
+すべての作業はLinuxまたはmacOSマシンでも行うことができます。
+====
+
+
+== 現在の状態
+
+ポリシー作成者は以下のリソースを使用できます：
+
+* https://github.com/kubewarden/policy-sdk-dotnet[{project-name} .NET Core SDK]: これはポリシーの記述プロセスを簡素化するオブジェクトと関数のセットを提供します。
+* https://github.com/kubewarden/policy-sdk-dotnet/tree/main/example[{short-project-name} ポリシーの例]: これは動作するポリシーの例です。
+
+知られている制限はありません。
+SDKは、検証ポリシーと変更ポリシーの両方の記述を可能にします。
+
+Kubernetesオブジェクトを扱うために、https://www.nuget.org/packages/KubernetesClient.Models[`KubernetesClient.Models`]ライブラリを使用することが可能です。
+
+== プロジェクトテンプレート
+
+現在、C#ポリシーをスキャフォールドできるプロジェクトテンプレートはありません。
+
+興味がある場合は、https://github.com/kubewarden/policy-sdk-dotnet/issues[issueを作成]してください。

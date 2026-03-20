@@ -1,0 +1,62 @@
+include::partial$variables.adoc[]
+= ドキュメント改善の提案
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 不足している点、古くなっている点、誤り、または品質レビューが必要な点について明確な詳細を記載して、GitHubのイシューを開くことでドキュメント改善を開始します。
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution", "improvement"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "ドキュメント", "改善の提案"]
+:sidebar_label: ドキュメント改善の提案
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+{short-project-name}のドキュメントに問題がある場合や新しいコンテンツを提案したい場合は、イシューを開いてください。https://github.com/join[GitHubアカウント]とブラウザへのアクセスが必要です。
+
+通常、{short-project-name}の新しいドキュメント作業はGitHubのイシューから始まります。
+ifeval::["{build-type}" == "community"]
+https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name}ドキュメントチーム]がそれらをレビューし、分類し、タグ付けします。
+endif::[]
+ifeval::["{build-type}" == "product"]
+https://github.com/orgs/rancher/teams/docs[{short-project-name}ドキュメントチーム]がそれらをレビューし、分類し、タグ付けします。
+endif::[]
+誰でも報告者を含む任意のイシューに取り組むことができますが、重複作業を避けるために作業を開始する前に自分に割り当てるべきです。
+
+== イシューを開く
+
+既存のドキュメントコンテンツに改善を提案したり、エラーを報告するには、イシューを開いてください。
+
+* 上部のGitHubオクトキャットアイコンをクリックしてください。これにより、
+ifeval::["{build-type}" == "community"]
+  https://github.com/kubewarden/docs[{short-project-name}のドキュメントリポジトリ]にリダイレクトされます。
+endif::[]
+ifeval::["{build-type}" == "product"]
+  https://github.com/rancher/kubewarden-product-docs[{short-project-name}のドキュメントリポジトリ]にリダイレクトされます。
+endif::[]
+* イシュータブに移動し、*新しいイシュー*をクリックします。
+* 問題または改善提案を説明してください。詳細が多いほど、より良いです。
+* *新しいイシューを送信*をクリックしてください。
+* 問題を提出した後は、自分に割り当てるか、コミュニティメンバーがそれを引き受けるのを待つことができます。ドキュメントチームやコミュニティのメンバーは、あなたの問題に対処する前に明確化を求めることがあります。あなたは自分の問題を積極的に確認するか、https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notificationsGitHub通知をオンにするhttps://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notificationsべきです。
+
+== 新しいコンテンツの提案
+
+新しいコンテンツを提案するには、以下のいずれかの方法で問題を提出してください：
+
+* コンテンツが属すると思われるセクションの既存のページを選択し、*イシューを作成する*をクリックします。または
+ifeval::["{build-type}" == "community"]
+* https://github.com/kubewarden/docs/issues/new/choose[GitHub]に移動し、直接イシューを提出します。
+endif::[]
+ifeval::["{build-type}" == "product"]
+* https://github.com/rancher/kubewarden-product-docs/issues/new/choose[GitHub]に移動し、直接イシューを提出します。
+endif::[]
+
+== どのようにすれば、あなたの貢献が実りあるものとなるのでしょうか？
+
+貢献は大きくても小さくても構いません。ただし、コミュニティが最大の価値を得るために、問題を報告する際には以下のことを守るようお願いしています：
+
+* 問題の明確な説明を提供することに焦点を当ててください。考慮すべきいくつかの重要なポイントは、欠けているもの、古くなっているもの、誤っているもの、または質的および技術的な改善が必要なものを説明することです。
+* その問題がユーザーに与える具体的な影響を説明してください。
+* 問題の範囲を制限してください。範囲が大きい場合は、問題内の小さなタスクに分解してください。例えば、「貢献ガイドの作成」は、関連する複数のタスクがあるため、範囲が広いです。
+  しかし、「クイックスタートページの文法エラーを修正する」は、単一のプルリクエストのみを必要とするより狭い範囲の問題です。
+* 重複作業を避けるために、既存のイシューをクロスチェックしてください。
+* 既存のプルリクエストまたはイシューを確認してください。あなたが開いているイシュー内で、既存のプルリクエストまたはイシューを参照して、貢献者に文脈を提供することを確認してください。
