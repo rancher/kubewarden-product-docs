@@ -1,0 +1,100 @@
+include::partial$variables.adoc[]
+= Rego
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende sobre los conceptos básicos del lenguaje Rego, incluyendo su uso en conjunto con Open Policy Agent y Gatekeeper para implementar políticas como código.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "rego"]
+:sidebar_label: Rego
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+El soporte para Rego está disponible en estas versiones:
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+
+El soporte para políticas de Rego admite datos contextuales de la versión {project-name} 1.9.
+====
+
+
+El lenguaje Rego es un lenguaje específico de dominio para habilitar políticas como código.
+https://www.openpolicyagent.org/docs/latest/policy-language/[Rego]
+es un lenguaje inspirado en https://en.wikipedia.org/wiki/Datalog[Datalog].
+
+Hay dos formas de escribir políticas Rego para implementar políticas como código en Kubernetes,
+Open Policy Agent y Gatekeeper.
+
+Las siguientes secciones muestran cómo los dos marcos son diferentes,
+aunque utilizan el mismo lenguaje.
+Si estás más interesado en la implementación de {short-project-name},
+puedes visitar directamente la documentación específica del marco enlazada a continuación.
+
+* xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
+* xref:tutorials/writing-policies/rego/gatekeeper/01-intro.adoc[Gatekeeper]
+
+== Un lenguaje, dos marcos
+
+=== Open Policy Agent (OPA)
+
+Open Policy Agent es un proyecto que te permite implementar políticas como código en cualquier proyecto.
+Puedes usar OPA para cualquier verificación basada en políticas que necesite tu aplicación.
+
+En este contexto, escribir políticas para Kubernetes es simplemente utilizar OPA.
+Al usar webhooks de admisión de Kubernetes,
+es posible evaluar solicitudes usando OPA,
+que ejecuta las políticas escritas en Rego.
+
+OPA tiene integración opcional con Kubernetes a través de su `kube-mgmt` sidecar.
+Cuando se despliega en Kubernetes, y con el servidor OPA evaluando las políticas Rego,
+es capaz de replicar los recursos de Kubernetes configurados en Rego.
+Así que esos recursos de Kubernetes son visibles para todas las políticas.
+Con OPA puedes definir políticas dentro de los objetos ConfigMap de Kubernetes.
+Puedes leer más sobre ello en
+https://github.com/open-policy-agent/kube-mgmt[su página del proyecto].
+
+=== Gatekeeper
+
+Gatekeeper se centra, únicamente, en su uso en Kubernetes,
+y aprovecha eso tanto como sea posible,
+haciendo que los flujos de trabajo de Kubernetes sean más fáciles que OPA en ciertos casos.
+
+== Observando las diferencias
+
+Tanto las políticas de OPA como las de Gatekeeper utilizan Rego para describir políticas como código.
+Cada solución tiene diferencias a la hora de escribir políticas en Rego,
+como se muestra en las siguientes secciones.
+
+== Punto de entrada
+
+El punto de entrada es el nombre de una regla dentro de un paquete,
+y es la regla invocada por el tiempo de ejecución cuando se ejecuta la política.
+
+== Limitaciones actuales
+
+=== Políticas conscientes del contexto
+
+Las políticas conscientes del contexto son políticas que no evalúan la solicitud de entrada de forma aislada.
+Toman otros factores en cuenta para tomar una decisión.
+Por ejemplo, una política que evalúa recursos con espacio de nombres,
+y utiliza una anotación,
+en el espacio de nombres padre para configurar algo en la política.
+Otro ejemplo sería una política que evalúa recursos `Ingress`,
+pero para tomar una decisión también tiene la lista de los recursos `Ingress` existentes.
+
+La idea de las políticas conscientes del contexto también puede extenderse a recursos personalizados,
+así que tu política podría querer evaluar una solicitud basada en los recursos personalizados actualmente utilizados también.
+
+Tanto OPA como Gatekeeper soportan políticas conscientes del contexto,
+a partir de la versión {short-project-name} 1.9.
+
+Más detalles sobre políticas conscientes del contexto están
+xref:reference/spec/05-context-aware-policies.adoc[aquí].
+
+=== Políticas de mutación
+
+Gatekeeper tiene soporte para políticas de mutación, pero {short-project-name} aún no ha implementado políticas de mutación con compatibilidad con Gatekeeper.
+Puedes utilizar políticas que usen el SDK {short-project-name} para escribir políticas de mutación, pero actualmente, no puedes ejecutar políticas de mutación de Gatekeeper en {short-project-name}.

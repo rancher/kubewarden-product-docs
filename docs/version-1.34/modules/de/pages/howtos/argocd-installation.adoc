@@ -1,0 +1,125 @@
+include::partial$variables.adoc[]
+
+= ArgoCD-Installation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: ArgoCD-Installation
+:sidebar_position: 35
+:description: Konfigurieren Sie Ihre ArgoCD-Anwendung, um Kubernetes-Ressourcen effektiv zu verwalten, indem Sie spezifische Konfigurationsoptionen für die sichere Erstellung und Erneuerung von Zertifikaten festlegen.
+:keywords: ["{project-name}", gitops, argocd]
+:doc-persona: [kubewarden-operator]
+:doc-type: [howto]
+:doc-topic: [argocd-installation]
+
+Wenn Sie ArgoCD verwenden, um Ihre Kubernetes-Ressourcen zu verwalten, möchten Sie möglicherweise {project-name} mit ArgoCD installieren. Das ist möglich, aber es gibt bestimmte Überlegungen. Seit {short-project-name} v1.17.0 wurde die Abhängigkeit cert-manager entfernt. Es gibt einen neuen Zertifikatsreconciler, der die Zertifikate automatisch erneuert. Das bedeutet, dass der {short-project-name}-Controller sich um die Erstellung und Erneuerung der Zertifikate für Sie kümmert. Dies umfasst sowohl die Root-CA als auch alle Webhook-Zertifikate.
+
+Die anfängliche Erstellung der Root-CA und des Webhook-Zertifikats erfolgt während der Helm-Chart-Installation unter Verwendung der verfügbaren Helm-Funktionen. Während des Renderns des Helm-Charts überprüft die Installation, ob die Zertifikate bereits erstellt wurden, und wenn nicht, erstellt sie diese.
+
+Dies stellt ein Problem dar, wenn Sie ArgoCD verwenden, da es Helm ausschließlich zum Rendern der Vorlagen nutzt, während das gesamte Ressourcenlebenszyklusmanagement von ArgoCD übernommen wird. Immer wenn ArgoCD das Helm-Chart rendert, um sicherzustellen, dass die Clusteranwendung nicht von der Chart-Definition abweicht, versucht es erneut, Zertifikate zu erstellen. Infolgedessen markiert es die Geheimnisse, die die Zertifikate und die Webhook-Konfiguration speichern, als unsynchronisiert.
+
+Um dieses Problem zu lösen, ist es notwendig, die ArgoCD-Anwendung so zu konfigurieren, dass sie ignoriert:
+
+* das `data`-Feld in Geheimnissen
+* das `caBundle`-Feld in der `MutatingWebhookConfiguration`
+* `ValidatingWebhookConfiguration` Ressourcen.
+
+Sie tun dies, indem Sie das `ignoreDifferences` Feld in der ArgoCD-Anwendung hinzufügen:
+
+[subs="+attributes", yaml]
+----
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubewarden-crds
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.kubewarden.io
+    chart: kubewarden-crds
+    targetRevision: 1.13.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubewarden-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubewarden-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.kubewarden.io
+    chart: kubewarden-controller
+    targetRevision: 4.1.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubewarden-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:     # Sync options which modifies sync behavior
+      # When syncing changes, respect fields ignored by the ignoreDifferences configuration
+      - RespectIgnoreDifferences=true
+  # ignoreDifferences is the important configuration to avoid ArgoCD marking
+  # the secrets and # webhook configurations as unsynchronized
+  ignoreDifferences:
+  - group: ""
+    kind: "Secret"
+    name: kubewarden-ca
+    namespace: kubewarden-system
+    jsonPointers:
+      - /data
+  - group: ""
+    kind: "Secret"
+    name: kubewarden-webhook-server-cert
+    namespace: kubewarden-system
+    jsonPointers:
+      - /data
+  - group: ""
+    kind: "Secret"
+    name: kubewarden-audit-scanner-client-cert
+    namespace: kubewarden-system
+    jsonPointers:
+      - /data
+  - group: "admissionregistration.k8s.io"
+    kind: "MutatingWebhookConfiguration"
+    jqPathExpressions:
+      - '.webhooks[]?.clientConfig.caBundle'
+  - group: "admissionregistration.k8s.io"
+    kind: "ValidatingWebhookConfiguration"
+    jqPathExpressions:
+      - '.webhooks[]?.clientConfig.caBundle'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubewarden-defaults
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.kubewarden.io
+    chart: kubewarden-defaults
+    targetRevision: 2.8.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubewarden-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+----
+
+[NOTE]
+====
+
+Im Beispiel ist der Schlüsselbereich die `ignoreDifferences`-Konfiguration für die {short-project-name} Controller-Anwendung. Der Rest des Inhalts bietet Kontext, wie man die ArgoCD-Anwendung konfiguriert und ein vollständiges Beispiel bereitstellt.
+
+====
