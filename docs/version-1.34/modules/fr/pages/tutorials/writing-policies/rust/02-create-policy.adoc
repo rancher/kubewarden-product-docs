@@ -1,0 +1,112 @@
+include::partial$variables.adoc[]
+= Création d'une stratégie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à créer et configurer des stratégies de validation qui contrôlent les demandes de création de Pod en fonction de critères de rejet personnalisables.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "rédaction-de-stratégies", "rust", "création-de-stratégies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "création de stratégie"]
+:sidebar_label: Création d'une stratégie
+:current-version: {page-origin-branch}
+
+Par exemple, vous créez une stratégie de validation simple qui traite les demandes de création de Pod.
+
+La stratégie examine l'attribut `metadata.name` du Pod et rejette les pods ayant un nom invalide.
+Sa liste de noms invalides doit être configurable par les utilisateurs finaux de la stratégie.
+
+Les paramètres de la stratégie ressemblent à ceci :
+
+[subs="+attributes",yaml]
+----
+invalid_names:
+- bad_name1
+- bad_name2
+----
+
+La stratégie doit accepter la création d'un Pod comme le suivant :
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Elle doit rejeter la création d'un Pod comme :
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad_name1
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== Échafaudage du nouveau projet de stratégie
+
+Vous pouvez créer un nouveau projet de stratégie en utilisant `cargo generate` avec le https://github.com/kubewarden/rust-policy-template[modèle de projet].
+
+Tout d'abord, installez `cargo-generate`. Cela nécessite https://pkgs.org/download/openssl-devel[openssl-devel].
+
+[subs="+attributes",shell]
+----
+cargo install cargo-generate
+----
+
+Maintenant, échafaudez le projet comme suit :
+
+[subs="+attributes",shell]
+----
+cargo generate --git https://github.com/kubewarden/rust-policy-template \
+               --branch main \
+               --name demo
+----
+
+La commande produit une sortie comme :
+
+[subs="+attributes",console]
+----
+🔧   Creating project called `+demo+`...
+✨   Done! New project created /<some-path-name>/demo
+----
+
+Cela crée le nouveau projet de stratégie dans le sous-répertoire `demo`.
+
+[NOTE]
+====
+
+Si vous prévoyez d'utiliser la fonctionnalité de registre de conteneurs GitHub dans la démonstration, vous devez https://docs.github.com/en/packages/working-with-a-github-packages-registry/enabling-improved-container-support-with-the-container-registry#enabling-the-container-registry-for-your-personal-account[activer le support amélioré des conteneurs].
+====
+
+
+=== Tests
+
+Vous pouvez essayer :
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+Cela teste l'échafaudage généré. Si tout est correctement en place, vous verrez une série de messages de compilation se terminant par une sortie comme :
+
+[subs="+attributes",console]
+----
+running 4 tests
+test settings::tests::validate_settings ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+test tests::reject_pod_with_invalid_name ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
