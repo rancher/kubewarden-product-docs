@@ -1,0 +1,65 @@
+include::partial$variables.adoc[]
+= 紧急禁用
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: 紧急禁用
+:sidebar_position: 31
+:title: 紧急禁用
+:description: 了解如何在紧急情况下禁用{project-name}，停止并删除相关配置，然后恢复。
+:keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
+:doc-persona: kubewarden-operator
+:doc-type: HOWTO
+:doc-topic: 操作手册
+
+在紧急情况下，运维团队可能需要执行那些{project-name}通常会阻止的操作。
+
+本文档解释了如何禁用{short-project-name}，以便运维团队可以处理集群故障。解决情况后，运维团队可以重新启动{short-project-name}。
+
+== 禁用{short-project-name}
+
+首先，停止{short-project-name}控制器。您可以通过将其部署缩减为零来实现：
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=0 \
+  -n kubewarden
+----
+
+[tip]
+====
+确保使用{short-project-name}堆栈部署所在名称空间的名称。
+在这里，堆栈部署在`kubewarden`名称空间中。
+====
+
+接下来，删除所有由{short-project-name}创建的`ValidatingWebhookConfigurations`和`MutatingWebhookConfigurations`：
+
+[source,console]
+----
+# Delete all the ValidatingWebhookConfiguration created by {short-project-name}
+kubectl delete validatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+
+# Delete all the MutatingWebhookConfiguration created by {short-project-name}
+kubectl delete mutatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+----
+
+== 恢复{short-project-name}
+
+当紧急情况结束时，通过恢复{short-project-name}控制器来恢复{short-project-name}堆栈：
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=1 \
+  -n kubewarden
+----
+
+[tip]
+====
+- 确保使用{short-project-name}堆栈部署所在名称空间的名称。
+  在这里，堆栈部署在`kubewarden`名称空间中。
+- 确保将控制器的规模恢复到其原始值。此示例假设控制器仅运行一个副本。
+====
+一旦控制器运行，它将协调已部署的策略。之前被删除的`ValidatingWebhookConfiguration`和`MutatingWebhookConfiguration`资源被重新创建，从而强制执行策略。

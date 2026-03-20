@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= 跟踪
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 启用跟踪以获取有关策略评估的详细信息，并调试与{project-name}部署相关的问题。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "tracing"]
+:doc-type: ["hosto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:current-version: {page-origin-branch}
+
+跟踪允许收集有关策略评估的详细信息。
+这是一个非常有用的工具，可用于调试您在 {project-name} 部署及相关策略中出现的问题。
+
+{short-project-name}使用https://www.jaegertracing.io/[Jaeger]来接收、存储和可视化跟踪事件。
+
+*_策略跟踪日志_* image:ui_policy_tracing.png[UI策略跟踪日志]
+
+== 先决条件
+
+您需要 Cert-Manager 和 OpenTelemetry。请按照xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[这些说明]安装 Cert Manager 和 OpenTelemetry Operator。
+
+== 安装Jaeger
+
+应用xref:howtos/telemetry/20-tracing-qs.adoc#_install_jaeger[跟踪快速入门]中的安装步骤。
+
+一旦Jaeger操作员创建了所有资源，`my-open-telemetry-collector.jaeger.svc.cluster.local`下会有一个服务。
+
+Jaeger 查询 UI 可以通过以下地址访问：
+
+[subs="+attributes",console]
+----
+https://<CLUSTER_IP>/api/v1/namespaces/jaeger/services/http:my-open-telemetry-query:16686/proxy/search
+----
+
+此端点可能因您的配置而异。您可以在服务页面找到与您的 Jaeger 资源相关的端点。
+
+=== 使用Jaeger端点更新`rancher-kubewarden-controller`
+
+您需要编辑`rancher-kubewarden-controller`资源以添加Jaeger端点"my-open-telemetry-collector.jaeger.svc.cluster.local:4317"。
+
+例如：
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  tracing: true
+  mode: sidecar
+  sidecar:
+    tracing:
+      jaeger:
+        endpoint: my-open-telemetry-collector.jaeger.svc.cluster.local:4317
+        tls:
+          insecure: true
+----
+
+服务`my-open-telemetry-collector`的安装位于`jaeger`名称空间下。
+
+[CAUTION]
+====
+
+为了简单起见，我们不对OpenTelemetry收集器与Jaeger端点之间的通信进行加密。
+
+这对于生产部署是*不合适的*。您应该阅读Jaeger的https://www.jaegertracing.io/docs/latest/kubernetes/[文档]。
+
+====
+
+
+您现在应该能够查看与特定策略服务器相关的任何失败请求。您还可以查看任何给定策略的详细视图。
+您可以通过使用Jaeger UI获得更深入的跟踪视图。
