@@ -1,0 +1,118 @@
+include::partial$variables.adoc[]
+= 创建新的验证策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 创建一个新的验证策略，通过配置策略设置来拒绝 Pod 对象中的无效主机名，并使用提供的工具进行测试。
+:keywords: {project-name}, kubewarden, kubernetes, 用 TypeScript 编写策略, 新的验证策略
+:doc-type: 教程
+:doc-topic: {project-name}, kubewarden, 编写策略, TypeScript, 创建一个新的验证策略
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+本教程涵盖创建一个验证 Pod 对象主机名的策略。
+
+该策略会拒绝所有使用一个或多个拒绝列表中主机名的 Pod 对象。
+您通过运行时设置提供策略配置。
+
+总结一下，策略设置应如下所示：
+
+[source,yaml]
+----
+denied_hostnames:
+  - bad-host
+  - forbidden-host
+----
+
+该策略拒绝创建此 Pod：
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostname: bad-host
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+但是，它接受创建这个 Pod：
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostname: allowed-host
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== 搭建一个新的策略项目
+
+您可以使用 https://github.com/kubewarden/js-policy-template[模板储存库] 创建一个新的策略项目。选择页面顶部附近的 "使用此模板" 绿色按钮，并按照 GitHub 的向导进行操作。
+在本地克隆该储存库，并更新 `package.json` 文件以反映您的策略细节：
+
+[source,json]
+----
+{
+  "name": "your-policy-name",
+  "version": "1.0.0",
+  "description": "Your policy description",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/your-policy-name"
+  }
+}
+----
+
+确保使用与您实际的 GitHub 储存库匹配的储存库路径。
+
+== 测试
+
+在必要的工具到位的情况下，`make all` 命令构建 `annotated-policy.wasm` 目标。命令 `make e2e` 使用 `bats` 和 `kwctl` 运行测试。
+
+.来自 `make` 命令的输出
+[source,console]
+----
+make all
+npx webpack --config webpack.config.cjs
+asset bundled.js 5.52 KiB [compared for emit] [minimized] (name: main)
+asset types.d.ts 430 bytes [compared for emit]
+asset index.d.ts 11 bytes [compared for emit]
+./src/index.ts 3.84 KiB [built] [code generated]
+./node_modules/kubewarden-policy-sdk/dist/bundle.js 3.85 KiB [built] [code generated]
+webpack 5.101.3 compiled successfully in 2280 ms
+npm install
+up to date, audited 400 packages in 2s
+58 packages are looking for funding
+  run `+npm fund+` for details
+
+found 0 vulnerabilities
+----
+
+[source,console]
+----
+make e2e
+npx webpack --config webpack.config.cjs
+asset bundled.js 5.52 KiB [compared for emit] [minimized] (name: main)
+asset types.d.ts 430 bytes [compared for emit]
+asset index.d.ts 11 bytes [compared for emit]
+./src/index.ts 3.84 KiB [built] [code generated]
+./node_modules/kubewarden-policy-sdk/dist/bundle.js 3.85 KiB [built] [code generated]
+webpack 5.101.3 compiled successfully in 1909 ms
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+
+5 tests, 0 failures
+----

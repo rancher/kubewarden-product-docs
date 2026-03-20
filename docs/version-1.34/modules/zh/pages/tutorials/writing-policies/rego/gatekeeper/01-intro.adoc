@@ -1,0 +1,35 @@
+include::partial$variables.adoc[]
+= Gatekeeper 支持
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 访问中央 Gatekeeper 策略并了解如何将其与 Kubernetes 准入控制器集成。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["编写策略", "rego", "Gatekeeper", "介绍"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rego", "gatekeeper"]
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Gatekeeper支持始于这些版本：
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+====
+
+
+Gatekeeper 是一个针对 Kubernetes 的项目，提供开箱即用的集成功能。
+
+== 与现有策略的兼容性
+
+所有现有的 Gatekeeper 策略应与 {short-project-name} 兼容，如本章所述。
+
+[IMPORTANT]
+====
+如果您发现这不成立，请报告您的 Gatekeeper 策略，我们将努力确保您的 Gatekeeper 策略与 {short-project-name} 兼容。
+====
+
+
+策略需要使用`opa` CLI编译为`wasm`目标。
+
+有关策略执行的更多信息，您可以阅读关于Open Policy Agent的xref:tutorials/writing-policies/rego/02-builtin-support.adoc[内置支持]的内容，位于{short-project-name}。
