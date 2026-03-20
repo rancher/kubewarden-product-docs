@@ -1,0 +1,74 @@
+include::partial$variables.adoc[]
+= Protección de la seguridad
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Protección de la seguridad
+:sidebar_position: 50
+:description: Asegura los {project-name} con consejos de protección y mejores prácticas para mitigar amenazas.
+:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manual-del-operador, seguridad
+
+{project-name} se esfuerza por ser seguro con poca configuración. En esta sección y sus subpáginas, puedes encontrar consejos de protección (con sus compensaciones) para asegurar {short-project-name} en sí mismo.
+
+Por favor, consulta el xref:/reference/threat-model.adoc[modelo de amenaza] para más información.
+
+== `kubewarden-defaults` gráfico de Helm
+
+Los operadores pueden obtener una ampliación segura instalando {short-project-name} gráficos de Helm. Se recomienda instalar `kubewarden-defaults` gráfico de Helm y habilitar sus políticas recomendadas con:
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=protect
+----
+
+Esto proporciona un PolicyServer por defecto y políticas por defecto, en modo de protección, para asegurar que la pila {short-project-name} esté a salvo de otras cargas de trabajo.
+
+== Verificando {short-project-name} artefactos
+
+Consulta el tutorial de xref:/tutorials/verifying-kubewarden.adoc[Verificando
+{short-project-name}].
+
+== RBAC
+
+{short-project-name} describe las configuraciones de RBAC en diferentes secciones de _Explicaciones_. Los usuarios pueden ajustar los permisos necesarios para la característica de xref:/explanations/audit-scanner/audit-scanner.adoc#_permissions_and_serviceaccounts[Escáner de Auditoría], así como la Cuenta de Servicio xref:/explanations/context-aware-policies.adoc[por Política Server] para la característica consciente del contexto.
+
+Para ver todos los Roles:
+
+[source,console]
+----
+kubectl get clusterroles,roles -A | grep kubewarden
+----
+
+== Permisos por directiva
+
+Para directivas conscientes del contexto, los operadores especifican permisos detallados por directiva bajo su `spec.contextAwareResources`, y estos funcionan en conjunto con la Cuenta de Servicio configurada para el Policy Server donde se ejecuta la directiva.
+
+== Cobertura de carga de trabajo
+
+Por defecto, {short-project-name} excluye espacios de nombres específicos de la cobertura de {short-project-name}. Esto se hace para simplificar el uso por primera vez y la interoperabilidad con otras cargas de trabajo.
+
+Los operadores conscientes de la seguridad pueden ajustar la lista de espacios de nombres a través del valor `.global.skipNamespaces` tanto para el gráfico de Helm `kubewarden-controller` como para el gráfico de Helm `kubewarden-defaults`.
+
+== Admisión de Seguridad de Pods
+
+Desde la versión 1.23, la pila de {short-project-name} puede ejecutarse en un espacio de nombres donde se aplican los estándares de seguridad de Pods [https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted[`restricted``Pod Security Standards], con las mejores prácticas actuales de protección de Pods.
+
+Para ello, necesitas añadir la etiqueta `pod-security.kubernetes.io/enforce:restricted` al {short-project-name} espacio de nombres de ampliación.
+
+```console
+kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
+```
+
+Consulta https://kubernetes.io/docs/concepts/security/pod-security-admission/[documentación oficial] de la Admisión de Seguridad de Pods de Kubernetes para más detalles.
+
+=== SecurityContexts
+
+El `kubewarden-controller` gráfico de Helm configura los Contextos de Seguridad y los expone en su `values.yaml`.
+
+El `kubewarden-defaults` gráfico de Helm permite configurar el Servidor de Políticas por defecto `.spec.securityContexts` bajo `.Values.policyServer.securityContexts`.
+
+Para los Servidores de Políticas gestionados por operadores, puedes configurarlos a través de su xref:/reference/CRDs.adoc#_policyserversecurity[`spec.securityContexts`].
