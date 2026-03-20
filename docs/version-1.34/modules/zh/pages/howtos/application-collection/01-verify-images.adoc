@@ -1,0 +1,143 @@
+include::partial$variables.adoc[]
+= 验证 Rancher 应用程序集合镜像
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置 PolicyServers 以使用 Docker 配置密钥进行身份验证并从 Rancher 应用程序集合中拉取镜像。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "rancher", "installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "rancher", "应用程序集合", "appco", "签名", "验证", "verify"]
+:sidebar_label: 验证镜像
+:current-version: {page-origin-branch}
+
+本节介绍如何利用 {project-name} 验证来自 https://apps.rancher.io/[Rancher 应用程序集合] 的应用程序和镜像。
+
+您通过部署 https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[验证镜像签名] 策略并配置 PolicyServers 从应用程序集合中拉取镜像的签名层来执行镜像验证。
+
+[IMPORTANT]
+====
+
+您需要一个访问令牌或服务帐户身份验证才能访问应用程序集合。
+
+====
+
+
+== 对 Rancher 应用程序集合进行身份验证
+
+按照 https://docs.apps.rancher.io/get-started/authentication/[应用程序集合文档] 创建访问令牌，并配置集群以使用 Docker 配置密钥从应用程序集合注册表中拉取。
+
+[subs="+attributes",console]
+----
+$ kubectl create secret docker-registry application-collection \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<mymail> \
+  --docker-password=<mytoken>
+----
+
+== 为 PolicyServer 创建密钥，以便它们可以从 Rancher 应用程序集合中拉取。
+
+正在使用的 PolicyServer 需要配置，以便它可以拉取包含签名的镜像层。
+
+按照 xref:/howtos/policy-servers/02-private-registry.adoc[私有注册表如何做] 为 PolicyServers 创建 Docker 配置密钥 *在 PolicyServer 名称空间中*。您通过实例化一个与之前 `application-collection` 内容相同的密钥来完成此操作。
+
+对于在 `default` 名称空间下使用 `kubewarden-defaults` Helm 图表安装的 PolicyServer `kubewarden`，它将是：
+
+[subs="+attributes",console]
+----
+$ kubectl create secret docker-registry application-collection-kw -n kubewarden \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<mymail> \
+  --docker-password=<mytoken>
+----
+
+== 配置 PolicyServers 使用新密钥
+
+如果使用来自 `default` Helm 图表的 PolicyServer `kubewarden-defaults`，请使用镜像拉取密钥 `application-collection-kw` 进行配置。这在同一名称空间中完成，通过为图表设置以下值来实现：
+
+[subs="+attributes",console]
+----
+$ helm upgrade -i --wait --namespace kubewarden \
+  --create-namespace kubewarden-defaults kubewarden/kubewarden-defaults \
+  --reuse-values \
+  --set policyServer.imagePullSecret=application-collection-kw
+----
+
+如果您正在使用其他PolicyServers，请设置它们的xref:reference/CRDs.adoc#_policyserverspec[`spec.imagePullSecret`]。Secret 必须与 PolicyServer 在同一名称空间中。
+
+== 应用策略
+
+您可以通过使用https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[验证镜像签名]策略来应用ClusterAdmissionPolicy。此策略检查来自`dp.apps.rancher.io/containers/*`的所有容器镜像。该策略支持OCI注册表和工件。
+
+您可以使用https://docs.apps.rancher.io/howto-guides/verify-signatures-with-kubewarden/[公钥]配置策略设置，该公钥来自应用程序集合（在撰写时）中的`pubKeys`数组。
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    artifacthub/pkg: verify-image-signatures/verify-image-signatures/0.2.9
+  name: check-appcollection-signatures
+spec:
+  backgroundAudit: true
+  mode: protect
+  module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.9
+  mutating: true
+  policyServer: default
+  # On first policy call, the policy-server downloads the image layers to
+  # verify the signatures. Later on it's cached. It may be useful to increase
+  # this timeout:
+  timeoutSeconds: 30 # default 10 seconds.
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+  settings:
+    modifyImagesWithDigest: true
+    rule: PublicKey
+    signatures:
+      - image: dp.apps.rancher.io/containers/*
+        pubKeys:
+          # Note: this array constitutes an AND in validation, not an OR.
+          - |-
+            -----BEGIN PUBLIC KEY-----
+            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA02FtEt5gBywiyxbmkVsb
+            CujcBg5lur0kpEbfDk10gCcs9shVEqEO3ZsOXHursgoaDAWqdPtsYhsgczGeJz9w
+            Aw+r6BuRV8YOkE37A8s/7IOQUW0tlqtnt11OKhIiZ9+e5l3ed2H1ymKQO3dgreSy
+            rShqYdA3hrItswyp41ApF6zhjSPlR6lAmq3X4wMYLAPptmzfxigTnR4hxB5UNPhs
+            i2qA4vLrUM/i+NohECuLr1EAymvupH26HLEdM+eZnlQn+WbhIP5Grc4ba7XrBv7K
+            kywgTC7CxkiJZR0mUcUD2wTX/Je8Ewj6oPSalx09e2jtzvmU5Kr9XUyMF7Zsj5CA
+            IwIDAQAB
+            -----END PUBLIC KEY-----
+EOF
+----
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f mypolicy.yml
+$ kubectl get admissionpolicies -n default # wait for status active
+----
+
+要测试它，请部署一个带有来自应用程序集合的签名镜像的Pod：
+
+[subs="+attributes",console]
+----
+$ kubectl run nginx --image [dp.apps.rancher.io/containers/nginx:1.24.0](http://dp.apps.rancher.io/containers/nginx:1.24.0) --overrides='{"spec": {"imagePullSecrets":[{"name": "application-collection"}]}}'
+ pod/nginx created
+----
+
+您可以检查您的 policy-server Pod 的日志，以查看验证是否已进行。
