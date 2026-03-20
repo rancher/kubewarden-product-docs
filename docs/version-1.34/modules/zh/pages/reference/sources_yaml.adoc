@@ -1,0 +1,130 @@
+include::partial$variables.adoc[]
+= sources.yaml的参考
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过指定源权限的路径和格式以及不安全的源，配置您的sources.yaml文件以与PolicyServer CRs一起使用。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "sources.yaml"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "sources.yaml"]
+:sidebar_label: sources.yaml
+:sidebar_position: 110
+:current-version: {page-origin-branch}
+
+您可以使用`kwctl`参数调整`policy-server`和`--sources-path`二进制文件的推送-拉取行为，以指定`sources.yaml`文件的路径。
+
+要配置PolicyServer CR，请设置其`spec.insecureSources`和`spec.sourceAuthorities`字段。这些字段的格式与下面的相应部分对应。
+
+== `sources.yaml` 文件
+
+如果您从`--sources-path`命令中省略`kwctl`参数，它会尝试从以下文件夹加载`sources.yaml`文件：
+
+* Linux: `$HOME/.config/kubewarden/sources.yaml`
+* Mac: `$HOME/Library/Application Support/io.kubewarden.kubewarden/sources.yaml`
+* Windows: `$HOME\AppData\Roaming\kubewarden\config\sources.yaml`
+
+其结构如下：
+
+[subs="+attributes",yaml]
+----
+insecure_sources:
+  - "registry-dev.example.com"
+  - "registry-dev2.example.com:5500"
+source_authorities:
+  "registry-pre.example.com":
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-1.pem
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-2.der
+  "registry-pre2.example.com:5500":
+    - type: Data
+      data: |
+            -----BEGIN CERTIFICATE-----
+            ca-pre2 PEM cert
+            -----END CERTIFICATE-----
+----
+
+此文件为YAML或JSON格式。所有键都是可选的，因此以下是有效的`sources.yaml`文件：
+
+[subs="+attributes",yaml]
+----
+insecure_sources: ["dev.registry.example.com"]
+----
+
+如是：
+
+[subs="+attributes",json]
+----
+{
+    "source_authorities": {
+        "host.k3d.internal:5000": [
+            {"type": "Data","data":"pem cert 1"},
+            {"type": "Data","data":"pem cert 2"}
+        ]
+    }
+}
+----
+
+=== 不安全源部分
+
+`insecure_sources`部分中的主机行为与未列出的主机不同。
+
+* 未列出的主机，尝试：
+ ** 使用HTTPS连接，验证服务器身份
+
++
+如果连接失败，则操作停止。* 列在`insecure_sources`中的主机按顺序尝试：**使用HTTPS连接，验证服务器身份**，使用HTTPS连接，跳过主机验证，以及**使用HTTP连接。
+
++
+如果全部失败，则操作停止。
+
+[NOTE]
+====
+
+在使用本地注册表或HTTP服务器进行开发时，使用`insecure_sources`通常是可以的。它避免了管理证书的负担。
+显然，这不适用于生产环境。
+
+====
+
+
+=== 源权限部分
+
+`source_authorities`部分包含URI和CA证书。它为该URI形成了证书链。它用于验证OpenContainer Initiative (OCI)注册表和HTTPS服务器的身份。
+
+您可以将这些证书编码为隐私增强邮件（PEM）或区分编码规则（DER）格式。要指定DER格式证书，您需要使用包含证书的文件路径。在PEM格式中，您可以指定证书文件的路径，或包含实际证书的字符串。您可以通过`type`键同时指定两者：
+
+[subs="+attributes",yaml]
+----
+source_authorities:
+  "registry-pre.example.com":
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-1.pem
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-2.der
+    - type: Data
+      data: |
+            -----BEGIN CERTIFICATE-----
+            A string with the ca-pre1-3 PEM cert
+            -----END CERTIFICATE-----
+  "registry-pre2.example.com:5500":
+    - type: Path
+      path: /opt/example.com/pki/ca-pre2-1.der
+----
+
+=== 代理部分
+
+`proxies`部分包含与通常的环境变量`HTTP_PROXY`、`HTTPS_PROXY`、`NO_PROXY`（及其小写对应项）类似的代理配置。
+
+此配置优先于设置这些环境变量。
+
+有关此功能的更多信息，请参见其xref:/howtos/proxy-configuration.adoc[how-to页面]。
+
+其格式为：
+
+[,yaml]
+----
+proxies:
+  http_proxy: "http://proxy.corp:3128"
+  https_proxy: "http://proxy.corp:3129"
+  no_proxy: "localhost,.corp"
+----

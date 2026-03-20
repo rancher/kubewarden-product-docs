@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+= 其他语言
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解如何使用各种以 WebAssembly 模块和 WASI 接口为目标的编程语言来编写 {project-name} 策略。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "other-languages"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "other languages"]
+:sidebar_label: 其他语言
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+{project-name}可以使用任何能够生成以 WASI 接口为目标的 WebAssembly 模块的编程语言来编写 策略。
+
+请在 https://github.com/kubewarden/docs[这里] 提交 Pull Request 或 GitHub Issue，如果您知道可以用来编写 {short-project-name} 策略的编程语言。

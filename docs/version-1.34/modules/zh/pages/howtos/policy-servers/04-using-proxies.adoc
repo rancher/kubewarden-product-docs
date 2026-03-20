@@ -1,0 +1,24 @@
+include::partial$variables.adoc[]
+
+= 使用代理配置策略服务器
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: 使用代理配置策略服务器
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "policy-servers", "production", "proxy", "proxies", "socks"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "policyservers", "production", "proxy", "proxies", "socks"]
+:sidebar_label: 使用代理
+:current-version: {page-origin-branch}
+
+PolicyServers 遵循处理代理设置的标准环境变量。策略服务器在下载策略时使用配置的代理。
+这包括在验证策略和镜像时的 Sigstore 操作。
+
+这些变量为：
+
+* `HTTP_PROXY` 或 `http_proxy`：用于 HTTP 请求的代理服务器
+* `HTTPS_PROXY` 或 `https_proxy`：用于 HTTPS 请求的代理服务器
+* `NO_PROXY` 或 `no_proxy`：要排除在代理之外的主机的逗号分隔列表
+
+请参阅 xref:reference/CRDs.adoc#_policyserverspec[`PolicyServer.spec.env`] 中的 CRD 参考以设置这些环境变量。
