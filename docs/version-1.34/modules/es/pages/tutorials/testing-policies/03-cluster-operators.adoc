@@ -1,0 +1,325 @@
+include::partial$variables.adoc[]
+= Pruebas para operadores de clúster
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Prueba las directivas de operadores de clúster con kwctl utilizando diferentes configuraciones y objetos de solicitud de validación para validar la configuración de las directivas.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "cluster-operators"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
+:current-version: {page-origin-branch}
+
+Como operador de clúster de Kubernetes, querrás realizar pruebas para las directivas {project-name} que deseas utilizar.
+
+Tendrás preguntas como:
+
+* ¿Cuáles son los ajustes correctos de la directiva para obtener el resultado de validación/mutación necesario?
+* ¿Cómo puedo estar seguro de que todo sigue funcionando como se espera cuando yo:
+ ** ¿actualizas la directiva a una versión más reciente?
+ ** ¿agrego/cambio recursos de Kubernetes?
+ ** ¿cambias los parámetros de configuración de la directiva?
+ ** ¿y así sucesivamente?
+
+{short-project-name} tiene una utilidad, https://github.com/kubewarden/kwctl[`kwctl`], que permite probar las directivas fuera de Kubernetes.
+
+Para usar `kwctl` lo invocas con las siguientes entradas:
+
+. Una URI de archivo binario de WebAssembly de la directiva que se va a ejecutar.
+La directiva {short-project-name} puede cargar desde el:
+ ** sistema de archivos local `file://`
+ ** un servidor HTTP(s) `https://`
+ ** un registro OCI `registry://`.
+. El objeto de solicitud de admisión a probar.
+Se lo proporcionas con el argumento `--request-path`.
+Utiliza `stdin` configurando `--request-path` a `-`.
+. La configuración de la directiva para el tiempo de ejecución como un JSON en línea a través de la bandera `--settings-json`.
+O un JSON, o un archivo YAML, cargado desde el sistema de archivos a través de `--settings-path`.
+
+Después de la prueba `kwctl`, imprime el objeto `ValidationResponse` en la salida estándar.
+
+Puedes descargar binarios precompilados de `kwctl`
+https://github.com/kubewarden/kwctl/releases[aquí].
+
+== Un ejemplo de prueba
+
+Esta sección describe cómo probar la
+https://github.com/kubewarden/psp-apparmor[psp-apparmor]
+directiva con diferentes configuraciones y objetos de solicitud de validación.
+
+=== Crea solicitudes de `AdmissionReview`
+
+Necesitas crear archivos que contengan los objetos `AdmissionReview` para probar la directiva.
+
+Puedes crear un archivo llamado `pod-req-no-specific-apparmor-profile.json` con el siguiente contenido:
+
+.pod-req-no-specific-apparmor-profile.json
+[%collapsible]
+======
+
+[subs="+attributes",json]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "kind": {
+    "kind": "Pod",
+    "version": "v1"
+  },
+  "object": {
+    "metadata": {
+      "name": "no-apparmor"
+    },
+    "spec": {
+      "containers": [
+        {
+          "image": "nginx",
+          "name": "nginx"
+        }
+      ]
+    }
+  },
+  "operation": "CREATE",
+  "requestKind": {"version": "v1", "kind": "Pod"},
+  "userInfo": {
+    "username": "alice",
+    "uid": "alice-uid",
+    "groups": ["system:authenticated"]
+  }
+}
+----
+
+======
+
+Esta solicitud intenta crear un Pod que no especifica ningún perfil de AppArmor a utilizar.
+Esto se debe a que no tiene un `annotation` con la
+clave `container.apparmor.security.beta.kubernetes.io/<container-name>`.
+
+Puedes crear un archivo llamado `pod-req-apparmor-unconfined.json` con el
+siguiente contenido:
+
+.pod-req-apparmor-unconfined.json
+[%collapsible]
+======
+
+[subs="+attributes",json]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "kind": {
+    "kind": "Pod",
+    "version": "v1"
+  },
+  "object": {
+    "metadata": {
+      "name": "privileged-pod",
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/nginx": "unconfined"
+      }
+    },
+    "spec": {
+      "containers": [
+        {
+          "image": "nginx",
+          "name": "nginx"
+        }
+      ]
+    }
+  },
+  "operation": "CREATE",
+  "requestKind": {"version": "v1", "kind": "Pod"},
+  "userInfo": {
+    "username": "alice",
+    "uid": "alice-uid",
+    "groups": ["system:authenticated"]
+  }
+}
+----
+
+======
+
+Esta solicitud intenta crear un Pod con un contenedor llamado `nginx` que se ejecuta con el perfil de AppArmor `unconfined`.
+Esto es solo para fines de tutorial.
+Ejecutar en modo `unconfined` es una mala práctica de seguridad.
+
+Ahora puedes crear un archivo llamado
+`pod-req-apparmor-custom.json` con el siguiente contenido:
+
+.pod-req-apparmor-custom.json
+[%collapsible]
+======
+
+[subs="+attributes",json]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "kind": {
+    "kind": "Pod",
+    "version": "v1"
+  },
+  "object": {
+    "metadata": {
+      "name": "privileged-pod",
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/nginx": "localhost/nginx-custom"
+      }
+    },
+    "spec": {
+      "containers": [
+        {
+          "image": "nginx",
+          "name": "nginx"
+        }
+      ]
+    }
+  },
+  "operation": "CREATE",
+  "requestKind": {"version": "v1", "kind": "Pod"},
+  "userInfo": {
+    "username": "alice",
+    "uid": "alice-uid",
+    "groups": ["system:authenticated"]
+  }
+}
+----
+
+======
+
+[NOTE]
+====
+Estos son todos objetos `AdmissionReview` simplificados.
+Solo se utilizan los campos relevantes para nuestra prueba de la directiva.
+====
+
+
+=== Prueba la directiva
+
+Ahora puedes utilizar `kwctl` para probar la creación de un Pod sin especificar un perfil de AppArmor:
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-no-specific-apparmor-profile.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+----
+
+La directiva acepta la solicitud y produce una salida como:
+
+[subs="+attributes",console]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": true
+}
+----
+
+La directiva rechaza la creación de un Pod con un perfil de AppArmor `unconfined`:
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-apparmor-unconfined.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "These AppArmor profiles are not allowed: [\"unconfined\"]"
+  }
+}
+----
+
+En ambas ocasiones, ejecutaste la directiva *sin* proporcionar ningún tipo de configuración.
+Como indica la https://github.com/kubewarden/psp-apparmor#configuration[documentación de la directiva], esto resulta en prevenir el uso de perfiles no predeterminados.
+
+El Pod que utiliza un perfil `nginx` personalizado también es rechazado por la directiva:
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-apparmor-custom.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "These AppArmor profiles are not allowed: [\"localhost/nginx-custom\"]"
+  }
+}
+----
+
+Puedes cambiar el comportamiento predeterminado, permitiendo que se utilicen los perfiles de AppArmor elegidos:
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-apparmor-custom.json \
+    --settings-json '{"allowed_profiles": ["runtime/default", "localhost/nginx-custom"]}' \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+----
+
+Ahora la solicitud tiene éxito:
+
+[subs="+attributes",console]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": true
+}
+----
+
+== Automatización
+
+Puedes automatizar todos estos pasos utilizando https://github.com/bats-core/bats-core[bats].
+
+Puedes escribir una serie de pruebas e integrar su ejecución dentro de tus pipelines de CI y de implementación continua existentes.
+
+Los comandos pueden ser "envueltos" en una prueba `bats`:
+
+.Una batstest
+[%collapsible]
+======
+
+[,bash]
+----
+@test "all is good" {
+  run kwctl run \
+    --request-path pod-req-no-specific-apparmor-profile.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ $(expr "$output" : '.*"allowed":true.*') -ne 0 ]
+}
+
+@test "reject" {
+  run kwctl run \
+    --request-path pod-req-apparmor-custom.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ $(expr "$output" : '.*"allowed":false.*') -ne 0 ]
+}
+----
+
+======
+
+Si el `bats` código está en el archivo `e2e.bats`, puedes ejecutar la prueba como:
+
+[subs="+attributes",console]
+----
+$ bats e2e.bats
+ ✓ all is good
+ ✓ reject
+
+2 tests, 0 failures
+----
+
+xref:tutorials/writing-policies/go/05-e2e-tests.adoc[Esta] sección tiene más información sobre cómo escribir pruebas de extremo a extremo para tus directivas.
