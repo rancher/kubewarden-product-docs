@@ -1,0 +1,96 @@
+:sidebar_label: ポリシーサーバーCLIリファレンス
+:sidebar_position: 121
+:title: ポリシーサーバーCLI
+:description: ポリシーサーバーのコマンドラインヘルプとオプションを調べ、`policy-server`プログラムをカスタマイズして実行する方法を確認します。
+:keywords: [cli, リファレンス, policy-server]
+:doc-persona: [kubewarden-operator]
+:doc-type: [リファレンス]
+:doc-topic: [オペレーターマニュアル]
+include::partial$variables.adoc[]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+= {title}
+
+== `policy-server`のコマンドラインヘルプ
+
+この文書には`policy-server`コマンドラインプログラムのヘルプ内容が含まれています。
+
+*コマンド概要:*
+
+* link:#policy-server[`policy-server`]
+* link:#policy-server-docs[`policy-server docs`]
+
+=== `policy-server`
+
+*使用法:* `policy-server ++[+OPTIONS+]++ ++[+COMMAND+]++`
+
+==== *サブコマンド:*
+
+* `docs` — ポリシーサーバーコマンドのマークダウンドキュメントを生成します。
+
+==== *オプション:*
+
+* `--addr ++<+BIND_ADDRESS+>++` — アドレスにバインドします。
++
+デフォルト値: `0.0.0.0`
+* `--always-accept-admission-reviews-on-namespace ++<+NAMESPACE+>++` — 指定されたネームスペースをターゲットとするAdmissionReviewsを常に受け入れます。
+* `--cert-file ++<+CERT_FILE+>++` — HTTPS用のX.509証明書ファイルへのパス
+* `--client-ca-file ++<+CLIENT_CA_FILE+>++` — クライアント証明書を発行したCA証明書ファイルへのパス。mTLSを有効にするために必要です。
+* `--daemon` — 設定されている場合、ポリシーサーバーをデタッチモードでデーモンとして実行します。
+* `--daemon-pid-file ++<+DAEMON-PID-FILE+>++` — PIDファイルへのパス、デーモンモードで実行する場合のみ使用されます。
++
+デフォルト値: `policy-server.pid`
+* `--daemon-stderr-file ++<+DAEMON-STDERR-FILE+>++` — 標準エラー出力を保持するファイルへのパス。デーモンモードで実行する場合のみ使用されます。
+* `--daemon-stdout-file ++<+DAEMON-STDOUT-FILE+>++` — 標準出力を保持するファイルへのパス。デーモンモードで実行する場合のみ使用されます。
+* `--disable-timeout-protection` — ポリシーのタイムアウト保護を無効にします。
+* `--docker-config-json-path ++<+DOCKER_CONFIG+>++` — Docker config.jsonに類似したパス。レジストリの認証情報を示すために使用できます。
+* `--enable-metrics` — メトリクスを有効にします。
+* `--enable-pprof` — pprofプロファイリングを有効にします。
+* `--ignore-kubernetes-connection-failure` — Kubernetes接続が失敗した場合にエラーで終了しないようにします。これにより、Kubernetesとの接続がない場合、コンテキスト対応のポリシーが正常に動作しなくなります。
+* `--key-file ++<+KEY_FILE+>++` — HTTPS用のX.509プライベートキーのファイルへのパス。
+* `--log-fmt ++<+LOG_FMT+>++` — ログ出力形式
++
+デフォルト値: `text`
++
+指定可能な値: `text`, `json`, `otlp`
+* `--log-level ++<+LOG_LEVEL+>++` — ログレベル
++
+デフォルト値: `info`
++
+指定可能な値: `trace`, `debug`, `info`, `warn`, `error`
+* `--log-no-color` — ログのカラー表示を無効にします。
+* `--policies ++<+POLICIES_FILE+>++` — 読み込むポリシーとその設定を保持するYAMLファイル。
++
+デフォルト値: `policies.yml`
+* `--policies-download-dir ++<+POLICIES_DOWNLOAD_DIR+>++` — ポリシーのダウンロードパス。
++
+デフォルト値: `.`
+* `--policy-timeout ++<+MAXIMUM_EXECUTION_TIME_SECONDS+>++` — 指定された時間後にポリシー評価を中断します。
++
+デフォルト値: `2`
+* `--port ++<+PORT+>++` — ポートでリスンします。
++
+デフォルト値: `3000`
+* `--readiness-probe-port ++<+READINESS_PROBE_PORT+>++` —
+Expose readiness endpoint on READINESS+_PROBE_+PORT
++
+デフォルト値: `8081`
+* `--sigstore-cache-dir ++<+SIGSTORE_CACHE_DIR+>++` — sigstoreデータをキャッシュするために使用されるディレクトリ。
++
+デフォルト値: `sigstore-data`
+* `--sources-path ++<+SOURCES_PATH+>++` — ソース情報を保持するYAMLファイル（https、不正なホストのレジストリ、カスタムCAなど）
+* `--verification-path ++<+VERIFICATION_CONFIG_PATH+>++` — 検証情報を保持するYAMLファイル（URI、キー、注釈など）
+* `--workers ++<+WORKERS_NUMBER+>++` — 作成するワーカースレッドの数
+
+=== `policy-server docs`
+
+ポリシーサーバーコマンドのためのマークダウンドキュメントを生成します
+
+*使用法:* `policy-server docs --output ++<+FILE+>++`
+
+==== *オプション:*
+
+* `-o`、`--output ++<+FILE+>++` — ドキュメントファイルが保存されるパス
+
+この文書はclap-markdownによって自動的に生成されました。

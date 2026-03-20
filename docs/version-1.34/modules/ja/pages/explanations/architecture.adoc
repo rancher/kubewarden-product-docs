@@ -1,0 +1,182 @@
+include::partial$variables.adoc[]
+= {project-name} アーキテクチャ
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}が、Kubernetesのコア機能を活用してクラスターにシームレスに統合する方法をご紹介します。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["architecture"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "アーキテクチャ"]
+:sidebar_label: アーキテクチャ
+:sidebar_position: 61
+:current-version: {page-origin-branch}
+
+{project-name}はKubernetesポリシーエンジンです。
+お好みのプログラミング言語で記述されたポリシーを使用します。
+この言語は、{project-name}が使用するWebAssemblyバイナリを生成する必要があります。
+
+== ポリシー_とは_何ですか？
+
+ポリシーはhttps://opencontainers.org/[Open Container Initiative]（OCI）アーティファクトです。それはWebAssemblyモジュール、ポリシーコード、およびPolicyServerが入場リクエストの検証と変更を行うために必要なメタデータを含んでいます。
+
+[NOTE]
+====
+
+https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes]のように、{project-name}はポリシーサーバーについて話すときに「PolicyServer」という用語を使用し、`policy-server`は{project-name} PolicyServerのPodまたはDeploymentについて話すときに使用します。
+
+====
+
+
+== 設計原則
+
+=== コア Kubernetes 機能の活用
+
+チームは、{project-name}をKubernetesのコア機能を活用するように設計し、車輪の再発明を避けました。
+プロジェクトは以下の組み合わせを利用しています：
+
+* Kubernetesコントローラー
+* カスタムリソース定義（CRD）
+* Webhook（検証および変更）
+* コントロールプレーンのイベント通知システム
+
+=== Kubernetesアーキテクチャを効果的に活用します。
+
+{project-name}はKubernetesエコシステム内でシームレスに動作します。{project-name}コントローラーはKubernetesコントローラーであり、{project-name}カスタムリソース定義（CRD）を監視し、Kubernetesリソースを構成してそれらを実行します。この統合により、{project-name}はコントローラーやCRDなどのKubernetesのビルトインメカニズムを使用して、セキュリティポリシーを効率的に監視、管理、適用します。
+
+=== 拡張可能なポリシー定義
+
+{project-name}はCRDを使用して{project-name}リソースを定義および管理し、入場リクエストの検証ルールを指定します。この設計により、ユーザーはカスタム入場制御でKubernetesの機能を拡張でき、セキュリティとコンプライアンスポリシーの施行がクラスター全体で一貫して行われることが保証されます。
+
+=== 直接的な入場制御
+
+{project-name}コントローラーによって設定されると、ポリシーサーバーサービスはKubernetesコントロールプレーンから直接入場リクエストを受け取り、`ValidationWebhooks`と`MutatingWebhooks`を使用します。この直接的な相互作用により、入場制御プロセスが効率化され、レイテンシが減少し、ポリシー施行の効率が向上します。
+
+WebAssemblyはサンドボックス化された実行環境を提供し、ポリシーが隔離された状態で実行されることを保証し、ポリシー施行メカニズムのセキュリティと安定性を向上させます。この隔離により、ポリシーが互いに干渉したり、ホストシステムに干渉したりすることが防止され、悪意のあるコードの実行リスクが軽減されます。
+WebAssemblyはポータブルで効率的であり、ポリシーが異なる環境で修正なしに実行できるようにします。このクロスプラットフォームの互換性により、{project-name}ポリシーは多用途であり、さまざまなKubernetesクラスターで配布および実行できます。
+
+=== OCIベースのポリシーアーティファクト
+
+{project-name}のポリシーはOCI（Open Container Initiative）アーティファクトです。この標準化により、ポリシーの配布とバージョン管理が容易になり、ポリシーには施行ロジックのためのWebAssemblyモジュールと、PolicyServerの運用に必要なメタデータが含まれます。OCIアーティファクトを使用することで、クラウドエコシステム内での相互運用性と管理の容易さが促進されます。
+
+=== 細粒度のポリシー適用
+
+{project-name}はポリシーを独自の「検証」または「変更」Webhookに関連付け、アドミッションコントロールの細粒度な適用を可能にします。この柔軟性により、管理者は特定のニーズに応じてポリシーの施行を調整でき、Kubernetesクラスターのセキュリティとコンプライアンスの姿勢を強化します。
+
+== {project-name}スタック
+
+{project-name}はこれらのコンポーネントで構成されています：
+
+* {project-name}カスタムリソースは、ポリシー管理のプロセスを簡素化するhttps://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetesカスタムリソース]です。
++
+{project-name}は、https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[アドミッションコントロール]を使用してKubernetesと統合されます。特に、{project-name}はKubernetesのアドミッションWebhookとして機能します。`policy-server`は、Kubernetes APIサーバーによってリクエストを検証するために呼び出されるWebhookエンドポイントです。
+
+* https://github.com/kubewarden/kubewarden-controller[{project-name}コントローラー]は、{project-name}のカスタムリソースを調整するKubernetesコントローラーです。このコントローラーは、{project-name}スタックの一部を作成します。
+また、{project-name}の設定をKubernetesの指示に変換します。
++
+`kubewarden-controller`は、必要な`MutatingWebhookConfiguration`または`ValidatingWebhookConfiguration`オブジェクトをKubernetes APIサーバーに登録します。
+
+* xref:../tutorials/writing-policies/index.adoc[{project-name}ポリシー]は、検証または変更ロジックを保持するWebAssemblyモジュールです。WebAssemblyモジュールには、xref:../tutorials/writing-policies/index.adoc[ポリシーの作成]セクションに詳細なドキュメントがあります。
+
+* https://github.com/kubewarden/policy-server[ポリシーサーバー]は、検証のリクエストを受け取ります。それは、{project-name}ポリシーを実行することによってリクエストを検証します。
+
+* https://github.com/kubewarden/audit-scanner[監査スキャナー]は、クラスター内のリソースを検査します。それは、{project-name}ポリシーに違反しているものを特定します。
++
+xref:/explanations/audit-scanner/audit-scanner.adoc[監査スキャナー]は、クラスター内で宣言されたリソースを常にチェックし、デプロイされた{project-name}ポリシーにもはや従わないものにフラグを立てます。
++
+.アーキテクチャ
+[mermaid]
+....
+%%{
+  init: {
+    "flowchart": {
+      "htmlLabels": false,
+    }　}　}%%　graph LR　　accTitle:アドミッションコントローラーアーキテクチャ　　accDescr:アドミッションコントローラーコンポーネントのアーキテクチャを示す図。　　subgraph " "　　direction LR　　subgraph " "　　direction LR　　k8s(("Kubernetes"))　　registry[("OCI registry")]　　end　　subgraph kw[&quot;`+**Admission Controller**+`&quot;]　　controller(&quot;`+**Controller**+`&quot;)　　subgraph policy-server[&quot;`+**policy-server**+`&quot;]　　direction LR　　kw-policy-1{{"Policy 1"}}　　kw-policy-2{{"Policy 2"}}　　kw-policy-3{{"Policy 3"}}　　end　　webhooks(["ValidationWebhooks and\nMutatingWebhooks"])　　audit-scanner["KW audit scanner"]　　end　　end　　policy-server -->|"downloads\npolicies from"| registry　　controller -->|"watches for\nevents"| k8s　　controller -->|"creates"| webhooks　　controller -->|"creates\npolicy-server\ninstances"| policy-server　　k8s -. "sends admission\nrequests using" .-> webhooks　　webhooks -. "sent admission\nrequests from K8s" .-> policy-server　　audit-scanner -->|"sends audit\nadmission requests"| policy-server
+....
+
+== {project-name}ポリシーの旅
+
+=== デフォルトのPolicyServer
+
+新しいクラスターでは、定義された{project-name}コンポーネントは次のとおりです：
+
+* カスタムリソース定義（CRD）
+* `kubewarden-controller`デプロイメント
+* `default`という名前のPolicyServerカスタムリソース。
+
+`kubewarden-controller`がデフォルトのPolicyServerリソースに気付くと、PolicyServerコンポーネントの`policy-server`デプロイメントを作成します。
+
+{project-name}はKubernetesのAdmission Webhookとして機能します。Kubernetesは、すべてのWebhookエンドポイントを保護するためにhttps://en.wikipedia.org/wiki/Transport_Layer_Security[トランスポート層セキュリティ]（TLS）を使用することを指定します。`kubewarden-controller`は次のようにしてこの安全な通信を設定します：
+
+. 自己署名のCAを生成する
+. このCAを使用して、`policy-server`サービスのTLS証明書キーを生成します。
+
+これらのオブジェクトはすべてKubernetesの`Secret`リソースとして保存されます。
+
+最後に、`kubewarden-controller`は`policy-server`デプロイメントと、クラスター内のネットワークでそれを公開するためのKubernetes ClusterIPサービスを作成します。
+
+=== 最初のポリシーを定義する
+
+[NOTE]
+====
+
+ポリシーは、どの`policy-server`で実行する必要があるかを定義しなければなりません。それは`policy-server`インスタンスに*バインド*されます。同じWasmモジュールと設定を持つ異なるポリシーを多くのPolicyServerで実行できます。ただし、複数のPolicyServerで実行される単一のポリシー定義を持つことはできません。
+
+====
+
+`kubewarden-controller`は新しい`ClusterAdmissionPolicy`リソースに気付き、バインドされた`policy-server`を見つけて調整します。
+
+=== `policy-server`の調整
+
+`ClusterAdmissionPolicy`または`AdmissionPolicy`を作成、変更、または削除する際に、`kubewarden-controller`で調整ループが起動し、ポリシーを所有する`policy-server`のために動作します。この調整ループは、`ConfigMap`にバインドされたすべてのポリシーを含む`policy-server`を作成します。次に、`policy-server`のデプロイメントロールアウトが開始されます。これにより、更新された構成で新しい`policy-server`インスタンスが起動します。
+
+起動時に、`policy-server`はConfigMapから構成を読み込み、指定されたすべての{project-name}ポリシーをダウンロードします。リモートHTTPサーバーやコンテナレジストリから{project-name}ポリシーをダウンロードできます。
+
+ポリシー設定パラメータを使用して、ポリシーの動作を調整します。起動後、ポリシーのダウンロードが完了すると、`policy-server`はユーザーが提供したポリシー設定が有効であるかを確認します。
+
+`policy-server`は、各ポリシーによって公開された`validate_setting`関数を呼び出すことでポリシー設定を検証します。ドキュメントのxref:../reference/spec/01-intro-spec.adoc[仕様参照]セクションにさらに詳細なドキュメントがあります。
+
+ユーザーのポリシー仕様から誤った設定パラメータを受け取ったポリシーがある場合、そのポリシーによって評価されたすべての入場リクエストはエラーを返します。
+
+{project-name}がすべてのポリシーを設定すると、`policy-server`はユーザーが指定した{project-name}ポリシーを使用して、受信リクエストを評価するためのワーカースレッドのプールを生成します。
+
+最後に、`policy-server`はHTTPSサーバーを起動し、受信する検証リクエストを待ち受けます。{project-name}は、{project-name}コントローラーによって作成されたTLSキーと証明書を使用してWebサーバーを保護します。
+
+Webサーバーは、命名規則に従い、各ポリシーを専用のパスで公開します: `/validate/<policy ID>`。
+
+=== Kubernetesにポリシーを認識させる
+
+すべての`policy-server`インスタンスには、https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/[`レディネスプローブ`]があり、`kubewarden-controller`が`policy-server`デプロイメントがhttps://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response[`AdmissionReview`]を評価する準備ができているかを確認します。
+
+{project-name}が`policy-server`デプロイメントを「一意に到達可能」または`Ready`としてマークすると、`kubewarden-controller`はKubernetes APIサーバーに新しいポリシーを認識させます。これは、`MutatingWebhookConfiguration`または`ValidatingWebhookConfiguration`オブジェクトを作成することによって行われます。この文脈において、「一意に到達可能」とは、クラスター内のすべてのPolicyServerインスタンスが最新のポリシー設定をインストールしていることを意味します。その区別は微妙な点ですが、PolicyServersの展開方法により必要です。
+異なる構成を持つ複数のPolicyServer上で、同じポリシーを運用することが可能です。
+
+各ポリシーは、`MutatingWebhookConfiguration`または`ValidatingWebhookConfiguration`が`policy-server`によって提供されるWebhookエンドポイントを指しています。エンドポイントは`/validate/<policy ID>`のURLで到達可能です。
+
+=== 実行中のポリシー
+
+必要な基盤が整ったので、Kubernetesは正しい`policy-server`エンドポイントにAdmission Reviewリクエストを送信し始めます。
+
+`policy-server`はAdmission Requestオブジェクトを受け取り、リクエストを受け取ったエンドポイントに基づいて、正しいポリシーを使用して評価します。
+
+{project-name}は、自身の専用WebAssemblyサンドボックス内で各ポリシーを評価します。`policy-server`インスタンス（"ホスト"）とWebAssemblyポリシー（"ゲスト"）間の通信は、waPC通信プロトコルを使用します。プロトコルの説明は、xref:../tutorials/writing-policies/index.adoc[ポリシーの作成]ドキュメントの一部です。
+ポリシーは、xref:../tutorials/writing-policies/wasi/01-intro-wasi.adoc[Web Assembly System Interface]（WASI）が提供するインターフェースも使用できます。
+
+== {project-name}が多くのPolicyServerとポリシーをどのように処理するか
+
+クラスターには、多くのPolicyServersと定義された{project-name}ポリシーがあります。
+多くのPolicyServersを持つことには利点があります：
+
+* 騒がしいネームスペースやテナント、または多くのポリシー評価を生成するものを、クラスターの他の操作に悪影響を与えないように隔離できます。
+
+* ミッションクリティカルなポリシーを専用のPolicyServerプールで実行することで、インフラストラクチャをより堅牢にできます。
+
+PolicyServerリソースは各`policy-server`を定義し、`ClusterAdmissionPolicy`または`AdmissionPolicy`リソースは各ポリシーを定義します。
+
+`ClusterAdmissionPolicy`と`AdmissionPolicy`は`policy-server`にバインドします。
+`ClusterAdmissionPolicy`が`policy-server`を指定していない場合は、デフォルトのPolicyServerにバインドされます。`ClusterAdmissionPolicy`が存在しない`policy-server`を参照する場合、その状態は`unschedulable`です。
+
+各`policy-server`は、その設定ファイルに定義された各ポリシーのために、複数の検証エンドポイントを定義します。同じポリシーを異なる設定パラメータで何度も読み込むことができます。
+
+`ValidatingWebhookConfiguration`と`MutatingWebhookConfiguration`リソースは、Kubernetes APIサーバーにこれらのポリシーを認識させます。その後、`kubewarden-controller`はAPIサーバーと設定リソースを同期させます。
+
+Kubernetes APIサーバーは、`policy-server`によって公開された正しい検証エンドポイントに、受信した入場リクエストを振り分けます。
