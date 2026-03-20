@@ -1,0 +1,26 @@
+include::partial$variables.adoc[]
+
+= Suporte empresarial
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Acesse informações centralizadas sobre suporte empresarial para {project-name} soluções através de várias interfaces.
+:keywords: [ {project-name}, Kubewarden, suporte, ]
+:doc-persona: [kubewarden-all]
+:doc-type: [explicação]
+:doc-topic: [support]
+
+ifeval::["{build-type}" == "community"]
+Essas organização(ões) fornecem suporte empresarial para {project-name}:
+
+[cols="1,1"]
+|===
+| Organização | Oferta
+
+| link:https://suse.com[SUSE]
+| A SUSE fornece suporte empresarial completo para CNCF {kw-community-name} através do link:https://apps.rancher.io/applications/suse-security-admission-controller[SUSE Security Admission Controller] — uma versão curada e confiável de {kw-community-name} construída sobre as imagens base do SUSE Linux BCI. Esta solução garante segurança, estabilidade e compatibilidade aprimoradas para ambientes Kubernetes de nível empresarial.
+|===
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+A SUSE fornece suporte empresarial completo para CNCF {kw-community-name} através do link:https://apps.rancher.io/applications/suse-security-admission-controller[SUSE Security Admission Controller] — uma versão curada e confiável de {kw-community-name} construída sobre as imagens base do SUSE Linux BCI. Esta solução garante segurança, estabilidade e compatibilidade aprimoradas para ambientes Kubernetes de nível empresarial.
+endif::[]
