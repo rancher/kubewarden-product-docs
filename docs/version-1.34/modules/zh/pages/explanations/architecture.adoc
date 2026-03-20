@@ -1,0 +1,182 @@
+include::partial$variables.adoc[]
+= {project-name} 体系结构
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解 {project-name} 如何利用核心 Kubernetes 特性无缝集成到您的集群中。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["architecture"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "architecture"]
+:sidebar_label: 体系结构
+:sidebar_position: 61
+:current-version: {page-origin-branch}
+
+{project-name} 是一个 Kubernetes 策略引擎。
+它使用您选择的编程语言编写的策略。
+该语言必须生成一个供 {project-name} 使用的 WebAssembly 二进制文件。
+
+== 什么是 _策略_？
+
+策略是一个 https://opencontainers.org/[开放容器倡议] (OCI) 工件。它包含一个 WebAssembly 模块、策略代码和 PolicyServer 执行入场请求验证和变更所需的元数据。
+
+[NOTE]
+====
+
+像 https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes] 一样，{project-name} 在讨论 {project-name} 策略服务器时使用术语 'PolicyServer'，在讨论 `policy-server` 时使用术语 Pod 或 Deployment 的 {project-name} PolicyServer。
+
+====
+
+
+== 设计原则
+
+=== 利用核心 Kubernetes 特性
+
+团队设计 {project-name} 以利用 Kubernetes 的核心特性，而不是重新发明轮子。
+该项目利用以下组合：
+
+* Kubernetes 控制器
+* 自定义资源定义 (CRDs)
+* Webhooks (验证和变更)
+* 控制平面的事件通知系统
+
+=== 有效利用 Kubernetes 架构
+
+{project-name} 在 Kubernetes 生态系统中无缝运行。在其核心，{project-name} 控制器是一个 Kubernetes 控制器，监控 {project-name} 自定义资源定义 (CRD) 并配置 Kubernetes 资源以执行它们。此集成确保 {project-name} 使用内置的 Kubernetes 机制，如控制器和 CRD，有效地监视、管理和应用安全策略。
+
+=== 可扩展的策略定义
+
+{project-name} 使用 CRD 来定义和管理 {project-name} 资源，这些资源指定了入场请求验证的规则。此设计使用户能够通过自定义入场控制扩展 Kubernetes 的能力，确保安全和合规政策的执行在集群中保持一致。
+
+=== 直接入场控制
+
+当由 {project-name} 控制器设置时，策略服务器服务直接从 Kubernetes 控制平面接收入场请求，使用 `ValidationWebhooks` 和 `MutatingWebhooks`。这种直接交互简化了入场控制过程，减少了延迟并提高了策略执行的效率。
+
+WebAssembly 提供了一个沙盒执行环境，确保策略在隔离中运行，从而增强了策略执行机制的安全性和稳定性。这种隔离防止了策略之间或与主机系统之间的相互干扰，降低了恶意代码执行的风险。
+WebAssembly 是可移植且高效的，使策略能够在不同环境中无须修改地运行。这种跨平台兼容性确保 {project-name} 策略是多功能的，因此您可以在不同的 Kubernetes 集群上分发和运行它们。
+
+=== 基于 OCI 的策略工件
+
+{project-name} 中的策略是 OCI（开放容器倡议）制品。这种标准化使策略的分发和版本控制变得更容易，策略包含用于执行逻辑的 WebAssembly 模块，以及 PolicyServer 操作所需的元数据。使用 OCI 制品促进了云生态系统内的互操作性和管理的便利性。
+
+=== 细粒度策略应用
+
+{project-name} 将策略与其自己的“验证”或“变更”Webhook 关联，允许细粒度地应用准入控制。这种灵活性使管理员能够根据特定需求量身定制策略的执行，增强 Kubernetes 集群的安全性和合规性。
+
+== {project-name} 技术栈
+
+{project-name} 包含以下组件：
+
+* {project-name} 自定义资源是 https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes 自定义资源]，简化了管理策略的处理。
++
+{project-name} 通过 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[动态准入控制] 与 Kubernetes 集成。特别是，{project-name} 作为 Kubernetes 准入 Webhook 运行。`policy-server` 是由 Kubernetes API 服务器调用的 Webhook 端点，用于验证请求。
+
+* https://github.com/kubewarden/kubewarden-controller[{project-name} 控制器] 是一个 Kubernetes 控制器，用于协调 {project-name} 的自定义资源。该控制器创建 {project-name} 技术栈的部分。
+它还将 {project-name} 配置转换为 Kubernetes 指令。
++
+`kubewarden-controller` 向 Kubernetes API 服务器注册所需的 `MutatingWebhookConfiguration` 或 `ValidatingWebhookConfiguration` 对象。
+
+* xref:../tutorials/writing-policies/index.adoc[{project-name} 策略] 是持有验证或变更逻辑的 WebAssembly 模块。WebAssembly 模块在 xref:../tutorials/writing-policies/index.adoc[编写策略] 部分有详细文档。
+
+* https://github.com/kubewarden/policy-server[PolicyServer] 接收验证请求。它通过执行 {project-name} 策略来验证请求。
+
+* https://github.com/kubewarden/audit-scanner[审计扫描器] 检查集群中已经存在的资源。它识别出那些违反 {project-name} 策略的资源。
++
+xref:/explanations/audit-scanner/audit-scanner.adoc[审计扫描器] 不断检查集群中声明的资源，标记那些不再遵循已部署的 {project-name} 策略的资源。
++
+.体系结构
+[mermaid]
+....
+%%{
+  init: {
+    "flowchart": {
+      "htmlLabels": false,
+    }  } }%% graph LR accTitle:准入控制器架构 accDescr:一个展示准入控制器组件架构的图示。 subgraph " " direction LR subgraph " " direction LR k8s(("Kubernetes")) registry[("OCI 注册表")] end subgraph kw[&quot;`+**Admission Controller**+`&quot;] controller(&quot;`+**Controller**+`&quot;) subgraph policy-server[&quot;`+**policy-server**+`&quot;] direction LR kw-policy-1{{"Policy 1"}} kw-policy-2{{"Policy 2"}} kw-policy-3{{"Policy 3"}} end webhooks(["验证 Webhooks 和\n变更 Webhooks"]) audit-scanner["KW 审计扫描器"] end end policy-server -->|"从"| registry 下载\n策略 controller -->|"监视\n事件"| k8s controller -->|"创建"| webhooks controller -->|"创建\n策略服务器\n实例"| policy-server k8s -. "使用" .-> webhooks 发送准入\n请求 webhooks -. "从 K8s 发送的准入\n请求" .-> policy-server audit-scanner -->|"发送审计\n准入请求"| policy-server
+....
+
+== 一个 {project-name} 策略的旅程
+
+=== 默认策略服务器
+
+在新集群上，定义的{project-name}组件为：
+
+* 自定义资源定义（CRD）
+* `kubewarden-controller` 部署
+* 名为`default`的策略服务器自定义资源。
+
+当`kubewarden-controller`注意到默认的策略服务器资源时，它会创建一个`policy-server`的策略服务器组件部署。
+
+{project-name}作为Kubernetes的准入Webhook工作。Kubernetes指定使用https://en.wikipedia.org/wiki/Transport_Layer_Security[传输层安全性](TLS)来保护所有Webhook端点。`kubewarden-controller`通过以下方式设置此安全通信：
+
+. 生成自签名的证书颁发机构
+. 使用此CA为`policy-server`服务生成TLS证书密钥。
+
+这些对象都作为`Secret`资源存储在Kubernetes中。
+
+最后，`kubewarden-controller`创建`policy-server`部署和一个Kubernetes ClusterIP服务，以在集群网络内部暴露它。
+
+=== 定义第一个策略
+
+[NOTE]
+====
+
+策略必须定义它必须运行在哪个`policy-server`上。它*绑定*到一个`policy-server`实例。您可以在多个策略服务器中运行具有相同Wasm模块和设置的不同策略。但是，您不能有一个在多个策略服务器中运行的单一策略定义。
+
+====
+
+`kubewarden-controller`注意到新的`ClusterAdmissionPolicy`资源，因此找到绑定的`policy-server`并进行协调。
+
+=== `policy-server`的协调
+
+在创建、修改或删除一个`ClusterAdmissionPolicy`或`AdmissionPolicy`时，`kubewarden-controller`中会激活一个对账循环，针对拥有该政策的`policy-server`。这个对账循环会创建一个与所有绑定到`policy-server`的政策相关的`ConfigMap`。然后，`policy-server`的部署发布开始。这导致启动新的`policy-server`实例，并使用更新的配置。
+
+在启动时，`policy-server`从ConfigMap读取其配置，并下载所有指定的{project-name}政策。您可以从远程HTTP服务器和容器注册表下载{project-name}政策。
+
+您使用政策设置参数来调整政策的行为。在启动和政策下载后，`policy-server`检查用户提供的政策设置是否有效。
+
+`policy-server`通过调用每个政策暴露的`validate_setting`函数来验证政策设置。在文档的xref:../reference/spec/01-intro-spec.adoc[规范参考]部分有进一步的文档。
+
+如果任何策略接收到错误的配置参数，则由该策略评估的任何准入请求将返回错误。
+
+当{project-name}配置所有策略后，`policy-server`会生成一个工作线程池，以使用用户指定的{project-name}策略评估传入请求。
+
+最后，`policy-server`启动一个HTTPS服务器，监听传入的验证请求。{project-name}使用由{project-name}控制器创建的TLS密钥和证书来保护Web服务器。
+
+Web 服务器通过遵循命名约定的专用路径公开每个策略：`/validate/<policy ID>`。
+
+=== 使 Kubernetes 意识到策略。
+
+所有`policy-server`实例都有一个https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/[`就绪探针`]，`kubewarden-controller`使用它来检查`策略服务器`部署是否准备好评估一个https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response[`AdmissionReview`]。
+
+一旦{project-name}将`policy-server`部署标记为'唯一可达'或`Ready`，`kubewarden-controller`就会使 Kubernetes API 服务器意识到新策略。这通过创建一个`MutatingWebhookConfiguration`或一个`ValidatingWebhookConfiguration`对象来实现。在这个上下文中，'唯一可达'意味着集群中的所有 PolicyServer 实例都安装了最新的策略配置。这种区分虽然细微，但由于 PolicyServers 的发布方式，这是必要的。
+在不同的 PolicyServer 上可以使用相同的策略，但它们的配置可能各不相同。
+
+每个策略都有一个专用的 `MutatingWebhookConfiguration` 或 `ValidatingWebhookConfiguration` 指向由 `policy-server` 提供的 Webhook 端点。该端点可以通过 `/validate/<policy ID>` URL 访问。
+
+=== 策略正在生效。
+
+现在所有必要的设置都已完成，Kubernetes 开始向正确的 `policy-server` 端点发送 Admission Review 请求。
+
+一个 `policy-server` 接收 Admission Request 对象，并根据接收请求的端点，使用正确的策略进行评估。
+
+{project-name} 在其专用的 WebAssembly 沙箱中评估每个策略。一个 `policy-server` 实例（"主机"）与 WebAssembly 策略（"客人"）之间的通信使用 waPC 通信协议。协议描述是 xref:../tutorials/writing-policies/index.adoc[编写策略] 文档的一部分。
+策略还可以使用 xref:../tutorials/writing-policies/wasi/01-intro-wasi.adoc[WebAssembly 系统接口] (WASI) 提供的接口。
+
+== {project-name} 如何处理多个 PolicyServer 和策略
+
+一个集群可以定义多个 PolicyServers 和 {project-name} 策略。
+拥有多个 PolicyServers 的好处：
+
+* 您可以将嘈杂的名称空间或租户，或那些需要进行大量策略评估的名称空间，与集群的其他部分隔离，以免对其他集群操作产生不利影响。
+
+* 您可以在专用的 PolicyServer 池中运行关键任务策略，使您的基础设施更具弹性。
+
+一个 PolicyServer 资源定义每个 `policy-server`，而 `ClusterAdmissionPolicy` 或 `AdmissionPolicy` 资源则定义每个策略。
+
+一个 `ClusterAdmissionPolicy` 和一个 `AdmissionPolicy` 绑定到一个 `policy-server`。
+任何未指定 `policy-server` 的 `ClusterAdmissionPolicy` 都会绑定到默认的 PolicyServer。如果一个 `ClusterAdmissionPolicy` 引用一个不存在的 `policy-server`，它的状态是 `unschedulable`。
+
+每个 `policy-server` 定义多个验证端点，对应其配置文件中定义的每个策略。您可以多次加载相同的策略，使用不同的配置参数。
+
+`ValidatingWebhookConfiguration` 和 `MutatingWebhookConfiguration` 资源使 Kubernetes API 服务器意识到这些策略。然后 `kubewarden-controller` 使 API 服务器和配置资源保持同步。
+
+Kubernetes API 服务器将传入的准入请求分发到 `policy-server` 所暴露的正确验证端点。
