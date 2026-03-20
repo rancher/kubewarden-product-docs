@@ -1,0 +1,13 @@
+include::partial$variables.adoc[]
+= Spezifikation der Richtlinienkommunikation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie die {project-name} Richtlinien effektiv über eine gut definierte API nutzen können, die nahtlose Interaktion und Kommunikation ermöglicht.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["richtlinien schreiben", "spezifikation", "einführung"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "richtlinienspezifikation", "richtlinienkommunikation"]
+:sidebar_label: Spezifikation der Richtlinienkommunikation
+:current-version: {page-origin-branch}
+
+Der Richtlinienauswerter interagiert mit {project-name} Richtlinien über eine gut definierte API. Zweck dieses Abschnitts ist es, die API zu dokumentieren, die vom Host (sei es `policy-server` oder `kwctl`) verwendet wird, um mit den Richtlinien von {short-project-name} zu kommunizieren.
