@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= Abhängigkeitsmatrix
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über die Abhängigkeiten des {project-name}, einschließlich ihrer Versionsbeschränkungen.
+:doc-persona: [„kubewarden-all“]
+:doc-topic: [„operator-manual“, „dependencies“]
+:doc-type: [„reference“]
+:keywords: [„dependency“, „dependencies“, „CRD“, „charts“, „matrix“]
+:sidebar_label: Abhängigkeitsmatrix
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+Diese Seite listet die Abhängigkeiten von {project-name} mit ihren relevanten Versionsbeschränkungen auf. Versionen außerhalb der angegebenen Bereiche können funktionieren, wurden jedoch nicht getestet.
+
+== OpenTelemetry, Metriken und Abhängigkeiten für das Tracing
+
+Zum Zeitpunkt des Schreibens verbessert sich der https://opentelemetry.io[OpenTelemetry] Stack kontinuierlich. Allerdings ist er noch nicht stabil, und unangekündigte, rückwärtsinkompatible Änderungen treten weiterhin auf. Die {short-project-name} Entwickler bemühen sich, Änderungen im OpenTelemetry-Stack zu verfolgen und sich anzupassen. Das Projekt testet gegen einen bekannten funktionierenden Bereich des OpenTelemetry-, Metriken- und Tracing-Stacks.
+
+== Optionale Abhängigkeiten
+
+Benötigt für spezifische Funktionen.
+
+[cols=”,^,^,^"]
+|===
+| Diagrammabhängigkeit | Helm-Diagramm `appVersion` | Helm-Diagramm `version` | Funktion
+
+| `open-telemetry/opentelemetry-operator` Diagramm
+| `≥ 0.104`
+| Beispiel: `0.97.1`
+| OTEL
+
+| `prometheus-community/kube-prometheus-stack` Diagramm
+| `≥ v0.69`
+| Beispiel: `77.13.0`
+| Metriken
+
+| `jaegertracing/jaeger-operator` Diagramm
+| `≥ 1.49 < 2`
+| Beispiel: `2.57.0`
+| Verfolgung
+
+| `kyverno/policy-reporter` Diagramm
+| `≥ 2 < 4`
+| Im `kubewarden-controller` Diagramm als Unterdiagramm
+| Policy Reports UI
+|===
+
+[cols=",^,^,^"]
+|===
+| CRD-Abhängigkeit | Version | Helm-Diagramm `version` | Funktion
+
+| (auslaufend, Entfernung geplant) `policyreports.wgpolicyk8s.io` CRDs
+| `v1beta1`
+| Im `kubewarden-defaults` Diagramm oder manuell installiert
+| Audit-Scanner
+
+| `openreports.io` CRDs
+| `v1alpha2`
+| Im `kubewarden-defaults` Diagramm oder manuell installiert
+| Audit-Scanner
+|===
+
+== Rancher
+
+{short-project-name} Tests gegen die bereitgestellten Monitoring- und Tracing-Helm-Diagramme im Rancher-Repository.
