@@ -1,0 +1,259 @@
+include::partial$variables.adoc[]
+= エンドツーエンドテスト
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: ポリシーの動作に対する包括的なエンドツーエンドテストをBATSとkwctlを使用して作成し、実行する方法を学びます。
+:keywords: "{project-name}", kubewarden, kubernetes, ポリシーのテスト, typescript, e2eテスト
+:doc-type: チュートリアル
+:doc-topic: {project-name}, kubewarden, ポリシーの作成, typescript, エンドツーエンドテスト
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+このセクションでは、Javyコンパイルツールチェーンによって生成された実際のWebAssemblyバイナリに対して実行されるエンドツーエンドテストの作成方法を示します。
+
+== 前提条件
+
+これらのツールが開発マシンに必要であることを思い出してください：
+
+* `bats`:テストを書くために使用され、実行を自動化します。
+* `kwctl` >= v1.30:{project-name}が提供するCLIツールで、Kubernetesの外でポリシーを実行するなどの操作が可能です。これは、ドキュメントのxref:/tutorials/testing-policies/index.adoc[テストポリシーセクション]で説明されています。
+
+== テストの作成
+
+テストを作成し、自動化するために`bats`を使用します。各テストには以下のステップがあります：
+
+. JSONリソースファイルを使用して、`kwctl run`を直接使用してポリシーを実行します。
+. `kwctl`によって生成された出力に対してアサーションを実行します。
+
+すべてのエンドツーエンドテストは、`e2e.bats`というファイルに格納されます。プロジェクトのスキャフォールディングプロジェクトには、例として`e2e.bats`が含まれています。ポリシーの動作に対する包括的なテストカバレッジを提供するために、その内容を拡張する必要があります。
+
+== テストデータファイル
+
+エンドツーエンドテストケースは、特定のKubernetesリソースの作成をテストします。
+
+例えば、Podリソースの作成をテストする場合：
+
+[source,json]
+----
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "test-pod"
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "nginx",
+        "image": "nginx:latest"
+      }
+    ]
+  }
+}
+----
+
+エンドツーエンドテストケースは、Kubernetes AdmissionReviewを含むJSONファイルを使用します。これらのAdmissionReviewを含むJSONオブジェクトは、Kubernetes APIに対して送信され、xref:/reference/spec/03-validating-policies.adoc#an-example[検証されます]。
+
+AdmissionReviews JSONオブジェクトは、`kwctl scaffold admission-request`を使用して取得できます。
+Podを含むAdmissionRequest JSONを確認するには、`test_data/pod.json`をご覧ください。
+
+== 基本的なテストケース
+
+テンプレートには、すでにいくつかの基本テストが提供されています。完全な`e2e.bats`ファイルは次のようになります：
+
+[source,bash]
+----
+#!/usr/bin/env bats
+----
+
+以下は、説明付きの既存のテストです：
+
+=== テスト1：拒否リストにあるホスト名を拒否する
+
+[source,bash]
+----
+@test "reject because hostname is on deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host", "test-hostname"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+このテストは、ポリシーがホスト名が拒否リストにある場合にPodsを拒否することを確認します。
+
+=== テスト2：許可されたホスト名を受け入れる
+
+[source,bash]
+----
+@test "accept because hostname is not on the deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+このテストは、ポリシーがホスト名が拒否リストにない場合にPodsを受け入れることを確認します。
+
+=== テスト3：設定が提供されていない場合に受け入れる
+
+[source,bash]
+----
+@test "accept because the deny list is empty" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+このテストは、設定を提供しない場合にポリシーがリクエストを受け入れることを確認します。
+
+=== テスト4：ホスト名なしでPodsを受け入れる
+
+[source,bash]
+----
+@test "accept because pod has no hostname set" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (no hostname to check)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+このテストは、ポリシーが拒否リストに関係なくホスト名なしのPodsを受け入れることを確認します。
+
+=== テスト5：Pod以外のリソースを受け入れる
+
+[source,bash]
+----
+@test "accept non-pod resources" {
+  run kwctl run annotated-policy.wasm -r test_data/service.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (not a pod)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+このテストは、ポリシーがPodではないリソースを受け入れることを確認します。ポリシーはPodのホスト名のみを検証します。
+
+== テストカバレッジの拡張
+
+テストシナリオを追加することで、テストカバレッジを拡張できます：
+
+=== テスト6：設定の検証
+
+設定の検証が正しく機能することを確認するために、テストを追加することもできます：
+
+[source,bash]
+----
+@test "accept valid settings" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["host1", "host2"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # settings are valid, request processed normally
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+=== テスト7：エッジケース
+
+[source,bash]
+----
+@test "reject with multiple denied hostnames" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["bad-host", "test-hostname", "forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+[source,bash]
+----
+@test "accept with empty denied hostnames array" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": []}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+== テストの実行
+
+このコマンドを使用して、すべてのエンドツーエンドテストを実行できます：
+
+[source,console]
+----
+make e2e
+----
+
+これにより、次のような出力が生成されます：
+
+[source,console]
+----
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+ ✓ accept valid settings
+ ✓ reject with multiple denied hostnames
+ ✓ accept with empty denied hostnames array
+
+8 tests, 0 failures
+----
+
+== テスト出力の理解
+
+各テストは`kwctl`を使用してポリシーを実行し、次のことを確認します：
+
+* 終了ステータス：コマンド`kwctl`は、ポリシーの実行が成功した場合、ステータス0で終了する必要があります。
+* 許可されたフィールド：JSON出力には、リクエストが受け入れられたかどうかを示す`allowed`フィールドが含まれています。
+* メッセージコンテンツ：拒否されたリクエストの場合、出力には説明的なエラーメッセージが含まれます。
+
+各テストの`echo "output = $\{output}"`ステートメントは、テストが失敗したときに実際のポリシー出力を表示することでデバッグに役立ちます。
+
+== 結論
+
+エンドツーエンドテストは、実際のWebAssemblyバイナリに対してテストすることによって、ポリシーの動作を包括的にカバーします。これにより、ポリシーが{short-project-name}にデプロイされたときに正しく機能することが保証され、TypeScript開発環境だけではありません。
+
+[TIP]
+====
+より包括的なエンドツーエンドテストの例については、https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-jsのソースコード]を参照してください。これは、各{short-project-name}のホスト機能を示す広範なe2eテストを含んでいます。これらのテストは、ネットワーキング、暗号操作、OCIレジストリとの相互作用など、より高度なポリシー機能をテストするためのインスピレーションとして役立ちます。
+====
