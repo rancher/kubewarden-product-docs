@@ -1,0 +1,91 @@
+include::partial$variables.adoc[]
+= 构建并运行 Gatekeeper 策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用熟悉的 Rego 语法和工具开发并部署 Gatekeeper 策略，以在 Kubernetes 环境中执行准入控制。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "build-and-run"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Gatekeeper 策略", "rego"]
+:sidebar_label: 构建并运行
+:current-version: {page-origin-branch}
+
+您可以以与针对 Open Policy Agent 的 Rego 策略完全相同的方式构建并运行该策略。
+您的项目结构为：
+
+----
+.
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+└── policy.rego
+
+1 directory, 3 files
+----
+
+== 构建
+
+通过运行 `opa` 命令构建策略：
+
+[subs="+attributes",shell]
+----
+$ opa build -t wasm -e policy/violation policy.rego
+----
+
+这将构建 Rego 策略，包含：
+
+* `target`: `wasm`。我们希望为 `wasm` 目标构建该策略。
+* `entrypoint`: `policy/violation`。入口点是 `violation` 软件包中的 `policy` 规则。
+* `policy.rego`: 构建并包含 `policy.rego` 文件。
+
+之前的命令生成了一个 `bundle.tar.gz` 文件。
+您可以从中提取 Wasm 模块：
+
+[subs="+attributes",shell]
+----
+$ tar -xf bundle.tar.gz /policy.wasm
+----
+
+项目树如下所示：
+
+----
+.
+├── bundle.tar.gz
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+└── policy.wasm
+
+1 directory, 5 files
+----
+
+您现在可以执行您的策略。
+
+== 运行
+
+使用 `kwctl` 按如下方式运行您的策略：
+
+ $ kwctl run -e gatekeeper --request-path data/other-ns.json policy.wasm | jq
+ {
+   "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+   "allowed": true
+ }
+
+这是您在名为 `other` 的名称空间中创建的资源，它已被接受，正如预期的那样。
+
+现在您可以运行一个被策略拒绝的请求：
+
+[subs="+attributes",console]
+----
+$ kwctl run -e gatekeeper --request-path data/default-ns.json policy.wasm | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "it is forbidden to use the default namespace"
+  }
+}
+----
+
+您可以看到您的 Gatekeeper 策略拒绝了这个资源。

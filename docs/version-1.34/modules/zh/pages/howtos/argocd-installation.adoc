@@ -1,0 +1,125 @@
+include::partial$variables.adoc[]
+
+= ArgoCD 安装
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: ArgoCD 安装
+:sidebar_position: 35
+:description: 通过安全地设置证书创建和续订的特定配置选项，配置您的 ArgoCD 应用程序以有效管理 Kubernetes 资源。
+:keywords: ["{project-name}", gitops, argocd]
+:doc-persona: [kubewarden-operator]
+:doc-type: [howto]
+:doc-topic: [argocd-installation]
+
+如果您使用 ArgoCD 来管理 Kubernetes 资源，您可能希望使用 ArgoCD 安装 {project-name}。这是可能的，但有一些注意事项。自 {short-project-name} v1.17.0 起，cert-manager 依赖项已被移除。现在有一个新的证书协调器，可以自动续订证书。这意味着 {short-project-name} 控制器负责为您创建和续订证书。这包括 root CA 和所有 webhook 证书。
+
+初始 root CA 和 webhook 证书的创建是在使用可用 Helm 函数的 Helm chart 安装期间进行的。因此，在 Helm chart 渲染期间，安装检查证书是否已经创建，如果没有，则创建它们。
+
+这在使用 ArgoCD 时会造成问题，因为它仅使用 Helm 来渲染模板，所有资源生命周期管理由 ArgoCD 负责。每当 ArgoCD 渲染 Helm chart 以检查集群应用程序是否偏离 chart 定义时，它会再次尝试创建证书。将存储证书和 webhook 配置的 Secret 标记为不同步。
+
+要解决此问题，需要配置 ArgoCD 应用程序以忽略：
+
+* Secret 中的 `data` 字段
+* `caBundle` 中的 `MutatingWebhookConfiguration` 字段
+* `ValidatingWebhookConfiguration` 资源。
+
+您可以通过在 ArgoCD 应用程序中添加 `ignoreDifferences` 字段来实现此操作：
+
+[subs="+attributes", yaml]
+----
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubewarden-crds
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.kubewarden.io
+    chart: kubewarden-crds
+    targetRevision: 1.13.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubewarden-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubewarden-controller
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.kubewarden.io
+    chart: kubewarden-controller
+    targetRevision: 4.1.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubewarden-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:     # Sync options which modifies sync behavior
+      # When syncing changes, respect fields ignored by the ignoreDifferences configuration
+      - RespectIgnoreDifferences=true
+  # ignoreDifferences is the important configuration to avoid ArgoCD marking
+  # the secrets and # webhook configurations as unsynchronized
+  ignoreDifferences:
+  - group: ""
+    kind: "Secret"
+    name: kubewarden-ca
+    namespace: kubewarden-system
+    jsonPointers:
+      - /data
+  - group: ""
+    kind: "Secret"
+    name: kubewarden-webhook-server-cert
+    namespace: kubewarden-system
+    jsonPointers:
+      - /data
+  - group: ""
+    kind: "Secret"
+    name: kubewarden-audit-scanner-client-cert
+    namespace: kubewarden-system
+    jsonPointers:
+      - /data
+  - group: "admissionregistration.k8s.io"
+    kind: "MutatingWebhookConfiguration"
+    jqPathExpressions:
+      - '.webhooks[]?.clientConfig.caBundle'
+  - group: "admissionregistration.k8s.io"
+    kind: "ValidatingWebhookConfiguration"
+    jqPathExpressions:
+      - '.webhooks[]?.clientConfig.caBundle'
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: kubewarden-defaults
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.kubewarden.io
+    chart: kubewarden-defaults
+    targetRevision: 2.8.0
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kubewarden-system
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+----
+
+[NOTE]
+====
+
+在这个例子中，关键方面是 `ignoreDifferences` 配置，用于 {short-project-name} 控制器应用程序。其余内容提供了有关如何配置 ArgoCD 应用程序的背景信息，并提供了完整的示例。
+
+====

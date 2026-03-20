@@ -1,0 +1,26 @@
+include::partial$variables.adoc[]
+
+= 企业级支持
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过各种接口访问针对{project-name}解决方案的企业支持的集中信息。
+:keywords: [ {project-name}, Kubewarden, 支持, ]
+:doc-persona: [kubewarden-all]
+:doc-type: [说明]
+:doc-topic: [支持]
+
+ifeval::["{build-type}" == "community"]
+这些组织提供{project-name}的企业支持：
+
+[cols="1,1"]
+|===
+| 公司 | 产品与服务
+
+| link:https://suse.com[SUSE]
+| SUSE通过link:https://apps.rancher.io/applications/suse-security-admission-controller[SUSE Security Admission Controller]为CNCF {kw-community-name}提供全面的企业支持——这是一个基于SUSE Linux BCI基础镜像构建的经过策划和信任的版本。该解决方案确保企业级Kubernetes环境的安全性、稳定性和兼容性得到增强。
+|===
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+SUSE通过link:https://apps.rancher.io/applications/suse-security-admission-controller[SUSE Security Admission Controller]为CNCF {kw-community-name}提供全面的企业支持——这是一个基于SUSE Linux BCI基础镜像构建的经过策划和信任的版本。该解决方案确保企业级Kubernetes环境的安全性、稳定性和兼容性得到增强。
+endif::[]
