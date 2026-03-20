@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= Guía rápida de la extensión UI de Rancher
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a instalar la {project-name} UI como una extensión de Rancher Manager con una guía paso a paso a través del proceso de instalación.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "rancher ui extension"]
+:current-version: {page-origin-branch}
+
+Esta sección describe la instalación de la UI {project-name} como una extensión de https://github.com/rancher/rancher[Rancher Manager].
+
+== Instalar {short-project-name} la extensión UI
+
+Instalas la {short-project-name} UI como una extensión global, sin embargo, instalas el {short-project-name} controlador a través de la UI de Rancher como un recurso de ámbito de clúster.
+
+[NOTE]
+====
+
+Para instalaciones en entornos aislados, sigue xref:howtos/airgap/02-install.adoc[estos pasos].
+
+====
+
+
+Dentro de la página de Extensiones, selecciona el botón "Habilitar" y elige la opción para añadir el repositorio de extensiones de Rancher. Cuando está habilitado, el elemento de extensión "{short-project-name}" aparece automáticamente. Selecciona este elemento para instalar la extensión. Una vez instalada, puedes instalar {short-project-name} en el clúster requerido.
+
+=== Instalar {short-project-name}
+
+Siguiendo los pasos anteriores, dentro de tu clúster aparece un nuevo elemento en el menú lateral para {short-project-name}. Esta página del panel te guía a través del proceso de instalación, completando los requisitos previos.
+
+[NOTE]
+====
+
+Durante el paso "Instalación de la app" del asistente de instalación, el botón "Instalar {short-project-name}" puede permanecer deshabilitado. Si esto sucede, actualiza la página y navega de nuevo a este paso.
+
+====
+
+
+== Tareas posteriores a la instalación
+
+Después de completar la instalación, la página del panel y el menú lateral ahora contienen nuevos elementos, a saber, Servidores de Políticas, Políticas de Admisión de Clúster y Políticas de Admisión. Desde aquí puedes crear Servidores de Políticas y Políticas para controlar el comportamiento dentro de tu clúster.
+
+*_Vista del panel de control_*
+image:ui_dashboard.png[Panel de control de la UI]
+
+=== Habilitando el servidor de políticas y las políticas predeterminadas
+
+Dentro de la página del panel de control, puedes seleccionar el botón "Instalar chart" para instalar el https://github.com/kubewarden/helm-charts/tree/main/charts/kubewarden-defaults[`kubewarden-defaults`] chart de Helm. Este chart incluye el servidor de políticas predeterminado y algunas políticas seleccionadas.
+
+Después de instalar el chart, puedes ver los detalles del servidor de políticas predeterminado con las políticas relacionadas en una tabla ordenable.
+
+*_Vista de detalles del servidor de políticas_*
+image:ui_policyserver_detail.png[Detalle del servidor de políticas en la UI]
+
+=== Creación de políticas
+
+Al crear políticas, inicialmente se te ofrece una opción de "Política personalizada" desde el panel de políticas. Proporciona la información requerida para el Nombre, Módulo y Reglas de tu política. Se recomienda añadir el repositorio del catálogo de políticas para acceder a las políticas oficiales de {short-project-name}.
+
+*_Creando una política personalizada_* image:ui_policy_custom.png[Lista blanca de políticas en la UI]
+
+=== Funciones adicionales
+
+Sigue las instrucciones para incluir xref:howtos/ui-extension/02-metrics.adoc[Monitoreo] o xref:howtos/ui-extension/03-tracing.adoc[Rastreo].
+
+== Instalación en entorno aislado
+
+Como {short-project-name} es una extensión oficial de Rancher, el equipo de Rancher proporciona un mecanismo para generar automáticamente una imagen del catálogo de extensiones. Esto se añade al archivo `rancher-images.txt` cuando https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[instalando Rancher Manager] para instancias en entorno aislado.
+
+Una vez que esta imagen se refleja en un registro accesible para tu clúster aislado, puedes importar la imagen dentro de la UI de Rancher. Esto crea un repositorio local de Helm con el chart de la {short-project-name} UI para la instalación.
+
+=== Pasos de instalación
+
+. https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-resources-setup/secrets[Crear] un secreto de registro dentro del espacio de nombres `cattle-ui-plugin-system`. Introduce el dominio de la dirección de la imagen en el campo *Nombre de dominio del registro*.
+. Navega de vuelta a la página *Extensiones* (por ejemplo, `https://cluster-ip/dashboard/c/local/uiplugins`).
+. En la parte superior derecha, selecciona *Gestionar catálogos de extensiones*. image:ui_airgap_01.png[Gestionar catálogos]
+. Selecciona el botón *Importar Catálogo de Extensiones*. imagen:ui_airgap_02.png[Importar Catálogos]
+. Introduce la dirección de la imagen en el campo *Referencia de Imagen del Catálogo*.
+. Selecciona el secreto que acabas de crear del menú desplegable *Secretos de extracción*. image:ui_airgap_03.png[Introduce la información del catálogo]
+. Haz clic en *Cargar*. La extensión estará ahora en estado *Pendiente*.
+. Vuelve a la página de *Extensiones*.
+. Selecciona la pestaña *Disponibles*, y haz clic en el botón *Recargar* para asegurarte de que la lista de extensiones esté actualizada. imagen:ui_airgap_04.png[Instalar {short-project-name}]
+. Encuentra la extensión {short-project-name} que acabas de añadir, y selecciona el botón *Instalar*.
