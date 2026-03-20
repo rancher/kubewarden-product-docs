@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= 指标参考
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用{project-name}暴露的平台指标探索集群指标和模式，以支持决策过程。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "metrics", "reference"]
+:sidebar_label: 指标参考
+:sidebar_position: 30
+:current-version: {page-origin-branch}
+
+{short-project-name}暴露相关的平台指标，使集群管理员和策略开发者能够识别模式和潜在问题。
+
+== 策略服务器
+
+策略服务器组件初始化并运行策略。
+在接收到来自Kubernetes API服务器的请求时，它将请求转发给策略，并将策略提供的响应返回给Kubernetes API服务器。
+
+=== 指标
+
+[NOTE]
+====
+https://opentelemetry.io/docs/concepts/signals/baggage/[Baggage]键值属性被添加到指标中，以提供额外信息。
+====
+
+
+|===
+| 名称 | 类型 | Baggage
+
+| `kubewarden_policy_evaluations_total`
+| 计数器
+| <<_kubewarden_policy_evaluations_total,Baggage>>
+|===
+
+==== `kubewarden_policy_evaluations_total`
+
+===== Baggage
+
+|===
+| 标签 | 说明
+
+| `policy_name`
+| 策略名称
+
+| `resource_name`
+| 被评估资源的名称
+
+| `resource_kind`
+| 被评估资源的类型
+
+| `resource_namespace`
+| 被评估资源的名称空间。如果资源是集群范围的，则不存在。
+
+| `resource_request_operation`
+| 操作类型：`CREATE`，`UPDATE`，`DELETE`，`PATCH`，`WATCH`...
+
+| `accepted`
+| 请求是否被接受？
+
+| `mutated`
+| 请求是否被修改？
+
+| `error_code`
+| 如果被拒绝，策略返回的错误代码（如果有的话）。
+  如果策略没有提供，则不显示。
+|===

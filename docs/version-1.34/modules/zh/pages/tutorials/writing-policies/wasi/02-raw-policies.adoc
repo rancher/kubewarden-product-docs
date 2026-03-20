@@ -1,0 +1,267 @@
+include::partial$variables.adoc[]
+= 编写原始策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 编写原始策略，通过定义自定义验证和变异逻辑来评估任意 JSON 文档。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "raw-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "raw policies"]
+:sidebar_label: 原始策略
+:current-version: {page-origin-branch}
+
+原始策略是可以评估任意 JSON 文档的策略。
+有关原始策略的更多信息，请参阅 xref:howtos/raw-policies.adoc[原始策略] 页面。
+
+== 示例
+
+有关 WASI 执行模式的概述，请参阅 xref:tutorials/writing-policies/wasi/01-intro-wasi.adoc[WASI 介绍]。
+
+[NOTE]
+====
+
+您可以通过在 `raw` 配置中的 `policyType` 字段中使用 `metadata.yml` 来标记该策略。
+有关更多信息，请参阅 xref:tutorials/writing-policies/metadata.adoc[元数据] 规范。
+====
+
+
+=== Validation
+
+作为示例，您可以编写一个接受以下格式请求的策略：
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "delete",
+    "resource": "products"
+  }
+}
+----
+
+并验证：
+
+* `user` 在有效用户列表中
+* `action` 在有效操作列表中
+* `resource` 在有效资源列表中
+
+首先，通过使用 https://github.com/kubewarden/go-wasi-policy-template[go WASI 策略模板] 来搭建策略。
+
+首先，您需要定义表示请求有效负载的类型。
+
+您应该声明一个自定义 `RawValidationRequest` 类型，包含 `Request` 和 `Settings`，而不是使用 `ValidationRequest` 提供的 `kw_sdk.go` 类型：
+
+[,go]
+----
+// RawValidationRequest represents the request that is sent to the validate function by the Policy Server.
+type RawValidationRequest struct {
+    Request Request `+json:"request"+`
+    // Raw policies can have settings.
+    Settings Settings `+json:"settings"+`
+}
+
+// Request represents the payload of the request.
+type Request struct {
+    User     string `+json:"user"+`
+    Action   string `+json:"action"+`
+    Resource string `+json:"resource"+`
+}
+----
+
+然后在 `Settings` 文件中定义 `validateSettings` 类型和 `settings.go` 函数：
+
+[,go]
+----
+// Settings represents the settings of the policy.
+type Settings struct {
+    ValidUsers     []string `+json:"validUsers"+`
+    ValidActions   []string `+json:"validActions"+`
+    ValidResources []string `+json:"validResources"+`
+}
+
+func validateSettings(input []byte) []byte {
+    var response SettingsValidationResponse
+
+    settings := &Settings{}
+    if err := json.Unmarshal(input, &settings); err != nil {
+        response = RejectSettings(Message(fmt.Sprintf("cannot unmarshal settings: %v", err)))
+    } else {
+        response = validateCliSettings(settings)
+    }
+
+    responseBytes, err := json.Marshal(&response)
+    if err != nil {
+        log.Fatalf("can not marshal validation response: %v", err)
+    }
+    return responseBytes
+}
+
+func validateCliSettings(settings *Settings) SettingsValidationResponse {
+    if len(settings.ValidUsers) == 0 {
+        return RejectSettings(Message(
+            "At least one valid user must be specified"))
+    }
+
+    if len(settings.ValidActions) == 0 {
+        return RejectSettings(Message(
+            "At least one valid action must be specified"))
+    }
+
+    if len(settings.ValidResources) == 0 {
+        return RejectSettings(Message(
+            "At least one valid resource must be specified"))
+    }
+
+    return AcceptSettings()
+}
+----
+
+最后，您在 `validate.go` 中更新验证逻辑：
+
+[,go]
+----
+func validate(input []byte) []byte {
+    var validationRequest RawValidationRequest
+    validationRequest.Settings = Settings{}
+    decoder := json.NewDecoder(strings.NewReader(string(input)))
+    decoder.DisallowUnknownFields()
+    err := decoder.Decode(&validationRequest)
+    if err != nil {
+        return marshalValidationResponseOrFail(
+            RejectRequest(
+                Message(fmt.Sprintf("Error deserializing validation request: %v", err)),
+                Code(400)))
+    }
+
+    return marshalValidationResponseOrFail(
+        validateRequest(validationRequest.Settings, validationRequest.Request))
+}
+
+func marshalValidationResponseOrFail(response ValidationResponse) []byte {
+    responseBytes, err := json.Marshal(&response)
+    if err != nil {
+        log.Fatalf("cannot marshal validation response: %v", err)
+    }
+    return responseBytes
+}
+
+func validateRequest(settings Settings, request Request) ValidationResponse {
+    if slices.Contains(settings.ValidUsers, request.User) &&
+        slices.Contains(settings.ValidActions, request.Action) &&
+        slices.Contains(settings.ValidResources, request.Resource) {
+        return AcceptRequest()
+    }
+
+    return RejectRequest(
+        Message("The request cannot be accepted."),
+        Code(403))
+}
+----
+
+=== 变异
+
+您可以更改之前的示例，以变异请求而不是拒绝它。
+
+在这种情况下，设置应包含 `defaultUser`、`defaultAction` 和 `defaultRequest`，以便在用户、操作或资源无效时变异请求。
+
+您需要使用新字段更新 `Settings` 类型：
+
+[,go]
+----
+// Settings represents the settings of the policy.
+type Settings struct {
+    ValidUsers []string `+json:"validUsers"+`
+    ValidActions []string `+json:"validActions"+`
+    ValidResources []string `+json:"validResources"+`
+    DefaultUser string `+json:"defaultUser"+`
+    DefaultAction string `+json:"defaultAction"+`
+    DefaultResource string `+json:"defaultResource"+`
+}
+
+func validateCliSettings(settings *Settings) SettingsValidationResponse {
+    if len(settings.ValidUsers) == 0 {
+        return RejectSettings(Message(
+            "At least one valid user must be specified"))
+    }
+
+    if len(settings.ValidActions) == 0 {
+        return RejectSettings(Message(
+            "At least one valid action must be specified"))
+    }
+
+    if len(settings.ValidResources) == 0 {
+        return RejectSettings(Message(
+            "At least one valid resource must be specified"))
+    }
+
+    if settings.DefaultUser == "" {
+        return RejectSettings(Message(
+            "Default user must be specified"))
+    }
+
+    if settings.DefaultAction == "" {
+        return RejectSettings(Message(
+            "Default action must be specified"))
+    }
+
+    if settings.DefaultResource == "" {
+        return RejectSettings(Message(
+            "Default resource must be specified"))
+    }
+
+    return AcceptSettings()
+}
+----
+
+您还需要更新 `ValidationResponse` 结构和 `MutateRequest` 函数，在 `kw_sdk.go` 中去除 Kubernetes 特定类型，并改用 {short-project-name} 类型：
+
+[,go]
+----
+// ValidationResponse defines the response given when validating a request
+type ValidationResponse struct {
+    Accepted bool `+json:"accepted"+`
+    // Optional - ignored if accepted
+    Message *string `+json:"message,omitempty"+`
+    // Optional - ignored if accepted
+    Code *uint16 `+json:"code,omitempty"+`
+    // Optional - used only by mutating policies
+    MutatedObject *Request `+json:"mutated_object,omitempty"+`
+}
+
+// MutateRequest accepts the request. The given `+mutatedObject+` is how
+// the evaluated object must look once accepted
+func MutateRequest(mutatedObject *Request) ValidationResponse {
+    return ValidationResponse{
+        Accepted:      true,
+        MutatedObject: mutatedObject,
+    }
+}
+----
+
+现在，您可以更新 `validate` 函数，以在无效时变异请求：
+
+[,go]
+----
+func validateRequest(settings Settings, request Request) ValidationResponse {
+    if slices.Contains(settings.ValidUsers, request.User) &&
+        slices.Contains(settings.ValidActions, request.Action) &&
+        slices.Contains(settings.ValidResources, request.Resource) {
+        return AcceptRequest()
+    }
+
+    if !slices.Contains(settings.ValidUsers, request.User) {
+        request.User = settings.DefaultUser
+    }
+
+    if !slices.Contains(settings.ValidActions, request.Action) {
+        request.Action = settings.DefaultAction
+    }
+
+    if !slices.Contains(settings.ValidResources, request.Resource) {
+        request.Resource = settings.DefaultResource
+    }
+
+    return MutateRequest(&request)
+}
+----

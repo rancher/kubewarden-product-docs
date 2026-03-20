@@ -1,0 +1,157 @@
+include::partial$variables.adoc[]
+= 分发策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过使用kwctl等工具，将策略安全地分发到OCI兼容注册表，并通过{project-name}策略管理确保集群安全。
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:current-version: {page-origin-branch}
+
+{project-name}策略是由{short-project-name}策略服务器评估的WebAssembly（Wasm）二进制文件。
+
+{short-project-name}策略服务器从以下来源加载策略：
+
+* 本地文件系统
+* HTTP(s)服务器
+* OCI兼容注册表：
+ ** https://github.com/distribution/distribution[分发]
+ ** https://ghcr.io[GitHub容器注册表]
+ ** https://azure.microsoft.com/en-us/products/container-registry/[Azure容器注册表]
+ ** https://aws.amazon.com/ecr/[Amazon ECR]
+ ** https://cloud.google.com/artifact-registry/[Google容器注册表]
+
+{short-project-name}建议通过常规OCI兼容注册表分发{short-project-name}策略。容器注册表是任何Kubernetes集群的强制要求。拥有一个存储和保护集群所需所有工件的单一位置是有益的。
+
+== 将策略推送到OCI兼容注册表
+
+https://github.com/opencontainers/image-spec[OCI镜像格式]规范允许在常规OCI兼容容器注册表中存储任何二进制块。
+
+目标OCI兼容注册表*必须支持工件*以成功将{short-project-name}策略推送到其中。
+
+您可以使用https://github.com/kubewarden/kwctl[`kwctl`] CLI 将{short-project-name}策略推送到OCI兼容的注册表。
+
+== 注释策略
+
+您还可以使用`kwctl`注释策略。注释{short-project-name}策略是通过向策略二进制文件添加Wasm自定义部分来完成的。这意味着策略打包了自己的元数据。
+
+`kwctl annotate`命令需要两个输入：
+
+* 要注释的{short-project-name}策略，文件系统中的本地文件。
+* 注释文件，包含策略元数据的YAML描述的文件。
+该文件通常位于您策略的根项目文件夹中。
+
+例如，您可以将此文件保存为`metadata.yml`，位于当前目录中：
+
+[subs="+attributes",yaml]
+----
+rules:
+- apiGroups: ["*"]
+  apiVersions: ["*"]
+  resources: ["*"]
+  operations: ["*"]
+mutating: false
+annotations:
+  io.kubewarden.policy.title: palindromify
+  io.kubewarden.policy.version: 0.1.0
+  io.kubewarden.policy.description: Allows you to reject palindrome names in resources and namespace names, or to only accept palindrome names
+  io.kubewarden.policy.author: Name Surname <name.surname@example.com>
+  io.kubewarden.policy.url: https://github.com/<org>/palindromify
+  io.kubewarden.policy.source: https://github.com/<org>/palindromify
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.usage: |
+    This is markdown text and as such allows you to define a free form usage text.
+
+    This policy allows you to reject requests if:
+    - The name of the resource is a palindrome name.
+    - The namespace name where this resource is created has a palindrome name.
+
+    This policy accepts the following settings:
+
+    - `+invert_behavior+`: bool that inverts the policy behavior. If enabled, only palindrome names will be accepted.
+----
+
+现在，让我们注释策略：
+
+[subs="+attributes",shell]
+----
+$ kwctl annotate policy.wasm \
+    --metadata-path metadata.yml \
+    --output-path annotated-policy.wasm
+----
+
+注释过程对策略执行某些优化，因此注释后的策略通常比原始策略小。这在很大程度上取决于用于生成原始Wasm对象的工具链。
+
+[IMPORTANT]
+====
+
+.使用kwctl inspect检查您的策略
+[%collapsible]
+======
+
+[subs="+attributes",shell]
+----
+$ kwctl inspect annotated-policy.wasm
+2023-08-24T12:06:27.986401Z  INFO sigstore::cosign::client_builder: Rekor public key not provided. Rekor integration disabled
+2023-08-24T12:06:27.986449Z  INFO sigstore::cosign::client_builder: No Fulcio cert has been provided. Fulcio integration disabled
+Details
+title:                    palindromify
+description:              Allows you to reject palindrome names in resources and namespace names, or to only accept palindrome names
+author:                   Name Surname <name.surname@example.com>
+url:                      https://github.com/<org>/palindromify
+source:                   https://github.com/<org>/palindromify
+license:                  Apache-2.0
+mutating:                 false
+background audit support: true
+context aware:            false
+execution mode:           kubewarden-wapc
+protocol version:         1
+
+Annotations
+io.kubewarden.kwctl       1.7.0-rc2
+
+Rules
+────────────────────
+- apiGroups:
+  - '*'
+  apiVersions:
+  - '*'
+  resources:
+  - '*'
+  operations:
+  - '*'
+────────────────────
+
+Usage
+This is markdown text and as such allows you to define a free form usage text.
+
+This policy allows you to reject requests if:
+
+• The name of the resource is a palindrome name.
+• The namespace name where this resource is created has a palindrome name.
+
+This policy accepts the following settings:
+
+• invert_behavior: bool that inverts the policy behavior. If enabled, only palindrome names will be accepted.
+
+Cannot determine if the policy has been signed. There was an error while attempting to fetch its signatures from the remote registry: invalid uri
+----
+
+======
+====
+
+
+== 推送策略
+
+您可以像这样推送注释策略：
+
+[subs="+attributes",shell]
+----
+$ kwctl push annotated-policy.wasm \
+     <oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1
+----
+
+不建议推送未注释的策略。策略服务器使用注释提供的元数据来正确执行策略。默认情况下，`kwctl push`拒绝将此类策略推送到OCI注册表。如果您需要未注释的策略，请使用`-&#x200D;-&#x200D;force`中的`kwctl push`标志。
+
+您可以参考来自 {short-project-name} 策略服务器或 `kwctl` 的策略，作为 `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`。

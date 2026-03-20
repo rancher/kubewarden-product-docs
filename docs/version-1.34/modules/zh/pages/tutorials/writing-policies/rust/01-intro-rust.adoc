@@ -1,0 +1,43 @@
+include::partial$variables.adoc[]
+= Rust
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 学习如何在Rust中利用SUSE的安全准入控制器简化的SDK和模板项目编写准入控制器策略。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "introduction"]
+:sidebar_label: Rust
+:current-version: {page-origin-branch}
+
+https://www.rust-lang.org/[Rust]是最成熟的编程语言，可以生成WebAssembly模块。
+WebAssembly在Rust世界中是一个一流的公民，因此Rust生态系统中的许多工具和库可以开箱即用。
+
+{project-name}提供了一个https://crates.io/crates/kubewarden-policy-sdk[Rust SDK]，简化了编写策略的过程。
+还有一个https://github.com/kubewarden/rust-policy-template[模板项目]，为使用https://github.com/cargo-generate/cargo-generate[`cargo-generate`]工具的策略项目提供了脚手架。
+
+本文件说明了如何利用这些项目在Rust中编写{short-project-name}策略。
+它不涵盖{short-project-name}的Rust SDK的细节。
+详细信息在https://docs.rs/kubewarden-policy-sdk/0.1.0[crate 文档]中。
+
+== 获取Rust依赖项
+
+使用https://github.com/rust-lang/rustup[rustup]安装Rust编译器及其工具。
+请参考rustup https://rust-lang.github.io/rustup/installation/index.html[安装文档]。
+
+安装`rustup`后，添加WebAssembly系统接口（WASI）目标：
+
+[subs="+attributes",console]
+----
+rustup target add wasm32-wasip1
+----
+
+== OSX依赖项
+
+要使用`cargo-generate`，您需要添加Xcode工具集。
+如果不是通过Xcode安装，以下命令将提供所需的依赖项：
+
+[subs="+attributes",console]
+----
+xcode-select --install
+----
