@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= Richtlinieneinstellungen
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie die Richtlinieneinstellungen mithilfe von {project-name} zur Validierung und Serialisierung von Richtliniendaten.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["richtlinien-schreiben", "spezifikation", "einstellungen"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "Richtlinienspezifikation", "Richtlinieneinstellungen"]
+:sidebar_label: Richtlinieneinstellungen
+:current-version: {page-origin-branch}
+
+Das Verhalten der Richtlinie ist nicht starr, Sie können es konfigurieren, indem Sie der Richtlinie zur Laufzeit Konfigurationsdetails bereitstellen. Der Autor der Richtlinie hat die Freiheit, die Struktur der Richtlinieneinstellungen zu definieren.
+
+{project-name} kümmert sich um die Serialisierung der Richtlinieneinstellungen in JSON und stellt sie der Richtlinie jedes Mal zur Verfügung, wenn sie aufgerufen wird.
+
+== Validierung der Einstellungen
+
+Richtlinien sollten die Einstellungen, die ein Benutzer bereitstellt, validieren, um die Richtigkeit zu überprüfen.
+
+Jede Richtlinie registriert eine waPC-Funktion namens `validate_settings`, die die Richtlinieneinstellungen validiert.
+
+Die `validate_settings`-Funktion erhält als Eingabe eine JSON-Darstellung der vom Benutzer bereitgestellten Einstellungen. Diese Funktion validiert sie und gibt als Antwort ein `SettingsValidationResponse`-Objekt zurück.
+
+Die Struktur des `SettingsValidationResponse`-Objekts ist:
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "valid": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+}
+----
+
+Wenn die vom Benutzer bereitgestellten Einstellungen `valid` sind, ignoriert `validate_settings` die Inhalte von `message`. Andernfalls zeigt `validate_settings` die Inhalte von `message` an.
+
+[NOTE]
+====
+
+{short-project-name}'s https://github.com/chimera-kube/policy-server[policy-server] validiert alle von Benutzern bereitgestellten Richtlinieneinstellungen zur Startzeit. Der policy-server beendet sich sofort mit einem Fehler, wenn mindestens eine seiner Richtlinien falsche Konfigurationsparameter erhalten hat.
+
+====
+
+
+== Beispiel
+
+Als Beispiel betrachten Sie die https://github.com/kubewarden/psp-capabilities[psp-capabilities] Richtlinie, die das folgende Konfigurationsformat hat:
+
+[subs="+attributes",yaml]
+----
+allowed_capabilities:
+- CHOWN
+
+required_drop_capabilities:
+- NET_ADMIN
+
+default_add_capabilities:
+- KILL
+----
+
+Die `validate_settings`-Funktion erhält als Eingabe das folgende JSON-Dokument:
+
+[subs="+attributes",json]
+----
+{
+  "allowed_capabilities": [
+    "CHOWN"
+  ],
+  "required_drop_capabilities": [
+    "NET_ADMIN"
+  ],
+  "default_add_capabilities": [
+    "KILL"
+  ]
+}
+----
+
+== Zusammenfassung
+
+Jede Richtlinie muss eine waPC-Funktion registrieren, `validate_settings`.
