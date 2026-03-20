@@ -1,0 +1,99 @@
+include::partial$variables.adoc[]
+= Schnellstart für die Rancher UI-Erweiterung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie die {project-name} UI als Erweiterung des Rancher Managers mit einer Schritt-für-Schritt-Anleitung durch den Installationsprozess installieren.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "rancher ui-erweiterung"]
+:current-version: {page-origin-branch}
+
+In diesem Abschnitt wird die Installation der {project-name} UI als Erweiterung von https://github.com/rancher/rancher[Rancher Manager] beschrieben.
+
+== Installieren Sie die {short-project-name} UI-Erweiterung
+
+Sie installieren die {short-project-name} UI als globale Erweiterung, jedoch installieren Sie den {short-project-name} Controller über die Rancher UI als clusterbezogene Ressource.
+
+[NOTE]
+====
+
+Für Air-Gapped-Installationen folgen Sie xref:howtos/airgap/02-install.adoc[diesen Schritten].
+
+====
+
+
+Wählen Sie auf der Seite Erweiterungen die Schaltfläche "Aktivieren" und wählen Sie die Option, das Rancher Extensions Repository hinzuzufügen. Wenn aktiviert, erscheint der Erweiterungseintrag "{short-project-name}" automatisch. Wählen Sie diesen Eintrag aus, um die Erweiterung zu installieren. Nach der Installation können Sie {short-project-name} in den erforderlichen Cluster installieren.
+
+=== Installieren Sie {short-project-name}
+
+Nach den vorherigen Schritten erscheint in Ihrem Cluster ein neuer Eintrag im Seitenmenü für {short-project-name}. Diese Dashboard-Seite führt Sie durch den Installationsprozess und erfüllt die Voraussetzungen.
+
+[NOTE]
+====
+
+Während des Schrittes "App-Installation" des Installationsassistenten kann die Schaltfläche "Installieren Sie {short-project-name}" ausgegraut bleiben. Wenn dies geschieht, aktualisieren Sie die Seite und navigieren Sie zurück zu diesem Schritt.
+
+====
+
+
+== Nach der Installation
+
+Nach Abschluss der Installation enthält die Dashboard-Seite und das Seitenmenü nun neue Einträge, nämlich Policy-Server, Cluster-Zulassungsrichtlinien und Zulassungsrichtlinien. Von hier aus können Sie Policy-Server und Richtlinien erstellen, um das Verhalten innerhalb Ihres Clusters zu steuern.
+
+*_Dashboard-Ansicht_*
+image:ui_dashboard.png[UI-Dashboard]
+
+=== Aktivieren des Standard-Policy-Servers und der Richtlinien
+
+Auf der Dashboard-Seite können Sie die Schaltfläche "Installieren Chart" auswählen, um das
+https://github.com/kubewarden/helm-charts/tree/main/charts/kubewarden-defaults[`kubewarden-defaults`]
+Helm-Chart zu installieren. Dieses Chart enthält den Standard-Policy-Server und einige kuratierte
+Richtlinien.
+
+Nach der Installation des Charts können Sie die Details des Standard-Policy-Servers mit
+den zugehörigen Richtlinien in einer sortierbaren Tabelle anzeigen.
+
+*_Detailansicht des Policy-Servers_*
+image:ui_policyserver_detail.png[UI Policy-Server-Detail]
+
+=== Richtlinien erstellen
+
+Beim Erstellen von Richtlinien haben Sie zunächst die Option "Benutzerdefinierte Richtlinie" im
+Policy Grid. Geben Sie die erforderlichen Informationen für den Namen, das Modul und die Regeln Ihrer Richtlinie an. Es wird empfohlen, das Policy-Katalog-Repository hinzuzufügen, um auf die offiziellen Richtlinien von {short-project-name} zuzugreifen.
+
+*_Erstellen einer benutzerdefinierten Richtlinie_*
+image:ui_policy_custom.png[UI Policy Whitelist]
+
+=== Zusätzliche Funktionen
+
+Befolgen Sie die Anweisungen, um
+xref:howtos/ui-extension/02-metrics.adoc[Überwachung] oder
+xref:howtos/ui-extension/03-tracing.adoc[Tracing] einzuschließen.
+
+== Air-Gapped-Installation
+
+Da {short-project-name} eine offizielle Rancher-Erweiterung ist, stellt das Rancher-Team
+einen Mechanismus zur automatischen Generierung eines Erweiterungskatalogbildes bereit. Dieses
+wird der `rancher-images.txt`-Datei hinzugefügt, wenn
+https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[Rancher Manager installieren] für Air-Gapped-Instanzen.
+
+Sobald dieses Bild in ein für Ihren Air-Gapped-Cluster zugängliches Registry gespiegelt wird, können Sie das Bild innerhalb der Rancher-UI importieren. Dies erstellt ein lokales
+Helm-Repository mit dem {short-project-name} UI-Chart zur Installation.
+
+=== Installationsschritte
+
+. https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-resources-setup/secrets[Erstellen]
+  ein Registry-Geheimnis im `cattle-ui-plugin-system`-Namespace. Geben Sie die
+  Domain der Bildadresse im Feld *Registry-Domain-Name* ein.
+. Navigieren Sie zurück zur *Erweiterungen*-Seite (zum Beispiel,
+  `https://cluster-ip/dashboard/c/local/uiplugins`).
+. Oben rechts wählen Sie *Erweiterungskataloge verwalten*.
+  image:ui_airgap_01.png[Kataloge verwalten]
+. Wählen Sie die Schaltfläche *Import Erweiterungskatalog* aus. Bild:ui_airgap_02.png[Importkatalog]
+. Geben Sie die Bildadresse im Feld *Katalogbildreferenz* ein.
+. Wählen Sie das soeben erstellte Geheimnis im Dropdown-Menü *Pull Secrets* aus. image:ui_airgap_03.png[Geben Sie Kataloginformationen ein]
+. Klicken Sie auf *Laden*. Die Erweiterung wird jetzt *Ausstehend* sein.
+. Kehren Sie zurück zur Seite *Erweiterungen*.
+. Wählen Sie die Registerkarte *Verfügbar* aus, und klicken Sie auf die Schaltfläche *Aktualisieren*, um sicherzustellen, dass die Liste der Erweiterungen auf dem neuesten Stand ist. Bild:ui_airgap_04.png[Installieren {short-project-name}]
+. Suchen Sie die Erweiterung {short-project-name}, die Sie gerade hinzugefügt haben, und wählen Sie die Schaltfläche *Installieren* aus.

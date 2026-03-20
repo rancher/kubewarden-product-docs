@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+:title: {project-name} Artefakte
+:description: Überprüfen Sie {project-name} Artefakte und greifen Sie auf verwandte Binärdateien, Helm-Diagramme zu, um eine effiziente Sicherheitsverwaltung zu gewährleisten.
+:keywords: [Artefakte, Unterstützung, Airgap, Bilder]
+:doc-persona: [kubewarden-operator]
+:doc-type: [Referenz]
+:doc-topic: [Betriebsanleitung, Artefakte, Registry, Bilder]
+
+= {title}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+== Überprüfung von {project-name}
+
+Es gibt ein Tutorial zu xref:/tutorials/verifying-kubewarden.adoc[Überprüfen
+{short-project-name}], das zeigt, wie man {short-project-name} Artefakte überprüft.
+
+== Binärdateien
+
+Unser `kwctl` CLI-Tool wird über https://github.com/kubewarden/kwctl/releases[GitHub-Releases] veröffentlicht.
+
+== OCI-Artefakte
+
+Für Open Container Initiative (OCI) Artefakte veröffentlicht das Projekt alles in `ghcr.io` unter https://github.com/orgs/kubewarden/packages.
+
+- sind die Wasm-OCI-Artefakte der Richtlinie.
+- https://github.com/orgs/kubewarden/packages/charts[`kubewarden/packages/charts/*`] sind die Helm-Charts als OCI-Artefakte. Sie folgen den SLSA-Standards.
+- die Container-Images, die als OCI-Images veröffentlicht werden: `kubewarden-controller`, `policy-server`, `audit-scanner`, `kubectl`.
+- es gibt auch `packages/tests/*`, das Artefakte enthält, die in e2e-Tests verwendet werden.
+
+== Helm-Charts über HTTPS
+
+{short-project-name} veröffentlicht Helm-Charts im Helm-Chart-HTTPS-Repository unter https://charts.kubewarden.io.. Sie sind ohne SLSA oder Signaturen, aber dieser Typ von Helm-Repository bietet Suchfunktionen.

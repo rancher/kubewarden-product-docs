@@ -1,0 +1,37 @@
+include::partial$variables.adoc[]
+= Benutzerdefinierte CA
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie benutzerdefinierte CA für den Einsatz in {project-name}-Installationen, um eine sichere Kommunikation und Authentifizierung zu gewährleisten.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "custom-certificate-authorities"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "benutzerdefinierte CA"]
+:sidebar_label: Benutzerdefinierte CA
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+Mit sowohl `kwctl` als auch `policy-server` können Sie Richtlinien aus den Open Container Initiative (OCI)-Registries und HTTP-Servern abrufen.
+Sie können Richtlinien nur an OCI-Registries senden.
+Standardmäßig wird HTTPS mit TLS-Überprüfung des Hosts verwendet.
+
+Der CA-Speicher des Systems wird verwendet, um die vertrauenswürdige Kette von Zertifikaten aus dem OCI-Registry zu validieren.
+In einer Standard-{project-name}-Installation verwendet `policy-server` die CA, die mit seinem Linux-Container geliefert wird.
+Auf der Client-Seite verwendet `kwctl` die CA Ihres Betriebssystems.
+
+Wenn Sie den https://github.com/kubewarden/kubewarden-controller[Controller] verwenden, können Sie den PolicyServer über seine xref:/howtos/policy-servers/01-custom-cas.adoc[`spec` Felder] konfigurieren.
+
+[NOTE]
+====
+
+Das Standardverhalten von `kwctl` und `policy-server` erzwingt HTTPS mit vertrauenswürdigen Zertifikaten, die mit der CA des Systems übereinstimmen.
+Sie können mit Registries unter Verwendung nicht vertrauenswürdiger Zertifikate oder sogar ohne TLS interagieren, indem Sie die `insecure_sources`-Einstellung verwenden.
+Offensichtlich ist das nicht für Produktionsumgebungen.
+====
+
+
+== Die `sources.yaml`-Datei
+
+Sie können das Push-Pull-Verhalten von `kwctl` und `policy-server` mit der Datei `sources.yaml` anpassen.
+
+Weitere Details finden Sie in der xref:../reference/sources_yaml.adoc[`sources.yaml`] Referenz.
