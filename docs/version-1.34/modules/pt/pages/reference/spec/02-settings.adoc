@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= Configurações de política
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configure as configurações de política usando {project-name} para validação e serialização dos dados da política.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "settings"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificação de política", "configurações de política"]
+:sidebar_label: Configurações de política
+:current-version: {page-origin-branch}
+
+O comportamento da política não é rígido, você pode configurá-lo fornecendo detalhes de configuração à política em runtime. O autor da política tem a liberdade de definir a estrutura das configurações da política.
+
+{project-name} cuida de serializar as configurações da política em JSON e as fornece à política sempre que é invocada.
+
+== Validação de configurações
+
+As políticas devem validar as configurações que um usuário fornece para verificar a correção.
+
+Cada política registra uma função waPC chamada `validate_settings` que valida as configurações da política.
+
+A função `validate_settings` recebe como entrada uma representação JSON das configurações fornecidas pelo usuário. Essa função as valida e retorna como resposta um objeto `SettingsValidationResponse`.
+
+A estrutura do objeto `SettingsValidationResponse` é:
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "valid": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+}
+----
+
+Se as configurações fornecidas pelo usuário forem `valid`, `validate_settings` ignora os conteúdos de `message`. Caso contrário, `validate_settings` exibe os conteúdos de `message`.
+
+[NOTE]
+====
+
+O https://github.com/chimera-kube/policy-server[policy-server] de {short-project-name} valida todas as configurações de política fornecidas pelos usuários no momento da inicialização. O servidor de política fecha imediatamente com um erro se pelo menos uma de suas políticas recebeu parâmetros de configuração incorretos.
+
+====
+
+
+== Exemplo
+
+Como exemplo, considere a política https://github.com/kubewarden/psp-capabilities[psp-capabilities] que tem o seguinte formato de configuração:
+
+[subs="+attributes",yaml]
+----
+allowed_capabilities:
+- CHOWN
+
+required_drop_capabilities:
+- NET_ADMIN
+
+default_add_capabilities:
+- KILL
+----
+
+A função `validate_settings` recebe como entrada o seguinte documento JSON:
+
+[subs="+attributes",json]
+----
+{
+  "allowed_capabilities": [
+    "CHOWN"
+  ],
+  "required_drop_capabilities": [
+    "NET_ADMIN"
+  ],
+  "default_add_capabilities": [
+    "KILL"
+  ]
+}
+----
+
+== Recapitulação
+
+Cada política deve registrar uma função waPC, `validate_settings`.
