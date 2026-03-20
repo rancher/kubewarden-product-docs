@@ -1,0 +1,145 @@
+include::partial$variables.adoc[]
+= Fonctionnalités de Kubernetes
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explorez les fonctionnalités de Kubernetes en utilisant les stratégies contextuelles de {project-name} et le protocole waPC pour accéder aux ressources du cluster.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction de stratégies", "spécification", "capacités d'hôte", "capacités de Kubernetes"]
+:doc-type: ["reference"]
+:keywords: ["Kubewarden", "Kubernetes", "spécification de stratégie", "capacités de Kubernetes"]
+:sidebar_label: Fonctionnalités de Kubernetes
+:current-version: {page-origin-branch}
+
+Les stratégies contextuelles de {project-name} nécessitent un accès aux ressources du cluster Kubernetes où elles s'exécutent.
+Pour cela, les SDK {short-project-name} exposent des fonctions qui utilisent le protocole de communication waPC pour communiquer avec le système hôte en demandant des données sur le cluster.
+
+== Contrat du protocole waPC
+
+En interne, les SDK s'appuient sur ces fonctions exposées par l'environnement hôte de la stratégie :
+
+* `list_resources_by_namespace` : Étant donné un type de ressource et un espace de noms, listez toutes les ressources de ce type qui y sont définies.
+Cela ne peut pas être utilisé pour lister les ressources à l'échelle du cluster, comme `Namespace`.
+* `list_resources_all` : Étant donné un type de ressource, listez toutes les ressources de ce type qui sont définies dans l'ensemble du cluster.
+Cela peut être utilisé pour lister les ressources à l'échelle du cluster, comme `Namespace`.
+* `get_resource` : Trouvez la ressource exacte identifiée par le type de ressource donné, le nom donné et un identifiant d'espace de noms optionnel.
+
+Cette communication invité-hôte est effectuée en utilisant le mécanisme d'appel hôte standard waPC.
+Tout invité implémentant le mécanisme d'intercommunication waPC est capable de demander cette information à l'hôte.
+
+waPC a les arguments de fonction suivants lors de l'appel de l'invité à l'hôte :
+
+* Liaison - `kubewarden`
+* Espace de noms - `kubernetes`
+* Opération - `list_resources_all`, `list_resources_by_namespace` ou `get_resource`
+* Charge utile - charge utile d'entrée - voir ci-dessous
+
+et renvoie :
+
+* Charge utile - charge utile de sortie - voir ci-dessous
+
+Par contrat, ou par convention, les stratégies peuvent récupérer les informations du cluster Kubernetes en appelant l'hôte de la manière suivante :
+
+=== Opération - `list_resources_all`
+
+==== Entrée
+
+[,hcl]
+----
+# API Group version. Use `+v1+` for the `+core+` group and
+  # `+groupName/groupVersion+` for all other groups
+  "api_version": string,
+  # Resource kind
+  "kind": string,
+  # Label selector to filter the resources
+  "label_selector": string,
+  # Field selector to filter the resources
+  "field_selector": string,
+  # Field masks: A list of fields to include in the response.
+  #
+  # If strictly defined, the host will prune the Kubernetes resource to contain *only*
+  # the specified fields, reducing memory usage and serialization overhead.
+  "field_masks": [string]
+----
+
+==== Sortie
+
+Retourne un Kubernetes https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#types-kinds[`List`], qui est une collection d'objets Kubernetes du même type.
+
+[IMPORTANT]
+====
+Utilisez cette fonction API pour récupérer des ressources à l'échelle du cluster (par exemple, des espaces de noms)
+====
+
+
+=== Opération - `list_resources_by_namespace`
+
+==== Entrée
+
+[,hcl]
+----
+{
+  # API Group version. Use `+v1+` for the `+core+` group and
+  # `+groupName/groupVersion+` for all other groups
+  "api_version": string,
+  # Resource kind
+  "kind": string,
+  # Namespace where the requested resource lives in
+  "namespace": string,
+  # Label selector to filter the resources
+  "label_selector": string,
+  # Field selector to filter the resources
+  "field_selector": string,
+  # Field masks: A list of fields to include in the response.
+  #
+  # If strictly defined, the host will prune the Kubernetes resource to contain *only*
+  # the specified fields, reducing memory usage and serialization overhead.
+  "field_masks": [string]
+}
+----
+
+==== Sortie
+
+Retourne un Kubernetes https://github.com/kubernetes/community/blob/master/contributors/devel/sig-architecture/api-conventions.md#types-kinds[`List`], qui est une collection d'objets Kubernetes du même type.
+
+[CAUTION]
+====
+Cette fonction API renvoie une erreur lorsqu'elle est utilisée pour récupérer des ressources à l'échelle du cluster (par exemple, des espaces de noms).
+Utilisez le `list_resources_all` lors de la gestion des ressources à l'échelle du cluster.
+====
+
+
+=== Opération - `get_resource`
+
+==== Caching
+
+Le résultat de l'opération `get_resource` est mis en cache pendant cinq secondes par défaut pour améliorer les performances et réduire la charge inutile sur le serveur API Kubernetes.
+
+Utilisez le champ `disable_cache` pour contourner le cache lorsque des données fraîches sont requises.
+
+==== Entrée
+
+[,hcl]
+----
+{
+  # API Group version. Use `+v1+` for the `+core+` group
+  # and `+groupName/groupVersion+` for all other groups
+  "api_version": string,
+  # Singular PascalCase name of the resource
+  "kind": string,
+  # Namespace scoping the search
+  "namespace": string,
+  # The name of the resource
+  "name": string,
+  # Disable caching of results obtained from Kubernetes API Server
+  "disable_cache": bool,
+  # Field masks: A list of fields to include in the response.
+  #
+  # If strictly defined, the host will prune the Kubernetes resource to contain *only*
+  # the specified fields, reducing memory usage and serialization overhead.
+  "field_masks": [string]
+}
+----
+
+==== Sortie
+
+Résultat de `GET /apis/$api_version/namespaces/$namespace/$kind/$name`

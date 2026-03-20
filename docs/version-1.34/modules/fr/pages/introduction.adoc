@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= Qu'est-ce que {project-name} ?
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez le rôle de {project-name} dans la gestion des stratégies Kubernetes, qui inclut l'application de la conformité et l'optimisation des ressources.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["introduction"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "cncf", "sandbox cncf", "kubernetes", "gestionnaire de stratégies d'admission"]
+:sidebar_label: Introduction
+:sidebar_position: 1
+:slug: /
+:current-version: {page-origin-branch}
+
+{project-name} est un moteur de stratégie Kubernetes.
+Il vise à être le moteur de stratégie universel pour Kubernetes.
+
+{intro-paragraph}
+
+== Comment {project-name} aide-t-il ?
+
+{short-project-name} offre de la flexibilité pour l'admission et l'application des stratégies dans un environnement Kubernetes.
+
+=== Avantages et valeur
+
+- Utilisez n'importe quel langage de programmation qui génère des binaires https://webassembly.org[WebAssembly] pour écrire vos stratégies.
+- WebAssembly permet la compatibilité des stratégies entre les processeurs et les systèmes d'exploitation.
+- Réutilisation des stratégies d'autres moteurs de stratégie sans avoir besoin de les réécrire.
+- Distribuez les stratégies en utilisant des mécanismes standards et sécurisés tels que des registres conformes à https://opencontainers.org[OCI].
+- L'application des stratégies à l'admission garantit que seules les charges de travail conformes s'exécutent.
+- Le scanner d'audit {short-project-name} vérifie activement et continuellement l'application des stratégies dans le temps.
+- Vérifiez les stratégies en utilisant des outils et pratiques https://slsa.dev[SLSA] (Niveaux de chaîne d'approvisionnement pour les artefacts logiciels).
+- {project-name} fournit une approche complète pour la gestion des stratégies d'admission.
+- L'adhésion à la CNCF et une communauté et un écosystème Open Source en croissance aident {short-project-name} avec la transparence, la collaboration et l'amélioration.
+
+=== Cas pratiques d'utilisation
+
+- Renforcement de la sécurité. Par exemple, appliquez des stratégies restreignant les privilèges des conteneurs, appliquez des stratégies réseau ou bloquez les registres d'images non sécurisés.
+- Audit de conformité. Assurez-vous que les charges de travail respectent les normes organisationnelles ou réglementaires et les meilleures pratiques.
+- Optimisation des ressources. Appliquez des limites et des quotas de ressources.
+
+Il existe une documentation supplémentaire sur les cas d'utilisation sur la page xref:use-cases.adoc[cas d'utilisation].
+
+== Nouveau sur {short-project-name} ?
+
+Si vous êtes nouveau dans le projet {short-project-name}, commencez par le xref:quick-start.adoc[guide de démarrage rapide] et la page xref:explanations/architecture.adoc[architecture].
+Ensuite, cela dépend de l'endroit où vos intérêts vous mènent. Pour les développeurs de stratégies, il existe des sections spécifiques aux langages dans les tutoriels. Pour les intégrateurs et les administrateurs, il y a une section 'comment faire'. La section des explications contient du matériel de fond utile. Il y a aussi un xref:glossary.adoc[glossaire].
+
+== Qu'est-ce que WebAssembly ?
+
+Comme indiqué sur https://webassembly.org/[le site officiel de WebAssembly] :
+
+____
+WebAssembly (abrégé Wasm) est un format d'instruction binaire pour une machine virtuelle basée sur une pile. Wasm est conçu comme une cible de compilation portable pour les langages de programmation, permettant le déploiement sur le web pour des applications client et serveur.
+____
+
+Wasm a été initialement conçu comme une "extension" de navigateur. Cependant, la communauté WebAssembly s'engage dans des efforts pour permettre l'exécution de code Wasm en dehors des navigateurs.
+
+== Pourquoi utiliser WebAssembly ?
+
+Les utilisateurs peuvent écrire des stratégies Kubernetes en utilisant leur langage de programmation préféré, à condition que sa chaîne d'outils puisse générer des binaires Wasm.
+
+Les modules Wasm sont portables, une fois construits, ils peuvent fonctionner sur n'importe quelle architecture de processeur et système d'exploitation. Par exemple, une stratégie développée et construite sur Apple Silicon peut fonctionner sur AMD64/Intel64 Linux sans conversion.
+
+Les auteurs de stratégies peuvent réutiliser leurs compétences, outils et meilleures pratiques. Les stratégies sont des programmes "traditionnels" qui peuvent avoir des blocs réutilisables (bibliothèques régulières). Vous pouvez les analyser et les tester, et vous pouvez les intégrer dans les workflows CI et CD actuels.
+
+== Distribution des stratégies
+
+Vous pouvez servir {short-project-name} stratégies en utilisant un serveur web standard ou, mieux encore, vous pouvez les publier dans un registre conforme à OCI en tant que https://github.com/opencontainers/artifacts[artéfacts OCI].
+
+ifeval::["{build-type}" == "community"]
+
+== Neutralité des fournisseurs
+
+{short-project-name} est un projet lien:https://contribute.cncf.io/maintainers/community/vendor-neutrality/[neutre vis-à-vis des fournisseurs] tel que défini par le CNCF.
+
+endif::[]

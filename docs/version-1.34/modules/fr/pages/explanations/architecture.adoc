@@ -1,0 +1,216 @@
+include::partial$variables.adoc[]
+= {project-name} architecture
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez comment {project-name} utilise les fonctionnalités de noyau de Kubernetes pour s'intégrer parfaitement dans votre cluster.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["architecture"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "architecture"]
+:sidebar_label: Architecture
+:sidebar_position: 61
+:current-version: {page-origin-branch}
+
+{project-name} est un moteur de stratégies Kubernetes.
+Il utilise des stratégies écrites dans un langage de programmation de votre choix.
+Ce langage doit générer un binaire WebAssembly que {project-name} peut utiliser.
+
+== Qu'est-ce que _une stratégie_ ?
+
+Une stratégie est un https://opencontainers.org/[Open Container Initiative] (OCI) artefact. Elle contient un module WebAssembly, le code de la stratégie, et les métadonnées requises par PolicyServer pour effectuer des validations et des mutations des demandes d'admission.
+
+[NOTE]
+====
+
+Comme https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes], {project-name} utilise le terme 'PolicyServer' lorsqu'il discute du serveur de stratégies {project-name} et `policy-server` lorsqu'il parle de Pod ou de Déploiement d'un {project-name} PolicyServer.
+
+====
+
+
+== Principes de conception
+
+=== Utilisation des fonctionnalités de noyau de Kubernetes
+
+L'équipe a conçu {project-name} pour utiliser les fonctionnalités de noyau de Kubernetes, sans réinventer la roue.
+Le projet utilise une combinaison de :
+
+* Contrôleurs Kubernetes
+* Définitions de ressources personnalisées (CRDs)
+* Webhooks (Validation et Mutation)
+* le système de notification d'événements du Plan de Contrôle
+
+=== Utilise efficacement l'architecture Kubernetes
+
+{project-name} fonctionne de manière transparente au sein de l'écosystème Kubernetes. Au cœur, le contrôleur {project-name} est un contrôleur Kubernetes, surveillant les définitions de ressources personnalisées (CRDs) {project-name} et configurant les ressources Kubernetes pour les exécuter. Cette intégration garantit que {project-name} utilise les mécanismes intégrés de Kubernetes, tels que les contrôleurs et les CRDs, pour surveiller, gérer et appliquer les stratégies de sécurité de manière efficace.
+
+=== Définition de stratégie extensible
+
+{project-name} utilise des CRDs pour définir et gérer les ressources {project-name}, qui spécifient les règles pour les validations des demandes d'admission. Ce design permet aux utilisateurs d'étendre les capacités de Kubernetes avec des contrôles d'admission personnalisés, garantissant que l'application des stratégies de sécurité et de conformité est cohérente à travers le cluster.
+
+=== Contrôle d'admission direct
+
+Lorsqu'il est configuré par le contrôleur {project-name}, le Service policy-server reçoit les demandes d'admission directement du plan de contrôle Kubernetes, en utilisant `ValidationWebhooks` et `MutatingWebhooks`. Cette interaction directe rationalise le processus de contrôle d'admission, réduisant la latence et augmentant l'efficacité de l'application des stratégies.
+
+WebAssembly offre un environnement d'exécution isolé, garantissant que les stratégies s'exécutent en isolation, améliorant ainsi la sécurité et la stabilité du mécanisme d'application des stratégies. Cette isolation empêche les stratégies d'interférer les unes avec les autres ou avec le système hôte, atténuant le risque d'exécution de code malveillant.
+WebAssembly est portable et efficace, permettant aux stratégies de s'exécuter dans différents environnements sans modification. Cette compatibilité multiplateforme garantit que les stratégies {project-name} sont polyvalentes, vous permettant de les distribuer et de les exécuter sur divers clusters Kubernetes.
+
+=== Artefacts de stratégie basés sur OCI
+
+Les stratégies dans {project-name} sont des artefacts OCI (Open Container Initiative). Cette standardisation facilite la distribution et la version des stratégies. Les stratégies contiennent à la fois les modules WebAssembly pour la logique d'application et les métadonnées nécessaires au fonctionnement du PolicyServer. L'utilisation d'artefacts OCI favorise l'interopérabilité et la facilité de gestion au sein des écosystèmes cloud.
+
+=== Application de stratégies détaillées
+
+{project-name} associe des stratégies à son propre webhook de 'validation' ou de 'mutation', permettant une application détaillée des contrôles d'admission. Cette flexibilité permet aux administrateurs d'adapter l'application des stratégies selon des besoins spécifiques, renforçant ainsi la sécurité et la conformité du cluster Kubernetes.
+
+== La pile {project-name}
+
+{project-name} se compose de ces composants :
+
+* Les Ressources Personnalisées {project-name} sont https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Ressources Personnalisées Kubernetes] qui simplifient le processus de gestion des stratégies.
++
+{project-name} s'intègre à Kubernetes en utilisant https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Contrôle d'Admission Dynamique]. En particulier, {project-name} fonctionne comme un Webhook d'Admission Kubernetes. Le `policy-server` est le point de terminaison Webhook appelé par le serveur API Kubernetes pour valider les demandes.
+
+* Le https://github.com/kubewarden/kubewarden-controller[{project-name} contrôleur] est un contrôleur Kubernetes qui réconcilie les Ressources Personnalisées de {project-name}. Ce contrôleur crée des parties de la pile {project-name}.
+Il traduit également la configuration de {project-name} en directives Kubernetes.
++
+Le `kubewarden-controller` enregistre les objets `MutatingWebhookConfiguration` ou `ValidatingWebhookConfiguration` nécessaires auprès du serveur API Kubernetes.
+
+* xref:../tutorials/writing-policies/index.adoc[{project-name} stratégies] sont des modules WebAssembly contenant la logique de validation ou de mutation. Les modules WebAssembly ont une documentation détaillée dans les sections xref:../tutorials/writing-policies/index.adoc[écriture de stratégies].
+
+* Le https://github.com/kubewarden/policy-server[PolicyServer] reçoit des demandes de validation. Il valide les demandes en exécutant les stratégies {project-name}.
+
+* Le https://github.com/kubewarden/audit-scanner[scanner d'audit] inspecte les ressources déjà présentes dans le cluster. Il identifie celles qui violent les stratégies {project-name}.
++
+xref:/explanations/audit-scanner/audit-scanner.adoc[Scanner d'audit] vérifie constamment les ressources déclarées dans le cluster, signalant celles qui ne respectent plus les stratégies {project-name} déployées.
++
+.Architecture
+[mermaid]
+....
+%%{
+  init: {
+    "flowchart": {
+      "htmlLabels": false,
+    }
+  }
+}%%
+graph LR
+    accTitle: Architecture du contrôleur d'admission
+    accDescr: Un diagramme montrant l'architecture des composants du contrôleur d'admission.
+    sous-graphe " "
+      direction LR
+      sous-graphe " "
+        direction LR
+          k8s(("Kubernetes"))
+          registry[("OCI registry")]
+        fin
+        sous-graphe kw[&quot;`+**Admission Controller**+`&quot;]
+          contrôleur(&quot;`+**Controller**+`&quot;)
+          sous-graphe PolicyServer[&quot;`+**policy-server**+`&quot;]
+            direction LR
+            kw-policy-1{{"Policy 1"}}
+            kw-policy-2{{"Policy 2"}}
+            kw-policy-3{{"Policy 3"}}
+        fin
+        webhooks(["ValidationWebhooks et\nMutatingWebhooks"])
+        audit-scanner(["Scanner d'audit KW"])
+      fin
+    fin
+    PolicyServer -->|"télécharge\nles politiques depuis"| registry
+    contrôleur -->|"surveille les\névénements"| k8s
+    contrôleur -->|"crée"| webhooks
+    contrôleur -->|"crée\ndes instances de\nPolicyServer"| PolicyServer
+    k8s -. "envoie des demandes d'admission\nutilisant" .-> webhooks
+    webhooks -. "demandes d'admission envoyées de K8s" .-> PolicyServer
+    audit-scanner -->|"envoie des demandes d'audit\nd'admission"| PolicyServer
+....
+
+== Le parcours d'une {project-name} stratégie
+
+=== PolicyServer par défaut
+
+Sur un nouveau cluster, les composants {project-name} définis sont :
+
+* Définitions de ressources personnalisées (CRD)
+* Le `kubewarden-controller` Déploiement
+* Une ressource personnalisée de PolicyServer nommée `default`.
+
+Lorsque le `kubewarden-controller` remarque la ressource PolicyServer par défaut, il crée un déploiement `policy-server` du composant PolicyServer.
+
+{project-name} fonctionne comme un Webhook d'admission Kubernetes. Kubernetes spécifie
+l'utilisation de https://en.wikipedia.org/wiki/Transport_Layer_Security[Transport Layer
+Security] (TLS) pour sécuriser tous les points de terminaison Webhook. Le `kubewarden-controller`
+met en place cette communication sécurisée en :
+
+. Générant une autorité de certification auto-signée
+. Utilisez cette CA pour générer une clé de certificat TLS pour le Service `policy-server`.
+
+Ces objets sont tous stockés en tant que ressources `Secret` dans Kubernetes.
+
+Enfin, `kubewarden-controller` crée le déploiement `policy-server` et un service Kubernetes ClusterIP pour l'exposer à l'intérieur du réseau du cluster.
+
+=== Définir la première stratégie
+
+[NOTE]
+====
+
+Une stratégie doit définir sur quel `policy-server` elle doit s'exécuter. Elle *lie* à une instance `policy-server`. Vous pouvez avoir différentes stratégies avec le même module Wasm et les mêmes paramètres fonctionnant dans de nombreux PolicyServers. Cependant, vous ne pouvez pas avoir une seule définition de stratégie qui fonctionne dans de nombreux PolicyServers.
+
+====
+
+Le `kubewarden-controller` remarque la nouvelle ressource `ClusterAdmissionPolicy` et réconcilie le `policy-server` lié.
+
+=== Réconciliation d'un `policy-server`
+
+Lors de la création, de la modification ou de la suppression d'un `ClusterAdmissionPolicy` ou `AdmissionPolicy`, une boucle de réconciliation s'active dans `kubewarden-controller`, pour le `policy-server` possédant la stratégie. Cette boucle de réconciliation crée un `ConfigMap` avec toutes les stratégies liées au `policy-server`. Ensuite, le déploiement du `policy-server` commence. Cela entraîne le démarrage de la nouvelle instance `policy-server` avec la configuration mise à jour.
+
+Au moment du démarrage, le `policy-server` lit sa configuration à partir du ConfigMap et télécharge toutes les stratégies {project-name} spécifiées. Vous pouvez télécharger des stratégies {project-name} à partir de serveurs HTTP distants et de registres de conteneurs.
+
+Vous utilisez des paramètres de configuration de stratégie pour ajuster le comportement des stratégies. Après le démarrage et le téléchargement des stratégies, le `policy-server` vérifie que les paramètres de stratégie fournis par l'utilisateur sont valides.
+
+Le `policy-server` valide les paramètres de stratégie en invoquant la fonction `validate_setting` exposée par chaque stratégie. Il y a une documentation supplémentaire dans la section xref:../reference/spec/01-intro-spec.adoc[référence de spécification] de la documentation.
+
+Si des stratégies reçoivent de mauvais paramètres de configuration, provenant de la spécification de stratégie des utilisateurs, alors toute demande d'admission évaluée par cette stratégie renvoie une erreur.
+
+Lorsque {project-name} a configuré toutes les stratégies, le `policy-server` crée un pool de threads de travail pour évaluer les demandes entrantes en utilisant les stratégies {project-name} spécifiées par l'utilisateur.
+
+Enfin, le `policy-server` démarre un serveur HTTPS, écoutant les demandes de validation entrantes. {project-name} utilise la clé TLS et le certificat créés par le contrôleur {project-name} pour sécuriser le serveur web.
+
+Le serveur web expose chaque stratégie par un chemin dédié suivant la convention de nommage : `/validate/<policy ID>`.
+
+=== Rendre Kubernetes conscient de la stratégie
+
+Toutes les instances `policy-server` disposent d'un https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/ [`readiness probe`], que `kubewarden-controller` utilise pour vérifier quand le déploiement `policy-server` est prêt à évaluer un https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response[`AdmissionReview`].
+
+Une fois que {project-name} marque le déploiement `policy-server` comme 'uniquement accessible' ou `Ready`, le `kubewarden-controller` rend le serveur API Kubernetes conscient de la nouvelle stratégie. Cela se fait en créant soit un objet `MutatingWebhookConfiguration` soit un objet `ValidatingWebhookConfiguration`. Dans ce contexte, 'uniquement accessible' signifie que toutes les instances de PolicyServer dans le cluster ont la dernière configuration de stratégie installée. La distinction est un point subtil, mais elle est nécessaire en raison de la manière dont le déploiement des PolicyServers fonctionne.
+Il est possible d'avoir la même stratégie sur différents PolicyServers avec des configurations différentes.
+
+Chaque stratégie a un `MutatingWebhookConfiguration` ou un `ValidatingWebhookConfiguration` dédié pointant vers le point de terminaison Webhook servi par `policy-server`. Le point de terminaison est accessible à l'URL `/validate/<policy ID>`.
+
+=== Stratégie en action
+
+Maintenant que toute la plomberie nécessaire est terminée, Kubernetes commence à envoyer des demandes de révision d'admission aux bons points de terminaison `policy-server`.
+
+Un `policy-server` reçoit l'objet de demande d'admission et, en fonction du point de terminaison qui a reçu la demande, utilise la stratégie correcte pour l'évaluer.
+
+{project-name} évalue chaque stratégie dans son propre environnement WebAssembly dédié. La communication entre une instance de `policy-server` (l'"hôte") et la stratégie WebAssembly (l'"invité") utilise le protocole de communication waPC. La description du protocole fait partie de la documentation xref:../tutorials/writing-policies/index.adoc[écriture des stratégies].
+Les stratégies peuvent également utiliser les interfaces fournies par le xref:../tutorials/writing-policies/wasi/01-intro-wasi.adoc[Web Assembly System Interface] (WASI).
+
+== Comment {project-name} gère de nombreux PolicyServers et stratégies
+
+Un cluster peut avoir de nombreux PolicyServers et des stratégies {project-name} définies.
+Il y a des avantages à avoir de nombreux PolicyServers :
+
+* Vous pouvez isoler des espaces de noms ou des locataires bruyants, ou ceux générant de nombreuses évaluations de stratégies, du reste du cluster afin de ne pas affecter négativement d'autres opérations du cluster.
+
+* Vous pouvez exécuter des stratégies critiques pour la mission dans un pool de PolicyServers dédié, rendant votre infrastructure plus résiliente.
+
+Une ressource PolicyServer définit chaque `policy-server` et une ressource `ClusterAdmissionPolicy` ou `AdmissionPolicy` définit chaque stratégie.
+
+Un `ClusterAdmissionPolicy` et un `AdmissionPolicy` se lient à un `policy-server`.
+Tout `ClusterAdmissionPolicy` ne spécifiant pas un `policy-server` se lie au PolicyServer par défaut. Si un `ClusterAdmissionPolicy` fait référence à un `policy-server` qui n'existe pas, son état est `unschedulable`.
+
+Chaque `policy-server` définit de nombreux points de validation, un pour chaque stratégie définie dans son fichier de configuration. Vous pouvez charger la même stratégie plusieurs fois, avec différents paramètres de configuration.
+
+Les ressources `ValidatingWebhookConfiguration` et `MutatingWebhookConfiguration` rendent le serveur API Kubernetes conscient de ces stratégies. Ensuite, `kubewarden-controller` maintient le serveur API et les ressources de configuration en synchronisation.
+
+Le serveur API Kubernetes envoie les demandes d'admission entrantes au point de validation correct exposé par `policy-server`.

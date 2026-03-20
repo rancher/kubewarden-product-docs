@@ -1,0 +1,163 @@
+include::partial$variables.adoc[]
+= Créer une nouvelle stratégie de validation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explorez la création d'une nouvelle stratégie de validation qui rejette les Pods avec des étiquettes sur la liste de refus, tout en validant les étiquettes avec des expressions régulières fournies par l'utilisateur pour garantir la sécurité.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "rédaction de stratégies", "go", "création d'une nouvelle stratégie de validation"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction de stratégies en Go", "nouvelle stratégie de validation"]
+:current-version: {page-origin-branch}
+
+Ce tutoriel couvre la création d'une stratégie qui valide les étiquettes des objets Pod.
+
+La stratégie consiste à rejeter tous les Pods qui utilisent une ou plusieurs étiquettes sur la liste de refus.
+La stratégie valide également certaines étiquettes à l'aide d'une expression régulière fournie par l'utilisateur.
+
+Pour résumer, les paramètres de la stratégie devraient ressembler à ceci :
+
+[subs="+attributes",yaml]
+----
+# List of labels that cannot be used
+denied_labels:
+- foo
+- bar
+
+# Labels that are validated with user-defined regular expressions
+constrained_labels:
+  priority: "[123]"
+  cost-center: "^cc-\d+"
+----
+
+La stratégie rejette la création de ce Pod :
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    foo: hello world
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Elle rejette également la création de ce Pod :
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    cost-center: cc-marketing
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Vous pouvez utiliser les paramètres de la stratégie pour forcer l'utilisation d'une spécification d'étiquette, quel que soit le contenu :
+
+[subs="+attributes",yaml]
+----
+constrained_labels:
+  mandatory-label: ".*" # <- this label must be present, we don't care about its value
+----
+
+== Échafaudage d'un nouveau projet de stratégie
+
+Vous pouvez créer un nouveau projet de stratégie en utilisant le https://github.com/kubewarden/go-policy-template[dépôt de modèle].
+Sélectionnez le bouton vert « Utiliser ce modèle » en haut de la page et suivez l'assistant de GitHub.
+
+Clonez le dépôt localement et définissez la directive `module` dans le fichier `go.mod` pour qu'elle ressemble à :
+
+[,go]
+----
+module <path to your repository>
+----
+
+[NOTE]
+====
+Une véritable stratégie utiliserait un chemin de dépôt, comme `github.com/kubewarden/go-policy-template`.
+====
+
+
+== Tests
+
+À condition que les outils nécessaires soient en place, une commande `make test` utilise Docker pour tirer une image de compilateur TinyGo en l'utilisant pour construire et tester le modèle de stratégie.
+
+La commande par défaut `make` construit la cible `policy.wasm`. Ensuite, `make test` exécute les tests Go définis.
+La commande `make e2e-tests` exécute des tests en utilisant https://github.com/bats-core/bats-core[bats] dans un cluster {short-project-name}.
+Après avoir cloné le `go-policy-template`, l'exécution de ces commandes vérifie que vous avez les outils nécessaires pour le tutoriel.
+
+.Sortie des commandes `make`
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+make test
+docker run \
+        --rm \
+        -e GOFLAGS="-buildvcs=false" \
+        -v /home/jhk/projects/suse/tmp/go-kw-demo:/src \
+        -w /src tinygo/tinygo:0.30.0 \
+        tinygo build -o policy.wasm -target=wasi -no-debug .
+Unable to find image 'tinygo/tinygo:0.30.0' locally
+0.30.0: Pulling from tinygo/tinygo
+9aaefb8797c4: Pull complete
+24ab7ca26e01: Pull complete
+ca4ea8be6361: Pull complete
+50380d0859d2: Pull complete
+4f4fb700ef54: Pull complete
+ea0ddd497f04: Pull complete
+01ba28116afb: Pull complete
+Digest: sha256:5cbf5e50aec3a00fcff8bb4ae070a07eea8198187a97b21dff6d873d2274ce7a
+Status: Downloaded newer image for tinygo/tinygo:0.30.0
+go test -v
+=== RUN   TestParsingSettingsWithNoValueProvided
+--- PASS: TestParsingSettingsWithNoValueProvided (0.00s)
+=== RUN   TestIsNameDenied
+--- PASS: TestIsNameDenied (0.00s)
+=== RUN   TestEmptySettingsLeadsToApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestEmptySettingsLeadsToApproval (0.00s)
+=== RUN   TestApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproval (0.00s)
+=== RUN   TestApproveFixture
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproveFixture (0.00s)
+=== RUN   TestRejectionBecauseNameIsDenied
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"info","message":"rejecting pod object","name":"test-pod","denied_names":"foo,test-pod"}
+|
+--- PASS: TestRejectionBecauseNameIsDenied (0.00s)
+PASS
+ok      github.com/kubewarden/go-policy-template        0.004s
+----
+
+et
+
+[subs="+attributes",console]
+----
+make e2e-tests
+bats e2e.bats
+e2e.bats
+ ✓ reject because name is on deny list
+ ✓ accept because name is not on the deny list
+ ✓ accept because the deny list is empty
+
+3 tests, 0 failures
+----
+
+======
