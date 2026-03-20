@@ -1,0 +1,46 @@
+include::partial$variables.adoc[]
+= C#
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erkunden und Erstellen von Validierungs- und Mutationsrichtlinien zur Zulassungskontrolle mithilfe des .NET Core SDK mit WASI-Unterstützung auf WebAssembly-Plattformen wie Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "c#"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Richtlinien schreiben", "c#", ".net"]
+:sidebar_label: C#
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+Derzeit hat .NET Core experimentelle Unterstützung für die WebAssembly WASI-Plattform.
+Dies stammt aus dem https://github.com/SteveSandersonMS/dotnet-wasi-sdk[`dotnet-wasi-sdk`] Projekt.
+
+[NOTE]
+====
+
+Sie benötigen keine Windows-Installation, um .NET Core-Code zu schreiben oder auszuführen.
+Alles kann auch auf einer Linux- oder macOS-Maschine erledigt werden.
+====
+
+
+== Aktueller Zustand
+
+Richtlinienautoren können die folgenden Ressourcen nutzen:
+
+* https://github.com/kubewarden/policy-sdk-dotnet[{project-name} .NET Core SDK]:
+dies bietet eine Reihe von Objekten und Funktionen, die den Prozess des Schreibens von Richtlinien vereinfachen.
+* https://github.com/kubewarden/policy-sdk-dotnet/tree/main/example[{short-project-name} Beispielrichtlinie]:
+dies ist ein Beispiel für eine funktionierende Richtlinie.
+
+Es sind keine Einschränkungen bekannt.
+Das SDK ermöglicht das Schreiben von sowohl validierenden als auch mutierenden Richtlinien.
+
+Es ist möglich, die
+https://www.nuget.org/packages/KubernetesClient.Models[`KubernetesClient.Models`]
+Bibliothek zu verwenden, um mit den Kubernetes-Objekten umzugehen.
+
+== Projektvorlage
+
+Derzeit haben wir keine Projektvorlage, die eine C#-Richtlinie erstellen kann.
+
+Bitte https://github.com/kubewarden/policy-sdk-dotnet/issues[melden Sie ein Problem]
+, wenn Sie interessiert sind.
