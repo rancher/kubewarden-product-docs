@@ -1,0 +1,29 @@
+include::partial$variables.adoc[]
+= Problem mit der Zertifikatsrotation des Policy Servers für Version ≤ v1.16.0
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Beheben von Problemen mit der Zertifikatsrotation des Policy Servers in {project-name}, beginnend mit Version 1.16.
+:doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["howto", "workarounds", "Zertifikate des Policy Servers"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "Zertifikate des Policy Servers"]
+:sidebar_label: Zertifikatsrotation
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+.Umgehungslösung für {project-name} v1.16.0 und früher
+====
+
+Diese Umgehungslösung ist nur für {short-project-name} v1.16.0 und früher erforderlich.
+Ab v1.17.0 erneuert der Controller die Zertifikate des Policy Servers automatisch.
+
+====
+
+Während des Freigabeprozesses für v1.14 entdeckte der {short-project-name} einen Fehler im Zusammenhang mit der Zertifikatsrotation des Policy Servers. Die Root-CA-Konfiguration sieht eine Laufzeit von 10 Jahren vor, aber jedes Zertifikats-Secret des Policy Servers hat eine Laufzeit von einem Jahr. Der Controller ist jedoch derzeit nicht in der Lage, sie automatisch zu erneuern.
+
+In der Version v1.14 stellte der {short-project-name} sicher, dass die Secrets des Policy Servers mit einer Laufzeit von 10 Jahren erstellt werden.
+
+Ein automatisierter Erneuerungsprozess ist für Version ≥ v1.16.0 vorhanden.
+
+Bis dahin können Benutzer das abgelaufene Zertifikats-Secret (policy-server-default) manuell löschen und einen Controller-Abgleich auslösen. Sie tun dies, indem Sie eine Richtlinie hinzufügen, entfernen oder aktualisieren oder die Anzahl der Replikate eines PolicyServers anpassen.

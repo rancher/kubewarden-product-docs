@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= Was ist {project-name}?
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über die Rolle von {project-name} im Kubernetes-Richtlinienmanagement, das die Durchsetzung von Compliance und die Optimierung von Ressourcen umfasst.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["Einführung"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "cncf", "cncf sandbox", "kubernetes", "Zulassungsrichtlinienmanager"]
+:sidebar_label: Einführung
+:sidebar_position: 1
+:slug: /
+:current-version: {page-origin-branch}
+
+{project-name} ist eine Kubernetes-Richtlinien-Engine.
+Ziel ist es, die universelle Richtlinien-Engine für Kubernetes zu sein.
+
+{intro-paragraph}
+
+== Wie hilft {project-name}?
+
+{short-project-name} bietet Flexibilität für die Zulassung und Durchsetzung von Richtlinien in einer Kubernetes-Umgebung.
+
+=== Vorteile und Nutzen
+
+- Verwenden Sie jede Programmiersprache, die https://webassembly.org[WebAssembly] Binärdateien erzeugt, um Ihre Richtlinien zu schreiben.
+- WebAssembly ermöglicht die Kompatibilität von Richtlinien über Prozessoren und Betriebssysteme hinweg.
+- Wiederverwendung von Richtlinien aus anderen Richtlinien-Engines, ohne sie neu schreiben zu müssen.
+- Verteilen Sie Richtlinien mithilfe von standardisierten und sicheren Mechanismen wie https://opencontainers.org[OCI]-konformen Registries.
+- Die Durchsetzung von Richtlinien bei der Zulassung stellt sicher, dass nur konforme Workloads ausgeführt werden.
+- Der {short-project-name} Audit-Scanner überprüft aktiv und kontinuierlich die Durchsetzung von Richtlinien über die Zeit.
+- Überprüfen Sie Richtlinien mit https://slsa.dev[SLSA] (Supply Chain Levels for Software Artifacts) Werkzeugen und Praktiken.
+- {project-name} bietet einen umfassenden Ansatz für das Management von Zulassungsrichtlinien.
+- Die CNCF-Mitgliedschaft und eine wachsende Open Source-Gemeinde und ein wachsendes Ökosystem unterstützen {short-project-name} bei Transparenz, Zusammenarbeit und Verbesserung.
+
+=== Einsatzbereiche
+
+- Sicherheitshärtung. Zum Beispiel Richtlinien durchsetzen, die Containerprivilegien einschränken, Netzwerkrichtlinien durchsetzen oder unsichere Image-Registries blockieren.
+- Compliance-Prüfung. Stellen Sie sicher, dass die Workloads den organisatorischen oder regulatorischen Standards und Best Practices entsprechen.
+- Ressourcenoptimierung. Setzen Sie Ressourcenlimits und -quoten durch.
+
+Es gibt weitere Dokumentation zu Anwendungsfällen auf der xref:use-cases.adoc[Seite der Anwendungsfälle].
+
+== Neu bei {short-project-name}?
+
+Wenn Sie neu im {short-project-name}-Projekt sind, beginnen Sie mit der xref:quick-start.adoc[Kurzanleitung] und der xref:explanations/architecture.adoc[Architektur]-Seite.
+Dann hängt es davon ab, wohin Ihre Interessen Sie führen. Für Richtlinienentwickler gibt es sprachspezifische Abschnitte in den Tutorials. Für Integratoren und Administratoren gibt es einen Abschnitt mit 'Anleitungen'. Der Abschnitt Erklärungen enthält nützliche Hintergrundmaterialien. Es gibt auch ein xref:glossary.adoc[Glossar].
+
+== Was ist WebAssembly?
+
+Wie auf https://webassembly.org/[der offiziellen Website von WebAssembly] angegeben:
+
+____
+WebAssembly (abgekürzt Wasm) ist ein binäres Instruktionsformat für eine stackbasierte virtuelle Maschine. Wasm ist als tragbares Kompilierungsziel für Programmiersprachen konzipiert, das die Bereitstellung im Web für Client- und Serveranwendungen ermöglicht.
+____
+
+Wasm wurde ursprünglich als "Erweiterung" des Browsers konzipiert. Die WebAssembly-Community engagiert sich jedoch in Bemühungen, die Ausführung von Wasm-Code außerhalb von Browsern zu ermöglichen.
+
+== Warum WebAssembly verwenden?
+
+Benutzer können Kubernetes-Richtlinien mit ihrer bevorzugten Programmiersprache schreiben, vorausgesetzt, ihre Toolchain kann Wasm-Binärdateien generieren.
+
+Wasm-Module sind tragbar, einmal erstellt, können sie auf jeder Art von Prozessorarchitektur und Betriebssystem ausgeführt werden. Zum Beispiel kann eine auf Apple Silicon entwickelte und gebaute Richtlinie ohne Konvertierung auf AMD64/Intel64 Linux ausgeführt werden.
+
+Richtlinienautoren können ihre Fähigkeiten, Werkzeuge und Best Practices wiederverwenden. Richtlinien sind "traditionelle" Programme, die wiederverwendbare Blöcke (reguläre Bibliotheken) haben können. Sie können sie linten und testen, und Sie können sie in aktuelle CI- und CD-Workflows integrieren.
+
+== Richtlinienverteilung
+
+Sie können {short-project-name}Richtlinien mit einem Standard-Webserver bereitstellen oder besser, Sie können sie in einem OCI-konformen Registry als https://github.com/opencontainers/artifacts[OCI-Artefakte] veröffentlichen.
+
+ifeval::["{build-type}" == "community"]
+
+== Anbieterneutralität
+
+{short-project-name} ist ein \link:https://contribute.cncf.io/maintainers/community/vendor-neutrality/[anbieterneutrales] Projekt, wie von der CNCF definiert.
+
+endif::[]
