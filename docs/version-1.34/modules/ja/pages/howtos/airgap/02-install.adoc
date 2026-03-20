@@ -1,0 +1,265 @@
+include::partial$variables.adoc[]
+
+= エアギャップ環境でのインストール
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}のイメージとポリシーを使用して、エアギャップ(された)環境に{project-name}をインストールするためのプライベートレジストリを構成します。
+:doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
+:doc-topic: [“operator-manual”, “air gap”, “installation”]
+:doc-type: [“howto”]
+:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “air gap installation”]
+:current-version: {page-origin-branch}
+
+{project-name}のエアギャップ環境でのインストールには、Kubernetesクラスターからアクセス可能なプライベートOpen Container Initiative (OCI)レジストリが必要です。
+{short-project-name}ポリシーはWebAssemblyモジュールであるため、OCIアーティファクトとしてOCI準拠のレジストリに保存できます。このOCIレジストリに{short-project-name}のイメージとポリシーを追加する必要があります。xref:/reference/artifacts.adoc[アーティファクト参照]ページで{short-project-name}アーティファクトのリストを参照できます。以下のセクションでは、手順について説明します。
+
+[NOTE]
+====
+link:https://docs.hauler.dev/docs/intro[Hauler]の使用をお勧めします。
+xref:/howtos/airgap/03-hauler.adoc[Haulerのドキュメントページ]をご覧ください。
+
+または、以下に示す手動プロセスを使用することもできます。
+====
+
+
+== Helmチャートをローカルに保存する
+
+次のHelmチャートをワークステーションにダウンロードする必要があります：
+
+[,console]
+----
+helm pull kubewarden/kubewarden-crds
+helm pull kubewarden/kubewarden-controller
+helm pull kubewarden/kubewarden-defaults
+helm pull kubewarden/sbomscanner
+----
+
+[NOTE]
+====
+オプションで、xref:/tutorials/verifying-kubewarden.adoc#_helm_charts[helmチャート]とxref:/tutorials/verifying-kubewarden.adoc#_container_images[コンテナイメージ]の署名を確認できます。
+====
+
+== コンテナイメージをローカルに保存する
+
+. 私たちの各Helmチャートには、それによって消費されるコンテナイメージの`imagelist.txt`が含まれており、該当する場合は、それが消費するポリシーのOCI Wasmモジュールを含む`policylist.txt`も含まれています。
++
+それらを取得するには、次のようにします。
++
+[,console]
+----
+helm pull --untar \
+  kubewarden/kubewarden-crds \
+  kubewarden/kubewarden-controller \
+  kubewarden/kubewarden-defaults \
+  kubewarden/sbomscanner
+----
++
+それから、それらを1つのファイルに連結します。
++
+[,console]
+----
+cat */imagelist.txt > kubewarden-images.txt
+----
+
+. https://github.com/kubewarden/utils[ユーティリティリポジトリ]から`kubewarden-save-images.sh`と`kubewarden-load-images.sh`をダウンロードします。
+. `.tar.gz`ファイルに{short-project-name}コンテナイメージを保存します:
++
+[,shell]
+----
+ ./kubewarden-save-images.sh \
+   --image-list ./kubewarden-images.txt \
+   --images kubewarden-images.tar.gz
+----
++
+Dockerはエアギャップインストールに使用されるイメージのプルを開始します。このプロセスには数分かかることがあります。完了すると、コマンドを実行した現在のディレクトリにtarball（`kubewarden-images.tar.gz`）があります。
+
+== ポリシーをローカルに保存します
+
+. 使用したいすべてのポリシーを`policies.txt`ファイルに追加します。
++
+[,console]
+----
+cat */policylist.txt > policies.txt
+----
++
+デフォルトポリシーのリストを含むファイルは、{short-project-name}デフォルトhttps://github.com/kubewarden/helm-charts/releases/[リリースページ]にあります。
+
+. https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller`リポジトリ]から`kubewarden-save-policies.sh`と`kubewarden-load-policies.sh`をダウンロードします。
+
+. ポリシーを`.tar.gz`ファイルに保存する：
++
+[,shell]
+----
+./kubewarden-save-policies.sh --policies-list policies.txt
+----
++
+`kwctl`を使用してポリシーをダウンロードします。`kubewarden-policies.tar.gz`アーカイブにはポリシーが含まれています。
+
+== Helmチャート
+
+次のHelmチャートをワークステーションにダウンロードする必要があります：
+
+[,shell]
+----
+helm pull kubewarden/kubewarden-crds
+helm pull kubewarden/kubewarden-controller
+helm pull kubewarden/kubewarden-defaults
+----
+
+== プライベートレジストリに投入します
+
+これらのファイルをエアギャップ環境に移動します：
+
+* `tgz`形式のHelmチャート（例：`kubewarden-crds-1.23.0.tgz`）
+* `kubewarden-policies.tar.gz`
+* `kubewarden-images.tar.gz`
+* `kubewarden-load-images.sh`
+* `kubewarden-load-policies.sh` および
+* `policies.txt`
+
+. {short-project-name} イメージをプライベートレジストリにロードします。Docker クライアントをローカルレジストリに対して認証する必要があります。
++
+[,shell]
+----
+ ./kubewarden-load-images.sh \
+   --image-list ./kubewarden-images.txt \
+   --images kubewarden-images.tar.gz \
+   --registry <REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+. {short-project-name} ポリシーをプライベートレジストリにロードします。`kwctl`でローカルレジストリの認証を行ってください（`kwctl`は、`docker`と同じメカニズム、すなわち`~/.docker/config.json`ファイルを使用して認証します）。
++
+[,shell]
+----
+ ./kubewarden-load-policies.sh \
+   --policies-list policies.txt \
+   --policies kubewarden-policies.tar.gz \
+   --registry <REGISTRY.YOURDOMAIN.COM:PORT> \
+   --sources-path sources.yml
+----
+
+[CAUTION]
+====
+
+`kwctl` コマンドは、これらのカテゴリのレジストリに接続するために`sources.yaml`ファイルが必要です。
+
+* 認証が必要です
+* 自己署名証明書が使用されています
+* TLSの終了は行われていません
+
+ドキュメントのxref:howtos/custom-certificate-authorities.adoc[カスタム証明書機関に関するセクション]を参照して、`sources.yaml`ファイルの設定方法を学んでください。
+
+====
+
+
+== {short-project-name}をインストールします
+
+プライベートレジストリに必要なすべてのものが揃ったので、{short-project-name}をインストールする。標準の{short-project-name}インストールとの唯一の違いは、コンテナイメージとポリシーのレジストリをプライベートレジストリに変更する必要があることです。
+
+{short-project-name}スタックをインストールします：
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-crds kubewarden-crds.tgz
+----
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-controller kubewarden-controller.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+[CAUTION]
+====
+
+`kubewarden-controller`チャートで利用可能なPolicy Reporterのサブチャートを使用するには、エアギャップ(された)環境でサブチャートに特有の他の値を定義する必要があります。以下に例を示します：
+
+[,shell]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden-controller.tgz \
+    --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set auditScanner.policyReporter=true \
+    --set policy-reporter.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.ui.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.image.repository=kyverno/policy-reporter \
+    --set policy-reporter.ui.image.repository=kyverno/policy-reporter-ui
+----
+
+サブチャートを有効にするために`auditScanner.policyReporter`を定義し、Policy Reporterのイメージを保存するレジストリとリポジトリを構成するために4つの値を定義する必要があります。Policy Reporterサブチャートの値に関する詳細情報は、https://github.com/kyverno/policy-reporter/tree/policy-reporter-2.19.4/charts/policy-reporter[Policy Reporterのドキュメント]を参照してください。
+
+====
+
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults kubewarden-defaults.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+[CAUTION]
+====
+
+`kubewarden-defaults` Helm Chartによってインストールされた推奨ポリシーを`global.cattle.systemDefaultRegistry`以外のレジストリからダウンロードするには、`recommendedPolicies.defaultPoliciesRegistry`設定を使用します。
+この構成により、ユーザーはポリシーのOCIアーティファクトを取得するために専用のレジストリを指定できます。これは、コンテナイメージリポジトリがOCIアーティファクトをサポートしていない場合に特に便利です。
+
+インストールし、インストールが完了するまで待つには、次のコマンドを使用します：
+
+[,console]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults kubewarden-defaults.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+  --set recommendedPolicies.defaultPoliciesRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+`recommendedPolicies.defaultPoliciesRegistry` 設定が設定されていない場合、`global.cattle.systemDefaultRegistry`がデフォルトのレジストリとして使用されます。
+
+====
+
+
+最後に、ポリシーサーバーを設定して、プライベートレジストリからポリシーを取得する必要があります。ドキュメントのxref:howtos/policy-servers/02-private-registry.adoc[プライベートレジストリの使用]セクションを参照してください。
+
+これで、クラスター内に{short-project-name}ポリシーを作成できます。ポリシーは、プライベートレジストリで利用可能でなければなりません。
+
+[,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v0.2.2
+  rules:
+  - apiGroups: [""]
+    apiVersions: [“v1”]
+    resources: [“pods”]
+    operations:
+    - CREATE
+  mutating: false
+EOF
+----
+
+[CAUTION]
+====
+
+`PolicyServer`リソースは、プライベートレジストリで利用可能なイメージを使用する必要があります。
+次に例を示します。
+
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: reserved-instance-for-tenant-a
+spec:
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
+  replicas: 2
+  serviceAccountName: sa
+----
+
+====
+
