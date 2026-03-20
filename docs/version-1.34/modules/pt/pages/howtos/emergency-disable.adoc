@@ -1,0 +1,65 @@
+include::partial$variables.adoc[]
+= Desabilitação de emergência
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Desabilitação de emergência
+:sidebar_position: 31
+:title: Desabilitação de emergência
+:description: Aprenda como desabilitar o {project-name} em situações de emergência, parando e excluindo configurações relacionadas, e depois restaurar.
+:keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
+:doc-persona: kubewarden-operator
+:doc-type: howto
+:doc-topic: operator-manual
+
+Em uma emergência, as equipes de operações podem precisar realizar ações que {project-name} bloquearia.
+
+Este documento explica como desabilitar {short-project-name} para que as equipes de operações possam resolver falhas no cluster. Após resolver a situação, as equipes de operações podem reiniciar {short-project-name}.
+
+== Desabilitar {short-project-name}
+
+Primeiro, pare o controlador {short-project-name}. Você faz isso escalando sua implantação para zero:
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=0 \
+  -n kubewarden
+----
+
+[tip]
+====
+Certifique-se de usar o nome do namespace onde a pilha {short-project-name} está implantada.
+Aqui, a pilha está implantada no namespace `kubewarden`.
+====
+
+Em seguida, exclua todos os `ValidatingWebhookConfigurations` e `MutatingWebhookConfigurations` criados por {short-project-name}:
+
+[source,console]
+----
+# Delete all the ValidatingWebhookConfiguration created by {short-project-name}
+kubectl delete validatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+
+# Delete all the MutatingWebhookConfiguration created by {short-project-name}
+kubectl delete mutatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+----
+
+== Restaurar {short-project-name}
+
+Quando a emergência acabar, restaure a pilha {short-project-name} trazendo de volta o controlador {short-project-name}:
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=1 \
+  -n kubewarden
+----
+
+[tip]
+====
+- Certifique-se de usar o nome do namespace onde a pilha {short-project-name} está implantada.
+  Aqui, a pilha está implantada no namespace `kubewarden`.
+- Certifique-se de escalar o controlador de volta ao seu valor original. Este exemplo assume que há apenas uma réplica do controlador em execução.
+====
+Uma vez que o controlador esteja em execução, ele reconcilia as políticas implantadas. Os recursos `ValidatingWebhookConfiguration` e `MutatingWebhookConfiguration`, anteriormente excluídos, são recriados, assim reforçando as políticas.
