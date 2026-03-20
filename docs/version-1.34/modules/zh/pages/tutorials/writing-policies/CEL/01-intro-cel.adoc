@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= CEL 简介
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解 CEL（计算表达式语言），这是一种快速、可移植且安全的表达式语言，旨在用于 Kubernetes 验证规则和 Kubernetes API 的扩展。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "cel", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "编写策略", "简介"]
+:current-version: {page-origin-branch}
+
+https://cel.dev[通用表达式语言 (CEL)] 是一种通用的表达式语言，旨在快速、可移植且安全地执行。CEL 作为一种语言，具有内存安全、无副作用、且保证程序终止（即程序不会无限循环），同时支持强类型和动态类型。您可以在 https://cel.dev[cel.dev] 了解更多关于 CEL 的信息，并在 https://playcel.undistro.io[CEL 游乐场] 中进行实践。
+
+== Kubernetes 中的 CEL
+
+CEL 被选为 Kubernetes 验证规则的语言，因为 CEL 表达式可以轻松地内联到 CRD 模式中，并在 "提前"（当 CRD 被创建和更新时）编译和类型检查。出于这些原因及其一般特性，它是扩展 Kubernetes API 的完美候选者。
+
+在 Kubernetes 1.30 中被标记为稳定，可以在 https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy[验证准入策略] 和其他验证规则中使用 CEL。有关更多信息，请参见 Kubernetes 文档 https://kubernetes.io/docs/reference/using-api/cel[这里]。
+
+=== Kubernetes 函数库
+
+Kubernetes CEL 验证规则可以访问多个函数库：
+
+* https://github.com/google/cel-spec/blob/v0.7.0/doc/langdef.md#list-of-standard-definitions[CEL 标准函数]
+* https://github.com/google/cel-spec/blob/v0.7.0/doc/langdef.md#macros[CEL 标准宏]
+* https://pkg.go.dev/github.com/google/cel-go/ext#Strings[CEL 扩展字符串函数库]
+* https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-cel-libraries[Kubernetes CEL 扩展库]，提供列表、正则表达式、URL、授权者、数量、可选类型、数值比较等的补充函数。
+
+== CEL 在 {project-name}: `cel-policy`
+
+{short-project-name} 提供 https://github.com/kubewarden/cel-policy[cel-policy]。
+这是一项策略，构建并打包上游的 https://pkg.go.dev/github.com/google/cel-go[cel-go] 解释器，以及上述列出的不同库，这些库可用于 Kubernetes 中的 CEL，来自 `apiextensions-apiserver`。
+
+此外，`cel-policy` 打包了一个 *{short-project-name} CEL 扩展库*，该库暴露了 {short-project-name} 的 https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[主机能力作为原生 CEL]：
+
+* Sigstore 验证
+* OCI 交互
+* 加密功能
+* 网络操作
+* 访问 Kubernetes 资源
+
+这意味着 `cel-policy` 是 Kubernetes CEL 的超集，并且向后兼容。可以重用为普通 Kubernetes 编写的 CEL，和/或利用 {short-project-name} 添加的功能。
+
+`cel-policy` 被编译并作为 CEL 解释器运行。政策的用户在 (Cluster)AdmissionPolicy 的 `spec.settings` 中传递所需的 CEL 表达式，得益于 CEL 的特性，表达式在创建或更新 (Cluster)AdmissionPolicy 时会被编译并进行类型检查以确保正确性。这意味着不需要自定义构建`cel-policy`。
+
+=== 与 ValidatingAdmissionPolicies 相比，{short-project-name} 的 `cel-policy` 的优势
+
+{short-project-name} `cel-policy`：
+
+* 它的 CEL 代码与 ValidatingAdmissionPolicies 向后兼容。
+* 与 ValidatingAdmissionPolicies 相反，它不需要像 ValidatingAdmissionPolicyBinding 这样的绑定，因为这一绑定已包含在 {short-project-name} 的 (Cluster)AdmissionPolicy 定义中。
+* 可以部署到缺乏 ValidatingAdmissionPolicies 支持的集群。
+* 具有上下文感知能力，并利用 {short-project-name} 的细粒度权限来实现 xref:../../../reference/spec/05-context-aware-policies.adoc[上下文感知]。
+* 作为 (Cluster)AdmissionPolicy 部署。
+* 得益于 {short-project-name} 在策略上的追踪和遥测，带来了显著优势。
+* 审计扫描器会考虑到这一点。
+* 得益于kwctl，可以在集群外进行开发和测试。
