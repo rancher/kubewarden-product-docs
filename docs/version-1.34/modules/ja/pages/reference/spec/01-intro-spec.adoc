@@ -1,0 +1,13 @@
+include::partial$variables.adoc[]
+= ポリシーコミュニケーション仕様
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 明確に定義されたAPIを通じて、{project-name}ポリシーをシームレスに連携・通信できる効果的な使い方を紹介します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["ポリシーの作成", "仕様", "導入"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "ポリシー仕様", "ポリシーコミュニケーション"]
+:sidebar_label: ポリシーコミュニケーション仕様
+:current-version: {page-origin-branch}
+
+ポリシー評価者は、明確に定義されたAPIを使用して{project-name}ポリシーと相互作用します。このセクションの目的は、ホスト（`policy-server`または`kwctl`であっても）が{short-project-name}のポリシーと通信するために使用するAPIを文書化することです。
