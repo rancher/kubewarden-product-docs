@@ -1,0 +1,38 @@
+include::partial$variables.adoc[]
+= Open Policy Agent简介
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解Open Policy Agent如何使用Rego语言编写评估和生成安全决策输出的策略。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "open policy agent", "opa", "rego"]
+:sidebar_label: 简介
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Open Policy Agent支持已从以下版本开始引入：
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+====
+
+
+Open Policy Agent（OPA）是一个通用的策略框架，使用Rego语言编写策略。
+
+== 简介
+
+Rego策略通过接收要评估的输入并生成响应输出来工作。
+从这个意义上说，OPA没有针对Kubernetes编写策略的特定工具。
+
+具体来说，OPA中的策略接收JSON输入并生成JSON输出。
+OPA服务器配置为接收来自Kubernetes的准入审查请求。
+策略以JSON格式接收Kubernetes `AdmissionReview`对象。
+它们必须返回一个有效的`AdmissionReview`对象作为评估结果。
+
+== 与现有策略的兼容性
+
+所有策略都可以使用官方`opa` CLI工具编译为`wasm`目标（WebAssembly）。
+
+在策略执行方面，您可以阅读更多关于在{short-project-name}中实现的xref:tutorials/writing-policies/rego/02-builtin-support.adoc[OPA内置支持]的信息。

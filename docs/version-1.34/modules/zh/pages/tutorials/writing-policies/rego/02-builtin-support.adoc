@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= 内置支持
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 确定哪些内置函数可用于 WebAssembly 模块，并了解它们在 Rego 策略开发中的实现和使用。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "built-in-support"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "内置 wasm 支持"]
+:sidebar_label: 内置支持
+:current-version: {page-origin-branch}
+
+此外，为 `wasm` 目标构建策略时，还需要运行该策略。
+
+Open Policy Agent (OPA) 团队有一个页面，您可以查看 https://www.openpolicyagent.org/docs/latest/policy-reference/#built-in-functions[内置支持]。
+
+在将 Rego 策略构建为 WebAssembly 模块时，其中某些内置函数包含在 Wasm 文件本身中。
+它们是链接的内置页面中用绿色勾号标记的内置函数。
+评估模块的 WebAssembly 运行时提供其他函数。
+
+标记为 `SDK-dependent` 的内置函数是主机必须实现的函数，在这种情况下，主机是 {project-name}。
+OPA 和 Gatekeeper 可能会根据策略的需要使用它们。
+无论如何，这些内置函数对策略是可见的，任何新策略或现有策略都可能依赖于它们。
+
+仍然有某些内置函数尚未由 {short-project-name} 提供，然而，根据公开可见的策略，已经支持的函数应该足够满足大多数 Kubernetes 用户的需求。
+
+https://github.com/kubewarden/policy-evaluator/issues/56[这个 GitHub 问题] 跟踪我们仍需实现的 Rego 内置函数。
+欢迎在此评论以帮助优先考虑我们的工作。
+
+== 执行缺少内置函数的策略
+
+当策略与 `kwctl` 或 `policy-server` 一起运行时，检查策略使用的内置函数列表。
+如果使用的内置函数中有任何缺失，程序将停止执行并记录一个致命错误，报告缺失的内置函数。
