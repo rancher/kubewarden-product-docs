@@ -1,0 +1,188 @@
+include::partial$variables.adoc[]
+
+= プライベートSigstoreインスタンスを使用するためのPolicyServersの設定
+:description: ポリシー署名検証のために、{project-name}でプライベートまたは自己ホスト型のSigstoreインスタンスを使用するようにPolicyServersを設定します。
+:keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "policy-servers", "private-sigstore"]
+:sidebar_label: プライベートSigstoreインスタンスの使用
+:sidebar_position: 5
+
+PolicyServerをプライベートまたは自己ホスト型のSigstoreインスタンスを使用するように設定できます。これにより、デフォルトの公共Sigstoreインフラストラクチャの代わりにポリシー署名検証が行えます。これは、エアギャップ(された)環境や独自のSigstoreデプロイメントを運用している場合に便利です。
+
+== 前提条件
+
+* Fulcio、Rekor、TSA、およびCTログサービスにアクセス可能な稼働中のプライベートSigstoreインスタンス
+* `kubectl`の`kubewarden`ネームスペースへのアクセス
+* ローカルにインストールされたhttps://docs.sigstore.dev/cosign/system_config/installation/[`cosign`] CLI。
+* ローカルにインストールされたhttps://jqlang.org/[`jq`]
+
+== ステップ1 - `ClientTrustConfig` JSONを生成する
+
+PolicyServerは、プライベートSigstoreインスタンスの信頼アンカーと署名設定を記述した`ClientTrustConfig` JSONを期待します。
+
+=== 証明書と公開鍵を取得する
+
+プライベートSigstoreインスタンスから以下を取得します：
+
+* `fulcio.pem` - Fulcio CA証明書チェーン（PEM）
+* `rekor.pub` - Rekor透明性ログ公開鍵
+* `tsa.pem` - タイムスタンプ認証局証明書チェーン（PEM）
+* `ctfe.pub` - CTログ公開鍵
+
+[source,shell]
+----
+# Fulcio CA certificate chain
+curl --fail -o fulcio.pem "${FULCIO_URL}/api/v1/rootCert"
+
+# Rekor transparency log public key
+curl --fail -o rekor.pub "${REKOR_URL}/api/v1/log/publicKey"
+
+# Timestamp Authority certificate chain
+curl --fail -o tsa.pem "${TSA_URL}/api/v1/timestamp/certchain"
+
+# CT log public key (from the Kubernetes secret in tuf-system namespace)
+kubectl get secret -o json -n tuf-system ctlog-public-key \
+  | jq -r ".data.public" | base64 -d > ctfe.pub
+----
+
+[WARNING]
+.セキュリティ上の考慮事項
+====
+
+Sigstoreインスタンスから証明書とキーを安全にダウンロードしてください。そうしないと、{project-name}が改ざんされたデータで構成される可能性があります。
+
+上記のコマンドは、テスト環境でそれを行う方法の例です。
+この情報を正しく取得する方法を学ぶために、組織内の適切なチームに相談してください。
+
+====
+
+=== 信頼されたルートと署名設定を生成します。
+
+プライベートSigstoreサービスのURLを指す環境変数を設定します：
+
+[source,shell]
+----
+export FULCIO_URL=https://fulcio.example.com
+export REKOR_URL=https://rekor.example.com
+export TSA_URL=https://tsa.example.com
+export CTLOG_URL=https://ctlog.example.com
+export ISSUER_URL=https://oidc.example.com
+----
+
+信頼されたルートを生成するには、`cosign`を実行します：
+
+[source,shell]
+----
+cosign trusted-root create \
+  --fulcio="url=$FULCIO_URL,certificate-chain=fulcio.pem" \
+  --rekor="url=$REKOR_URL,public-key=rekor.pub,start-time=2024-01-01T00:00:00Z" \
+  --tsa="url=$TSA_URL,certificate-chain=tsa.pem" \
+  --ctfe="url=$CTLOG_URL,public-key=ctfe.pub,start-time=2024-01-01T00:00:00Z" \
+  --out trusted_root.json
+----
+
+署名設定を生成するには、`cosign`を実行します：
+
+[source,shell]
+----
+cosign signing-config create \
+  --fulcio="url=$FULCIO_URL,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --rekor="url=$REKOR_URL,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --rekor-config="ANY" \
+  --oidc-provider="url=$ISSUER_URL/auth,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --tsa="url=$TSA_URL/api/v1/timestamp,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --tsa-config="EXACT:1" \
+  --out signing_config.json
+----
+
+[NOTE]
+====
+`--oidc-provider`はオプションです。プライベートSigstoreインスタンスに専用のOIDCプロバイダーがある場合のみ含めてください。ポリシーがKubernetesサービスアカウントトークン（`kubectl create token`経由）を使用して署名されている場合は、このフラグを省略してください。
+
+`start-time`の値は、証明書が発行される前の日付（またはSigstoreインスタンスのデプロイ日）に設定する必要があります。
+====
+
+両方のコマンドのすべての利用可能なフラグとJSONフィールド定義の完全な説明については、https://docs.sigstore.dev/cosign/system_config/installation/[cosign CLIリファレンス]およびhttps://github.com/sigstore/protobuf-specs[Sigstoreクライアント信頼設定仕様]を参照してください。
+
+=== `trust_config.json`に統合してください。
+
+[source,shell]
+----
+cat << EOF > trust_config.json
+{
+  "mediaType": "application/vnd.dev.sigstore.clienttrustconfig.v0.1+json",
+  "trustedRoot": $(cat trusted_root.json),
+  "signingConfig": $(cat signing_config.json)
+}
+EOF
+----
+
+== ステップ2 - `kubewarden`ネームスペースにConfigMapを作成します。
+
+`ClientTrustConfig` JSONをキー`sigstore-trust-config`を持つConfigMapに保存します。ConfigMap **は**アドミッションコントローラーのネームスペースに存在する必要があります。この例では`kubewarden`です：
+
+[source,shell]
+----
+kubectl --namespace kubewarden create configmap my-sigstore-trust-config \
+  --from-file=sigstore-trust-config=trust_config.json
+----
+
+== ステップ3 - 検証設定ConfigMapを作成します。
+
+署名されたポリシーの証明書のアイデンティティ制約を指定する`verification_config.yaml`ファイルを作成します。例えば、Kubernetesサービスアカウントトークンを使用する場合:
+
+[source,yaml]
+----
+allOf:
+  - kind: genericIssuer
+    issuer: https://kubernetes.default.svc.cluster.local
+    subject:
+      equal: https://kubernetes.io/namespaces/<namespace>/serviceaccounts/<serviceaccount>
+anyOf: null
+----
+
+`<namespace>`と`<serviceaccount>`をポリシー署名時に使用するネームスペースとサービスアカウントに置き換えてください。
+
+ConfigMapを作成します:
+
+[source,shell]
+----
+kubectl --namespace kubewarden create configmap my-verification-config \
+  --from-file=verification-config=verification_config.yaml
+----
+
+[NOTE]
+====
+ConfigMap キー**は**`verification-config`でなければなりません（ファイル名ではありません）。{short-project-name}はこの正確なキーを探します。
+====
+
+== ステップ4 - PolicyServerを構成します
+
+PolicyServerの`spec.sigstoreTrustConfig`と`spec.verificationConfig`を、作成したConfigMapの名前に設定します:
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: default
+spec:
+  image: ghcr.io/kubewarden/policy-server:latest
+  replicas: 1
+  sigstoreTrustConfig: my-sigstore-trust-config
+  verificationConfig: my-verification-config
+----
+
+コントローラーはConfigMapをポリシーサーバーポッドにマウントし、署名検証のためにプライベートSigstoreインスタンスを使用するように構成し、検証設定で指定されたアイデンティティ制約を強制します。
+
+[WARNING]
+.セキュリティ上の考慮事項
+====
+
+`sigstoreTrustConfig`によって参照されるConfigMapに書き込みアクセス権を持つユーザーは、ポリシー署名検証に影響を与えることができます。これにより、異なるSigstore信頼ルートを置き換え、署名チェックを回避することが可能になる場合があります。
+
+Kubernetes RBACを使用してこのConfigMapへのアクセスを制限し、最小特権の原則に従ってください。
+
+====
