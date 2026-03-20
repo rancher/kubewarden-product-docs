@@ -1,0 +1,67 @@
+include::partial$variables.adoc[]
+= 使用 Rancher Fleet 管理 {project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用 Rancher Fleet 和 Kubernetes 自定义资源定义（CRD）管理 {project-name} Helm 图表，以实现 GitOps 方法。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "rancher-fleet"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}","kubernetes", "kubewarden", "rancher fleet"]
+:sidebar_label: Rancher Fleet
+:sidebar_position: 130
+:current-version: {page-origin-branch}
+
+您可以像其他 Helm 图表一样，使用 https://fleet.rancher.io/[Rancher Fleet] 管理 {project-name} Helm 图表。
+Rancher Fleet 使用 Kubernetes CRD 定义 GitOps 方法来管理 Kubernetes 集群。
+它通过定义 https://fleet.rancher.io/concepts[Fleet Bundles] 来实现。
+
+== 安装
+
+{short-project-name} 图表是标准图表，它们相互依赖：
+
+`kubewarden-crds` ← `kubewarden-controller` ← `kubewarden-defaults`
+
+请参阅 xref:/quick-start.adoc[快速入门文档] 以获取更多信息。
+
+使用 Rancher Fleet，您可以在 https://fleet.rancher.io/ref-fleet-yaml[`fleet.yaml`] 文件中使用 `dependsOn` 编码图表依赖关系。
+
+在图表准备好之前，您可能会看到临时错误，例如：
+
+[subs="+attributes",console]
+----
+ErrApplied(1) [Cluster fleet-local/local: dependent bundle(s) are not ready:
+[kubewarden-example-helm-kubewarden-controller]]
+----
+
+这些错误并不表示有问题，一旦图表完成部署，它们将不再出现。
+
+== 去除
+
+[CAUTION]
+====
+
+当去除 GitRepo 时，所有 3 个 {short-project-name} 图表会同时被去除。
+这意味着 `kubewarden-crds` 图表被去除。
+
+{short-project-name} 在 `kubewarden-controller` 图表中使用预删除 helm 钩子作业来删除默认的策略服务器。
+这个预删除钩子是必要的，以便在删除 PolicyServer 之前清空策略的网络钩子。
+对于任何策略引擎，情况都是如此。
+如果不这样做，集群可能会保留针对已不存在策略的 webhook，从而拒绝所有请求并进入失败状态。
+
+同时去除 GitRepo（从而去除 `kubewarden-crds` 图表）和 `kubewarden-controller` 图表，会导致预删除钩子作业失败。
+这意味着去除操作不完整，导致集群中遗留“残骸”。
+====
+
+
+自动卸载 CRD 通常不被任何工具支持，Rancher Fleet 也不例外。
+
+要执行正确的删除，请确保首先从集群中删除 `kubewarden-defaults` 的 Bundle。
+通过将这些更改提交到持有 Fleet 配置的储存库来完成此操作，然后等待其应用。
+然后以相同的方式去除 `kubewarden-controller`，最后去除 `kubewarden-crds`。
+
+另一个选项是添加两个 GitRepo，一个仅用于 CRD，另一个用于其余的 {short-project-name} Helm 图表。
+这使您可以先去除 {short-project-name} 图表，最后去除 {short-project-name} CRD。
+
+== 示例
+
+有关 Fleet bundle 定义的示例，请参见 https://github.com/kubewarden/fleet-example[github.com/kubewarden/fleet-example]。

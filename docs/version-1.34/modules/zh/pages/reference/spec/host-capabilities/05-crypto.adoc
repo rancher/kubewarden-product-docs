@@ -1,0 +1,73 @@
+include::partial$variables.adoc[]
+= 加密能力
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解用于评估正在使用的PKI证书的Wasm主机的加密能力和功能。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "cryptographic-capabilities"]
+:doc-type: ["reference"]
+:keywords: ["Kubewarden", "kubernetes", "策略规范", "加密能力"]
+:sidebar_label: 加密能力
+:current-version: {page-origin-branch}
+
+由于撰写时Wasm的限制，某些加密库无法编译为Wasm。与此同时，{project-name}需要这些库的策略可以执行回调，以在主机端评估加密功能。它们接收结果，并继续执行任务。
+
+== 行为
+
+Wasm主机依赖于`rustls-wepki`来实现x.509和PKI证书。也就是说：
+
+- 密钥使用：我们选择接受任何密钥使用，这有助于覆盖多个用例（如往常一样，如果您想讨论不同的方法，请与我们联系）。
+- 证书链：如果其中间CA已过期，则该证书将被视为不受信任。
+- 证书到期日期：如果提供了证书链，我们将始终验证证书的整个有效期。Wepki不检查root CA的到期情况。
+- 我们始终验证证书，如果未提供链，则使用Mozilla的CA。
+
+== WaPC协议合同
+
+如果您正在实现自己的语言SDK，这些是主机公开的执行加密检查的函数：
+
+=== waPC函数 - `v1/is_certificate_trusted` 输入
+
+[,hcl]
+----
+# Certificate:
+{
+  # **mandatory**: Which encoding is used by the certificate
+  # Either the string "Pem" or "Der".
+  "encoding": string,
+  # Actual certificate
+  # The certificate is UTF-8 encoded.
+  # It's an array of bytes of the unicode code pointers of a PEM/DER encoded
+  # certificate string.
+  "data": [byte(int), ..., byte(int)]
+}
+
+{
+  # **mandatory**: PEM-encoded certificate to verify
+  "cert": Certificate,
+  # optional:
+  "cert_chain": [
+      # list of certs, ordered by trust
+      # usage (intermediates first, root last)
+      # If not provided, Mozilla's CA is used.
+      Certificate,
+      ...
+      Certificate,
+    ],
+  # RFC 3339 time format string, to check expiration
+  # against.
+  # If missing, time is now.
+  "not_after": string
+}
+----
+
+=== waPC函数 - `v1/is_certificate_trusted` 输出
+
+[,hcl]
+----
+{
+   # true if certificate verified:
+   "trusted": boolean,
+   # empty if trusted == true:
+   "reason": string
+}
+----

@@ -1,0 +1,264 @@
+include::partial$variables.adoc[]
+
+= 常用任务
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用 {project-name} 和 kwctl CLI 工具管理 Kubernetes 集群中的策略。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["common-tasks"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:current-version: {page-origin-branch}
+
+这描述了在您 xref:quick-start.adoc#installation[安装 {project-name}] 后在 Kubernetes 集群中常见的任务。
+
+这些单独的任务是按逻辑顺序排列的。
+
+== 测试策略
+
+{short-project-name} 使用两个工具来帮助您查找策略并在本地测试它们：
+
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub]，使用他们针对 {short-project-name} 策略的软件包过滤器
+* https://github.com/kubewarden/kwctl[`kwctl`]，一个 CLI 工具
+
+=== Artifact hub
+
+Artifact hub 托管社区贡献的策略。例如，您可以找到由 {short-project-name} 开发者创建的 https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[已弃用的 Kubernetes Pod 安全策略] 的替代品。
+
+如下面的截图所示，一旦您找到感兴趣的策略，选择 `Install` 按钮并使用 `kwctl` 获取您集群的策略。
+
+image::tasks-artifact-hub.png[Artifact Hub]
+
+[NOTE]
+====
+
+以前，{short-project-name} 策略可以在 https://hub.kubewarden.io[{short-project-name} 策略中心] 找到。这已经被 https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[退役]。
+现在可以从 https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io] 获取策略。
+
+====
+
+
+=== `kwctl` CLI 工具
+
+`kwctl` 是 {short-project-name} 的 CLI 工具，供策略作者和集群管理员在应用于 Kubernetes 集群之前测试策略。
+
+该工具的界面与 `docker` CLI 工具类似。
+
+==== 使用案例
+
+您可以使用 `kwctl` 来帮助处理这些场景：
+
+_作为策略作者_
+
+* _对您的策略进行端到端测试_：测试您的策略以应对精心设计的Kubernetes请求，并确保您的策略按预期行为运行。您甚至可以测试需要访问正在运行的集群的上下文感知策略。
+* _在您的Wasm模块中嵌入元数据_：二进制文件包含其执行所需权限的注释。您可以使用`kwctl`检查和修改这些注释。
+* _将策略发布到OCI注册表_：该二进制文件是完全合规的OCI对象，可以存储在OCI注册表中。
+
+_作为集群管理员_
+
+* _检查远程策略_：给定在OCI注册表或HTTP服务器中的策略，显示该策略的所有静态信息。
+* _在您的集群中进行策略的试运行_：测试该策略以应对精心设计的Kubernetes请求，并确保该策略在您提供的输入数据下按预期行为运行。您还可以在试运行模式下测试需要访问正在运行的集群的上下文感知策略。
+* _为您的策略生成初始 `ClusterAdmissionPolicy` 脚手架_：
+  生成一个 `YAML` 文件，包含所有必需的设置，可以使用 `kubectl` 应用到您的 Kubernetes 集群。
+
+==== 安装
+
+`kwctl` 稳定版本的二进制文件可从 https://github.com/kubewarden/kwctl/releases[GitHub 储存库] 获取。要从 GitHub `kwctl` https://github.com/kubewarden/kwctl[储存库] 构建，您需要一个 https://www.rust-lang.org/tools/install[Rust] 开发环境。
+
+==== 用法
+
+您可以通过运行以下命令列出所有的 `kwctl` 选项和子命令：
+
+[subs="+attributes",shell]
+----
+$ kwctl --help
+kwctl 0.2.5
+{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {short-project-name} policies
+
+USAGE:
+    kwctl [OPTIONS] <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help       Print help information
+    -v               Increase verbosity
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    annotate       Add {short-project-name} metadata to a WebAssembly module
+    completions    Generate shell completions
+    digest         Fetch the digest of its OCI manifest
+    help           Print this message or the help of the given subcommand(s)
+    inspect        Inspect {short-project-name} policy
+    policies       Lists all downloaded policies
+    pull           Pulls a {short-project-name} policy from a given URI
+    push           Pushes a {short-project-name} policy to an OCI registry
+    rm             Removes a {short-project-name} policy from the store
+    run            Runs a {short-project-name} policy from a given URI
+    scaffold       Scaffold a Kubernetes resource or configuration file
+    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+----
+
+以下是一些命令使用示例：
+
+* _列出策略_：列出存储在本地 `kwctl` 注册表中的所有策略
+ ** 命令：`kwctl policies`
+* _获取策略_：下载并将策略存储在本地 `kwctl` 存储中
+ ** 命令：`kwctl pull <policy URI>`
++
+[subs="+attributes",shell]
+----
+$ kwctl pull registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+
+$ kwctl policies
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+| Policy                                                       | Mutating | Context aware | SHA-256      | Size     |
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+| registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 | no       | no            | 59e34f482b40 | 21.86 kB |
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+----
+* _了解策略的工作原理_：检查策略元数据
+ ** 命令：`kwctl inspect <policy URI>`
++
+[subs="+attributes",shell]
+----
+  $ kwctl inspect registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+  Details
+  title:              pod-privileged
+  description:        Limit the ability to create privileged containers
+  author:             Flavio Castelli
+  url:                https://github.com/kubewarden/pod-privileged-policy
+  source:             https://github.com/kubewarden/pod-privileged-policy
+  license:            Apache-2.0
+  mutating:           false
+  context aware:      false
+  execution mode:     kubewarden-wapc
+  protocol version:   1
+
+  Annotations
+  io.kubewarden.kwctl 0.1.9
+
+  Rules
+  ────────────────────
+  ---
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    resources:
+      - pods
+    operations:
+      - CREATE
+  ────────────────────
+
+  Usage
+  This policy doesn't have a configuration. Once enforced, it will reject
+  the creation of Pods that have at least a privileged container defined.
+----
+* _评估策略_：评估策略，并在可用时找到匹配您要求的正确配置值。
++
+您需要对 https://kubernetes.io/docs/reference/[Kubernetes REST APIs] 有一定的了解。
+
+ ** 命令：`kwctl run -r <"Kubernetes Admission request" file path> -s <"JSON document" file path> <policy URI>`
+ ** 方案 1:
+  *** 请求评估：创建一个没有 'privileged' 容器的 pod
++
+[subs="+attributes",shell]
+----
+$ kwctl run registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 -r unprivileged-pod-request.json
+{"uid":"C6E115F4-A789-49F8-B0C9-7F84C5961FDE","allowed":true,"status":{"message":""}}
+----
+
+  *** 下载策略二进制文件的等效命令：
++
+[subs="+attributes",shell]
+----
+`$ kwctl run file://$PWD/pod-privileged-policy.wasm -r unprivileged-pod-request.json
+{"uid":"C6E115F4-A789-49F8-B0C9-7F84C5961FDE","allowed":true,"status":{"message":""}}
+----
+
+  *** 结果：该策略允许请求
+ ** 方案 2:
+  *** 请求评估：创建一个至少包含一个 'privileged' 容器的 pod
+  *** 命令：
++
+[subs="+attributes",shell]
+----
+kwctl run registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 -r privileged-pod-request.json
+----
+
+  *** 下载策略二进制文件的等效命令：`kwctl run file://$PWD/pod-privileged-policy.wasm -r privileged-pod-request.json`
+  *** 输出：
++
+[subs="+attributes",json]
+----
+{
+  "uid": "8EE6AF8C-C8C8-45B0-9A86-CB52A70EC50D",
+  "allowed": false,
+  "status": { "message": "User 'kubernetes-admin' cannot schedule privileged containers" }
+}
+----
+
+  *** 结果：该策略拒绝请求
+
++
+有关更复杂的示例，请参阅博客文章 https://www.kubewarden.io/blog/2021/06/kwctl-intro-for-kubernetes-administrators/[向 Kubernetes 管理员介绍 `kwctl`]。
+
+== 实施策略
+
+您通过定义一个 `ClusterAdmissionPolicy` 来实施策略，然后使用 `kubectl` 将其部署到您的集群中。
+
+`kwctl` 帮助从您想要实施的策略生成一个 `ClusterAdmissionPolicy`。
+
+在您生成了 `ClusterAdmissionPolicy` 并将其应用到您的集群后，您可以按照下面的 xref:quick-start.adoc#_example_enforce_your_first_policy[快速入门] 中描述的步骤进行操作：
+
+* 从策略 `ClusterAdmissionPolicy` 生成 `manifest` 并将其保存到文件中
+ ** 命令：`kwctl scaffold manifest -t ClusterAdmissionPolicy <policy URI> > <"policy name".yaml>`
++
+[subs="+attributes",shell]
+----
+$ kwctl scaffold manifest -t ClusterAdmissionPolicy registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+---
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9"
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+  mutating: false
+----
+
++
+
+[TIP]
+====
+默认情况下，`name` 的值设置为 `generated-policy`。
+您可能希望在部署 `ClusterAdmissionPolicy` 之前编辑它。
+前一个示例中的名称设置为 `privileged-pods`。
+====
+
+* 将 `ClusterAdmissionPolicy` 部署到您的 Kubernetes 集群中
+ ** 命令：`kubectl apply -f <"policy name".yaml>`
++
+[subs="+attributes",shell]
+----
+$ kubectl apply -f pod-privileged-policy.yaml
+clusteradmissionpolicy.policies.kubewarden.io/privileged-pods created
+----
+
+在部署 `ClusterAdmissionPolicy` 后，发送到您的集群的所有请求都会根据策略进行评估，前提是它们在策略范围内。
+
+== 后续步骤
+
+* xref:tutorials/writing-policies/index.adoc[编写策略] 解释了如何用不同的语言编写策略并生成 WebAssembly 二进制文件，以便它们可以被 {short-project-name} 使用。
+* xref:../explanations/distributing-policies.adoc[分发策略] 解释了如何将策略发布到 https://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCI 注册表]。

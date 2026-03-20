@@ -1,0 +1,13 @@
+include::partial$variables.adoc[]
+= 策略沟通规范
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过一个定义良好的API，发现如何有效地使用{project-name}策略，以实现无缝的互动和沟通。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "introduction"]
+:doc-type: ["reference"]
+:keywords: ["Kubewarden", "kubernetes", "策略规范", "策略沟通"]
+:sidebar_label: 策略沟通规范
+:current-version: {page-origin-branch}
+
+策略评估器通过一个定义良好的API与{project-name}策略进行交互。本节的目的是记录主机（无论是`policy-server`还是`kwctl`）用于与{short-project-name}的策略进行沟通的API。

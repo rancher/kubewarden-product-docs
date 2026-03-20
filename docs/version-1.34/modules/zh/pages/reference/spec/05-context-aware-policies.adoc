@@ -1,0 +1,166 @@
+include::partial$variables.adoc[]
+= 上下文感知策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 探索在准入控制中上下文感知策略的能力，包括资源访问和缓存，以优化策略评估。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "context-aware-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "策略规范", "上下文感知策略"]
+:sidebar_label: 上下文感知策略
+:current-version: {page-origin-branch}
+
+`policy-server`能够向策略暴露集群信息，以便它们可以根据其他现有资源做出决策，而不仅仅是基于准入请求提供的详细信息。
+
+托管策略的策略服务器检索Kubernetes资源。应用于策略服务器服务账户的RBAC规则调节对Kubernetes的访问。
+
+由{project-name} Helm图表部署的`default`策略服务器可以访问以下Kubernetes资源：
+
+* 名称空间
+* 服务
+* Ingresses
+
+[CAUTION]
+====
+
+策略服务器对从Kubernetes API服务器获取的结果进行缓存，以减少对Kubernetes这一核心部分的负载。这意味着信息可能会过时或缺失。
+
+====
+
+
+== 支持矩阵
+
+[cols=",^,"]
+|===
+| 策略类型 | 支持 | 注意
+
+| 传统编程语言
+| ✅
+| -
+
+| Rego
+| ✅
+| 自{short-project-name} 1.9版本发布以来
+
+| WASI
+| ✅
+| 自{short-project-name} 1.10.0版本发布以来，仅适用于Go SDK
+|===
+
+== 约束
+
+{short-project-name}的优先事项是减少对Kubernetes API服务器的查询次数。{short-project-name}考虑了两个限制：
+
+* 内存使用：策略服务器进程在内存中缓存从Kubernetes获取的数据。获取的数据越多，策略服务器Pod消耗的内存就越多。
+* 一致性：由策略服务器维护的缓存可能包含过时的数据。新的资源可能缺失，已删除的资源可能仍然可用，而已更改的资源可能包含旧数据。这可能会影响策略评估。
+
+=== 列出多个资源
+
+{short-project-name} 策略可以同时获取多个资源。例如，它们可以发出类似于 "获取在 `default` 名称空间中定义的所有 Pods，且标签 `color` 设置为 ``green`` 的查询。"
+
+通过这样的查询，策略服务器获取所有符合用户标准的资源。资源获取是分批进行的，以减少对Kubernetes API服务器的负载。在将资源存储到内存之前，策略服务器会删除每个资源的 `managedFields` 属性，以减少内存消耗。该属性对策略没有用处，并占用大量内存。
+
+然后，策略服务器创建一个 https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes[Kubernetes watch] 来保持缓存对象列表的更新。策略服务器不控制 Kubernetes API 服务器发送资源更改通知的速度。这取决于不同的外部因素，例如针对Kubernetes API服务器创建的 watch 数量及其负载。
+
+最后，当前代码有以下限制。考虑这两个查询：
+
+* `kubectl get pods -n default`
+* `kubectl get pods -n default -l color=green`
+
+策略服务器创建两个 watch，并复制第二个查询的所有 Pods。此限制将在未来的 {short-project-name} 版本中移除。
+
+=== 获取特定资源
+
+{short-project-name} 策略可以获取在集群中定义的特定资源。
+例如，它们可以发出类似于 "获取在 `psql-0` 名称空间中定义的名为 `db` 的 Pod 的查询。"
+
+默认情况下，此查询获取对象并将其存储在内存缓存中，缓存五秒钟。在这五秒内，策略接收缓存的数据。
+
+策略作者还可以决定直接查询，跳过缓存。
+始终提供最新数据。这会对Kubernetes API服务器造成更大的负载（取决于策略触发的频率），并在评估准入请求时引入更多延迟。
+
+直接或缓存的查询行为由策略作者在每个查询级别上使用{short-project-name} SDK进行配置。
+
+== ClusterAdmissionPolicies
+
+ClusterAdmissionPolicies具有字段https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/ClusterAdmissionPolicy/v1#spec-contextAwareResources[spec.contextAwareResources]。
+该字段提供了策略需要访问的`GroupVersionKind`资源列表。这允许策略编写者将策略所需的“权限”与策略一起交付。此外，这允许策略操作员在部署时审查策略所需的“权限”。
+
+=== 在本地测试上下文感知策略
+
+除了在集群中运行策略进行端到端测试外，您还可以使用`kwctl` CLI工具在集群上运行策略和模拟请求。
+
+为此，`kwctl run`可以首先将与集群的所有交互记录到文件中：
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --record-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+这将创建以下`replay-session.yml`文件：
+
+[subs="+attributes",yaml]
+----
+# replay-session.yml
+---
+- type: Exchange
+  request: |
+    !KubernetesGetResource
+    api_version: /v1
+    kind: Pod
+    name: p-testing
+    namespace: local
+    disable_cache: true
+  response:
+    type: Success
+    payload: '{"apiVersion":"","kind":"Pod", <snipped> }'
+----
+
+使用重放会话，您现在可以模拟集群交互，而无需集群，这对于CI和端到端测试是理想的：
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --replay-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+== 语言SDK
+
+支持集群上下文的语言SDK公开允许策略检索集群当前状态的函数。
+
+[TIP]
+====
+
+如果您想了解有关SDK使用的waPC函数的更多信息，请查看xref:reference/spec/host-capabilities/06-kubernetes.adoc[Kubernetes能力]参考文档。
+
+====
+
+
+=== Rust
+
+请参阅在https://docs.rs/kubewarden-policy-sdk/0.8.7/kubewarden_policy_sdk[Rust SDK参考文档]中公开此功能的函数。
+
+=== 转至
+
+请参阅暴露此功能的函数，详见https://pkg.go.dev/github.com/kubewarden/policy-sdk-go[Go SDK参考文档]。
+
+== Rego策略
+
+=== Gatekeeper
+
+上下文感知信息的暴露在`data.inventory`键下，例如Gatekeeper。
+
+库存的填充是通过策略可以访问的资源，位于`spec.contextAwareResources`字段中。
+
+=== 开放政策代理
+
+上下文感知信息的暴露在`data.kubernetes`键下，例如https://github.com/open-policy-agent/kube-mgmt[`kube-mgmt`]默认情况下的行为。
+
+库存的填充是通过策略可以访问的资源，位于`spec.contextAwareResources`字段中。

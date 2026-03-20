@@ -1,0 +1,22 @@
+include::partial$variables.adoc[]
+= 策略测试
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解如何使用 {project-name} 创建和测试 {project-name} 策略，以实现安全的集群管理。
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["Kubewarden", "persons", "policy author", "cluster operator"]
+:sidebar_label: 策略测试
+:current-version: {page-origin-branch}
+
+== 策略测试角色
+
+本节涵盖测试 {project-name} 策略的主题。
+有两个角色对测试策略感兴趣：
+
+* *策略开发者*：您正在编写 {short-project-name} 策略，并希望确保您的代码按预期运行。
+* *集群操作员*：您发现了一个 {short-project-name} 策略，并希望在部署之前测试和调整策略设置。
+您希望在 CI/CD 管道和其他管理任务中持续测试这些设置。
+
+文档后续部分展示了这些角色如何测试 {short-project-name} 策略。
