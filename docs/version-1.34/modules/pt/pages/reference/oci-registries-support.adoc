@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= Suporte ao registro OCI para {short-project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Distribua as políticas de {project-name} como artefatos OCI via registros regulares da Open Container Initiative (OCI).
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["distributing-policies", "oci-registries-support"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "suporte ao registro OCI"]
+:sidebar_label: Suporte ao registro OCI
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+Você distribui suas políticas de {project-name} como
+https://opencontainers.org[Artefatos OCI]
+usando registros regulares da Open Container Initiative (OCI).
+
+{short-project-name} O armazenamento da política está ao lado das imagens de contêiner.
+Elas não requerem configuração ou manutenção extra
+além da necessária para imagens de contêiner regulares.
+
+[NOTE]
+====
+Você pode adicionar um registro que funcione com {short-project-name} ou
+corrigir quaisquer imprecisões do registro usando o
+botão "Editar esta página" na parte inferior da página
+====
+
+
+== Projetos que implementam registros OCI
+
+* https://goharbor.io/[Harbor].
+* https://github.com/distribution/distribution[Distribution] (https://github.com/distribution/distribution/releases/tag/v2.7.0[≥ 2.7.0]).
+* https://access.redhat.com/products/red-hat-quay/[Quay]: Suportado, mas https://access.redhat.com/documentation/en-us/red_hat_quay/3/html/use_red_hat_quay/oci-intro#other-oci-artifacts-with-quay[inativo por padrão na v3.6].
+
+== Registros OCI hospedados
+
+* https://github.com/container-registry/[GitHub Container Registry]. Veja https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry[aqui].
+* https://quay.io[Quay.io]. Veja a lista de projetos.
+* https://aws.amazon.com/ecr/[Amazon ECR]: Veja https://aws.amazon.com/blogs/containers/oci-artifact-support-in-amazon-ecr/[aqui].
+* https://cloud.google.com/artifact-registry[Google Artifact Registry]. Veja https://cloud.google.com/anthos-config-management/docs/how-to/sync-oci-artifacts-from-artifact-registry[aqui].
+* https://azure.microsoft.com/en-us/products/container-registry/[Azure Container Registry]. Veja https://learn.microsoft.com/en-us/azure/container-registry/container-registry-oci-artifacts[aqui].
+* https://hub.docker.com/[Docker Hub]. Veja https://docs.docker.com/docker-hub/oci-artifacts/[aqui].
+* https://cloud.ibm.com/docs/Registry[IBM Cloud Container Registry]. Veja https://cloud.ibm.com/docs/Registry?topic=Registry-registry_helm_charts[aqui].
+* https://jfrog.com/artifactory/[JFrog Artifactory]. Veja https://jfrog.com/help/r/jfrog-artifactory-documentation/docker-registry[aqui].
+
+== Ferramentas que funcionam com registros OCI
+
+O {short-project-name} projeto recomenda:
+
+* https://github.com/kubewarden/kwctl[`kwctl`] (nossa ferramenta CLI).
+* https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
+* https://github.com/google/go-containerregistry/blob/main/cmd/crane/README.md[Crane].
+
+== Problemas conhecidos
+
+=== Docker Hub
+
+Atualmente, o Docker Hub não suporta artefatos OCI, portanto não pode ser usado para armazenar {short-project-name} políticas.
+A Docker Inc. anunciou que o Docker Hub suportará artefatos OCI no https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[futuro].
+
+=== JFrog
+
+Embora o JFrog suporte artefatos OCI, é apenas parcialmente possível enviar para ele, ao seguir sua especificação. https://github.com/kubewarden/kwctl/issues/59[Leia mais aqui].

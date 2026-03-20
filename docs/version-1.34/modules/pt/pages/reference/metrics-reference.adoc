@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= Referência de métricas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explore métricas e padrões de cluster com as métricas expostas da plataforma {project-name} para informar os processos de tomada de decisão.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "metrics", "reference"]
+:sidebar_label: Referência de métricas
+:sidebar_position: 30
+:current-version: {page-origin-branch}
+
+{short-project-name} expõe métricas relevantes da plataforma permitindo que administradores de cluster e desenvolvedores de políticas identifiquem padrões e potenciais problemas.
+
+== Servidor de Políticas
+
+O componente Servidor de Políticas inicializa e executa políticas.
+Ao receber solicitações do servidor de API do Kubernetes, ele encaminha a solicitação para a política, retornando a resposta fornecida pela política ao servidor de API do Kubernetes.
+
+=== Métricas
+
+[NOTE]
+====
+https://opentelemetry.io/docs/concepts/signals/baggage/[Baggage] atributos de chave-valor são adicionados à métrica para fornecer informações adicionais.
+====
+
+
+|===
+| Nome | Tipo | Baggage
+
+| `kubewarden_policy_evaluations_total`
+| Contador
+| <<_kubewarden_policy_evaluations_total,Baggage>>
+|===
+
+==== `kubewarden_policy_evaluations_total`
+
+===== Baggage
+
+|===
+| Etiqueta | Descrição
+
+| `policy_name`
+| Nome da política
+
+| `resource_name`
+| Nome do recurso avaliado
+
+| `resource_kind`
+| Tipo do recurso avaliado
+
+| `resource_namespace`
+| namespace do recurso avaliado. Não presente se o recurso for de escopo de cluster.
+
+| `resource_request_operation`
+| Tipo de operação: `CREATE`, `UPDATE`, `DELETE`, `PATCH`, `WATCH`...
+
+| `accepted`
+| A solicitação foi aceita?
+
+| `mutated`
+| A solicitação foi modificada?
+
+| `error_code`
+| Código de erro retornado pela política se rejeitada, se houver.
+  Não está presente se a política não fornecer uma.
+|===

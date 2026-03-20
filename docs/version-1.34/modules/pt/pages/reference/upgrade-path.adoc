@@ -1,0 +1,69 @@
+include::partial$variables.adoc[]
+= Caminho de fazer upgrade
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Atualize sua pilha {project-name} usando estratégias de versionamento suportadas e regras de compatibilidade entre seus componentes.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["operator-manual", "upgrade-path"]
+:doc-type: ["reference"]
+:keywords: ["caminho de fazer upgrade", "suporte"]
+:sidebar_label: Caminho de fazer upgrade
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {project-name}Versionamento da pilha
+
+O projeto {short-project-name} utiliza https://semver.org/[Versionamento semântico] para definir a versão da "pilha" de todos os seus componentes: a versão segue o padrão `MAJOR.MINOR.PATCH`. A versão suportada é a última versão lançada.
+
+Os componentes {short-project-name} que seguem as regras para a versão da "pilha" são:
+
+* `kubewarden-crds` gráfico, no campo appVersion deles.
+
+* `kubewarden-controller` gráfico, no campo appVersion deles.
+
+* `kubewarden-defaults` gráfico, no campo appVersion deles.
+
+* `policy-server` tag de imagem para aqueles implantados manualmente. O recurso para o padrão já é gerenciado pelo `kubewarden-defaults` gráfico.
+
+* `kwctl` binário.
+
+== Compatibilidade de versão da pilha entre componentes
+
+O `kubewarden-crds` gráfico, o `kubewarden-controller` gráfico, o `kubewarden-defaults` gráfico, qualquer `policy-server` imagem implantada manualmente e `kwctl` devem executar a mesma versão `MAJOR`.`MINOR`.`PATCH`.
+
+Portanto, se a versão `kubewarden-controller` em execução for `1.1.2`, a versão dos +``policy-server``s e `kwctl` em uso também deve ser `1.1.2`.
+
+== Versões de gráficos Helm
+
+Os gráficos Helm definem o `version` campo e o `appVersion` campo. O campo `appVersion` informa a versão da {short-project-name} "pilha" conforme mencionado anteriormente. O `version` campo também segue https://semver.org/[versionamento semântico] e descreve mudanças compatíveis com versões anteriores nos templates de gráficos e `values.yaml`.
+
+== Caminhos de fazer upgrade
+
+Ao atualizar componentes, você pode atualizar várias `PATCH` versões de pilha em uma única operação. No entanto, a atualização de várias versões de pilha `MAJOR` ou `MINOR` em uma única atualização não é suportada.
+
+Por exemplo, você pode atualizar componentes da versão `1.1.10` para `1.1.nn` em uma única atualização. Mas a atualização de `1.1.10` para `1.5.0` não é suportada. Nesses casos, você deve atualizar individualmente para cada `MAJOR`/`MINOR` versão entre as duas versões. Portanto, é necessário atualizar `1.1.10` para `1.2.0`, depois `1.3.0`, depois `1.4.0` e finalmente para `1.5.0`. Para atualizar uma `MAJOR` versão para outra, você precisa aplicar todas as `MINOR` atualizações entre as duas `MAJOR` versões.
+
+.Exemplo de gráfico de suporte a caminhos de fazer upgrade
+[mermaid]
+....
+%%{init: "theme": "neutral"}%%
+flowchart LR;
+  accTitle: Gráfico de suporte a caminhos de fazer upgrade accDescr: Um diagrama mostrando os caminhos de fazer upgrade recomendados e suportados para {short-project-name}.
+  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|Não recomendado|1.2.0(1.2.0); 1.0.2-->|Não suportado|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray: 3 5 linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
+....
+
+== Ordem de fazer upgrade
+
+Os {short-project-name} usuários devem fazer upgrade da pilha começando pelo `kubewarden-crds` gráfico, depois o `kubewarden-controller` gráfico. Depois disso, faça upgrade do `policy-server` (via `kubewarden-defaults` gráfico ou atualizando as imagens dos personalizados) e `kwctl`.
+
+== Downgrades
+
+Downgrades não são suportados, e {short-project-name} não os testa. No entanto, há uma expectativa razoável de que eles devam funcionar.
+
+== SDKs, políticas
+
+Os SDKs de políticas para as diferentes linguagens e políticas mantidas pela {short-project-name} equipe seguem seu próprio versionamento semântico. {short-project-name} suporta a versão mais recente. Não há necessidade de um caminho de upgrade para eles, apenas um upgrade para a versão mais recente.
+
+Mudanças na pilha {short-project-name} podem significar que políticas e SDKs recebam atualizações para usar os novos recursos do {short-project-name}. {short-project-name} se preocupa em realizar essas atualizações de maneira compatível com versões anteriores.
+
+Por exemplo, uma versão menor do {short-project-name} que adiciona suporte para o Audit Scanner (`v1.7.0`) significa que as políticas ganharam um novo campo `spec.backgroundAudit`. Isso é opcional, compatível com versões anteriores e definido como `true` por padrão.
