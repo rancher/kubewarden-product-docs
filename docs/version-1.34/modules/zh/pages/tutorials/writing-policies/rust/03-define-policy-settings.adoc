@@ -1,0 +1,111 @@
+include::partial$variables.adoc[]
+= 定义策略设置
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 在您的代码中定义策略设置和结构，以建立通过高效设置管理验证策略完整性的基础。确保跟踪所有更改，例如谁进行了更改、何时进行的更改以及更改了什么。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "policy-settings"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "编写策略", "策略设置", "rust"]
+:sidebar_label: 定义策略设置
+:current-version: {page-origin-branch}
+
+== 策略设置结构
+
+首先，定义一个保存策略设置的结构。
+
+打开`demo/src/settings.rs`文件并将`Settings`
+`struct`的定义更改为：
+
+[subs="+attributes",rust]
+----
+pub(crate) struct Settings {
+    pub invalid_names: HashSet<String>,
+}
+----
+
+这会自动将无效名称的列表放入Set集合中。
+
+== 设置验证函数
+
+接下来，编写一个设置验证函数，以确保策略在运行时至少包含一个无效名称。
+
+您可以通过更改`Validatable`特性的实现来做到这一点。
+
+将`src/settings.rs`中定义的脚手架实现更改为：
+
+[subs="+attributes",rust]
+----
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        if self.invalid_names.is_empty() {
+            Err(String::from("No invalid name specified. Specify at least one invalid name to match"))
+        } else {
+            Ok(())
+        }
+    }
+}
+----
+
+== 添加单元测试
+
+现在您可以编写单元测试，以确保设置验证正常工作。
+您可以按照https://doc.rust-lang.org/stable/book/ch11-00-testing.html[常规Rust方式]完成此操作。
+
+在`src/settings.rs`文件的底部已经有一些默认测试。将自动生成的代码替换为如下所示：
+
+[subs="+attributes",rust]
+----
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use kubewarden_policy_sdk::settings::Validatable;
+
+    #[test]
+    fn accept_settings_with_a_list_of_invalid_names() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("bad_name1"));
+        invalid_names.insert(String::from("bad_name2"));
+
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn reject_settings_without_a_list_of_invalid_names() -> Result<(), ()> {
+        let invalid_names = HashSet::<String>::new();
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_err());
+        Ok(())
+    }
+}
+----
+
+您现在可以通过执行以下操作来运行单元测试：
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+这会生成类似于以下内容的输出：
+
+[subs="+attributes",console]
+----
+   Compiling demo v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src/lib.rs (target/debug/deps/demo-bea8e11b21717093)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

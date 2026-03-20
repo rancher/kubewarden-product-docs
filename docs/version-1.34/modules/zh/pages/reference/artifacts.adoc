@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+:title: {project-name} 工件
+:description: 验证 {project-name} 工件并访问相关的二进制文件、Helm 图表，以实现高效的安全管理。
+:keywords: [工件，支持，隔离，镜像]
+:doc-persona: [kubewarden-operator]
+:doc-type: [参考]
+:doc-topic: [操作手册，工件，注册表，镜像]
+
+= {title}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+== 正在验证 {project-name}
+
+在 xref:/tutorials/verifying-kubewarden.adoc[验证
+{short-project-name}] 上有一个教程，演示如何验证 {short-project-name} 工件。
+
+== 二进制文件
+
+我们的 `kwctl` CLI 工具通过 https://github.com/kubewarden/kwctl/releases[GitHub releases]发布。
+
+== OCI 工件
+
+对于开放容器倡议（OCI）工件，该项目将 `ghcr.io` 中的所有内容发布至 https://github.com/orgs/kubewarden/packages.。
+
+- https://github.com/orgs/kubewarden/packages/policies[`kubewarden/packages/policies/*`] 是策略 Wasm OCI 工件。
+- https://github.com/orgs/kubewarden/packages/charts[`kubewarden/packages/charts/*`] 是以 OCI 工件形式发布的 Helm 图表。它们遵循 SLSA 标准。
+- 作为 OCI 镜像发布的容器镜像： `kubewarden-controller`， `policy-server`， `audit-scanner`， `kubectl`。
+- 还有 `packages/tests/*` 包含用于端到端测试的工件。
+
+== 通过 HTTPS 的 Helm 图表
+
+{short-project-name} 将 Helm 图表发布到位于 https://charts.kubewarden.io. 的 Helm 图表 HTTPS 储存库中。它们没有 SLSA 或签名，但这种类型的 Helm 储存库提供搜索功能。
