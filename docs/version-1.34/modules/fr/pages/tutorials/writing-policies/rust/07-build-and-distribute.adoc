@@ -1,0 +1,50 @@
+include::partial$variables.adoc[]
+= Créer et distribuer des stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Suivez ces étapes essentielles pour créer et distribuer des stratégies efficacement pour votre configuration {project-name}.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "rédaction de stratégies", "rust", "créer et distribuer"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction de stratégies", "rust", "créer et distribuer"]
+:sidebar_label: Créer et distribuer des stratégies
+:current-version: {page-origin-branch}
+
+== Création de la stratégie
+
+Jusqu'à présent, vous avez créé la stratégie avec une cible de compilation correspondant au même système d'exploitation et à la même architecture que votre machine de développement.
+
+Il est maintenant temps de créer la stratégie en tant que binaire WebAssembly, un fichier `.wasm`.
+
+Vous utilisez la commande :
+
+[subs="+attributes",console]
+----
+make policy.wasm
+----
+
+Cette commande compile le code en mode release, avec une cible de compilation WebAssembly.
+
+La compilation produit un fichier `policy.wasm` :
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+== Distribution de la stratégie
+
+{project-name} documente la distribution de la stratégie dans la section
+xref:../../../explanations/distributing-policies.adoc[distribution de la stratégie].
+
+== Plus d'exemples
+
+Vous pouvez trouver plus de stratégies Rust {short-project-name} dans l'espace GitHub de {short-project-name}.
+https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Cette requête]
+peut vous aider à les trouver.
+
+Les dépôts de stratégies {short-project-name}, affichés par cette requête, ont des actions GitHub qui automatisent les tâches suivantes :
+
+* Exécuter des tests unitaires et du linting de code sur les demandes de tirage et après les fusions de code dans la branche principale.
+* Créer la stratégie en mode `release` et la pousser vers un registre OCI en tant qu'artéfact.
