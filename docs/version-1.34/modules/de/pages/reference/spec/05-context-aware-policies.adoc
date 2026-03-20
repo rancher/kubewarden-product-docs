@@ -1,0 +1,166 @@
+include::partial$variables.adoc[]
+= Kontextabhängige Richtlinien
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erforschen Sie kontextabhängige Richtlinienfunktionen in der Zugangssteuerung, einschließlich Ressourcenzugriff und Caching, um die Richtlinienbewertung zu optimieren.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "context-aware-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "richtlinienspezifikation", "kontextabhängige richtlinien"]
+:sidebar_label: Kontextabhängige Richtlinien
+:current-version: {page-origin-branch}
+
+Der `policy-server` hat die Fähigkeit, Clusterinformationen an Richtlinien weiterzugeben, damit diese Entscheidungen basierend auf anderen vorhandenen Ressourcen treffen können und nicht nur basierend auf den Details, die von der Zugangsanforderung bereitgestellt werden.
+
+Der Policy-Server, der die Richtlinie hostet, ruft Kubernetes-Ressourcen ab. RBAC-Regeln, die auf das Service-Konto des Policy-Servers angewendet werden, regeln den Zugriff auf Kubernetes.
+
+Der `default` Policy-Server, der von {project-name} Helm-Charts bereitgestellt wird, hat Zugriff auf die folgenden Kubernetes-Ressourcen:
+
+* Namespaces
+* Services
+* Ingresses
+
+[CAUTION]
+====
+
+Der Policy-Server führt ein Caching der Ergebnisse durch, die vom Kubernetes-API-Server erhalten werden, um die Last auf diesem Kernel von Kubernetes zu reduzieren. Das bedeutet, dass Informationen veraltet oder unvollständig sein könnten.
+
+====
+
+
+== Unterstützungsmatrix
+
+[cols=",^,"]
+|===
+| Richtlinientyp | Support | Anmerkungen
+
+| Traditionelle Programmiersprachen
+| ✅
+| -
+
+| Rego
+| ✅
+| Seit der Veröffentlichung von {short-project-name} 1.9
+
+| WASI
+| ✅
+| Seit der Veröffentlichung von {short-project-name} 1.10.0, nur für Go SDK
+|===
+
+== Beschränkungen
+
+Die Priorität von {short-project-name} ist es, die Anzahl der Abfragen gegen den Kubernetes-API-Server zu reduzieren. {short-project-name} berücksichtigt zwei Einschränkungen:
+
+* Speichernutzung: Der Policy-Server-Prozess speichert die aus Kubernetes abgerufenen Daten im Speicher. Je mehr Daten abgerufen werden, desto mehr Speicher verbrauchen die Policy-Server-Pods.
+* Konsistenz: Der vom Policy-Server gehaltene Cache könnte veraltete Daten enthalten. Neue Ressourcen könnten fehlen, gelöschte Ressourcen könnten noch verfügbar sein und geänderte könnten alte Daten haben. Dies könnte die Bewertung der Richtlinien beeinflussen.
+
+=== Auflistung mehrerer Ressourcen
+
+{short-project-name} Richtlinien können mehrere Ressourcen gleichzeitig abrufen. Zum Beispiel können sie eine Abfrage wie "Hole alle Pods, die im `default` Namespace definiert sind und bei denen das Label `color` auf ``green`` gesetzt ist" stellen.
+
+Mit einer solchen Abfrage ruft der Policy-Server alle Ressourcen ab, die den Benutzerkriterien entsprechen. Das Abrufen von Ressourcen erfolgt in Chargen, um die Last auf dem Kubernetes-API-Server zu reduzieren. Bevor die Ressourcen im Speicher abgelegt werden, entfernt der Policy Server das `managedFields` Attribut jeder Ressource, um den Speicherverbrauch zu reduzieren. Dieses Attribut ist für Richtlinien nicht nützlich und benötigt eine erhebliche Menge an Speicher.
+
+Der Policy Server erstellt dann einen https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes[Kubernetes watch], um die zwischengespeicherte Liste der Objekte aktuell zu halten. Der Policy Server kontrolliert nicht die Geschwindigkeit, mit der der Kubernetes API Server Benachrichtigungen über Änderungen an Ressourcen sendet. Dies hängt von verschiedenen externen Faktoren ab, wie der Anzahl der gegen den Kubernetes API-Server erstellten Watches und seiner Last.
+
+Schließlich hat der aktuelle Code die folgende Einschränkung. Angesichts dieser beiden Abfragen:
+
+* `kubectl get pods -n default`
+* `kubectl get pods -n default -l color=green`
+
+Der Policy Server erstellt zwei Watches und dupliziert alle Pods der zweiten Abfrage. Diese Einschränkung soll in zukünftigen Versionen von {short-project-name} entfernt werden.
+
+=== Abrufen einer bestimmten Ressource
+
+{short-project-name} Richtlinien können eine bestimmte Ressource abrufen, die im Cluster definiert ist.
+Zum Beispiel können sie eine Abfrage wie "hole den Pod mit dem Namen `psql-0`, der im `db` Namespace definiert ist" stellen.
+
+Standardmäßig ruft diese Abfrage das Objekt ab und speichert es für fünf Sekunden im Cache. Während dieser fünf Sekunden erhalten die Richtlinien zwischengespeicherte Daten.
+
+Der Autor der Richtlinie kann auch entscheiden, eine direkte Abfrage durchzuführen und den Cache zu überspringen.
+Frische Daten werden immer bereitgestellt. Dies verursacht eine höhere Last auf dem Kubernetes API-Server (je nach Häufigkeit der Auslösung von Richtlinien) und führt zu mehr Latenz bei der Auswertung einer Zulassungsanfrage.
+
+Das Verhalten der direkten oder zwischengespeicherten Abfrage wird auf Abfrageebene vom Autor der Richtlinie unter Verwendung der {short-project-name} SDKs konfiguriert.
+
+== ClusterAdmissionPolicies
+
+ClusterAdmissionPolicies haben das Feld https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/ClusterAdmissionPolicy/v1#spec-contextAwareResources[spec.contextAwareResources].
+Dieses Feld bietet eine Liste von `GroupVersionKind` Ressourcen, auf die die Richtlinie zugreifen muss. Dies ermöglicht es den Autoren von Richtlinien, die "Berechtigungen", die die Richtlinie benötigt, zusammen mit der Richtlinie zu versenden. Darüber hinaus ermöglicht es den Betreibern von Richtlinien, die "Berechtigungen", die die Richtlinie zur Bereitstellungszeit benötigt, zu überprüfen.
+
+=== Testen von kontextbewussten Richtlinien lokal
+
+Neben dem Ausführen von Richtlinien in einem Cluster für End-to-End-Tests können Sie die `kwctl` Kommandozeilenschnittstelle verwenden, um Richtlinien und simulierte Anfragen gegen den Cluster auszuführen.
+
+Dafür kann `kwctl run` zunächst alle Interaktionen mit dem Cluster in eine Datei aufzeichnen:
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --record-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+was die folgende `replay-session.yml` Datei erstellt:
+
+[subs="+attributes",yaml]
+----
+# replay-session.yml
+---
+- type: Exchange
+  request: |
+    !KubernetesGetResource
+    api_version: /v1
+    kind: Pod
+    name: p-testing
+    namespace: local
+    disable_cache: true
+  response:
+    type: Success
+    payload: '{"apiVersion":"","kind":"Pod", <snipped> }'
+----
+
+Mit der Wiedergabesitzung können Sie nun die Interaktionen mit dem Cluster simulieren, ohne einen Cluster zu benötigen, was ideal für CI und End-to-End-Tests ist:
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --replay-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+== Language SDKs
+
+Programmiersprachen SDKs, die den Cluster-Kontext unterstützen, stellen Funktionen zur Verfügung, die es Richtlinien ermöglichen, den aktuellen Zustand des Clusters abzurufen.
+
+[TIP]
+====
+
+Wenn Sie mehr Informationen über die von den SDKs verwendete waPC-Funktion wünschen, überprüfen Sie die xref:reference/spec/host-capabilities/06-kubernetes.adoc[Kubernetes Fähigkeiten] Referenzdokumentation.
+
+====
+
+
+=== Rust
+
+Siehe die Funktionen, die diese Funktionalität in der https://docs.rs/kubewarden-policy-sdk/0.8.7/kubewarden_policy_sdk[Rust SDK Referenzdokumentation] bereitstellen.
+
+=== Weiter
+
+Siehe die Funktionen, die diese Funktionalität im https://pkg.go.dev/github.com/kubewarden/policy-sdk-go[Go SDK Referenzdokumentation] bereitstellen.
+
+== Rego-Richtlinien
+
+=== Gatekeeper
+
+Die kontextabhängige Informationsfreigabe erfolgt unter dem `data.inventory` Schlüssel, wie Gatekeeper.
+
+Die Befüllung des Inventars erfolgt mit den Ressourcen, auf die die Richtlinie über das `spec.contextAwareResources` Feld zugreifen kann.
+
+=== Open Policy Agent
+
+Die Freigabe kontextabhängiger Informationen erfolgt unter dem `data.kubernetes` Schlüssel, wie https://github.com/open-policy-agent/kube-mgmt[`kube-mgmt`] standardmäßig tut.
+
+Die Befüllung des Inventars erfolgt mit Ressourcen, auf die die Richtlinie über das `spec.contextAwareResources` Feld zugreifen kann.

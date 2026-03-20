@@ -1,0 +1,145 @@
+include::partial$variables.adoc[]
+= Fähigkeiten des Sigstore-Hosts
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie die Fähigkeiten des Sigstore-Hosts mithilfe von CEL-Richtlinien in Kubewarden implementieren, um Containerbilder zu überprüfen und eine sichere Zulassungskontrolle durchzusetzen.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "richtlinien schreiben", "cel", "sigstore", "signatur", "überprüfung"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "richtlinien schreiben", "sigstore", "signatur", "überprüfung"]
+:sidebar_label: Fähigkeiten des Sigstore-Hosts
+:current-version: {page-origin-branch}
+
+Als Beispiel für eine andere Verwendung der Hostfähigkeiten auf von Kubewarden`cel-policy`, lassen Sie uns eine Richtlinie erstellen, die alle Containerbilder in einem Pod überprüft, indem sie deren Sigstore-schlüssellosen Signaturen prüft.
+
+== Beispiel: Sigstore-Überprüfungsrichtlinie
+
+Diese Richtlinie wird alle Containerbilder im Pod Sigstore überprüfen und sicherstellen, dass die Bilder signiert und vertrauenswürdig sind.
+
+In diesem Fall werden wir nach einer Sigstore-schlüssellosen Signatur suchen, die in GitHub Actions durchgeführt wurde. Diese Art von Sigstore-schlüssellosen Signaturen ist an den OIDC-Issuer von GitHub gebunden, wenn die kryptografischen Zertifikate erstellt werden, sodass wir nur die GitHub-Organisation kennen müssen, unter der das Containerbild veröffentlicht wird. Sie können mehr über die Hostfähigkeiten für Sigstore xref:reference/spec/host-capabilities/02-signature-verifier-policies.adoc[hier] lesen.
+
+Um dies in CEL zu erreichen, verwenden wir die https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{project-name} CEL-Erweiterungsbibliotheken für Hostfähigkeiten] in der Richtlinie, insbesondere die https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[`githubAction` Funktion].
+
+Wie immer können wir mit `kwctl` beginnen:
+
+[subs="+attributes",console]
+----
+$ kwctl scaffold manifest -t ClusterAdmissionPolicy \
+  registry://ghcr.io/kubewarden/policies/cel-policy:v1.0.0`
+----
+
+Das können wir dann bearbeiten, um es für unsere Containerüberprüfungsrichtlinie relevant zu machen:
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: "cel-sigstore-keyless-verification"
+spec:
+  module: ghcr.io/kubewarden/policies/cel-policy:v1.0.0
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: default
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE", "UPDATE"]
+----
+
+Jetzt kommen wir zum CEL-Teil. Wir werden eine Liste von Containerbildern im aktuellen Pod-Objekt abrufen und dann überprüfen, ob sie von einer Signatur verifiziert sind, die zu unserer gewählten Organisation passt (in diesem Fall github.com/opencontainers):
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: "cel-sigstore-keyless-verification"
+spec:
+  module: ghcr.io/kubewarden/policies/cel-policy:v1.0.0
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: default
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE", "UPDATE"]
+  settings:
+    variables:
+      - name: containerImages
+        expression: |
+          object.spec.containers.map(c, c.image)
+      - name: containerImagesNotVerified
+        expression: |
+          variables.containerImages.filter(image, !kw.sigstore.image(image).githubAction("opencontainers").verify().isTrusted())
+    validations:
+      - expression: |
+          size(variables.containerImagesNotVerified) == 0
+        messageExpression: "'These container images are not signed by the kubewarden GitHub organization: ' + variables.containerImagesNotVerified.join(', ')"
+----
+
+Aber warten Sie, wir dürfen nicht vergessen, dass InitContainers auch Teil von Pods sein können. Lassen Sie uns also eine weitere Variable und Validierung hinzufügen:
+
+```yaml title="./cel-policy-sigstore.yaml"
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy +
+metadata: +
+  name: "cel-sigstore-keyless-verification" +
+spec: +
+  module: ghcr.io/kubewarden/policies/cel-policy:v1.0.0 +
+  namespaceSelector: +
+    matchLabels: +
+      kubernetes.io/metadata.name: default +
+  rules: +
+    - apiGroups: [""] +
+      apiVersions: ["v1"] +
+      resources: ["pods"] +
+      operations: ["CREATE", "UPDATE"] +
+  settings: +
+    variables: +
+      - name: containerImages +
+        expression: | +
+          object.spec.containers.map(c, c.image) +
+      - name: initContainerImages +
+        expression: | +
+          has(object.spec.initContainerImages) ? object.spec.initContainers.map(c, c.image) : [] +
+      - name: containerImagesNotVerified +
+        expression: | +
+          variables.containerImages.filter(image, !kw.sigstore.image(image).githubAction("opencontainers").verify().isTrusted()) +
+      - name: initContainerImagesNotVerified +
+        expression: | +
+          variables.initContainerImages.filter(image, !kw.sigstore.image(image).githubAction("opencontainers").verify().isTrusted()) +
+    validations: +
+      - expression: | +
+          size(variables.containerImagesNotVerified) == 0 +
+        messageExpression: "'Diese Containerbilder sind nicht von der Kubewarden GitHub-Organisation signiert: ' + variables.containerImagesNotVerified.join(', ')" +
+      - expression: | +
+          size(variables.initContainerImagesNotVerified) == 0 +
+        messageExpression: "'Diese Init-Containerbilder sind nicht von der Kubewarden GitHub-Organisation signiert: ' + variables.initContainerImagesNotVerified.join(', ')"
+```
+
+As usual with CEL, we can add several `validations` under
+`settings.validations`, and they are evaluated in parallel, joined with an AND
+operation, which is short-circuited.
+
+We can now deploy the policy, and try to deploy a Pod with unsigned images:
+
+```console
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: golanci-lint-example
+spec:
+  containers:
+  - name: nginx
+    image: ghcr.io/opencontainers/golangci-lint:v1.52.1
+    ports:
+    - containerPort: 80
+EOF
+Error from server: error when creating "STDIN":
+  admission webhook "clusterwide-cel-sigstore-keyless-verification.kubewarden.admission" denied the request:
+  failed to verify image: Callback evaluation failure: no signatures found for image: ghcr.io/opencontainers/golangci-lint:v1.52.1
+```

@@ -1,0 +1,259 @@
+include::partial$variables.adoc[]
+= End-to-End-Tests
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie umfassende End-to-End-Tests für das Verhalten von Richtlinien mit BATS und kwctl schreiben und ausführen.
+:keywords: "{project-name}", kubewarden, kubernetes, Richtlinien testen, typescript, e2e-Tests
+:doc-type: Anleitung
+:doc-topic: {project-name}, kubewarden, Richtlinien schreiben, typescript, End-to-End-Tests
+:doc-persona: Kubewarden-Richtlinienentwickler
+:current-version: {page-origin-branch}
+
+In diesem Abschnitt wird gezeigt, wie Sie End-to-End-Tests schreiben können, die gegen das tatsächliche WebAssembly-Binärformat ausgeführt werden, das von der Javy-Kompilierungstoolchain erzeugt wird.
+
+== Voraussetzungen
+
+Denken Sie daran, dass Sie diese Werkzeuge auf Ihrem Entwicklungsrechner benötigen:
+
+* `bats`: Wird verwendet, um die Tests zu schreiben und deren Ausführung zu automatisieren.
+* `kwctl` >= v1.30: CLI-Tool, das von {project-name} bereitgestellt wird, um seine Richtlinien außerhalb von Kubernetes auszuführen, unter anderem. Es wird im xref:/tutorials/testing-policies/index.adoc[Abschnitt über die Testrichtlinien] der Dokumentation behandelt.
+
+== Tests schreiben
+
+Sie werden `bats` verwenden, um Ihre Tests zu schreiben und zu automatisieren. Jeder Test hat die folgenden Schritte:
+
+. Führen Sie die Richtlinie direkt mit `kwctl run` und der JSON-Ressourcendatei aus.
+. Überprüfen Sie die von `kwctl` erzeugte Ausgabe.
+
+Alle End-to-End-Tests werden in einer Datei namens `e2e.bats` gespeichert. Das Projektgerüst enthält ein Beispiel, `e2e.bats`. Sie müssen den Inhalt erweitern, um eine umfassende Testabdeckung für das Verhalten Ihrer Richtlinien bereitzustellen.
+
+== Testdatendateien
+
+Die End-to-End-Testfälle testen die Erstellung spezifischer Kubernetes-Ressourcen.
+
+Zum Beispiel, wenn Sie die Erstellung einer Pod-Ressource testen:
+
+[source,json]
+----
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "test-pod"
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "nginx",
+        "image": "nginx:latest"
+      }
+    ]
+  }
+}
+----
+
+Der End-to-End-Testfall verwendet eine JSON-Datei, die eine Kubernetes AdmissionReview enthält. Diese JSON-Objekte der AdmissionReviews sind die, die gegen die Kubernetes-API gesendet werden, damit sie xref:/reference/spec/03-validating-policies.adoc#an-example[validiert] werden.
+
+Sie können AdmissionReviews-JSON-Objekte erhalten, indem Sie `kwctl scaffold admission-request` verwenden.
+Werfen Sie einen Blick auf `test_data/pod.json`, um ein AdmissionRequest-JSON mit einem Pod zu sehen.
+
+== Grundlegende Testfälle
+
+Die Vorlage bietet bereits mehrere grundlegende Tests. So sollte die vollständige `e2e.bats`-Datei aussehen:
+
+[source,bash]
+----
+#!/usr/bin/env bats
+----
+
+Hier sind die vorhandenen Tests mit Erklärungen:
+
+=== Test 1: Abgelehnte Hostnamen zurückweisen
+
+[source,bash]
+----
+@test "reject because hostname is on deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host", "test-hostname"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+Dieser Test stellt sicher, dass die Richtlinie Pods ablehnt, wenn ihr Hostname auf der Ablehnungsliste steht.
+
+=== Test 2: Erlaubte Hostnamen akzeptieren
+
+[source,bash]
+----
+@test "accept because hostname is not on the deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Dieser Test überprüft, ob die Richtlinie Pods akzeptiert, wenn ihr Hostname nicht auf der Ablehnungsliste steht.
+
+=== Test 3: Akzeptieren, wenn keine Einstellungen bereitgestellt werden
+
+[source,bash]
+----
+@test "accept because the deny list is empty" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Dieser Test stellt sicher, dass die Richtlinie Anfragen akzeptiert, wenn Sie keine Einstellungen bereitstellen.
+
+=== Test 4: Pods ohne Hostnamen akzeptieren
+
+[source,bash]
+----
+@test "accept because pod has no hostname set" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (no hostname to check)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Dieser Test überprüft, dass die Richtlinie Pods ohne Hostnamen unabhängig von der Ablehnungsliste akzeptiert.
+
+=== Test 5: Nicht-Pod-Ressourcen akzeptieren
+
+[source,bash]
+----
+@test "accept non-pod resources" {
+  run kwctl run annotated-policy.wasm -r test_data/service.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (not a pod)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Dieser Test stellt sicher, dass die Richtlinie Ressourcen akzeptiert, die keine Pods sind, da die Richtlinie nur Pod-Hostnamen validiert.
+
+== Erweiterte Testabdeckung
+
+Sie können die Testabdeckung erweitern, indem Sie weitere Testszenarien hinzufügen:
+
+=== Test 6: Validierung der Einstellungen
+
+Sie können auch Tests hinzufügen, um zu überprüfen, ob die Validierung der Einstellungen korrekt funktioniert:
+
+[source,bash]
+----
+@test "accept valid settings" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["host1", "host2"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # settings are valid, request processed normally
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+=== Test 7: Randfälle
+
+[source,bash]
+----
+@test "reject with multiple denied hostnames" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["bad-host", "test-hostname", "forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+[source,bash]
+----
+@test "accept with empty denied hostnames array" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": []}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+== Tests ausführen
+
+Sie können alle End-to-End-Tests mit diesem Befehl ausführen:
+
+[source,console]
+----
+make e2e
+----
+
+Dies erzeugt eine Ausgabe wie:
+
+[source,console]
+----
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+ ✓ accept valid settings
+ ✓ reject with multiple denied hostnames
+ ✓ accept with empty denied hostnames array
+
+8 tests, 0 failures
+----
+
+== Testausgabe verstehen
+
+Jeder Test verwendet `kwctl`, um die Richtlinie auszuführen und überprüft:
+
+* Exit-Status: Der Befehl `kwctl` sollte mit dem Status 0 beenden, um eine erfolgreiche Ausführung der Richtlinie anzuzeigen.
+* Erlaubtes Feld: Die JSON-Ausgabe enthält ein `allowed`-Feld, das angibt, ob die Anfrage akzeptiert wurde.
+* Nachrichteninhalt: Für abgelehnte Anfragen enthält die Ausgabe eine beschreibende Fehlermeldung.
+
+Die `echo "output = $\{output}"`-Anweisungen in jedem Test helfen beim Debuggen, indem sie die tatsächliche Richtlinienausgabe anzeigen, wenn ein Test fehlschlägt.
+
+== Fazit
+
+Die End-to-End-Tests bieten eine umfassende Abdeckung des Verhaltens der Richtlinie, indem sie gegen das tatsächliche WebAssembly-Binärformat getestet werden. Dies stellt sicher, dass die Richtlinie korrekt funktioniert, wenn sie in {short-project-name} bereitgestellt wird, und nicht nur in der TypeScript-Entwicklungsumgebung.
+
+[TIP]
+====
+Für umfassendere Beispiele von End-to-End-Tests können Sie den https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js Quellcode] erkunden, der umfangreiche e2e-Tests enthält, die jede der {short-project-name}-Host-Funktionen demonstrieren. Diese Tests können als Inspiration für das Testen fortschrittlicherer Richtlinienfunktionen wie Netzwerkfunktionen, kryptografische Operationen und OCI-Registry-Interaktionen dienen.
+====
