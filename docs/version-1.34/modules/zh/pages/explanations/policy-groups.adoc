@@ -1,0 +1,250 @@
+include::partial$variables.adoc[]
+= 策略组
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过策略组组合简单策略来了解创建复杂策略，特别是使用 AdmissionPolicyGroup 和 ClusterAdmissionPolicyGroup 定义。
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explanations", "policy-group"]
+:doc-type: ["explanation"]
+:doctype: book
+:keywords: ["{project-name}", "Kubewarden", "策略组", "集群准入策略组", "准入策略组"]
+:sidebar_label: 策略组
+:sidebar_position: 21
+:current-version: {page-origin-branch}
+
+策略组功能允许用户通过组合简单策略来创建复杂策略。它引入了两个新的自定义资源定义（CRD）：
+
+* `AdmissionPolicyGroup`：适用于特定名称空间的准入策略。
+* `ClusterAdmissionPolicyGroup`：适用于整个集群的准入策略。
+
+这些策略组使用户能够使用现有策略，减少自定义策略创建的需求并增强重用性。通过避免策略逻辑的重复，用户可以简化管理并使用类似 DSL 的配置创建自定义策略。
+
+策略组允许使用逻辑运算符对多个策略进行组合评估。这允许定义复杂的逻辑。然而，虽然普通策略可以包含变更逻辑以在准入期间修改资源，但策略组仅进行验证。
+
+策略组的配置与普通策略类似。不同之处在于添加了 `expression`、`message` 和 `policies` 字段，并在不同位置声明上下文感知规则。
+
+这是一个 `ClusterAdmissionPolicyGroup` 的示例，您可以在接下来的部分中使用它来解释不同的字段：
+
+.一个`ClusterAdmissionPolicyGroup`，拒绝使用带有`latest`标签镜像的Pod，除非这些镜像由两个受信任方签名：爱丽丝和鲍勃。
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    signed_by_alice:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyg65hiNHt8FXTamzCn34IE3qMGcV
+                yQz3gPlhoKq3yqa1GIofcgLjUZtcKlUSVAU2/S5gXqyDnsW6466Jx/ZVlg==
+                -----END PUBLIC KEY-----
+    signed_by_bob:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X
+                urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==
+                -----END PUBLIC KEY-----
+    reject_latest:
+      module: registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0
+      settings:
+        tags:
+          reject:
+            - latest
+  expression: "reject_latest() || (signed_by_alice() && signed_by_bob())"
+  message: "the image is using the latest tag or is not signed by Alice and Bob"
+----
+======
+
+== 主要配置字段
+
+本节涵盖策略组的主要配置字段。
+
+=== `policies` 属性
+
+策略字段是普通策略的映射。{project-name} 通过策略组调用策略，以确定是否接受或拒绝正在评估的资源。这些策略的定义是普通 {short-project-name} 策略的简化版本，仅包含 `module`、`settings` 和 `contextAwareResources` 属性。这些元素对于策略在策略组中正常工作是必要的。
+
+一个唯一的名称标识组策略中的每个策略。例如，以下代码片段定义了三个策略：`signed_by_alice`、`signed_by_bob` 和 `reject_latest_tag`.
+
+[,yaml]
+----
+policies:
+  signed_by_alice:
+    module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.8
+    settings: {} # settings for the policy
+  signed_by_bob:
+    module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.8
+    settings: {} # settings for the policy
+  reject_latest_tag:
+    module: ghcr.io/kubewarden/policies/trusted-repos-policy:v0.2.0
+    settings: {} # settings for the policy
+----
+
+[TIP]
+====
+
+一个策略组可以多次包含相同的策略，但配置不同。
+
+====
+
+
+=== `expression` 属性
+
+`expression` 属性包含由逻辑运算符连接在一起的策略标识符组成的语句。
+
+`expression` 语句的评估必须得出布尔数据类型的值。
+
+策略的表示形式是一个以 `.spec.policies` 映射中指定的策略标识符命名的函数。策略评估产生的结果随后使用用户提供的逻辑运算符进行评估。
+
+这些是支持的运算符：
+
+* `&&`：用于执行 `AND` 操作
+* `||`：用于执行 `OR` 操作
+* `!`：用于执行 `NOT` 操作
+
+您可以使用圆括号 `( )` 来定义评估优先级。
+
+例如，给定以下表达式：
+
+[,console]
+----
+reject_latest() || (signed_by_alice() && signed_by_bob())
+----
+
+该策略拒绝使用 `latest` 标签的镜像的工作负载，除非 Alice 和 Bob 都已签署这些镜像。
+
+=== `message` 属性和响应格式
+
+`message` 字段指定当 `expression` 的评估结果为拒绝时返回的消息。响应包括消息，以及各个策略评估的结果。
+
+[IMPORTANT]
+====
+
+只有在必要时，属于该组的策略才会进行评估。
+
+例如，给定以下表达式：
+
+[,console]
+----
+reject_latest() || (signed_by_alice() && signed_by_bob())
+----
+
+当 `reject_latest` 策略返回 `true` 时，`signed_by_bob` 和 `signed_by_alice` 策略不会被评估。
+
+同样，如果 `signed_by_alice` 和 `reject_latest` 策略返回 `false`，则 `signed_by_bob` 策略不会被评估。
+
+这避免了对组中策略的不必要评估，并为入场请求提供快速响应。
+
+====
+
+当组策略执行拒绝时，系统将所有组策略的评估细节作为 AdmissionResponse `.status.details.causes` 的一部分发送。
+
+您可以通过提高 `kubectl` 的详细程度来获取被拒绝的入场请求的完整细节：
+
+[,shell]
+----
+kubectl -v4 apply -f signed-pod.yml
+I0919 18:29:40.251332    4330 helpers.go:246] server response object: [{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "error when creating \"signed-pod.yml\": admission webhook \"clusterwide-demo.kubewarden.admission\" denied the request: the image is using the latest tag or is not signed by Alice and Bob",
+  "details": {
+    "causes": [
+      {
+        "message": "Resource signed is not accepted: verification of image testing.registry.svc.lan/busybox:latest failed: Host error: Callback evaluation failure: Image verification failed: missing signatures\nThe following constraints were not satisfied:\nkind: pubKey\nowner: null\nkey: |\n  -----BEGIN PUBLIC KEY-----\n  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X\n  urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==\n  -----END PUBLIC KEY-----\nannotations: null\n",
+        "field": "spec.policies.signed_by_bob"
+      },
+      {
+        "message": "not allowed, reported errors: tags not allowed: latest",
+        "field": "spec.policies.reject_latest"
+      }
+    ]
+  },
+  "code": 400
+}]
+Error from server: error when creating "signed-pod.yml": admission webhook "clusterwide-demo.kubewarden.admission" denied the request: the image is using the latest tag or is not signed by Alice and Bob
+----
+
+完整的入场响应在调试模式下运行的策略服务器的日志中可用。此外，评估细节始终是由策略服务器发出的OpenTelemetry跟踪的一部分。
+
+== 上下文感知策略
+
+策略组与普通策略之间的另一个区别是上下文感知资源规则的定义位置。组中的每个策略接受一个可选的`contextAwareResources`字段，以指定在评估期间策略可以访问的资源。与普通策略类似，您只能通过定义`ClusterAdmissionPolicyGroup`来使用上下文感知功能。这是出于安全原因，因为只有非特权用户可以部署`AdmissionPolicyGroup`资源。有关更多详细信息，请参阅xref:explanations/context-aware-policies.adoc[上下文感知策略]文档。
+
+.一个使用上下文感知策略的策略组示例。
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo-ctx-aware
+spec:
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - services
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    unique_service_selector:
+      module: registry://ghcr.io/kubewarden/policies/unique-service-selector-policy:v0.1.0
+      contextAwareResources:
+        - apiVersion: v1
+          kind: Service
+      settings:
+        app.kubernetes.io/name: MyApp
+    owned_by_foo_team:
+      module: registry://ghcr.io/kubewarden/policies/safe-annotations:v0.2.9
+      settings:
+        mandatory_annotations:
+          - owner
+        constrained_annotations:
+          owner: "foo-team"
+  expression: "unique_service_selector() || (!unique_service_selector() && owned_by_foo_team())"
+  message: "the service selector is not unique or the service is not owned by the foo team"
+----
+======
+
+在前面的示例中，`unique_service_selector`策略可以访问`Service`资源。然而，`owned_by_foo_team`无法访问Kubernetes资源。
+
+== 设置验证
+
+当策略服务器启动时，它会验证策略组和普通策略的设置。然而，策略组会经过额外的验证步骤，以检查表达式是否有效并评估为布尔数据类型的值。
+
+== 审计扫描器
+
+与AdmissionPolicy和ClusterAdmissionPolicy CRD类似，`backgroundAudit`字段指示在xref:../explanations/audit-scanner/audit-scanner.adoc[审计检查]期间是否包含策略组。
+
+== 策略服务器
+
+您可以扩展`policies.yml`设置文件，以包括策略组和普通策略。与普通策略一样，模块下载仅发生一次。您在策略组和普通策略中使用相同的策略模块。
