@@ -1,0 +1,21 @@
+include::partial$variables.adoc[]
+= Distribuição de política
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprenda como distribuir políticas e acessar informações relacionadas para {project-name}, incluindo detalhes de configuração.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ['kubewarden', 'kubernetes', 'distribuindo políticas do Kubewarden']
+:sidebar_label: Distribuição de política
+:sidebar_position: 080
+:current-version: {page-origin-branch}
+
+Foi uma longa e, espero, agradável jornada pelo tutorial de Go, parabéns por ter chegado até aqui 🎉.
+
+Durante este tutorial, você recriou a https://github.com/kubewarden/safe-labels-policy[safe-labels-policy].
+
+Não há nada de especial a fazer quando se trata de distribuir uma política.
+Se você seguiu este guia, já publicou sua política usando a Ação do GitHub `release.yml` definida no último capítulo.
+
+O tópico da distribuição de políticas é abordado com mais profundidade na seção xref:/explanations/distributing-policies.adoc["distribuindo políticas"] da documentação de {project-name}.
