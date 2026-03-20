@@ -1,0 +1,50 @@
+include::partial$variables.adoc[]
+= Construcción y distribución de directivas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Sigue estos pasos esenciales para construir y distribuir directivas de manera efectiva para tu configuración de {project-name}.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "rust", "build and distribute"]
+:sidebar_label: Construcción y distribución de directivas
+:current-version: {page-origin-branch}
+
+== Construcción de la directiva
+
+Hasta ahora, has construido la directiva con un objetivo de compilación del mismo sistema operativo y arquitectura de tu máquina de desarrollo.
+
+Ahora es el momento de construir la directiva como un binario de WebAssembly, un archivo `.wasm`.
+
+Utilizas el comando:
+
+[subs="+attributes",console]
+----
+make policy.wasm
+----
+
+Este comando construye el código en modo de lanzamiento, con un objetivo de compilación de WebAssembly.
+
+La construcción produce un archivo `policy.wasm`:
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+== Distribución de la directiva
+
+{project-name} documenta la distribución de directivas en la sección de
+xref:../../../explanations/distributing-policies.adoc[distribución de directivas].
+
+== Más ejemplos
+
+Puedes encontrar más directivas de Rust {short-project-name} en el espacio de GitHub de {short-project-name}.
+https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Esta consulta]
+puede ayudarte a encontrarlas.
+
+Los repositorios de directivas {short-project-name}, mostrados por esa consulta, tienen acciones de GitHub que automatizan las siguientes tareas:
+
+* Ejecutar pruebas de unidad y análisis de código en solicitudes de extracción y después de fusiones de código en la rama principal.
+* Construir la directiva en modo `release` y subirla a un registro OCI como un artefacto.

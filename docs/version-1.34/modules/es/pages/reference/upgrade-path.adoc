@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= Vía de actualizar versión
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Actualiza tu {project-name} pila utilizando estrategias de versionado y reglas de compatibilidad entre sus componentes.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["operator-manual", "upgrade-path"]
+:doc-type: ["reference"]
+:keywords: ["vía de actualizar versión", "soporte"]
+:sidebar_label: Vía de actualizar versión
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {project-name} Versionado de la pila
+
+El proyecto {short-project-name} utiliza https://semver.org/[Versionado semántico] para definir la versión de la "pila" de todos sus componentes: la versión sigue el patrón `MAJOR.MINOR.PATCH`. La versión soportada es la última versión publicada.
+
+Los componentes {short-project-name} que siguen las reglas para la versión de la "pila" son:
+
+* `kubewarden-crds` gráfico, en su campo appVersion.
+
+* `kubewarden-controller` gráfico, en su campo appVersion.
+
+* `kubewarden-defaults` gráfico, en su campo appVersion.
+
+* `policy-server` etiqueta de imagen para las que se despliegan manualmente. El recurso para el predeterminado ya está gestionado por el gráfico `kubewarden-defaults`.
+
+* `kwctl` binario.
+
+== Compatibilidad de versiones de la pila entre componentes
+
+El gráfico `kubewarden-crds`, el gráfico `kubewarden-controller`, el gráfico `kubewarden-defaults`, cualquier imagen `policy-server` desplegada manualmente, y `kwctl` deberían ejecutar la misma versión `MAJOR`.`MINOR`.`PATCH`.
+
+Por lo tanto, si la versión `kubewarden-controller` en ejecución es `1.1.2`, la versión de ``directiva-server``s y `kwctl` en uso debería ser `1.1.2` también.
+
+== Versiones de gráficos de Helm
+
+Los gráficos de Helm definen el campo `version` y el campo `appVersion`. El campo `appVersion` informa sobre la versión de la pila {short-project-name} mencionada anteriormente. El campo `version` también sigue https://semver.org/[versionado semántico] y describe los cambios compatibles con versiones anteriores en las plantillas de gráficos y `values.yaml`.
+
+== Opciones de actualización
+
+Al actualizar componentes, puedes actualizar múltiples `PATCH` versiones de la pila en una sola operación. Sin embargo, la actualización de múltiples versiones de la pila `MAJOR` o `MINOR` en una sola actualización no está soportada.
+
+Por ejemplo, puedes actualizar componentes de la versión `1.1.10` a la `1.1.nn` en una sola actualización. Pero la actualización de `1.1.10` a `1.5.0` no está soportada. En estos casos, debes actualizar individualmente a cada `MAJOR`/`MINOR` versión entre las dos versiones. Por lo tanto, es necesario actualizar `1.1.10` a `1.2.0`, luego `1.3.0`, luego `1.4.0` y finalmente a `1.5.0`. Para actualizar una `MAJOR` versión a otra, necesitas aplicar todas las actualizaciones `MINOR` entre las dos versiones `MAJOR`.
+
+.Gráfico de soporte de vía de actualizar versión de ejemplo
+[mermaid]
+....
+%%{init: "theme": "neutral"}%% diagrama de flujo LR; accTitle: Gráfico de soporte de vía de actualizar versión accDescr: Un diagrama que muestra las vías de actualizar versión recomendadas y soportadas para {short-project-name}.
+  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|No recomendado|1.2.0(1.2.0); 1.0.2-->|No soportado|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:marrón,stroke-width:2px,stroke-dasharray: 3 5
+  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
+....
+
+== Orden de actualizar versión
+
+Los usuarios {short-project-name} deben actualizar la pila comenzando con el gráfico `kubewarden-crds`, luego con el gráfico `kubewarden-controller`. Después de eso, actualiza el `policy-server` (a través del gráfico `kubewarden-defaults` o actualizando las imágenes de los personalizados) y `kwctl`.
+
+== Degradaciones
+
+Las degradaciones *no* están soportadas, y {short-project-name} no las prueba. No obstante, hay una expectativa razonable de que deberían funcionar.
+
+== SDKs, directivas
+
+Los SDKs de directivas para los diferentes lenguajes y directivas mantenidos por el equipo {short-project-name} siguen su propio versionado semántico. {short-project-name} soporta la última versión. No hay necesidad de una vía de actualizar versión para ellos, solo un salto a la última versión.
+
+Los cambios en la pila {short-project-name} pueden significar que las directivas y los SDKs reciban actualizaciones para utilizar las últimas características de {short-project-name}. {short-project-name} se encarga de realizar estas actualizaciones de manera compatible con versiones anteriores.
+
+Por ejemplo, una versión menor de {short-project-name} que añade soporte para el Escáner de Auditoría (`v1.7.0`) significa que las directivas ganaron un nuevo campo `spec.backgroundAudit`. Esto es opcional, compatible con versiones anteriores y se establece en `true` por defecto.
