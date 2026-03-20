@@ -1,0 +1,100 @@
+include::partial$variables.adoc[]
+= Tests pour les auteurs de stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à tester les auteurs de stratégies avec kwctl, en utilisant soit bats soit des tests standards, spécifiquement pour les stratégies {project-name} en Wasm.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "policy-authors"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "test de stratégie", "auteur de stratégie", "rust", "go", "assemblyscript", "environnement de développement"]
+:current-version: {page-origin-branch}
+
+Les stratégies {project-name} sont des programmes réguliers compilés en WebAssembly (Wasm).
+Comme pour tout type de programme, une bonne couverture de tests est importante.
+
+Les auteurs de stratégies peuvent utiliser leurs environnements de développement préférés.
+Vous pouvez utiliser des outils familiers et des frameworks de test pour vérifier le développement.
+
+Ces stratégies {short-project-name} sont des exemples écrits en xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] et xref:tutorials/writing-policies/go/01-intro-go.adoc[Go] :
+
+* https://github.com/kubewarden/psp-apparmor[psp-apparmor]
+* https://github.com/kubewarden/ingress-policy[ingress-policy]
+
+Ils ont des suites de tests utilisant des tests standards pour leurs environnements de développement.
+
+Les stratégies utilisent GitHub Actions pour leurs pipelines CI.
+
+== Tests de bout en bout
+
+Vous pouvez également écrire des tests qui s'exécutent contre le binaire Wasm contenant votre stratégie.
+Pour ce faire sans avoir à déployer un cluster Kubernetes, vous pouvez utiliser ces outils :
+
+* https://github.com/bats-core/bats-core[bats] : est utilisé pour écrire des tests et automatiser leur exécution.
+* https://github.com/kubewarden/kwctl[`kwctl`] : l'outil CLI par défaut de {short-project-name} qui vous aide avec les opérations liées aux stratégies ; tirer, inspecter, annoter, pousser et exécuter.
+
+Pour utiliser `kwctl run`, vous avez besoin des éléments suivants :
+
+. La référence du fichier binaire Wasm de la stratégie à exécuter.
+La stratégie {short-project-name} peut être chargée depuis :
+ ** le système de fichiers local (`file://`)
+ ** un serveur HTTP(s) (`https://`
+ ** un registre OCI (`registry://`).
+. L'objet de demande d'admission à tester.
+Vous le fournissez via l'argument `--request-path`, ou sur `stdin` en définissant `--request-path` à `-`.
+. Les paramètres de stratégie pour le composant d'exécution sous forme de JSON en ligne via le drapeau `--settings-json`.
+Ou un JSON, ou un fichier YAML, chargé depuis le système de fichiers via `--settings-path`.
+
+Après le test `kwctl`, imprime l'objet `ValidationResponse` sur la sortie standard.
+
+Voici comment utiliser `kwctl` pour tester le binaire Wasm de la https://github.com/kubewarden/ingress-policy[`ingress-policy`] mentionnée précédemment :
+
+[subs="+attributes",console]
+----
+$ curl https://raw.githubusercontent.com/kubewarden/ingress-policy/v0.1.8/test_data/ingress-wildcard.json 2> /dev/null | \
+    kwctl run \
+        --settings-json '{"allowPorts": [80], "denyPorts": [3000]}' \
+        --request-path - \
+        registry://ghcr.io/kubewarden/policies/ingress:v0.1.8 | jq
+----
+
+Vous pouvez télécharger des binaires précompilés de `kwctl`
+https://github.com/kubewarden/kwctl/releases[ici].
+
+En utilisant `bats`, vous pouvez écrire un test qui exécute cette commande et recherche les sorties attendues :
+
+.Un test bats
+[%collapsible]
+======
+
+[,bash]
+----
+@test "all is good" {
+  run kwctl run \
+    --request-path test_data/ingress-wildcard.json \
+    --settings-json '{"allowPorts": [80], "denyPorts": [3000]}' \
+    ingress-policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # settings validation passed
+  [[ "$output" == *"valid: true"* ]]
+
+  # request accepted
+  [[ "$output" == *"allowed: true"* ]]
+}
+----
+
+======
+
+Vous pouvez mettre le code dans un fichier, `e2e.bats`, par exemple, puis invoquer `bats` en :
+
+[subs="+attributes",console]
+----
+$ bats e2e.bats
+ ✓ all is good
+
+1 tests, 0 failures
+----
+
+xref:tutorials/writing-policies/go/05-e2e-tests.adoc[Cette] section de la documentation contient plus d'informations sur l'écriture de tests de bout en bout de vos stratégies.

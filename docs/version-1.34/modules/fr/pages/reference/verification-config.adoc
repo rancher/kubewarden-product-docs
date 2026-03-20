@@ -1,0 +1,279 @@
+include::partial$variables.adoc[]
+:description: Configurez les formats de configuration de vérification pour la signature d'images de conteneur sécurisées en utilisant un serveur de stratégie ou une stratégie pour vérifier la provenance et les signatures.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manuel-opérateur", "configuration-de-vérification"]
+:doc-type: ["reference"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "configuration de vérification"]
+:current-version: {page-origin-branch}
+
+= Format de configuration de vérification
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+== Introduction
+
+Vous pouvez utiliser le format `verification-config` avec :
+
+* `policy-server` pour vérifier la provenance des modules de stratégie
+* `verify-image-signatures` stratégie pour vérifier la provenance des images de cluster
+
+Référez-vous à xref:/howtos/security-hardening/secure-supply-chain.adoc[chaîne d'approvisionnement sécurisée] pour plus d'informations.
+
+== Format
+
+La configuration a 2 clés racines :
+
+* `allOf` : Vous devez satisfaire à toutes les informations de vérification énumérées ici pour vérifier que les images de conteneurs sont signées.
+* `anyOf` : Vous devez satisfaire à au moins `anyOf.minimumMatches` de toutes les informations de vérification énumérées pour accepter une image de conteneur comme signée.
+
+Ces deux clés racines acceptent un tableau de clés de type `kind`. Une liste complète des clés acceptées en fonction de différents cas d'utilisation est ci-dessous :
+
+* `pubKey` : Pour les signatures effectuées avec la cryptographie traditionnelle à clé publique/privée.
+* `githubAction` : Pour les signatures effectuées avec le flux de travail sans clé de Sigstore à l'intérieur de GitHub Actions. {short-project-name} vérifie ces informations par rapport à l'extension de certificat x509 `workflow_repository` créée par l'OpenID Connect de GitHub, et pas seulement les `issuer` et `subject`. Vous devriez utiliser ce `kind` si vous travaillez avec GitHub Actions.
+* `genericIssuer` : Pour les signatures effectuées avec le flux de travail sans clé de Sigstore, où l'utilisateur doit valider le certificat `issuer` et `subject` par lui-même. Il accepte un `subject`, qui peut être :
+
+** `equal` : La valeur passée ici doit correspondre exactement au `subject` dans le certificat de signature.
+** `urlPrefix` : La valeur passée ici est post-fixée avec `/` pour éviter le typo-squatting, et doit être un préfixe du `subject` dans le certificat de signature.
+
+La clé `kind` accepte une clé `annotations` optionnelle, avec une liste de paires clé-valeur, qui doit être présente dans la signature.
+
+== Par exemple :
+
+Ceci est un exemple de configuration pour vérifier les signatures en utilisant le flux de travail Sigstore :
+
+[subs="+attributes",yaml]
+----
+---
+apiVersion: v1
+
+allOf:
+  - kind: githubAction
+    owner: kubewarden   # mandatory
+    repo: policy-server # optional
+    annotations:  # optional
+      env: prod
+
+anyOf: # at least `+anyOf.minimumMatches+` are required to match
+  minimumMatches: 2 # default is 1
+  signatures:
+  - kind: pubKey
+    owner: alice # optional
+    key: | # mandatory
+         -----BEGIN PUBLIC KEY-----
+         MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQiTy5S+2JFvVlhUwWPLziM7iTM2j
+         byLgh2IjpNQN0Uio/9pZOTP/CsJmXoUNshfpTUHd3OxgHgz/6adtf2nBwQ==
+         -----END PUBLIC KEY-----
+    annotations:  # optional
+      env: prod
+  - kind: genericIssuer
+    issuer: https://github.com/login/oauth
+    subject:
+      equal: alice@example.com
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      equal: https://github.com/bob/app-example/.github/workflows/release.yml@refs/heads/main
+    annotations:  # optional
+      env: prod
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      urlPrefix: https://github.com/bob # <- it will be post-fixed with `+/+` for security reasons
+----
+
+== Référence de configuration de signature
+
+Vous pouvez valider les exigences de signature contenues dans un fichier. Développez pour un exemple :
+
+.Un fichier d'exigences de signature
+[%collapsible]
+====
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+
+allOf:
+  - kind: githubAction
+    owner: kubewarden   # mandatory
+    annotations:
+      env: prod
+
+anyOf: # at least `+anyOf.minimumMatches+` are required to match
+  minimumMatches: 2 # default is 1
+  signatures:
+  - kind: pubKey
+    owner: flavio # optional
+    key: .... # mandatory
+    annotations:  # optional
+      env: prod
+      foo: bar
+  - kind: pubKey
+    owner: victor # optional
+    key: .... # mandatory
+  - kind: genericIssuer
+    issuer: https://github.com/login/oauth
+    subject:
+      equal: alice@example.com
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      equal: https://github.com/flavio/policy-secure-pod-images/.github/workflows/release.yml@refs/heads/main
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      urlPrefix: https://github.com/flavio/
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      urlPrefix: https://github.com/kubewarden # <- it will be post-fixed with `+/+` for security reasons
+  - kind: githubAction
+    owner: flavio   # mandatory
+    repo: policy1 # optional
+  - kind: pubKey
+    owner: alice # optional
+    key: .... # mandatory
+----
+====
+
+
+=== Validation de signature
+
+La configuration précédente contient les deux sections, `allOf` et `anyOf` :
+
+* `allOf` : Vous faites confiance à la stratégie uniquement si toutes les exigences de signature sont valides.
+* `anyOf` : Vous faites confiance à la stratégie si le critère `minimumMatches` est valide.
+
+Dans l'exemple, le champ `minimumMatches` est 2. Ainsi, vous devez satisfaire à au moins deux des exigences de signature. La valeur par défaut pour le champ `minimumMatches` est `1`.
+
+Pour la validation de signature, vous devez répondre à toutes les exigences de signature de `allOf` *et* au nombre minimum de `anyOf`.
+
+=== Validation de clé publique
+
+Pour vérifier qu'une stratégie a la signature de clé publique correcte, vous spécifiez les données de la clé et le propriétaire de la clé. Dans cet exemple, vous définissez `kind` sur `pubKey` et le `key` a la clé publique. Le champ propriétaire est optionnel, mais peut être utile pour clarifier qui possède la clé.
+
+[subs="+attributes",yaml]
+----
+  - kind: pubKey
+    owner: bob # optional
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MBFKHFDGHKIJH0CAQYIKoZIzj0DAQcDQgAEX0HFTtCfTtPmkx5p1RbDE6HJSGAVD
+      BVDF6SKFSF87AASUspkQsN3FO4iyWodCy5j3o0CdIJD/KJHDJFHDFIu6sA==
+      -----END PUBLIC KEY-----
+----
+
+=== Validation de signature sans clé
+
+Une stratégie signée en mode sans clé n'a pas de clé publique que vous pouvez vérifier. Vous pouvez toujours vérifier la stratégie avec les données OpenID Connect (OIDC) utilisées lors du processus de signature. Pour cela, il est nécessaire de définir la validation de la signature comme `genericIssuer`.
+
+Il est possible de vérifier les informations de la signature :
+
+* `issuer` (obligatoire) : cela correspond à l'attribut `Issuer` dans le certificat généré par Fulcio. Cela montre l'OIDC utilisé pour signer la stratégie.
+* `subject` : champ utilisé pour correspondre à l'attribut `Subject` dans le certificat de Fulcio. Le champ `Subject` (Fulcio) contient l'utilisateur utilisé pour s'authentifier auprès du fournisseur OIDC. Le champ de vérification, `subject`, peut avoir l'un des deux sous-champs :
+
+** `equal` : le `Subject` (Fulcio) du certificat doit être égal à la valeur dans la validation de la signature ;
+** `urlPrefix` : la valeur du champ `Subject` (Fulcio) du certificat doit être préfixée par la valeur définie dans la validation de la signature.
+
+[NOTE]
+====
+
+À la fois le `cosign verify` et le `kwctl inspect` peuvent montrer des informations sur les signatures sans clé.
+
+====
+
+
+Par exemple, cette configuration signifie que la stratégie doit avoir une signature sans clé d'Alice utilisant l'OIDC de GitHub :
+
+[subs="+attributes",yaml]
+----
+- kind: genericIssuer
+  issuer: https://github.com/login/oauth
+  subject:
+    equal: alice@example.com
+----
+
+Cette configuration nécessite que la stratégie soit signée dans les actions GitHub, à partir d'un dépôt appartenant à l'utilisateur GitHub `flavio` :
+
+[subs="+attributes",yaml]
+----
+- kind: genericIssuer
+  issuer: https://token.actions.githubusercontent.com
+  subject:
+    urlPrefix: https://github.com/flavio
+----
+
+=== Vérification de la signature des actions GitHub
+
+Le "type", `githubAction` est pour valider les stratégies signées dans les actions GitHub.
+Vous pouvez faire cela avec le type `genericIssuer` également. Pour simplifier le processus d'exigence de signature, utilisez deux champs supplémentaires pour `githubAction` :
+
+* `owner` (obligatoire) : L'identifiant GitHub de l'utilisateur ou de l'organisation en qui avoir confiance.
+* `repo` : Le nom du dépôt en qui avoir confiance.
+
+Par exemple, le dernier extrait, utilisant `genericIssuer`, pourrait être réécrit comme suit :
+
+[subs="+attributes",yaml]
+----
+- kind: githubAction
+  owner: flavio
+----
+
+=== Validation des annotations de signature
+
+Tous les types de signature peuvent avoir d'autres champs de validation optionnels, `annotations`.
+Ces champs sont des données clé/valeur ajoutées lors du processus de signature.
+
+Avec {short-project-name}, vous pouvez vérifier que les signatures de stratégie proviennent d'utilisateurs de confiance *et* ont des annotations spécifiques.
+
+La prochaine validation vérifie deux conditions pour la stratégie :
+
+* qu'elle est signée avec une clé spécifique
+* elle a une annotation d'environnement de production.
+
+[subs="+attributes",yaml]
+----
+- kind: pubKey
+  key: |
+    -----BEGIN PUBLIC KEY-----
+    MBFKHFDGHKIJH0CAQYIKoZIzj0DAQcDQgAEX0HFTtCfTtPmkx5p1RbDE6HJSGAVD
+    BVDF6SKFSF87AASUspkQsN3FO4iyWodCy5j3o0CdIJD/KJHDJFHDFIu6sA==
+    -----END PUBLIC KEY-----
+  annotations:
+    environment: production
+----
+
+=== Utilisation d'un fichier de configuration de vérification de signature pour vérifier un artefact OCI de stratégie.
+
+Vous pouvez tester si une stratégie passe la vérification en utilisant le fichier de configuration de vérification. Utilisez le drapeau `--verification-config-path` de la commande `kwctl
+verify`.
+
+[subs="+attributes",console]
+----
+$ cat signatures_requirements.yaml
+apiVersion: v1
+allOf:
+  - kind: pubKey
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5Q+cN1Jj2S7N05J4AXnqwP2DyzSg
+      Mc+raYce2Wthrd30MSgFtoh5ADAkCd/nML2Nx8UD9KBuASRb0gG5jXqgMQ==
+      -----END PUBLIC KEY-----
+
+$ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/kubewarden/policies/user-group-psp:latest
+2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
+----
+
+Ce dernier exemple teste si une stratégie donnée provient de l'organisation {short-project-name} :
+
+[subs="+attributes",console]
+----
+$ cat kubewarden_signatures.yaml
+apiVersion: v1
+allOf:
+  - kind: githubAction
+    owner: kubewarden
+
+$ kwctl verify --verification-config-path kubewarden_signatures.yaml ghcr.io/kubewarden/policies/user-group-psp:latest
+2022-03-29T18:07:39.062292Z  INFO kwctl::verify: Policy successfully verified
+----
