@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= モニターモード
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: モニターモードのためにClusterAdmissionPoliciesまたはAdmissionPoliciesを設定して、受信リクエストを変更することなくポリシーアクションを追跡および分析します。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "monitor-mode"]
+:doc-type: ["reference"]
+:keywords: ["kubernetes", "kubewarden", "monitor mode"]
+:sidebar_label: モニターモード
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+ポリシーを定義する際には、xref:reference/CRDs.adoc#admissionpolicyspec[`spec.mode`]で指定された2つのモードのいずれかを選択できます。
+デフォルトでは、`mode: protect`にポリシーをデプロイします。
+その後、ポリシーはリクエストを受け入れ、拒否し、または変更を加えます。
+
+モニターモードでポリシーをデプロイすることを選択できます。モニターモードでは：
+
+* ポリシーはすべてのリクエストを受け入れ、ポリシーがインストールされていないかのように振る舞います。
+* `policy-server`はポリシーを通常通りトレースします。リクエストが拒否されたり、ポリシーが変更を加えることを提案した場合、トレースには詳細が含まれます。
+* `policy-server`メトリクスは通常通り更新され、モードがメトリクスのバゲージに含まれます。したがって、モードによってポリシーを簡単にフィルタリングし、`monitor`モードを使用してデプロイされたポリシーに焦点を当てることができます。
+
+`mode`は`ClusterAdmissionPolicy`および`AdmissionPolicy`リソースに含まれる属性です。`mode`属性が取ることができる2つの値があります：`monitor`と`protect`。`mode`は省略された場合、`protect`がデフォルトになります。
+
+`monitor mode`でポリシーを作成するには、リソースの仕様の一部としてステートメント`mode: monitor`を含める必要があります。例えば、この`ClusterAdmissionPolicy`の`spec`セクション（➀でマークされた）:
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-capabilities
+spec:
+  mode: monitor <1>
+  policyServer: reserved-instance-for-tenant-a
+  module: registry://ghcr.io/kubewarden/policies/psp-capabilities:v0.1.3
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    allowed_capabilities:
+    - CHOWN
+    required_drop_capabilities:
+    - NET_ADMIN
+----
+<1> `mode: monitor`属性は`spec`セクションにあります。
+
+== ポリシーモードの変更
+
+セキュリティ上の理由から、ポリシーリソースに対して`UPDATE`権限を持つユーザーは、ポリシーをより制限的にすることができます。これは、既存の`ClusterAdmissionPolicy`または`AdmissionPolicy`の`mode`を`monitor`から`protect`に変更できることを意味します。
+
+ただし、既存の`ClusterAdmissionPolicy`または`AdmissionPolicy`の`mode`を`protect`から`monitor`に変更することはできません。
+
+したがって、ポリシーの`mode`を`protect`から`monitor`に変更するには、ポリシーを削除し、`monitor`モードで再作成する必要があります。ポリシーを`protect`から`monitor`に切り替えることは、ポリシーを削除することと同じであるため、このアプローチはユーザーがポリシー削除権限を持っていることを前提としています。
+
+== ポリシーの変更に関する注意
+
+`monitor`モードでのポリシー変更は、リソースに対して変更を行いません。
+`monitor`モードでは、ポリシーはそのアクションが何であったかを記録します。また、`protect`モードで生成されるはずだった変更パッチも記録します。
+
+[WARNING]
+====
+変更ポリシーが`monitor`モードにあるとき、後のポリシーは、変更ポリシーが`protect`モードにあるときとは異なる、変更されていないリソースを評価します。
+====
