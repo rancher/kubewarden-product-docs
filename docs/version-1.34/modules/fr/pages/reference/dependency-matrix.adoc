@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= Matrice des dépendances
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez les dépendances de {project-name}, y compris leurs contraintes de version.
+:doc-persona: [“kubewarden-all”]
+:doc-topic: [“manuel-opérateur”, “dépendances”]
+:doc-type: [“référence”]
+:keywords: [“dépendance”, “dépendances”, “CRD”, “charts”, “matrice”]
+:sidebar_label: Matrice des dépendances
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+Cette page liste les dépendances de {project-name}, avec leurs contraintes de version pertinentes. Les versions en dehors des plages fournies peuvent fonctionner mais ne sont pas testées.
+
+== OpenTelemetry, dépendances de métriques et de traçage
+
+Au moment de la rédaction, la pile https://opentelemetry.io[OpenTelemetry] continue de s'améliorer. Cependant, elle n'est pas encore stable, et des changements incompatibles avec les versions précédentes, non annoncés, se produisent encore. Les développeurs de {short-project-name} s'efforcent de suivre les changements de la pile OpenTelemetry et de s'y adapter. Le projet effectue des tests sur une plage fonctionnelle connue de la pile OpenTelemetry, des métriques et du traçage.
+
+== Dépendances optionnelles
+
+Nécessaires pour des fonctionnalités spécifiques.
+
+[cols=”,^,^,^"]
+|===
+| Dépendance de chart | Chart Helm `appVersion` | Chart Helm `version` | Fonctionnalité
+
+| `open-telemetry/opentelemetry-operator` chart
+| `≥ 0.104`
+| Exemple : `0.97.1`
+| OTEL
+
+| `prometheus-community/kube-prometheus-stack` chart
+| `≥ v0.69`
+| Exemple : `77.13.0`
+| Métriques
+
+| `jaegertracing/jaeger-operator` chart
+| `≥ 1.49 < 2`
+| Exemple : `2.57.0`
+| Suivi
+
+| `kyverno/policy-reporter` chart
+| `≥ 2 < 4`
+| Dans le chart `kubewarden-controller` en tant que sous-chart
+| Interface des rapports de stratégie
+|===
+
+[cols=",^,^,^"]
+|===
+| Dépendance CRD | Version | Chart Helm `version` | Fonctionnalité
+
+| (cesser la prise en charge, suppression programmée) `policyreports.wgpolicyk8s.io` CRD
+| `v1beta1`
+| Dans le chart `kubewarden-defaults` ou installé manuellement
+| Scanner d'audit
+
+| `openreports.io` CRD
+| `v1alpha2`
+| Dans le chart `kubewarden-defaults` ou installé manuellement
+| Scanner d'audit
+|===
+
+== Rancher
+
+Le projet {short-project-name} teste les charts Helm de surveillance et de traçage fournis dans le dépôt Rancher.
