@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Rotação de certificados
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprenda como rotacionar certificados em seu {project-name} sem causar tempo de inatividade.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explanations", "certificates"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "certificado", "controlador", "reconciliação"]
+:sidebar_label: Rotação de certificados
+:sidebar_position: 21
+
+A versão {project-name} v1.17.0 removeu a dependência do cert-manager. O controlador é capaz de gerenciar todos os certificados usados por todos os componentes. Agora, o controlador possui um novo loop de reconciliação que garante que os certificados estejam sempre atualizados e que a configuração do webhook esteja correta.
+
+A instalação do gráfico Helm realiza a primeira geração de certificados. Ela gera a CA raiz com dez anos até a expiração. A instalação do gráfico Helm também gera o certificado do servidor web do webhook do controlador, assinado pela CA raiz. O servidor da API usa isso para se comunicar com o {short-project-name} controlador para validar os CRDs. Ele tem uma expiração de um ano.
+
+Uma vez que o controlador inicia, seu reconciliador renova os certificados automaticamente quando estão prestes a expirar. Ele também atualiza todos os certificados e configurações de webhook usados por toda a {short-project-name} pilha.
+
+[NOTE]
+====
+Todos os certificados gerados pelo gráfico Helm e posteriormente pelo controlador usam chaves ECDSA P256.
+====
+
+O loop de reconciliação renova os certificados 60 dias antes da expiração.
+Os certificados rotacionam sem tempo de inatividade. O loop de reconciliação também cuida da renovação da CA raiz.
+
+O controlador gera uma nova CA raiz 60 dias antes da expiração. O controlador atualiza o pacote de CA usado por todos os webhooks para incluir tanto a nova CA raiz quanto a antiga.
+
+A mudança da CA raiz leva o reconciliador a recriar os certificados emitidos para os webhooks. A propagação dos novos certificados requer um período de tempo. No entanto, durante esse tempo, o pacote CA atualizado permite que o servidor da API continue a se comunicar com todos os webhooks sem qualquer tempo de inatividade.
+
+Quando um novo certificado está pronto e o antigo é inválido, o controlador atualiza o pacote de CA, utilizado pelos webhooks, para incluir apenas a CA raiz mais recente.
+
+Quando um certificado do servidor de política ou do servidor web controlador é renovado, o controlador atualiza o segredo com o novo certificado assinado pela CA raiz. Devido a esse recurso de recarga, o controlador e o servidor de política utilizam o novo certificado sem a necessidade de reiniciar processos, portanto, sem tempo de inatividade.
