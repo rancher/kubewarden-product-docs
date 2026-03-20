@@ -1,0 +1,23 @@
+include::partial$variables.adoc[]
+= Definições de recursos personalizados (CRDs)
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Saiba mais sobre as definições de recursos personalizados (CRDs) para {project-name} e acesse referências de API relacionadas.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["operator-manual", "crd"]
+:doc-type: ["reference"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom resource definitions", "crd"]
+:sidebar_label: Definições de recursos personalizados (CRDs)
+:sidebar_position: 5
+:current-version: {page-origin-branch}
+
+Você pode encontrar as definições para os recursos personalizados {project-name} tanto nesta página quanto https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[aqui em docs.crds.dev].
+
+////
+API REFERENCE GOES BELOW.
+From a file generated in the kubewarden/kubewarden-controller repo
+in docs/crds.
+////
+
+include::latest@shared:en:partial$CRD-docs-for-docs-repo-v1.33-forward.adoc[]

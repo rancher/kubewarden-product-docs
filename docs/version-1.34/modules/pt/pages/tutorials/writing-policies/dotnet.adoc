@@ -1,0 +1,41 @@
+include::partial$variables.adoc[]
+= C#
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explore e escreva validação e mutação de políticas de controle de admissão usando o SDK .NET Core com suporte WASI em plataformas WebAssembly como Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "c#"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas", "c#", ".net"]
+:sidebar_label: C#
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+Atualmente, o .NET Core tem suporte experimental para a plataforma WebAssembly WASI.
+Isso é do projeto https://github.com/SteveSandersonMS/dotnet-wasi-sdk[`dotnet-wasi-sdk`].
+
+[NOTE]
+====
+
+Você não precisa de uma instalação do Windows para escrever ou executar código .NET Core.
+Tudo pode ser feito também em uma máquina Linux ou macOS.
+====
+
+
+== Estado atual
+
+Os autores de políticas podem usar os seguintes recursos:
+
+* https://github.com/kubewarden/policy-sdk-dotnet[{project-name} .NET Core SDK]: isso fornece um conjunto de objetos e funções que simplificam o processo de escrita de políticas.
+* https://github.com/kubewarden/policy-sdk-dotnet/tree/main/example[{short-project-name} exemplo de política]: este é um exemplo de uma política funcional.
+
+Nenhuma limitação é conhecida.
+O SDK permite escrever tanto políticas de validação quanto de mutação.
+
+É possível usar a biblioteca https://www.nuget.org/packages/KubernetesClient.Models[`KubernetesClient.Models`] para lidar com os objetos do Kubernetes.
+
+== Modelo de projeto
+
+Atualmente, não temos um modelo de projeto que possa gerar a estrutura básica de uma política em C#.
+
+Por favor, https://github.com/kubewarden/policy-sdk-dotnet/issues[abra uma issue] se estiver interessado.
