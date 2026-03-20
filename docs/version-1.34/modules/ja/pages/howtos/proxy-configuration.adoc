@@ -1,0 +1,44 @@
+include::partial$variables.adoc[]
+
+= プロキシ設定
+:description: プロキシを{project-name}で利用する。
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "proxy", "proxies"]
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "proxy"]
+
+`kwctl`と`policy-server`の両方に対して、HTTPおよびHTTPSプロキシを設定でき、またこのプロキシ設定から除外するドメインを指定できます。
+
+これを行う方法は2つあります：* `kwctl`または`policy-server`のために、環境変数`HTTP_PROXY`、`HTTPS_PROXY`、`NO_PROXY`（およびそれらの小文字の対応）を設定すること。
+  PolicyServer CRを設定するには、その`spec.env`配列を設定します。* `--sources-path`引数を介して`sources.yaml`ファイルを提供すること。
+  `sources.yaml`ファイルは環境変数よりも優先されます。
+  この設定を`spec`フィールドを介して使用することは、PolicyServer CRではまだ公開されていません。
+
+プロキシ設定を行うことは、以下に影響します：
+
+* OCIレジストリからのポリシーのプル、プッシュ、およびプル・アンド・ラン。
+* コンテキスト認識呼び出しからのホスト機能、例えば：
+** コンテナレジストリ、OCIマニフェストまたはマニフェストダイジェストを取得すること。
+   OCIレジストリに直接アクセスする代わりに、トラフィックは設定されたプロキシを介してルーティングされます。
+** Sigstore機能、例えばキーなし署名の検証。
+   Sigstoreで定義されたサービスに直接アクセスする代わりに、トラフィックは設定されたプロキシを介してルーティングされます。
+
+== 例
+
+PolicyServer を通じて、`kwctl`または`policy-server``spec.env`向けの以下の環境変数を設定できます：
+
+[source,bash]
+----
+HTTP_PROXY="http://proxy.corp:3128"
+https_proxy="http://proxy.corp:3129"
+NO_PROXY="localhost,.corp"
+----
+
+この設定では：* HTTPを介した非セキュアなトラフィック、例えば非セキュアなOCIレジストリとの間のトラフィックは`\http://proxy.corp:3128`を介してルーティングされます。
+  これは、対象リポジトリ内のコンテナに対してOCIイメージマニフェストダイジェストを利用するコンテキスト認識機能を呼び出すポリシーのプルに影響します。なお、HTTPSを介した暗号化通信は`\https://proxy.corp:3129`を通じてルーティングされます。
+  例えば、これは任意のセキュアなOCIレジストリへのポリシーのプルおよびプッシュ、そしてポリシーのコンテキスト認識機能を含みます。* localhostまたは`.corp`の下の任意のドメインとの間のトラフィックは、前述の設定から除外されます。
+
+
+== `sources.yaml`ファイル
+
+詳細については、xref:/reference/sources_yaml.adoc[`sources.yaml`] 参照を確認してください。
