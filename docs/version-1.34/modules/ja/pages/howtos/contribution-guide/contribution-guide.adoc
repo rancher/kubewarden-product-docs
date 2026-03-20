@@ -1,0 +1,18 @@
+include::partial$variables.adoc[]
+= 貢献ガイド
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 私たちの包括的な貢献ガイドを通じて、SUSEプロジェクトへの貢献について学びましょう。このガイドでは、手順とベストプラクティスを説明しています。
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "contributing"]
+:sidebar_label: 貢献ガイド
+:sidebar_position: 1
+:current-version: {page-origin-branch}
+
+_{project-name}は、新しい方も経験豊富な方も、すべての貢献者を歓迎します。_
+
+ifeval::["{build-type}" == "community"]
+貢献ガイドをhttps://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[こちら]でご確認ください。
+endif::[]
