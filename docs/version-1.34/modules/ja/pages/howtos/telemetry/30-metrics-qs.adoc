@@ -1,0 +1,211 @@
+include::partial$variables.adoc[]
+= メトリクス クイックスタート
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Prometheusを使用してポリシーサーバーでメトリクス報告を設定し、データ収集のためにHelmチャートを通じて{project-name}を有効にします。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "メトリクス クイックスタート"]
+:sidebar_label: Metrics
+:current-version: {page-origin-branch}
+
+このセクションでは、ポリシーサーバーでメトリクス報告を有効にする方法を文書化しています。
+
+[NOTE]
+====
+
+続行する前に、この本の前のxref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry]セクションを完了したことを確認してください。このセクションが正しく機能するために必要です。
+
+====
+
+ポリシーサーバーによって公開されたメトリクスを収集するためにhttps://prometheus.io/[Prometheus]を使用します。
+
+== Prometheusをインストールします。
+
+https://github.com/prometheus-operator/prometheus-operator[Prometheusオペレーター]を使用し、Prometheusのターゲットを定義します。
+
+Prometheusをインストールして設定する方法はたくさんあります。展開の容易さのために、PrometheusコミュニティのHelmチャートを使用するべきです。
+
+このHelmチャートでデプロイされたPrometheusオペレーターは、どのサービスをPrometheusが監視するかを定義するためにhttps://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md#servicemonitor[サービスモニター]を使用します。
+
+あなたの場合、`kubewarden`ネームスペースをターゲットにし、ラベル`app=kubewarden-policy-server-default`と`app.kubernetes.io/name: kubewarden-controller`に一致するサービスのためにServiceMonitorを追加しています。これにより、Prometheusオペレーターは、これらの条件に一致するサービスに属するKubernetesエンドポイントを検査するように構成されます。
+
+デフォルトのPrometheusインスタンスがHelmチャートによってインストールされるために、`kubewarden-controller`と`kubewarden-policy-server`という2つのServiceMonitorを作成できます。
+
+そのためには、次の値ファイルを作成するべきです：
+
+[subs="+attributes",console]
+----
+cat <<EOF > kube-prometheus-stack-values.yaml
+prometheus:
+  additionalServiceMonitors:
+    - name: kubewarden
+      selector:
+        matchLabels:
+          app: kubewarden-policy-server-default
+      namespaceSelector:
+        matchNames:
+          - kubewarden
+      endpoints:
+        - port: metrics
+          interval: 10s
+    - name: kubewarden-controller
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: kubewarden-controller
+      namespaceSelector:
+        matchNames:
+          - kubewarden
+      endpoints:
+        - port: metrics
+          interval: 10s
+EOF
+----
+
+PrometheusスタックHelmチャートをインストールするべきです：
+
+[NOTE]
+====
+執筆時点（2023-11-17）での最新のチャートバージョンは`51.5.3`です。
+====
+
+
+[subs="+attributes",console]
+----
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm install --wait --create-namespace \
+  --namespace prometheus \
+  --version 51.5.3 \
+  --values kube-prometheus-stack-values.yaml \
+  prometheus prometheus-community/kube-prometheus-stack
+----
+
+== {short-project-name}をインストールします
+
+これで、Helmチャートを使用して{short-project-name}を推奨される方法でインストールできます。
+
+[NOTE]
+====
+
+`cert-manager`はOpenTelemetryの要件ですが、すでにこのドキュメントの前のセクションでインストールしています。
+
+====
+
+
+まず、{short-project-name}を含むHelmリポジトリを追加する必要があります。
+
+[subs="+attributes",console]
+----
+helm repo add kubewarden https://charts.kubewarden.io
+----
+
+次に、{short-project-name}によって定義されたカスタムリソース定義（CRD）をインストールします。
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden --create-namespace \
+  kubewarden-crds kubewarden/kubewarden-crds
+----
+
+これで、{short-project-name}スタックの残りをデプロイできます。公式のHelmチャートは、`default`という名前のPolicyServerを作成します。
+
+Helmチャートを構成して、{short-project-name}でメトリクスが有効になるようにする必要があります。`kubewarden-values.yaml`ファイルには次の内容が含まれている必要があります：
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  mode: sidecar
+  metrics: True
+  sidecar:
+    metrics:
+      port: 8080
+----
+
+今、Helmチャートをインストールします：
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  --values kubewarden-values.yaml \
+  kubewarden-controller kubewarden/kubewarden-controller
+
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=monitor
+----
+
+これにより、`default`の`PolicyServer`インスタンスが作成されます：
+
+[subs="+attributes",console]
+----
+kubectl get policyservers.policies.kubewarden.io
+NAME      AGE
+default   3m7s
+----
+
+デフォルトでは、このポリシーサーバーにはメトリクスが有効になっていません。
+
+== Prometheusへのアクセス
+
+Prometheusは、Kubernetesクラスター内のさまざまなコンポーネントによって公開されたメトリクスを検査するために使用できるUIを提供します。
+
+Prometheusポートを転送してアクセスできるようにします。
+
+[subs="+attributes",console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-operated 9090
+----
+
+今、ポート`9090`でPrometheusにアクセスし、例えば次のようなクエリを実行できます：`kubewarden_policy_evaluations_total`。ポリシーを通過するリクエストが増えるにつれて、評価の数が時間とともに増加するのがわかります。
+
+== Grafanaへのアクセス
+
+Grafanaサービスを転送してアクセスできるようにします。
+
+[subs="+attributes",console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
+----
+
+デフォルトのユーザー名`admin`とパスワード`prom-operator`でログインできます。
+
+=== {short-project-name} Grafanaダッシュボードの使用
+
+{short-project-name}には、クラスター内での{short-project-name}の動作についての概要を示す基本的なメトリクスを持つGrafanaダッシュボードがあります。このダッシュボードは、{short-project-name}ポリシーサーバーリポジトリのGitHubリリースで、https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSONファイル]として、またはhttps://grafana.com/grafana/dashboards/15314[Grafanaウェブサイト]で利用可能です。
+
+ダッシュボードを環境にインポートするには、GrafanaウェブサイトまたはリポジトリからJSONファイルをダウンロードできます。
+
+[subs="+attributes",console]
+----
+curl https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json
+----
+
+ファイルを取得したら、Grafanaダッシュボードにアクセスし、https://grafana.com/docs/grafana/latest/dashboards/export-import/#import-dashboard[インポートします]。Grafanaダッシュボードの`/dashboard/import`を訪れ、次の手順に従ってください：
+
+. JSONファイルの内容をGrafana UIの`Import via panel json`ボックスにコピーして貼り付けます。
+. `Load`ボタンをクリックします。
+. ソースとして`Prometheus`を選択します。
+. `Import`ボタンをクリックします。
+
+別のオプションは、grafana.comウェブサイトから直接インポートすることです。これについて：
+
+. https://grafana.com/grafana/dashboards/15314[ダッシュボードページ]からダッシュボードIDをコピーします、
+. それを`Import via grafana.com`フィールドに貼り付けます。
+. `load`ボタンをクリックします。
+. ダッシュボードをインポートした後、使用するPrometheusデータソースを定義し、インポートプロセスを完了します。
+
+Grafanaダッシュボードには、{short-project-name}によって管理されているすべてのポリシーの状態を示すパネルがあります。また、ポリシー特有のパネルもあります。
+
+特定のポリシーの詳細なメトリクスを取得するには、`policy_name`変数の値を必要なポリシーの名前に合わせて変更します。
+
+このようなダッシュボードが表示されるはずです：
+
+image::grafana_dashboard.png[ダッシュボード]
