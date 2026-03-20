@@ -1,0 +1,112 @@
+include::partial$variables.adoc[]
+= Erstellen einer Richtlinie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Lernen Sie, Validierungsrichtlinien zu erstellen und zu konfigurieren, die Pod-Erstellungsanfragen basierend auf anpassbaren Ablehnungskriterien steuern.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "richtlinien-schreiben", "rust", "richtlinien-erstellen"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "richtlinienerstellung"]
+:sidebar_label: Erstellen einer Richtlinie
+:current-version: {page-origin-branch}
+
+Als Beispiel erstellen Sie eine einfache Validierungsrichtlinie, die Pod-Erstellungsanfragen verarbeitet.
+
+Die Richtlinie betrachtet das `metadata.name` Attribut des Pods und lehnt Pods mit einem ungültigen Namen ab.
+Die Liste der ungültigen Namen sollte von den Endbenutzern der Richtlinie konfigurierbar sein.
+
+Die Richtlinieneinstellungen sehen ungefähr so aus:
+
+[subs="+attributes",yaml]
+----
+invalid_names:
+- bad_name1
+- bad_name2
+----
+
+Die Richtlinie sollte die Erstellung eines Pods wie dem folgenden akzeptieren:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Die Richtlinie sollte die Erstellung eines Pods wie dem folgenden ablehnen:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad_name1
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== Gerüst für das neue Richtlinienprojekt erstellen
+
+Sie können ein neues Richtlinienprojekt erstellen, indem Sie `cargo generate` mit dem https://github.com/kubewarden/rust-policy-template[Vorlagenprojekt] verwenden.
+
+Zuerst installieren Sie `cargo-generate`. Dies erfordert https://pkgs.org/download/openssl-devel[openssl-devel].
+
+[subs="+attributes",shell]
+----
+cargo install cargo-generate
+----
+
+Jetzt erstellen Sie das Gerüst für das Projekt wie folgt:
+
+[subs="+attributes",shell]
+----
+cargo generate --git https://github.com/kubewarden/rust-policy-template \
+               --branch main \
+               --name demo
+----
+
+Der Befehl erzeugt eine Ausgabe wie:
+
+[subs="+attributes",console]
+----
+🔧   Creating project called `+demo+`...
+✨   Done! New project created /<some-path-name>/demo
+----
+
+Dies erstellt das neue Richtlinienprojekt im `demo` Unterverzeichnis.
+
+[NOTE]
+====
+
+Wenn Sie die Funktionalität des GitHub-Container-Registrierungsdienstes in der Demo nutzen möchten, müssen Sie https://docs.github.com/en/packages/working-with-a-github-packages-registry/enabling-improved-container-support-with-the-container-registry#enabling-the-container-registry-for-your-personal-account[verbesserte Containerunterstützung aktivieren].
+====
+
+
+=== Tester
+
+Sie können Folgendes ausprobieren:
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+Dies testet das generierte Gerüst. Wenn alles korrekt an seinem Platz ist, sehen Sie eine Reihe von Kompilierungsnachrichten, die mit einer Ausgabe enden wie:
+
+[subs="+attributes",console]
+----
+running 4 tests
+test settings::tests::validate_settings ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+test tests::reject_pod_with_invalid_name ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
