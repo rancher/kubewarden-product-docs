@@ -1,0 +1,48 @@
+include::partial$variables.adoc[]
+= Schreiben von {project-name} Richtlinien
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Entwickeln Sie Admission-Controller-Richtlinien, indem Sie gut definierte Funktionen über eine spezifische API mit einer unterstützten Programmiersprache bereitstellen.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "richtlinien schreiben"]
+:sidebar_label: Richtlinien schreiben
+:current-version: {page-origin-branch}
+
+Dieser Abschnitt führt {project-name} Richtlinien anhand traditioneller Computeranalogien ein.
+
+Eine {short-project-name} Richtlinie ist wie ein Programm, das eine Aufgabe erfüllt.
+Es erhält Eingabedaten, führt Berechnungen mit diesen Daten durch und gibt ein Ergebnis zurück.
+
+Die Eingabedaten sind Kubernetes-Zulassungsanfragen.
+Das Ergebnis der Berechnung ist eine Validierungsantwort, die Kubernetes mitteilt, ob die Eingabedaten, die Zulassungsanfrage, akzeptiert, abgelehnt oder verändert werden sollen.
+
+Die https://github.com/kubewarden/policy-server[policy-server] Komponente von {short-project-name} führt diese Operationen aus.
+
+Der Policy-Server enthält keine Datenverarbeitungsfunktionen.
+Sie fügen zur Laufzeit mit Add-ons Verarbeitungsfunktionen hinzu.
+Diese Add-ons sind die {short-project-name} Richtlinien.
+
+Eine {short-project-name} Richtlinie ist also wie ein https://en.wikipedia.org/wiki/Plug-in_%28computing%29[traditionelles Plugin] des "Policy-Server"-Programms.
+
+Zusammenfassung:
+
+* {short-project-name} Richtlinien sind Plugins, die eine Reihe gut definierter Funktionen (validieren eines Kubernetes-Anforderungsobjekts, validieren von vom Benutzer bereitgestellten Richtlinieneinstellungen und andere Funktionen) über eine gut definierte API bereitstellen.
+* Der Policy-Server ist das "Haupt"-Programm, das die Plugins (auch bekannt als Richtlinien) lädt und deren bereitgestellte Funktionen nutzt, um Kubernetes-Anfragen zu akzeptieren, abzulehnen oder zu verändern.
+
+Das Schreiben von {short-project-name} Richtlinien besteht darin, die Validierungslogik zu schreiben und sie dann über eine gut definierte API bereitzustellen.
+
+== Anforderungen an Programmiersprachen
+
+Sie liefern {short-project-name} Richtlinien als https://webassembly.org/[WebAssembly] Binärdateien.
+
+Richtlinienautoren können Richtlinien in jeder Programmiersprache schreiben, die WebAssembly als Ziel für die Kompilierung unterstützt.
+Die Liste der unterstützten Sprachen entwickelt sich ständig weiter, https://github.com/appcypher/awesome-wasm-langs[diese Seite] bietet einen schönen Überblick über die WebAssembly-Landschaft.
+
+Derzeit gibt es keinen offiziellen Weg, um komplexe Datentypen zwischen dem Host und einem WebAssembly-Gast auszutauschen.
+Um diese Einschränkung zu überwinden, verwenden {short-project-name} Richtlinien das https://github.com/wapc[waPC] Projekt, das einen bidirektionalen Kommunikationskanal bereitstellt.
+
+Daher muss Ihre bevorzugte Programmiersprache ein verfügbares waPC-Gast-SDK haben.
+Wenn das nicht der Fall ist, zögern Sie nicht, sich zu melden.
+Das Projektteam kann Ihnen helfen, diese Einschränkung zu überwinden.
