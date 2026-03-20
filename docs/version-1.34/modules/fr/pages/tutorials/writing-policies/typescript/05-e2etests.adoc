@@ -1,0 +1,259 @@
+include::partial$variables.adoc[]
+= Tests de bout en bout
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à écrire et à exécuter des tests de bout en bout complets pour le comportement des stratégies en utilisant BATS et kwctl.
+:keywords: "{project-name}", kubewarden, kubernetes, tests de stratégies, typescript, tests e2e
+:doc-type: didacticiel
+:doc-topic: {project-name}, kubewarden, écriture-des-stratégies, typescript, tests-de-bout-en-bout
+:doc-persona: développeur-de-stratégie-kubewarden
+:current-version: {page-origin-branch}
+
+Cette section montre comment vous pouvez écrire des tests de bout en bout s'exécutant contre le binaire WebAssembly réel produit par la chaîne d'outils de compilation Javy.
+
+== Conditions préalables
+
+Rappelez-vous, vous avez besoin de ces outils sur votre machine de développement :
+
+* `bats` : Utilisé pour écrire les tests et automatiser leur exécution.
+* `kwctl` >= v1.30 : Outil CLI fourni par {project-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions. C'est couvert dans xref:/tutorials/testing-policies/index.adoc[la section des tests de stratégies] de la documentation.
+
+== Écriture de tests
+
+Vous utiliserez `bats` pour écrire et automatiser vos tests. Chaque test a les étapes suivantes :
+
+. Exécutez la stratégie en utilisant `kwctl run` directement avec le fichier de ressources JSON.
+. Effectuez des assertions sur la sortie produite par `kwctl`.
+
+Tous les tests de bout en bout vont dans un fichier appelé `e2e.bats`. Le projet de structure de projet comprend un exemple, `e2e.bats`. Vous devez étendre son contenu pour fournir une couverture de test complète pour le comportement de votre stratégie.
+
+== Fichiers de données de test
+
+Les cas de test de bout en bout testent la création de ressources Kubernetes spécifiques.
+
+Par exemple, lors du test de la création d'une ressource Pod :
+
+[source,json]
+----
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "test-pod"
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "nginx",
+        "image": "nginx:latest"
+      }
+    ]
+  }
+}
+----
+
+Le cas de test de bout en bout utilise un fichier JSON contenant un AdmissionReview Kubernetes. Ces objets JSON AdmissionReviews sont ceux qui sont envoyés contre l'API Kubernetes afin qu'ils soient xref:/reference/spec/03-validating-policies.adoc#an-example[validés].
+
+Vous pouvez obtenir des objets JSON AdmissionReviews en utilisant `kwctl scaffold admission-request`.
+Jetez un œil à `test_data/pod.json` pour voir un AdmissionRequest JSON avec un Pod.
+
+== Cas de test de base
+
+Le modèle fournit déjà plusieurs tests de base. Voici à quoi devrait ressembler le fichier `e2e.bats` complet :
+
+[source,bash]
+----
+#!/usr/bin/env bats
+----
+
+Voici les tests existants avec des explications :
+
+=== Test 1 : Rejeter les noms d'hôtes refusés
+
+[source,bash]
+----
+@test "reject because hostname is on deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host", "test-hostname"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+Ce test garantit que la stratégie rejette les Pods lorsque leur nom d'hôte figure sur la liste de refus.
+
+=== Test 2 : Accepter les noms d'hôtes autorisés
+
+[source,bash]
+----
+@test "accept because hostname is not on the deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Ce test vérifie que la stratégie accepte les Pods lorsque leur nom d'hôte n'est pas sur la liste de refus.
+
+=== Test 3 : Accepter lorsque aucun paramètre n'est fourni
+
+[source,bash]
+----
+@test "accept because the deny list is empty" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Ce test garantit que la stratégie accepte les demandes lorsque vous ne fournissez aucun paramètre.
+
+=== Test 4 : Accepter les pods sans noms d'hôte
+
+[source,bash]
+----
+@test "accept because pod has no hostname set" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (no hostname to check)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Ce test vérifie que la stratégie accepte les Pods sans noms d'hôte, indépendamment de la liste de refus.
+
+=== Test 5 : Accepter les ressources non-Pod
+
+[source,bash]
+----
+@test "accept non-pod resources" {
+  run kwctl run annotated-policy.wasm -r test_data/service.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (not a pod)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Ce test garantit que la stratégie accepte les ressources qui ne sont pas des Pods, puisque la stratégie ne valide que les noms d'hôte des Pods.
+
+== Couverture de test étendue
+
+Vous pouvez étendre la couverture de test en ajoutant plus de scénarios de test :
+
+=== Test 6 : Validation des paramètres
+
+Vous pouvez également ajouter des tests pour vérifier que la validation des paramètres fonctionne correctement :
+
+[source,bash]
+----
+@test "accept valid settings" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["host1", "host2"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # settings are valid, request processed normally
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+=== Test 7 : Cas limites
+
+[source,bash]
+----
+@test "reject with multiple denied hostnames" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["bad-host", "test-hostname", "forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+[source,bash]
+----
+@test "accept with empty denied hostnames array" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": []}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+== Exécution des tests
+
+Vous pouvez exécuter tous les tests de bout en bout en utilisant cette commande :
+
+[source,console]
+----
+make e2e
+----
+
+Cela produit une sortie comme :
+
+[source,console]
+----
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+ ✓ accept valid settings
+ ✓ reject with multiple denied hostnames
+ ✓ accept with empty denied hostnames array
+
+8 tests, 0 failures
+----
+
+== Comprendre la sortie des tests
+
+Chaque test utilise `kwctl` pour exécuter la stratégie et vérifie :
+
+* Statut de sortie : La commande `kwctl` doit se terminer avec le statut 0 pour une exécution réussie de la stratégie.
+* Champ autorisé : La sortie JSON contient un champ `allowed` indiquant si la demande a été acceptée.
+* Contenu du message : Pour les demandes rejetées, la sortie contient un message d'erreur descriptif.
+
+Les déclarations `echo "output = $\{output}"` dans chaque test aident au débogage en montrant la sortie réelle de la stratégie lorsque le test échoue.
+
+== Conclusion
+
+Les tests de bout en bout offrent une couverture complète du comportement de la stratégie en testant contre le binaire WebAssembly réel. Cela garantit que la stratégie fonctionne correctement lorsqu'elle est déployée dans {short-project-name}, et pas seulement dans l'environnement de développement TypeScript.
+
+[TIP]
+====
+Pour des exemples plus complets de tests de bout en bout, vous pouvez explorer le code source https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js source code], qui comprend des tests e2e étendus démontrant chacune des capacités d'hôte de {short-project-name}. Ces tests peuvent servir d'inspiration pour tester des fonctionnalités de stratégie plus avancées telles que le réseau, les opérations cryptographiques et les interactions avec le registre OCI.
+====
