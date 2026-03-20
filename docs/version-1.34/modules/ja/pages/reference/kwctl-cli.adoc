@@ -1,0 +1,493 @@
+// This file was converted from Markdown to AsciiDoc.
+
+include::partial$variables.adoc[]
+= kwctl CLI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: kwctl CLI
+:description: \`kwctl` コマンドラインツールを探索して、{project-name} ポリシーを管理し、ポリシーの読み込みなどのタスクを実行します。
+:keywords: cli、リファレンス、kwctl
+:doc-persona: kubewarden-operator
+:doc-type: リファレンス
+:doc-topic: オペレーター・マニュアル
+
+== のコマンドラインヘルプ`kwctl`
+
+この文書には `kwctl` コマンドラインプログラムのヘルプ内容が含まれています。
+
+*コマンド概要:*
+
+* <<kwctl,`kwctl`>>
+* <<kwctl-annotate,`kwctl annotate`>>
+* <<kwctl-bench,`kwctl bench`>>
+* <<kwctl-completions,`kwctl completions`>>
+* <<kwctl-digest,`kwctl digest`>>
+* <<kwctl-docs,`kwctl docs`>>
+* <<kwctl-info,`kwctl info`>>
+* <<kwctl-inspect,`kwctl inspect`>>
+* <<kwctl-load,`kwctl load`>>
+* <<kwctl-policies,`kwctl policies`>>
+* <<kwctl-pull,`kwctl pull`>>
+* <<kwctl-push,`kwctl push`>>
+* <<kwctl-rm,`kwctl rm`>>
+* <<kwctl-run,`kwctl run`>>
+* <<kwctl-save,`kwctl save`>>
+* <<kwctl-scaffold,`kwctl scaffold`>>
+* <<kwctl-scaffold-admission-request,`kwctl scaffold admission-request`>>
+* <<kwctl-scaffold-artifacthub,`kwctl scaffold artifacthub`>>
+* <<kwctl-scaffold-manifest,`kwctl scaffold manifest`>>
+* <<kwctl-scaffold-vap,`kwctl scaffold vap`>>
+* <<kwctl-scaffold-verification-config,`kwctl scaffold verification-config`>>
+* <<kwctl-verify,`kwctl verify`>>
+
+[[kwctl]]
+=== `kwctl`
+
+ポリシーを管理する{project-name} ツール
+
+*使用方法:* `kwctl [OPTIONS] <COMMAND>`
+
+==== サブコマンド
+
+* `annotate` — WebAssembly モジュールに {short-project-name} メタデータを追加します。
+* `bench` — {short-project-name} ポリシーのベンチマークを実行します。
+* `completions` — シェルの補完を生成します。
+* `digest` — ポリシーの OCI マニフェストからダイジェストを取得します。
+* `docs` — kwctl コマンドのマークダウンドキュメントを生成します。
+* `info` — システム情報を表示します。
+* `inspect` — {short-project-name} ポリシーを検査します。
+* `load` — tar.gz ファイルからポリシーを読み込みます。
+* `policies` — ダウンロードしたすべてのポリシーをリストします。
+* `pull` — 指定された URI から {short-project-name} ポリシーを取得します。
+* `push` — OCI レジストリに {short-project-name} ポリシーをプッシュします。
+* `rm` — ストアから {short-project-name} ポリシーを削除します。
+* `run` — 指定された URI から {short-project-name} ポリシーを実行します
+* `save` — ポリシーを tar.gz ファイルに保存します
+* `scaffold` — Kubernetes リソースまたは設定ファイルを作成します。
+* `verify` — Sigstore を使用して指定された URI から {short-project-name} ポリシーを検証します
+
+==== オプション
+
+* `-v`, `--verbose <VERBOSE>` — 詳細度を上げます
+* `--no-color <NO-COLOR>` — カラフルな出力を無効にします
+
+[[kwctl-annotate]]
+=== `kwctl annotate`
+
+WebAssembly モジュールに {short-project-name} メタデータを追加します
+
+*使用方法:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
+
+==== 引数
+
+* `<WASM-PATH>` — 注釈を付ける WebAssembly モジュールへのパス
+
+==== オプション
+
+* `-m`, `--metadata-path <PATH>` — メタデータを含むファイル
+* `-o`, `--output-path <PATH>` — 出力ファイル
+* `-u`, `--usage-path <PATH>` — ポリシーの使用情報を含むファイル
+
+[[kwctl-bench]]
+=== `kwctl bench`
+
+{short-project-name}ポリシーのベンチマークを実行します。
+
+ポリシーは以下の方法で指定できます：
+- URI: 例、`registry://ghcr.io/kubewarden/policies/psp-policy:latest` または `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
+- SHA プレフィックス: 例、`c3b80a10f9c3`（ポリシーがすでにプルされている必要があります）
+- ローカル WASM ファイル: 例、`file://home/tux/new-policy/psp-policy.wasm`
+- ローカル YAML ファイル: 例、`file://home/tux/cluster-admission-policy.yaml`（{short-project-name} カスタムリソースの宣言を含む、`ClusterAdmissionPolicy`、`AdmissionPolicy` など）
+
+デフォルトの動作:
+スキーマが省略された場合、`file://` が仮定され、現在のディレクトリをルートとして扱われます。
+
+{short-project-name} カスタムリソースに関する注意事項：
+- フラグ `--request-path`、`--settings-path`、および `--settings-json` は無視されます。設定はカスタムリソース定義から読み取られます。
+- `--execution-mode` フラグは YAML ファイル内のすべてのポリシーに適用されます。
+- `--raw` フラグは使用できません。{short-project-name} のカスタムリソースは `raw` ポリシーをサポートしていません。
+
+カスタムリソース定義 (CRD) の以下の属性のみが評価されます。
+- ポリシーモジュール
+- ポリシー設定
+- ポリシーがアクセスできるコンテキスト対応リソース
+
+`rules`、`matchConditions`、`objectSelector`、および `namespaceSelector` などの他のフィールドは無視されます。
+
+YAML ファイルには複数のカスタムリソース宣言が含まれる場合があります。この場合、`kwctl` は各評価中に同じリクエストを使用してファイル内の各ポリシーを評価します。
+
+*使用方法：* `kwctl bench [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== 引数
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — ポリシーのURI、SHA プレフィックス、または{short-project-name}ポリシーリソースを含むYAMLファイル。サポートされているスキーム: registry://, https://, file://。スキーマが省略された場合、file:// が仮定され、現在のディレクトリをルートとして扱われます。
+
+==== オプション
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — ポリシーの `contextAwareResources` セクション内で定義された Kubernetes リソースへのアクセスを付与します。警告: 悪用を避けるためにリソースのリストを慎重に確認してください。デフォルトでは無効になっています。
+* `--cert-email <VALUE>` — Fulcio証明書に期待されるメールアドレス。
+* `--cert-oidc-issuer <VALUE>` — Fulcio証明書に期待されるOIDC発行者。
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — wasmtimeキャッシュの使用を無効にします。
+* `--docker-config-json-path <PATH>` — Docker の 'config.json' ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `--dump-results-to-disk <DUMP_RESULTS_TO_DISK>` — targetが見つかれば、結果をtarget/tiny-bench/label/..に配置します。以前の実行と比較するために使用されます。
+* `-e`, `--execution-mode <MODE>` — このポリシーを実行するために使用するランタイム。 +
+  指定可能な値: `opa`, `gatekeeper`, `kubewarden`, `wasi`。
+* `--github-owner <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubオーナー。
+* `--github-repo <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubリポジトリ。
+* `--measurement-time <SECONDS>` — ベンチマークが「実行されるべき」時間、num_samplesが優先されるため、ベンチマークがこの時間制限よりも遅い場合、num_samplesを収集するためにベンチマークが長くなります。
+* `--num-resamples <NUM>` — いくつの再サンプリングを行うべきか。
+* `--num-samples <NUM>` — いくつの再サンプリングを行うべきか。推奨は少なくとも50、100を超えると有意に異なる結果は得られないようです。
+* `--raw <RAW>` — 生のリクエストを検証する +
+  デフォルト値：`false`
+* `--record-host-capabilities-interactions <FILE>` — 指定されたファイルにポリシーとホストの能力に関する通信をすべて記録します。後で '--replay-host-capabilities-interactions' フラグと組み合わせるのに便利です。
+* `--replay-host-capabilities-interactions <FILE>` — ポリシーとホストの能力の交換中に、ホストは提供されたファイル内に見つかった回答を再送信します。これは、OCI レジストリ、DNS、Kubernetes との外部インタラクションが行われないことを前提に、ポリシーを再現可能な方法でテストするのに役立ちます。
+* `-r`, `--request-path <PATH>` — JSON 形式の Kubernetes Admission リクエストオブジェクトを含むファイル
+* `--settings-json <VALUE>` — このポリシーの設定を含む JSON 文字列
+* `-s`, `--settings-path <PATH>` — このポリシーの設定を含むファイル
+* `--sigstore-trust-config <PATH>` — Sigstore protobuf 仕様の ClientTrustConfig メッセージに準拠した JSON 形式のファイル。このファイルは、CA およびアーティファクトの透明性サービスにアクセスするために使用される URI や、信頼の根となる暗号的なルートを含む、Sigstore インスタンス全体の状態を構成します。
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA ...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — key=value 形式の注釈。複数回繰り返すことができます。
+* `--verification-config-path <PATH>` — 署名、公開鍵 ... に関する検証設定情報を保持する YAML ファイル。
+* `-k`, `--verification-key <PATH>` — ポリシーを検証するために使用される鍵へのパス。複数回繰り返すことができます。
+* `--warm-up-time <SECONDS>` — ベンチがウォームアップする時間
+
+[[kwctl-completions]]
+=== `kwctl completions`
+
+シェルの補完を生成する
+
+*使用方法:* `kwctl completions --shell <VALUE>`
+
+==== オプション
+
+* `-s`, `--shell <VALUE>` — シェルタイプ +
+  指定可能な値：`bash`, `elvish`, `fish`, `powershell`, `zsh`
+
+[[kwctl-digest]]
+=== `kwctl digest`
+
+ポリシーのOCIマニフェストからダイジェストを取得します
+
+*使用方法:* `kwctl digest [OPTIONS] <uri>`
+
+==== 引数
+
+* `<URI>` — ポリシー URI
+
+==== オプション
+
+* `--docker-config-json-path <PATH>` — Docker の 'config.json' ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA ...)
+
+[[kwctl-docs]]
+=== `kwctl docs`
+
+kwctl コマンドのマークダウンドキュメントを生成します。
+
+*使用方法:* `kwctl docs --output <FILE>`
+
+==== オプション
+
+* `-o`, `--output <FILE>` — ドキュメントファイルが保存されるパス
+
+[[kwctl-info]]
+=== `kwctl info`
+
+システム情報を表示します
+
+*使用方法:* `kwctl info`
+
+[[kwctl-inspect]]
+=== `kwctl inspect`
+
+{short-project-name} — ポリシーを検査します。
+
+*使用方法:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
+
+==== 引数
+
+* `<URI_OR_SHA_PREFIX>` — ポリシー URI または SHA プレフィックス。サポートされているスキーム：registry://, https://, file://。スキーマが省略された場合、file://が仮定され、現在のディレクトリを基準とします。
+
+==== オプション
+
+* `--docker-config-json-path <PATH>` — Dockerの'config.json'ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `-o`, `--output <FORMAT>` — 出力形式 +
+  指定可能な値: `yaml`
+* `--show-signatures <SHOW-SIGNATURES>` — sigstore署名を表示します
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA...)
+
+[[kwctl-load]]
+=== `kwctl load`
+
+tar.gzファイルからポリシーを読み込みます
+
+*使用方法:* `kwctl load --input <input>`
+
+==== オプション
+
+* `--input <INPUT>` — tarballからポリシーを読み込みます
+
+[[kwctl-policies]]
+=== `kwctl policies`
+
+ダウンロードしたすべてのポリシーをリストします
+
+*使用方法:* `kwctl policies`
+
+[[kwctl-pull]]
+=== `kwctl pull`
+
+指定されたURIから{short-project-name}ポリシーをプルします
+
+*使用方法:* `kwctl pull [OPTIONS] <uri>`
+
+==== 引数
+
+* `<URI>` — ポリシーURI。サポートされているスキーム: registry://, https://, file://
+
+==== オプション
+
+* `--cert-email <VALUE>` — Fulcio証明書に期待されるメールアドレス
+* `--cert-oidc-issuer <VALUE>` — Fulcio証明書に期待されるOIDC発行者
+* `--docker-config-json-path <DOCKER_CONFIG>` — Dockerの'config.json'ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `--github-owner <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubオーナー
+* `--github-repo <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubリポジトリ
+* `-o`, `--output-path <PATH>` — 出力ファイル。提供されていない場合は{short-project-name}ストアにダウンロードされます
+* `--sigstore-trust-config <PATH>` — Sigstore protobuf 仕様の ClientTrustConfig メッセージに準拠した JSON 形式のファイル。このファイルは、CA およびアーティファクトの透明性サービスにアクセスするために使用される URI や、信頼の根となる暗号的なルートを含む、Sigstore インスタンス全体の状態を構成します。
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — key=value 形式の注釈。複数回繰り返すことができます。
+* `--verification-config-path <PATH>` — 署名、公開鍵...に関する検証設定情報を保持する YAML ファイル。
+* `-k`, `--verification-key <PATH>` — ポリシーを検証するために使用される鍵へのパス。複数回繰り返すことができます。
+
+[[kwctl-push]]
+=== `kwctl push`
+
+{short-project-name}ポリシーをOCIレジストリにプッシュします
+
+*使用方法:* `kwctl push [OPTIONS] <policy> <uri>`
+
+ポリシーのメタデータ内に見つかる注釈は、OCIマニフェストの一部になります。
+複数行の注釈は、OCI仕様と互換性がないためスキップされます。
+「io.kubewarden.policy.source」注釈は「org.opencontainers.image.source」として伝播され、renovatebotのようなツールがポリシーの更新を検出できるようにします。
+
+==== 引数
+
+* `<POLICY>` — プッシュするポリシー。ローカルファイルへのパス、ポリシーURI、またはストア内のポリシーのSHAプレフィックスである可能性があります。
+* `<URI>` — ポリシーURI。サポートされているスキーム：registry://
+
+==== オプション
+
+* `--docker-config-json-path <PATH>` — Dockerの'config.json'ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `-f`、`--force <FORCE>` — 注釈が付いていないポリシーもプッシュします。
+* `-o`, `--output <PATH>` — 出力形式 +
+  ［デフォルト値］:`text` +
+  指定可能な値：`text`、`json`
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA...)
+
+[[kwctl-rm]]
+=== `kwctl rm`
+
+ストアから{short-project-name}ポリシーを削除します。
+
+*使用方法:* `kwctl rm <uri_or_sha_prefix>`
+
+==== 引数
+
+* `<URI_OR_SHA_PREFIX>` — ポリシーURIまたはSHAプレフィックス
+
+[[kwctl-run]]
+=== `kwctl run`
+
+1つ以上の{short-project-name}ポリシーをローカルで実行します。
+
+ポリシーは以下の方法で指定できます：
+- URI: 例、`registry://ghcr.io/kubewarden/policies/psp-policy:latest` または `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
+- SHA プレフィックス: 例、`c3b80a10f9c3`（ポリシーがすでにプルされている必要があります）
+- ローカル WASM ファイル: 例、`file://home/tux/new-policy/psp-policy.wasm`
+- ローカル YAML ファイル: 例、`file://home/tux/cluster-admission-policy.yaml`（{short-project-name} カスタムリソースの宣言を含む、`ClusterAdmissionPolicy`、`AdmissionPolicy` など）
+
+デフォルトの動作:
+スキーマが省略された場合、`file://` が仮定され、現在のディレクトリがルートになります。
+
+{short-project-name} カスタムリソースに関する注意事項：
+- フラグ `--request-path`、`--settings-path`、および `--settings-json` は無視されます；設定はカスタムリソース定義から読み取られます。
+- `--execution-mode` フラグは YAML ファイル内のすべてのポリシーに適用されます。
+- `--raw` フラグは使用できません。{short-project-name} のカスタムリソースは `raw` ポリシーをサポートしていません。
+
+カスタムリソース定義 (CRD) の以下の属性のみが評価されます：
+- ポリシーモジュール
+- ポリシー設定
+- ポリシーがアクセスできるコンテキスト対応リソース
+
+`rules`、`matchConditions`、`objectSelector`、および `namespaceSelector` などの他のフィールドは無視されます。
+
+YAML ファイルには複数のカスタムリソース宣言が含まれる場合があります。この場合、`kwctl` は各評価中に同じリクエストを使用してファイル内の各ポリシーを評価します。
+
+*使用方法:* `kwctl run [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== 引数
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — ポリシーのURI、SHAプレフィックス、または{short-project-name}ポリシーリソースを含むYAMLファイル。サポートされているスキーム: registry://, https://, file://。スキーマが省略された場合、file://が仮定され、現在のディレクトリがルートになります。
+
+==== オプション
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — ポリシーの`contextAwareResources`セクション内で定義されたKubernetesリソースへのアクセスを付与します。警告: 悪用を避けるためにリソースのリストを慎重に確認してください。デフォルトでは無効になっています。
+* `--cert-email <VALUE>` — Fulcio証明書に期待されるメールアドレス
+* `--cert-oidc-issuer <VALUE>` — Fulcio証明書に期待されるOIDC発行者
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — wasmtimeキャッシュの使用を無効にします。
+* `--docker-config-json-path <PATH>` — Dockerの'config.json'ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `-e`, `--execution-mode <MODE>` — このポリシーを実行するために使用するランタイム +
+  指定可能な値: `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubオーナー
+* `--github-repo <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubリポジトリ
+* `--raw <RAW>` — 生のリクエストを検証する +
+  デフォルト値: `false`
+* `--record-host-capabilities-interactions <FILE>` — 指定されたファイルにポリシーとホストの能力に関する通信をすべて記録します。後で '--replay-host-capabilities-interactions' フラグと組み合わせるのに便利です。
+* `--replay-host-capabilities-interactions <FILE>` — ポリシーとホストの能力の交換中に、ホストは提供されたファイル内に記録された回答を再生します。これは、OCI レジストリ、DNS、Kubernetes との外部インタラクションが行われないことを前提に、ポリシーを再現可能な方法でテストするのに役立ちます。
+* `-r`, `--request-path <PATH>` — JSON 形式の Kubernetes 入場リクエストオブジェクトを含むファイル
+* `--settings-json <VALUE>` — このポリシーの設定を含む JSON 文字列
+* `-s`, `--settings-path <PATH>` — このポリシーの設定を含むファイル
+* `--sigstore-trust-config <PATH>` — Sigstore protobuf 仕様の ClientTrustConfig メッセージに準拠した JSON 形式のファイル。このファイルは、CA およびアーティファクトの透明性サービスにアクセスするために使用される URI や、信頼の根となる暗号的なルートを含む、Sigstore インスタンス全体の状態を構成します。
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — key=value 形式の注釈。複数回繰り返すことができます。
+* `--verification-config-path <PATH>` — 署名、公開鍵...に関する検証設定情報を保持する YAML ファイル。
+* `-k`, `--verification-key <PATH>` — ポリシーを検証するために使用される鍵へのパス。複数回繰り返すことができます。
+
+[[kwctl-save]]
+=== `kwctl save`
+
+ポリシーをtar.gzファイルに保存します。
+
+*使用方法:* `kwctl save --output <FILE> <policies>...`
+
+==== 引数
+
+* `<POLICIES>` — 保存するポリシーのリスト
+
+==== オプション
+
+* `-o`、`--output <FILE>` — ファイルが保存されるパス
+
+[[kwctl-scaffold]]
+=== `kwctl scaffold`
+
+Kubernetesリソースまたは設定ファイルをスキャフォールドします。
+
+*使用方法:* `kwctl scaffold <COMMAND>`
+
+==== サブコマンド
+
+* `admission-request` — AdmissionRequestオブジェクトをスキャフォールドします。
+* `artifacthub` — metadata.ymlファイルからartifacthub-pkg.ymlファイルを出力します。
+* `manifest` — Kubernetesリソースマニフェストを出力します。
+* `vap` — Kubernetes `ValidatingAdmissionPolicy`を{short-project-name} `ClusterAdmissionPolicy`に変換します。
+* `verification-config` — デフォルトのSigstore検証設定ファイルを出力します。
+
+[[kwctl-scaffold-admission-request]]
+=== `kwctl scaffold admission-request`
+
+AdmissionRequestオブジェクトをスキャフォールドします。
+
+*使用方法:* `kwctl scaffold admission-request [OPTIONS] --operation <TYPE>`
+
+==== オプション
+
+* `--object <PATH>` — 新しいオブジェクトが含まれているファイル
+* `--old-object <PATH>` — 既存のオブジェクトが含まれているファイル
+* `-o`, `--operation <TYPE>` — {short-project-name} カスタムリソースタイプ +
+  指定可能な値: `CREATE`
+
+[[kwctl-scaffold-artifacthub]]
+=== `kwctl scaffold artifacthub`
+
+metadata.ymlファイルからartifacthub-pkg.ymlファイルを出力します。
+
+*使用方法:* `kwctl scaffold artifacthub [OPTIONS]`
+
+==== オプション
+
+* `-m`, `--metadata-path <PATH>` — ポリシーのメタデータを含むファイル
+* `-o`, `--output <FILE>` — artifact-pkg.ymlファイルが保存されるパス
+* `-q`, `--questions-path <PATH>` — ポリシーのquestions-uiコンテンツを含むファイル
+* `-v`, `--version <VALUE>` — ポリシーのSemverバージョン
+
+[[kwctl-scaffold-manifest]]
+=== `kwctl scaffold manifest`
+
+Kubernetesリソースマニフェストを出力します。
+
+*使用方法:* `kwctl scaffold manifest [OPTIONS] --type <VALUE> <uri_or_sha_prefix>`
+
+==== 引数
+
+* `<URI_OR_SHA_PREFIX>` — ポリシーURIまたはSHAプレフィックス。サポートされているスキーム: registry://, https://, file://。スキーマが省略された場合、file://が仮定され、現在のディレクトリにルートされます。
+
+==== オプション
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — ポリシーによってアクセスできるKubernetesリソースを定義するためにポリシーメタデータを使用します。警告: 悪用を避けるためにリソースのリストを慎重に確認してください。デフォルトでは無効になっています。
+* `--cert-email <VALUE>` — Fulcio証明書に期待されるメールアドレス
+* `--cert-oidc-issuer <VALUE>` — Fulcio証明書に期待されるOIDC発行者
+* `--docker-config-json-path <DOCKER_CONFIG>` — Dockerの'config.json'ファイルを含むディレクトリへのパス。レジストリアクセス認証の詳細を示すために使用できます。
+* `--fulcio-cert-path <PATH>` — Fulcio証明書へのパス。複数回繰り返すことができます。
+* `--github-owner <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubオーナー
+* `--github-repo <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubリポジトリ
+* `--rekor-public-key-path <PATH>` — Rekor公開鍵へのパス。複数回繰り返すことができます。
+* このポリシーの設定を含むJSON文字列
+* `-s`, `--settings-path <PATH>` — このポリシーの設定を含むファイル
+* `--sigstore-trust-config <PATH>` — Sigstore protobuf 仕様の ClientTrustConfig メッセージに準拠した JSON 形式のファイル。このファイルは、CA およびアーティファクトの透明性サービスにアクセスするために使用されるURIや、暗号的な信頼のルートを含むSigstoreインスタンス全体の状態を構成します。
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA の...)
+* `--title <VALUE>` — ポリシータイトル
+* `-t`, `--type <VALUE>` — {short-project-name} カスタムリソースタイプ +
+  指定可能な値：`ClusterAdmissionPolicy`、`AdmissionPolicy`
+* `-a`, `--verification-annotation <KEY=VALUE>` — key=value 形式の注釈。複数回繰り返すことができます。
+* `--verification-config-path <PATH>` — 署名、公開鍵...に関する検証設定情報を保持する YAML ファイル。
+* `-k`, `--verification-key <PATH>` — ポリシーを検証するために使用される鍵へのパス。複数回繰り返すことができます。
+
+[[kwctl-scaffold-vap]]
+=== `kwctl scaffold vap`
+
+Kubernetes `ValidatingAdmissionPolicy`を{short-project-name} `ClusterAdmissionPolicy`に変換します。
+
+*使用方法:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
+
+==== オプション
+
+* `-b`, `--binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml>` — ValidatingAdmissionPolicyBinding定義を含むファイル
+* `--cel-policy <URI>` — 使用するCELポリシーモジュール +
+  デフォルト値: `ghcr.io/kubewarden/policies/cel-policy:latest`
+* `-p`, `--policy <VALIDATING-ADMISSION-POLICY.yaml>` — ValidatingAdmissionPolicy定義を含むファイル
+
+[[kwctl-scaffold-verification-config]]
+=== `kwctl scaffold verification-config`
+
+デフォルトのSigstore検証構成ファイルを出力します。
+
+*使用方法:* `kwctl scaffold verification-config`
+
+[[kwctl-verify]]
+=== `kwctl verify`
+
+指定されたURIからSigstoreを使用して{short-project-name}ポリシーを検証します。
+
+*使用方法:* `kwctl verify [OPTIONS] <uri>`
+
+==== 引数
+
+* `<URI>` — ポリシーURI。サポートされているスキーム：registry://
+
+==== オプション
+
+* `--cert-email <VALUE>` — Fulcio証明書に期待されるメールアドレス
+* `--cert-oidc-issuer <VALUE>` — Fulcio証明書に期待されるOIDC発行者
+* `--docker-config-json-path <PATH>` — Dockerの'config.json'ファイルを含むディレクトリへのパス。レジストリ認証の詳細を示すために使用できます。
+* `--github-owner <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubオーナー
+* `--github-repo <VALUE>` — CDパイプラインで生成された証明書に期待されるGitHubリポジトリ
+* Sigstore protobuf 仕様の ClientTrustConfig メッセージに準拠したJSON形式のファイル。このファイルは、CA およびアーティファクトの透明性サービスにアクセスするために使用される URI や、信頼の根となる暗号的なルートを含む、Sigstore インスタンス全体の状態を構成します。
+* `--sources-path <PATH>` — ソース情報を保持する YAML ファイル (https、レジストリの不正なホスト、カスタム CA の...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — key=value 形式の注釈。複数回繰り返すことができます。
+* `--verification-config-path <PATH>` — 署名、公開鍵...に関する検証設定情報を保持する YAML ファイル。
+* `-k`, `--verification-key <PATH>` — ポリシーを検証するために使用される鍵へのパス。複数回繰り返すことができます。
+
+'''
+
+この文書はhttps://crates.io/crates/clap-markdown[`clap-markdown`]によって自動的に生成されました。
