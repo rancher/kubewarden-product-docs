@@ -1,0 +1,139 @@
+include::partial$variables.adoc[]
+
+= 审计扫描器
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用 {project-name} 中的审计扫描器功能验证您的集群的合规状态，以确保其正确配置。
+:doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["howto", "audit-scanner-installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:sidebar_label: 审计扫描器
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+从版本 `v1.7.0` 开始，{project-name} 具有一个名为 "审计扫描器" 的新功能。一个名为 "审计扫描器" 的新组件不断检查集群中声明的资源，标记不符合已部署的 {project-name} 策略的资源，并将这些结果保存到特定的报告自定义资源中。
+
+政策会随着时间而演变：您会部署新政策并更新现有政策。版本和配置设置也会发生变化。这可能导致集群中已经存在的资源不再合规。
+
+审计扫描器功能为 Kubernetes 管理员提供了一种工具，以一致地验证其集群的合规状态。
+
+审计扫描器可以将其结果保存到自定义资源定义（CRDs）中的 OpenReports，来自 link:https://openreports.io[openreports.io]（自 v1.33 起的默认设置）或来自 link:https://github.com/kubernetes-sigs/wg-policy-prototypes[Kubernetes 政策工作组] 的 PolicyReports（自 v1.30 起标记为弃用，自 v1.30 起未默认安装或创建，计划在未来版本中移除）。
+
+== 安装
+
+审计扫描器组件自 {short-project-name} `v1.7.0` 起可用。
+因此，请确保您安装的 Helm 图表的 APP 版本为 `v1.7.0` 或更高。
+
+. 安装 `kubewarden-crds` Helm 图表。该图表默认安装所需的 `PolicyReport` CRDs。
++
+[subs="+attributes",console]
+----
+helm install kubewarden-crds kubewarden/kubewarden-crds
+----
++
+
+[NOTE]
+====
+使用 Kubewarden 1.33，审计扫描器功能默认将报告保存到来自 [openreports.io](https://openreports.io) 的 OpenReports CRDs 中。
+
+来自 K8s 策略工作组的 link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] CRDs 默认未安装，标记为弃用，并将在未来版本中移除。
+
+希望继续使用已弃用的 PolicyReports 的用户，即 1.33 之前的行为，需要：- 将 `kubewarden-crds` Helm 图表的 `.Values.install.installPolicyReportCRDs` 值更改为 `true`。- 将 `kubewarden-controller` Helm 图表的 `.Values.auditScanner.reportCRDsKind` 值从 `openreports` 更改为 `policyreport`。
+====
++
+[CAUTION]
+====
+要存储策略报告的结果，您需要有 PolicyReport 自定义资源定义（CRDs）。如果所需的 PolicyReport CRDs 已经在集群中，您无法使用 kubewarden-crds 图表安装它们。在这种情况下，您可以通过在图表中将 `installOpenReportCRDs` 设置为 `false` 来禁用 OpenReport CRDs 的安装（如果使用已弃用的 PolicyReports，则将 `installPolicyReportCRDs` 设置为 `false`）。
+这意味着 Kubewarden 堆栈将不管理这些 CRDs，责任由管理员承担。
+
+有关 CRDs 的更多信息，请参见 link:https://github.com/kubernetes-sigs/wg-policy-prototypes[策略工作组储存库]。
+
+====
+
+
+. 安装 `kubewarden-controller` Helm 图表。
++
+[subs="+attributes",console]
+----
+helm install kubewarden-controller kubewarden/kubewarden-controller
+----
++
+
+[NOTE]
+====
+审计扫描器默认启用。要禁用它，请设置 `auditScanner.enable=false`。
+====
++
+[NOTE]
+====
+如果您希望审计扫描器将其报告保存在 PolicyReports CRDs（标记为已弃用）中，而不是默认的 OpenReports CRDs，请设置 `auditScanner.reportCRDsKind="policyreport"`。
+====
+
+有关 {short-project-name} 安装的更多信息，请参见 xref:quick-start.adoc[快速入门指南]。
+
+默认情况下，审计扫描器的实现为每 60 分钟触发一次的 https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob]。您可以通过更改 kubewarden-controller 图表 https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml] 来调整此和其他审计扫描器设置。
+
+有关审计扫描器的更多信息，请参见 xref:explanations/audit-scanner/audit-scanner.adoc[这里]。
+
+=== 政策报告用户界面（可选）
+
+`kubewarden-controller` 图表附带 https://kyverno.github.io/policy-reporter[Policy Reporter] 的子图表。默认情况下，它是禁用的，通过设置 `auditScanner.policyReporter=true` 来启用。Policy Reporter 子图表的值在 `policyReporter` 键下的 `kubewarden-controller` 值中。
+
+这仅安装 Policy Reporter 上游图表的一部分，即用户界面，提供集群中 PolicyReports 和 ClusterPolicyReports 的可视化。有关 Policy Reporter UI 的更多信息，请参见 xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner]。
+
+默认情况下，Policy Reporter UI 仅作为名为 `kubewarden-controller-ui` 的 ClusterIP 服务在安装命名空间中公开。
+
+`kubewarden-controller` 图表已安装。
+
+==== 入口
+
+用户可以提供自己的入口配置，或通过子图表配置在https://github.com/kyverno/policy-reporter/blob/policy-reporter-2.19.4/charts/policy-reporter/charts/ui/values.yaml#L172-L189[这里]启用入口。
+
+请参见以下子图表的入口配置示例：
+
+[subs="+attributes",yaml]
+----
+auditScanner:
+  policyReporter: true
+policy-reporter: # subchart values settings
+  ui:
+    enabled: true
+    ingress:
+      enabled: true
+      hosts:
+        - host: "*.local" # change this to your appropriate domain
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+----
+
+==== 端口转发
+
+为了快速查看或调试，可以通过以下命令设置端口转发到服务：
+
+[subs="+attributes",console]
+----
+kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
+----
+
+这使得 Policy Reporter UI 在 `\http://localhost:8082` 可用。
+
+== 触发手动运行
+
+审计扫描器的实现作为一个默认每 60 分钟运行一次的 Cronjob。可以通过运行以下命令触发手动运行：
+
+[subs="+attributes",bash]
+----
+kubectl create job \
+    --namespace kubewarden \
+    --from cronjob/audit-scanner \
+    audit-scanner-manual-$(date +%Y-%m-%d-%H-%M-%S)
+----
+
+您可以使用以下命令检查作业的状态：
+
+[subs="+attributes",console]
+----
+kubectl get -n kubewarden jobs
+----

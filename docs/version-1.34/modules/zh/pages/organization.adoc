@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= 文档组织
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: 公司
+:sidebar_position: 75
+:description: 访问全面的文档，组织成教程、解释、操作指南和参考材料，适用于{project-name}。
+:keywords: ["入学策略管理器", "{project-name}", 文档, 组织]
+:doc-persona: [kubewarden-all]
+:doc-type: [解释]
+:doc-topic: [解释]
+
+{project-name}按如下方式组织项目文档：
+
+* xref:/introduction.adoc[简介]
+* xref:/quick-start.adoc[快速入门]
+* _教程_—通过示例学习。
+* _解释_—基本概念。
+* _操作指南_—完成{short-project-name}任务。
+* _参考手册_
+* 组织—此页面
+* xref:/personas.adoc[角色]—{short-project-name}适合谁？
+* xref:/disclosure.adoc[安全性]
+* xref:/glossary.adoc[词汇表]
+
+大部分材料分为四个部分：_教程_、_解释_、_操作指南_和_参考_。由于这些部分并非互斥，可能会有重叠。{short-project-name}项目尝试遵循link:https://diataxis.fr/[Diátaxis]文档框架。
+
+== 导航
+
+左侧内容菜单始终指示您当前的文档位置。
+右侧部分菜单显示当前页面的部分。每个页面的主内容面板顶部还有一个'面包屑'功能。
+
+== 搜索
+
+每个页面的头部面板中都有一个搜索框功能。
+
+== 编辑
+
+每个页面底部都有指向GitHub页面源代码的链接。
+
+== 其他资源
+
+另外还维护：
+
+* link:https://github.com/kubewarden/rfc[RFCs] 用于该项目。
+* 一系列与 {community-name} 发布相关的 link:https://www.kubewarden.io/blog/[博客文章]。
+* 与 {community-name} 的 link:https://github.com/kubewarden/community[社区] 管理相关的项目。
