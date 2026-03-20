@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= Seguimiento
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Habilita el seguimiento para obtener detalles precisos sobre las evaluaciones de directivas y depurar problemas relacionados con la ampliación de {project-name}.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "tracing"]
+:doc-type: ["hosto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:current-version: {page-origin-branch}
+
+El seguimiento permite la recopilación de detalles precisos sobre las evaluaciones de directivas.
+Es una herramienta útil para depurar problemas en tu ampliación de {project-name} y directivas.
+
+{short-project-name} utiliza https://www.jaegertracing.io/[Jaeger] para recibir, almacenar y visualizar eventos de seguimiento.
+
+*_Registros de seguimiento de directivas_* image:ui_policy_tracing.png[Registros de seguimiento de directivas de la UI]
+
+== Requisitos previos
+
+Necesitas Cert-Manager y OpenTelemetry. Sigue xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[estas instrucciones] para instalar Cert Manager y el Operador de OpenTelemetry.
+
+== Instala Jaeger
+
+Aplica los pasos de instalación del xref:howtos/telemetry/20-tracing-qs.adoc#_install_jaeger[inicio rápido de seguimiento].
+
+Una vez que el operador de Jaeger crea todos los recursos, hay un Servicio bajo `my-open-telemetry-collector.jaeger.svc.cluster.local`.
+
+La UI de consulta de Jaeger es accesible en la siguiente dirección:
+
+[subs="+attributes",console]
+----
+https://<CLUSTER_IP>/api/v1/namespaces/jaeger/services/http:my-open-telemetry-query:16686/proxy/search
+----
+
+Este endpoint puede ser único dependiendo de tu configuración. Puedes encontrar el endpoint listado para tu recurso de Jaeger en la página de Servicios.
+
+=== Actualiza `rancher-kubewarden-controller` con el endpoint de Jaeger
+
+Necesitarás editar el recurso `rancher-kubewarden-controller` para añadir el endpoint de Jaeger "my-open-telemetry-collector.jaeger.svc.cluster.local:4317".
+
+Por ejemplo:
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  tracing: true
+  mode: sidecar
+  sidecar:
+    tracing:
+      jaeger:
+        endpoint: my-open-telemetry-collector.jaeger.svc.cluster.local:4317
+        tls:
+          insecure: true
+----
+
+La instalación del servicio, `my-open-telemetry-collector`, está bajo el espacio de nombres `jaeger`.
+
+[CAUTION]
+====
+
+Por simplicidad, no estamos cifrando la comunicación entre el colector de OpenTelemetry y el endpoint de Jaeger.
+
+Esto es *inadecuado para la ampliación en producción*. Deberías leer la https://www.jaegertracing.io/docs/latest/kubernetes/[documentación] de Jaeger.
+
+====
+
+
+Ahora deberías poder ver cualquier solicitud fallida relacionada con un Servidor de Directivas específico. También puedes ver la vista detallada de cualquier directiva.
+Puedes obtener una vista más profunda de los trazos utilizando la interfaz de usuario de Jaeger.

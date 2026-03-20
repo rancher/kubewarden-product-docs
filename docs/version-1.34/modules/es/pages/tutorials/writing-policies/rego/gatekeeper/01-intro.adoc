@@ -1,0 +1,35 @@
+include::partial$variables.adoc[]
+= Soporte de Gatekeeper
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Accede a las directivas centrales de Gatekeeper y aprende a integrarlas con los controladores de admisión de Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rego", "gatekeeper"]
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+El soporte de Gatekeeper comienza a partir de estas versiones:
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+====
+
+
+Gatekeeper es un proyecto dirigido a Kubernetes con características listas para usar para la integración.
+
+== Compatibilidad con directivas existentes
+
+Todas las directivas existentes de Gatekeeper deberían ser compatibles con {short-project-name} como se explica en este capítulo.
+
+[IMPORTANT]
+====
+Si encuentras que esto no es cierto para tus directivas de Gatekeeper, infórmalo, y trabajaremos para asegurar que tu directiva de Gatekeeper funcione con {short-project-name}.
+====
+
+
+Las directivas deben compilarse con la CLI de `opa` para el destino `wasm`.
+
+Para la ejecución de directivas, puedes leer más sobre el soporte xref:tutorials/writing-policies/rego/02-builtin-support.adoc[integrado] en {short-project-name}.
