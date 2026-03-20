@@ -1,0 +1,50 @@
+include::partial$variables.adoc[]
+= Construindo e distribuindo políticas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Siga estas etapas essenciais para construir e distribuir políticas de forma eficaz para sua configuração {project-name}.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas", "rust", "construir e distribuir"]
+:sidebar_label: Construindo e distribuindo políticas
+:current-version: {page-origin-branch}
+
+== Construindo a política
+
+Até agora, você construiu a política com um alvo de compilação do mesmo sistema operacional e arquitetura da sua máquina de desenvolvimento.
+
+Agora é hora de construir a política como um binário WebAssembly, um arquivo `.wasm`.
+
+Você usa o comando:
+
+[subs="+attributes",console]
+----
+make policy.wasm
+----
+
+Este comando constrói o código em modo de release, com um alvo de compilação WebAssembly.
+
+A compilação produz um arquivo `policy.wasm`:
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+== Distribuindo a política
+
+{project-name} documenta a distribuição de políticas na seção
+xref:../../../explanations/distributing-policies.adoc[distribuindo políticas].
+
+== Mais exemplos
+
+Você pode encontrar mais políticas Rust {short-project-name} no espaço do GitHub de {short-project-name}.
+https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Esta consulta]
+pode ajudá-lo a encontrá-las.
+
+Os repositórios de políticas {short-project-name}, mostrados por essa consulta, têm Ações do GitHub que automatizam as seguintes tarefas:
+
+* Executar testes unitários e linting de código em pull requests e após fusões de código na ramificação principal.
+* Construir a política em modo `release` e enviá-la para um registro OCI como um artefato.

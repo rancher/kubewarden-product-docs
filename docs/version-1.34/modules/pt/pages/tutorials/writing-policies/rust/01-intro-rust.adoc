@@ -1,0 +1,43 @@
+include::partial$variables.adoc[]
+= Rust
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprenda a escrever políticas de controlador de admissão em Rust com o SDK simplificado de controladores de admissão de segurança da SUSE e projetos de modelo.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas", "introdução"]
+:sidebar_label: Rust
+:current-version: {page-origin-branch}
+
+https://www.rust-lang.org/[Rust] é a linguagem de programação mais madura que pode gerar módulos WebAssembly.
+O WebAssembly é considerado um cidadão de primeira classe no mundo Rust, de modo que muitas das ferramentas e crates do ecossistema Rust funcionam de imediato.
+
+O {project-name} fornece um https://crates.io/crates/kubewarden-policy-sdk[SDK Rust] que simplifica o processo de escrever políticas.
+Há também um https://github.com/kubewarden/rust-policy-template[projeto modelo] que oferece a estrutura inicial para um projeto de políticas utilizando o https://github.com/cargo-generate/cargo-generate[`cargo-generate`] utilitário.
+
+Esta documentação mostra como usar esses projetos para escrever {short-project-name} políticas usando Rust.
+Não cobre os detalhes do SDK Rust do {short-project-name}.
+Os detalhes estão na https://docs.rs/kubewarden-policy-sdk/0.1.0[documentação do crate].
+
+== Obtendo as dependências do Rust
+
+Instale o compilador Rust e suas ferramentas usando https://github.com/rust-lang/rustup[rustup].
+Consulte a https://rust-lang.github.io/rustup/installation/index.html[documentação de instalação do rustup].
+
+Uma vez que você tenha instalado `rustup`, adicione o alvo da Interface de Sistema WebAssembly (WASI):
+
+[subs="+attributes",console]
+----
+rustup target add wasm32-wasip1
+----
+
+== Dependências do OSX
+
+Para usar `cargo-generate`, você precisa adicionar o conjunto de ferramentas do Xcode.
+Se não estiver instalado através do Xcode, o seguinte comando fornece as dependências necessárias:
+
+[subs="+attributes",console]
+----
+xcode-select --install
+----
