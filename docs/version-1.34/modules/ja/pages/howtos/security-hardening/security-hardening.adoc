@@ -1,0 +1,73 @@
+include::partial$variables.adoc[]
+= セキュリティハードニング
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: セキュリティハードニング
+:sidebar_position: 50
+:description: ハードニングのヒントとベストプラクティスを使用して脅威を軽減し、{project-name}を安全に保ちます。
+:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: HOWTO(操作方法)
+:doc-topic: operator-manual, security
+
+{project-name}は、最小限の設定で安全であることを目指しています。このセクションおよびそのサブページでは、{short-project-name}自体を保護するためのハードニングのヒント（そのトレードオフを含む）を見つけることができます。
+
+詳細については、xref:/reference/threat-model.adoc[脅威モデル]を参照してください。
+
+== `kubewarden-defaults` Helmチャート
+
+オペレーターは、すべての{short-project-name} Helmチャートをインストールすることで、安全なデプロイメントを取得できます。`kubewarden-defaults` Helmチャートをインストールし、推奨されるポリシーを有効にすることをお勧めします。
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=protect
+----
+
+これにより、デフォルトのPolicyServerとデフォルトのポリシーが提供され、保護モードで{short-project-name}スタックが他のワークロードから安全であることが保証されます。
+
+== {short-project-name}アーティファクトの検証
+
+xref:/tutorials/verifying-kubewarden.adoc[検証{short-project-name}]チュートリアルを参照してください。
+
+== RBAC
+
+{short-project-name}は、異なる_説明_セクションにおけるRBAC構成を説明します。ユーザーは、xref:/explanations/audit-scanner/audit-scanner.adoc#_permissions_and_serviceaccounts[監査スキャナー]機能に必要な権限を微調整でき、コンテキスト対応機能のためのxref:/explanations/context-aware-policies.adoc[ポリシーサーバー]サービスアカウントも調整できます。
+
+すべてのロールを表示するには：
+
+[source,console]
+----
+kubectl get clusterroles,roles -A | grep kubewarden
+----
+
+== ポリシーごとの権限
+
+コンテキスト対応ポリシーの場合、オペレーターはその`spec.contextAwareResources`の下でポリシーごとに細かい権限を指定し、それらはポリシーが実行されるポリシーサーバーに設定されたサービスアカウントと連携して機能します。
+
+== ワークロードのカバレッジ
+
+デフォルトでは、{short-project-name}は{short-project-name}のカバレッジから特定のネームスペースを除外します。これは、初回使用を簡素化し、他のワークロードとの相互運用性を向上させるために行われます。
+
+セキュリティ意識の高いオペレーターは、`.global.skipNamespaces`の値を使用して、`kubewarden-controller`および`kubewarden-defaults`のHelmチャートのこれらのネームスペースリストを調整できます。
+
+== ポッドセキュリティアドミッション
+
+1.23以降、{short-project-name}のスタックは、https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted[`restricted`\`ポッドセキュリティ基準`]が適用されているネームスペースで実行でき、現在のポッドハードニングのベストプラクティスが適用されます。
+
+そのためには、`pod-security.kubernetes.io/enforce: restricted`ラベルを{short-project-name}デプロイメントネームスペースに追加する必要があります。
+
+```console
+kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
+```
+
+詳細については、Kubernetesのポッドセキュリティアドミッションのhttps://kubernetes.io/docs/concepts/security/pod-security-admission/[公式ドキュメント]を参照してください。
+
+=== SecurityContexts
+
+`kubewarden-controller` Helmチャートは、セキュリティコンテキストを構成し、それを`values.yaml`で公開します。
+
+`kubewarden-defaults` Helmチャートでは、`.Values.policyServer.securityContexts`の下でデフォルトのポリシーサーバー`.spec.securityContexts`を構成できます。
+
+オペレーターによって管理されるポリシーサーバーについては、xref:/reference/CRDs.adoc#_policyserversecurity[`spec.securityContexts`]を介して構成できます。
