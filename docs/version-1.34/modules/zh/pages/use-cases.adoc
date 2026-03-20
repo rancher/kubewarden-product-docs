@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= {project-name} 使用案例
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: 使用案例
+:sidebar_position: 74
+:description: 了解在不同Kubernetes环境和角色中{project-name}的各种用例，包括多个场景。
+:keywords: {project-name}，文档，用例，案例研究
+:doc-persona: kubewarden-all
+:doc-type: 解释
+:doc-topic: 解释
+
+这些是{project-name}的xref:/personas.adoc[角色]的一些示例用例。
+
+== 案例A：作为Kubernetes操作员，我希望确保我的集群是安全和合规的。
+
+我使用其`kubewarden-defaults` Helm图表在`kubewarden`名称空间中部署{project-name}及其默认配置。这将在`kubewarden`名称空间中部署一个默认的PolicyServer和推荐的ClusterAdmissionPolicies，完全由Kubernetes操作员控制。
+
+作为操作员，我可以在受管理的名称空间（例如`kubewarden`）下添加更多PolicyServers，以分配负载和容错。
+
+操作员可以部署更多的ClusterAdmissionPolicies和ClusterAdmissionPolicyGroups。这些检查所有Kubernetes资源，针对任何类型的操作（GET，CREATE，UPDATE，PATCH，DELETE，PROXY）。这确保了对集群的操作是安全和合规的。
+
+其中包括：
+
+* 安全性
+* 合规性（符合行业标准或公司规定）
+* 资源优化（通过变更策略）
+* Kubernetes环境的治理（通过标签和命名约定）
+* 最佳做法
+* 镜像验证
+
+安全期望会随着时间而变化。之前在集群中正确的部署可能不再是这样。然而，{short-project-name}已经接受了这些在集群中的操作。在这些情况下，操作员可以部署审计扫描器功能，这是一个定期运行的CronJob，用于评估集群中的现有资源。这确保了集群即使随着时间的推移也保持安全和合规。
+
+操作员可以在`monitor`模式下配置策略，而不是`protect`模式，以便在不阻塞操作的情况下了解集群的状态。
+
+操作员可以通过消耗日志和OpenTelemetry信息来获取来自策略和{short-project-name}堆栈的信息，以获取指标和追踪。
+
+== 案例B：作为Kubernetes操作员，我希望为我的Kubernetes用户提供一个框架，以便他们可以在自己的名称空间中自助服务。
+
+作为操作员，我像案例A中那样为我选择的一组策略部署{short-project-name}。这为我提供了集群中的安全基线，其他用户无法规避。
+
+除了案例A，我在每个名称空间中有不同的角色：可能是团队、团队管理员、测试部署等。我允许每个名称空间管理员通过让他们在自己的名称空间中部署PolicyServers，以及名称空间的AdmissionPolicies和AdmissionPolicyGroups来自助服务。
+这种架构意味着他们可以控制自己的PolicyServer和策略。这些策略仅适用于他们的名称空间，并限制资源使用在他们的名称空间内。
+
+它还允许操作员隔离噪声租户，为那些需要高吞吐量和低延迟的租户和任务保留高性能的PolicyServers，例如。
+
+== 案例C：作为策略作者，我希望使用我熟悉的工具和语言来编写新策略。
+
+{short-project-name}通过支持任何可以编译为WebAssembly的语言作为策略的可能目标语言来实现这一点。这意味着策略作者可以重用他们的工作流程（`git`、CI、编辑器、同行评审等）和工具：语言、语言库、测试工具和框架等。
+
+它允许重用特定领域语言（如Rego、CEL、Kyverno的YAML+宏）或通用语言（如Go、Rust、C#、Javascript，任何可以编译为Wasm的语言）。{short-project-name}为一些语言提供了xref:/tutorials/writing-policies/index.adoc[SDKs]作为一流支持。
+
+{short-project-name}策略可以是简单或复杂的xref:/explanations/context-aware-policies.adoc[上下文感知]策略。
+上下文感知策略也用于与单独的工作负载接口（例如，从长时间运行的图像扫描服务获取信息）。
+
+== 案例D：作为系统集成商，我希望将 {short-project-name} 作为我的安全和合规解决方案的一部分进行重用。
+
+作为系统集成商，我希望重用 {short-project-name}，并可能通过将其他解决方案包含在 {short-project-name} 中来重用它们。
+
+作为系统集成商，我可以重用 {short-project-name} 的部分。例如，`policy-server`，通过 xref:/howtos/raw-policies.adoc["原始策略"] 功能来管理 Kubernetes 集群内外的资源。
+
+系统集成商可以选择部署 `kubewarden-controller` 或自行管理 CRD。他们可以根据需要选择部署或扩展审计扫描器。
+
+系统集成商可以创建新的组件。例如，一个图像扫描器，并通过上下文感知策略与其接口，而无需在 Kubernetes 控制器中实现单体架构。
+
+== 非目标
+
+{short-project-name} 不打算：
+
+- 替代 Kubernetes 内置安全功能，而是对其进行补充：
+  - {short-project-name} 提供从 PSP 迁移的功能。
+  - 您可以与 {short-project-name} 的 `cel-policy` 一起重用 ValidatingAdmissionPolicies 和 CEL 策略。
+  - {short-project-name} 策略可以是可变的，而 Pod Security Admission 不能。
+  - {short-project-name} 策略受益于 {short-project-name} 堆栈功能（审计扫描器、遥测、CRD 管理）。
+- 提供运行时安全性，如入侵检测或运行时容器隔离。
+- 提供集群的主机系统保护。
+- 提供无限的策略执行灵活性。为了防止 DoS 攻击，策略的处理时间是有限制的。
