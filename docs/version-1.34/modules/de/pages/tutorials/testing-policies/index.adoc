@@ -1,0 +1,22 @@
+include::partial$variables.adoc[]
+= Richtlinientests
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie {project-name} Richtlinien mit {project-name} für eine sichere Clusterverwaltung erstellen und testen können.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "personen", "richtlinienautor", "Clusterbetreiber"]
+:sidebar_label: Richtlinientests
+:current-version: {page-origin-branch}
+
+== Richtlinientests-Personas
+
+Dieser Abschnitt behandelt das Thema des Testens von {project-name} Richtlinien.
+Es gibt zwei Personas, die daran interessiert sind, Richtlinien zu testen:
+
+* *Richtlinienentwickler*: Sie schreiben eine {short-project-name} Richtlinie und möchten sicherstellen, dass Ihr Code sich so verhält, wie Sie es erwarten.
+* *Clusterbetreiber*: Sie haben eine {short-project-name} Richtlinie gefunden und möchten die Richtlinieneinstellungen testen und anpassen, bevor Sie sie bereitstellen.
+Sie möchten diese Einstellungen weiterhin in Ihren CI/CD-Pipelines und anderen administrativen Aufgaben testen.
+
+Die nächsten Abschnitte der Dokumentation zeigen, wie diese Personas {short-project-name} Richtlinien testen können.
