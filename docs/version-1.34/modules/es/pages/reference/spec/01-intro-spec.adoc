@@ -1,0 +1,13 @@
+include::partial$variables.adoc[]
+= Especificación de comunicación de directivas
+:revdate: 18-03-2026
+:page-revdate: {revdate}
+:description: Descubre cómo utilizar eficazmente las directivas {project-name} a través de una API bien definida que permite una interacción y comunicación sin problemas.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "introduction"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificación de directivas", "comunicación de directivas"]
+:sidebar_label: Especificación de comunicación de directivas
+:current-version: {page-origin-branch}
+
+El evaluador de directivas interactúa con las directivas {project-name} utilizando una API bien definida. El propósito de esta sección es documentar la API utilizada por el anfitrión (ya sea `policy-server` o `kwctl`) para comunicarse con las directivas de {short-project-name}.
