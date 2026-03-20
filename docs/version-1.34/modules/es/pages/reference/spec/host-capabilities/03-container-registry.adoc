@@ -1,0 +1,319 @@
+include::partial$variables.adoc[]
+= Capacidades del registro de contenedores
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explora las capacidades del registro de contenedores, incluyendo el cálculo de los resúmenes de manifiestos OCI y la obtención de manifiestos de objetos OCI.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "container-registry"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificación de directiva", "capacidades del registro de contenedores"]
+:sidebar_label: Capacidades del registro de contenedores
+:current-version: {page-origin-branch}
+
+Los registros de contenedores se pueden utilizar para distribuir muchos tipos de objetos OCI.
+Desde imágenes de contenedores bien conocidas hasta artefactos OCI genéricos.
+Los artefactos OCI se utilizan para almacenar objetos como {project-name} directivas, gráficos de Helm y más.
+
+Estas son las capacidades expuestas por el {short-project-name} anfitrión, para interactuar con los registros de contenedores.
+
+== Obtener el resumen del manifiesto OCI
+
+Esta devolución de llamada calcula el resumen de un manifiesto OCI. El resumen se puede utilizar para identificar un objeto almacenado en un registro OCI. Este es un método inmutable, a diferencia de `tags` que son mutables.
+
+=== Almacenamiento en el caché.
+
+Calcular el resumen implica una serie de solicitudes de red entre el {short-project-name} anfitrión de directivas y el registro remoto.
+Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
+
+=== Autenticación
+
+Las interacciones con registros privados requieren que el {short-project-name} anfitrión de directivas se autentique contra el registro remoto.
+
+El anfitrión de directivas utilizará el mismo conjunto de credenciales que se usaron para obtener directivas del registro remoto.
+
+=== Protocolo de comunicación
+
+Esta es la descripción del protocolo waPC utilizado para exponer esta capacidad:
+
+==== Función waPC - `v1/manifest_digest` entrada
+
+[,hcl]
+----
+# OCI URI - JSON encoded string
+string
+----
+
+==== Función waPC - `v1/manifest_digest` salida
+
+[,hcl]
+----
+{
+  # digest of the OCI object
+  "digest": string
+}
+----
+
+Por ejemplo, al solicitar el resumen del manifiesto de la `busybox:latest` imagen, la carga útil sería:
+
+* Carga útil de entrada: `"busybox:latest"`
+* Carga útil de salida: `{ "digest": "sha256:69e70a79f2d41ab5d637de98c1e0b055206ba40a8145e7bddb55ccc04e13cf8f"}`
+
+== Manifiesto OCI
+
+Esta llamada obtiene el manifiesto de los objetos OCI. Cuando esté disponible, esta información puede utilizarse para identificar manifiestos de imágenes específicas, para una o más plataformas. O un único manifiesto de imagen para la imagen.
+
+=== Almacenamiento en el caché.
+
+Obtener esta información implica solicitudes de red entre el {short-project-name} anfitrión de directivas y el registro remoto. Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
+
+=== Autenticación
+
+Las interacciones con registros privados requieren que el {short-project-name} anfitrión de directivas se autentique contra el registro remoto.
+
+El anfitrión de directivas utiliza el mismo conjunto de credenciales que se utilizó para obtener directivas del registro remoto.
+
+=== Protocolo de comunicación
+
+Esta es la descripción del protocolo waPC utilizado para exponer esta capacidad:
+
+==== Función waPC - `v1/oci_manifest` entrada
+
+[,hcl]
+----
+# OCI URI - JSON encoded string
+string
+----
+
+==== Función waPC - `v1/oci_manifest` salida
+
+[,hcl]
+----
+{
+    "schemaVersion": 2,
+        "mediaType": "application/vnd.oci.image.index.v1+json",
+        "manifests": [
+        {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:7d5e84b9314ba7058bfa209881919146ffc4a89c5ba14cfa8270a18c8d418c44",
+            "size": 1048,
+            "platform": {
+                "architecture": "amd64",
+                "os": "linux"
+            }
+        },
+        {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:ae1e98105555f3983496c15c70dafc87639b77830953d6470694b47e0e063e25",
+            "size": 1048,
+            "platform": {
+                "architecture": "arm64",
+                "os": "linux"
+            }
+        },
+        {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:e9fc0f86e26366abf29fd29e8c09d00df717f9038fd4298eaa39a0a2b4361fa4",
+            "size": 566,
+            "annotations": {
+                "vnd.docker.reference.digest": "sha256:7d5e84b9314ba7058bfa209881919146ffc4a89c5ba14cfa8270a18c8d418c44",
+                "vnd.docker.reference.type": "attestation-manifest"
+            },
+            "platform": {
+                "architecture": "unknown",
+                "os": "unknown"
+            }
+        },
+        {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:e8904ebb2841dc19ae458436eb01ddea3e8d6ea653c7d9476537f4029b1f45a2",
+            "size": 566,
+            "annotations": {
+                "vnd.docker.reference.digest": "sha256:ae1e98105555f3983496c15c70dafc87639b77830953d6470694b47e0e063e25",
+                "vnd.docker.reference.type": "attestation-manifest"
+            },
+            "platform": {
+                "architecture": "unknown",
+                "os": "unknown"
+            }
+        }
+    ]
+}
+
+OR
+
+{
+    "schemaVersion": 2,
+        "mediaType": "application/vnd.oci.image.manifest.v1+json",
+        "config": {
+            "mediaType": "application/vnd.oci.image.config.v1+json",
+            "digest": "sha256:61dc3269b9e8faeea32128560cdbd355e8c1dff31e32abc0223be039c5cc5e2d",
+            "size": 1775
+        },
+        "layers": [
+        {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "digest": "sha256:67d998e418791ec2955ec99753eb55f03ca96538976e5ccebfec08eae20056b5",
+            "size": 57033795
+        },
+        {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "digest": "sha256:be6185edcab66334dd5c7c2273fd6254100ece960e087541f3dba0616c440038",
+            "size": 188411978
+        },
+        {
+            "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+            "digest": "sha256:58a13f6770904193ca67beb50d424e69a39579e1581dbf8e02e1751f3b75f932",
+            "size": 70078992
+        }
+        ],
+        "annotations": {
+            "org.opencontainers.image.base.digest": "sha256:67a7c41ccd5dfcb08face86546f0d25c0740f0d0225e39fecb8bbae8b95b847a",
+            "org.opencontainers.image.base.name": "docker.io/library/debian:latest"
+        }
+}
+----
+
+Por ejemplo, al solicitar el manifiesto de la `ghcr.io/kubewarden/policy-server:v1.10.0` imagen, la carga útil sería:
+
+* Carga útil de entrada: `"ghcr.io/kubewarden/policy-server:v1.10.0"`
+* Carga útil de salida: el cuerpo de la respuesta exitosa obtenida del registro.
+Puede ser un https://github.com/opencontainers/image-spec/blob/main/image-index.md[imagen de índice OCI] o un https://github.com/opencontainers/image-spec/blob/main/manifest.md[manifiesto de imagen OCI].
+Los detalles pueden cambiar dependiendo del registro y la imagen.
+
+== Manifiesto OCI y configuración
+
+Esta llamada obtiene el manifiesto de imágenes OCI y su configuración. Esta información puede utilizarse para obtener el manifiesto de la imagen del contenedor y la información de configuración utilizada por el entorno de ejecución de contenedor para ejecutarlo.
+
+=== Almacenamiento en el caché.
+
+Obtener esta información implica solicitudes de red entre el {short-project-name} anfitrión de directivas y el registro remoto. Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
+
+=== Autenticación
+
+Las interacciones con registros privados requieren que el {short-project-name} anfitrión de directivas se autentique contra el registro remoto.
+
+El anfitrión de directivas utiliza el mismo conjunto de credenciales que se utilizó para obtener directivas del registro remoto.
+
+=== Protocolo de comunicación
+
+Esta es la descripción del protocolo waPC utilizado para exponer esta capacidad:
+
+==== Función waPC - `v1/oci_manifest_config` entrada
+
+[,hcl]
+----
+# OCI URI - JSON encoded string
+string
+----
+
+==== Función waPC - `v1/oci_manifest_config` salida
+
+[,hcl]
+----
+{
+  "manifest": {
+    "schemaVersion": 2,
+    "mediaType": "application/vnd.oci.image.manifest.v1+json",
+    "config": {
+      "mediaType": "application/vnd.oci.image.config.v1+json",
+      "digest": "sha256:bc3511804cb29da6333f0187a333eba13a43a3a0a1737e9b50227a5cf057af74",
+      "size": 1592
+    },
+    "layers": [
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:294efa324e89a020b06df261f77903fb9f46fdee79c54e4f6589f786f6c31bec",
+        "size": 428
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:f0936413f7d0757b41777a624e5be83da28789d0c4b8b3f46853ca9c3bb6300f",
+        "size": 422
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:cd2adfe5e808335e0c30eff616a9852a94cfbf8ecd455d1b893e1c858ddc3aeb",
+        "size": 22357278
+      },
+      {
+        "mediaType": "application/vnd.oci.image.layer.v1.tar+gzip",
+        "digest": "sha256:6c7ec51ccec3d4438c94e697258085ddf825c1e711df4d923b1794794196cf06",
+        "size": 37415
+      }
+    ]
+  },
+  "digest": "sha256:6ebc3e17a9804a8d385fee819554ad95a05072d022c5bd2dd27556a5752d47f5",
+  "config": {
+    "created": "2024-06-05T13:48:01.671482413Z",
+    "architecture": "amd64",
+    "os": "linux",
+    "config": {
+      "User": "65533:65533",
+      "ExposedPorts": {
+        "3000/tcp": {}
+      },
+      "Env": [
+        "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+      ],
+      "Entrypoint": [
+        "/policy-server"
+      ],
+      "WorkingDir": "/"
+    },
+    "rootfs": {
+      "type": "layers",
+      "diff_ids": [
+        "sha256:79f61adc25589b7b467a6becca5756f3b722ab7f9d0c18c205e89c08fdc8d45d",
+        "sha256:2a5e7791442784b3614921dcb51afdbe94ae9bfd3752e22e5eb81ce731f5bfbf",
+        "sha256:0d893e5416389fd105bc81d3694a5d5dbffc41237291df0aaa4efbc26632e91c",
+        "sha256:018ce7bd6fd46306e129aca44c1c103675dbe29e3aa842a0b7fb01507e8d02d2"
+      ]
+    },
+    "history": [
+      {
+        "created": "2024-06-05T13:48:00.432722149Z",
+        "created_by": "COPY /etc/passwd /etc/passwd # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2024-06-05T13:48:00.469118621Z",
+        "created_by": "COPY /etc/group /etc/group # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2024-06-05T13:48:01.653480931Z",
+        "created_by": "COPY --chmod=0755 policy-server-x86_64 /policy-server # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2024-06-05T13:48:01.671482413Z",
+        "created_by": "ADD Cargo.lock /Cargo.lock # buildkit",
+        "comment": "buildkit.dockerfile.v0"
+      },
+      {
+        "created": "2024-06-05T13:48:01.671482413Z",
+        "created_by": "USER 65533:65533",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2024-06-05T13:48:01.671482413Z",
+        "created_by": "EXPOSE map[3000/tcp:{}]",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      },
+      {
+        "created": "2024-06-05T13:48:01.671482413Z",
+        "created_by": "ENTRYPOINT [\"/policy-server\"]",
+        "comment": "buildkit.dockerfile.v0",
+        "empty_layer": true
+      }
+    ]
+  }
+}
+----
+
+Por ejemplo, al solicitar el manifiesto de la imagen y la configuración de la `ghcr.io/kubewarden/policy-server:v1.13.0` imagen, la carga útil sería:
+
+* Carga útil de entrada: `"ghcr.io/kubewarden/policy-server:v1.13.0"`
+* Carga útil de salida: el cuerpo de la respuesta exitosa obtenida del registro. Contendrá el https://github.com/opencontainers/image-spec/blob/main/manifest.md[manifiesto de imagen OCI], el resumen de la imagen y la https://github.com/opencontainers/image-spec/blob/main/config.md[configuración de imagen OCI].
