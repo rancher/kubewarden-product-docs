@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+= 他の言語
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: WebAssemblyモジュールおよびWASIインターフェースを対象とするさまざまなプログラミング言語を使って、{project-name}ポリシーの作成方法について学びましょう。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "other-languages"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "ポリシーの作成", "他の言語"]
+:sidebar_label: 他の言語
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+{project-name}ポリシーは、WASIインターフェースを対象とするWebAssemblyモジュールを生成できる任意のプログラミング言語で作成できます。
+
+もし、https://github.com/kubewarden/docs[こちら]ポリシーを作成できるプログラミング言語をご存知の場合は、プルリクエストまたはGitHub Issueを、から開いてください。{short-project-name}
