@@ -1,0 +1,59 @@
+include::partial$variables.adoc[]
+= OCI 注册表支持 {short-project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过常规开放容器倡议 (OCI) 注册表分发 {project-name} 策略作为 OCI 工件。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["distributing-policies", "oci-registries-support"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "OCI 注册表支持"]
+:sidebar_label: OCI 注册表支持
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+您将 {project-name} 策略作为 https://opencontainers.org[OCI 工件] 使用常规开放容器倡议 (OCI) 注册表进行分发。
+
+{short-project-name} 策略存储在容器镜像旁边。
+它们不需要额外的设置或维护，除了常规容器镜像所需的设置。
+
+[NOTE]
+====
+您可以添加与 {short-project-name} 兼容的注册表，或通过使用页面底部的 "编辑此页面" 按钮来纠正任何注册表不准确之处。
+====
+
+
+== 实施 OCI 注册表的项目
+
+* https://goharbor.io/[Harbor]。
+* https://github.com/distribution/distribution[Distribution] (https://github.com/distribution/distribution/releases/tag/v2.7.0[≥ 2.7.0])。
+* https://access.redhat.com/products/red-hat-quay/[Quay]：支持，但 https://access.redhat.com/documentation/en-us/red_hat_quay/3/html/use_red_hat_quay/oci-intro#other-oci-artifacts-with-quay[在 v3.6 中默认不活动]。
+
+== 托管的 OCI 注册表
+
+* https://github.com/container-registry/[GitHub Container Registry]。请参见 https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry[这里]。
+* https://quay.io[Quay.io]。请参见项目列表。
+* https://aws.amazon.com/ecr/[Amazon ECR]：请参见 https://aws.amazon.com/blogs/containers/oci-artifact-support-in-amazon-ecr/[这里]。
+* https://cloud.google.com/artifact-registry[Google Artifact Registry]。请参见 https://cloud.google.com/anthos-config-management/docs/how-to/sync-oci-artifacts-from-artifact-registry[这里]。
+* https://azure.microsoft.com/en-us/products/container-registry/[Azure 容器注册表]。请参见 https://learn.microsoft.com/en-us/azure/container-registry/container-registry-oci-artifacts[这里]。
+* https://hub.docker.com/[Docker Hub]。请参见 https://docs.docker.com/docker-hub/oci-artifacts/[这里]。
+* https://cloud.ibm.com/docs/Registry[IBM Cloud 容器注册表]。请参见 https://cloud.ibm.com/docs/Registry?topic=Registry-registry_helm_charts[这里]。
+* https://jfrog.com/artifactory/[JFrog Artifactory]。请参见 https://jfrog.com/help/r/jfrog-artifactory-documentation/docker-registry[这里]。
+
+== 与 OCI 注册表兼容的工具
+
+{short-project-name} 项目推荐：
+
+* https://github.com/kubewarden/kwctl[`kwctl`]（我们的 CLI 工具）。
+* https://github.com/containers/skopeo[Skopeo]（https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]）。
+* https://github.com/google/go-containerregistry/blob/main/cmd/crane/README.md[Crane]。
+
+== 已知问题
+
+=== Docker Hub
+
+目前，Docker Hub 不支持 OCI 工件，因此无法用于存储 {short-project-name} 策略。
+Docker Inc. 已宣布 Docker Hub 将在https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[未来]支持 OCI 工件。
+
+=== JFrog
+
+尽管 JFrog 支持 OCI 工件，但根据其规范，推送功能仅部分可用。https://github.com/kubewarden/kwctl/issues/59[在这里阅读更多]。
