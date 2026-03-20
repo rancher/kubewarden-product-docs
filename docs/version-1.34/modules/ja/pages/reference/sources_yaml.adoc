@@ -1,0 +1,130 @@
+include::partial$variables.adoc[]
+= sources.yamlの参照
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: PolicyServer CRと連携するために、ソース権限のパスとフォーマット、さらに安全でないソースを指定して、sources.yamlファイルを設定してください。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "sources.yaml"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "sources.yaml"]
+:sidebar_label: sources.yaml
+:sidebar_position: 110
+:current-version: {page-origin-branch}
+
+`kwctl`および`policy-server`バイナリのプッシュ・プル動作を、`--sources-path`引数を使用して調整できます。これは、`sources.yaml`ファイルへのパスを指定するためのものです。
+
+PolicyServer CRを設定するには、その`spec.insecureSources`および`spec.sourceAuthorities`フィールドを設定してください。これらのフィールドのフォーマットは、以下の各ソース権限セクションに対応しています。
+
+== `sources.yaml`ファイル
+
+`kwctl`コマンドから`--sources-path`引数を省略すると、これらのフォルダから`sources.yaml`ファイルを読み込もうとします：
+
+* Linux: `$HOME/.config/kubewarden/sources.yaml`
+* Mac: `$HOME/Library/Application Support/io.kubewarden.kubewarden/sources.yaml`
+* Windows: `$HOME\AppData\Roaming\kubewarden\config\sources.yaml`
+
+その構造は次のとおりです：
+
+[subs="+attributes",yaml]
+----
+insecure_sources:
+  - "registry-dev.example.com"
+  - "registry-dev2.example.com:5500"
+source_authorities:
+  "registry-pre.example.com":
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-1.pem
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-2.der
+  "registry-pre2.example.com:5500":
+    - type: Data
+      data: |
+            -----BEGIN CERTIFICATE-----
+            ca-pre2 PEM cert
+            -----END CERTIFICATE-----
+----
+
+このファイルはYAMLまたはJSON形式のいずれかです。すべてのキーはオプションであるため、以下は有効な`sources.yaml`ファイルです：
+
+[subs="+attributes",yaml]
+----
+insecure_sources: ["dev.registry.example.com"]
+----
+
+そのまま：
+
+[subs="+attributes",json]
+----
+{
+    "source_authorities": {
+        "host.k3d.internal:5000": [
+            {"type": "Data","data":"pem cert 1"},
+            {"type": "Data","data":"pem cert 2"}
+        ]
+    }
+}
+----
+
+=== 安全でないソースセクション
+
+`insecure_sources`セクションにあるホストは、リストにないホストとは異なる動作をします。
+
+* リストにないホストは、次のように試してください：
+ ** HTTPSを使用して接続し、サーバーのアイデンティティを確認する
+
++
+接続が失敗した場合、操作は停止します。* `insecure_sources`にリストされているホストは、順番に試してください：** HTTPSを使用して接続し、サーバーのアイデンティティを確認する** HTTPSを使用して接続し、ホストの確認をスキップする** HTTPを使用して接続する
+
++
+すべてが失敗した場合、操作は停止します。
+
+[NOTE]
+====
+
+ローカルレジストリやHTTPサーバーを開発に使用する場合、`insecure_sources`を使用するのは通常は問題ありません。証明書の管理の負担を回避します。
+明らかに、これは本番環境での使用には適していません。
+
+====
+
+
+=== ソース権限セクション
+
+`source_authorities` セクションには、URI と CA 証明書が含まれています。それは、その URI のための証明書チェーンを形成します。これは、OpenContainer Initiative (OCI) レジストリと HTTPS サーバーのアイデンティティを確認するために使用されます。
+
+これらの証明書は、プライバシー強化メール (PEM) または識別符号化規則 (DER) 形式でエンコードします。DER 形式の証明書を指定するには、証明書を含むファイルへのパスを使用します。PEM 形式では、証明書ファイルへのパスまたは実際の証明書を含む文字列を指定します。両方を `type` キーで指定します：
+
+[subs="+attributes",yaml]
+----
+source_authorities:
+  "registry-pre.example.com":
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-1.pem
+    - type: Path
+      path: /opt/example.com/pki/ca-pre1-2.der
+    - type: Data
+      data: |
+            -----BEGIN CERTIFICATE-----
+            A string with the ca-pre1-3 PEM cert
+            -----END CERTIFICATE-----
+  "registry-pre2.example.com:5500":
+    - type: Path
+      path: /opt/example.com/pki/ca-pre2-1.der
+----
+
+=== プロキシセクション
+
+`proxies` セクションには、通常の環境変数 `HTTP_PROXY`、`HTTPS_PROXY`、`NO_PROXY`（およびそれらの小文字の対応物）に類似したプロキシ設定が含まれています。
+
+この設定は、これらの環境変数を設定することよりも優先されます。
+
+この機能に関する詳細は、xref:/howtos/proxy-configuration.adoc[ハウツーページ]を参照してください。
+
+その形式は次のとおりです。
+
+[,yaml]
+----
+proxies:
+  http_proxy: "http://proxy.corp:3128"
+  https_proxy: "http://proxy.corp:3129"
+  no_proxy: "localhost,.corp"
+----

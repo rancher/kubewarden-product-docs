@@ -1,0 +1,209 @@
+include::partial$variables.adoc[]
+= kwctl ({project-name} CLI) のインストール
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: kwctl のインストール
+:description: さまざまなオペレーティングシステムのインストール手順に従って kwctl ({project-name} CLI) をインストールし、シェル補完を有効にしてください。
+:keywords: ["{project-name}", kubewarden, kubernetes, kwctl をインストール, インストール, kwctl]
+:doc-persona: kubewarden-all
+:doc-type: HOWTO(操作方法)
+:doc-topic: kwctl をインストールする
+
+`kwctl` は {project-name} のコマンドラインインターフェース (CLI) ツールです。以下は、いくつかのオペレーティングシステムのインストール手順です。
+
+[tabs]
+====
+Linux::
++
+--
+Linux 用のインストール
+
+. Homebrew
++
+Linux で Homebrew パッケージマネージャーを使用している場合は、次のようにします：
++
+[source,console]
+----
+brew install kwctl
+----
++
+インストールを確認してください：
++
+[source,console]
+----
+kwctl --version
+----
+
+. Zypper (openSUSE)
++
+[source,console]
+----
+zypper install kwctl
+----
+
+. AUR
++
+Arch Linux または Arch ベースのディストリビューションを使用している場合、AUR から kwctl をインストールできます。
++
+.. AUR ヘルパー (yay) を使用する：
++
+[source,console]
+----
+yay -S kwctl
+----
++
+.. makepkg を使用する：
++
+[source,console]
+----
+# Clone the AUR package
+git clone https://aur.archlinux.org/kwctl.git
+cd kwctl
+
+# Build and install the package
+makepkg -si
+----
++
+.. インストールを確認してください：
++
+[source,console]
+----
+kwctl --version
+----
+
+. 手動インストール
++
+.. Linux 用の `kwctl` の最新リリースをダウンロードしてください：
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-x86_64.zip
+----
++
+ARM64 システム (例：Raspberry Pi) 用には、次のようにします：
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-aarch64.zip
+----
++
+.. ダウンロードした `.zip` ファイルからファイルを抽出してください：
++
+[source,console]
+----
+unzip kwctl-linux-x86_64.zip
+----
++
+次のファイルを抽出します：
++
+* `kwctl-linux-x86_64`:`kwctl` バイナリ
+* `kwctl-linux-x86_64.sig`:バイナリを検証するための署名ファイル
+* `kwctl-linux-x86_64.pem`:署名を検証するための証明書ファイル
++
+.. バイナリを PATH 内のディレクトリに移動し、`kwctl` に名前を変更して実行可能にします。
++
+.. インストールを確認してください：
++
+[source,console]
+----
+kwctl --version
+----
+
+--
+macOS::
++
+--
+macOS にインストールします。
+
+. Homebrew を使用して
++
+.. 両方のノードに `kwctl`:
++
+[source,shell]
+----
+brew install kwctl
+----
++
+インストールを確認してください：
++
+[source,console]
+----
+kwctl --version
+----
++
+. 手動インストール
++
+.. macOS 用の `kwctl` の最新リリースをダウンロードしてください：
++
+... **Apple Silicon (ARM64)** システムの場合は、次を使用します：
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-darwin-aarch64.zip
+----
+...  **Intel (x86_64)** システムの場合は、次を使用します：
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-darwin-x86_64.zip
+----
++
+... ダウンロードした `.zip` ファイルからファイルを抽出してください：
++
+[source,console]
+----
+unzip kwctl-darwin-x86_64.zip
+----
++
+次のファイルを抽出します：
++
+* `kwctl-darwin-x86_64`:`kwctl` バイナリ
+* `kwctl-darwin-x86_64.sig`:バイナリを検証するための署名ファイル
+* `kwctl-darwin-x86_64.pem`:署名を検証するための証明書ファイル
++
+.. バイナリを PATH 内のディレクトリに移動し、`kwctl` に名前を変更して実行可能にします。
++
+.. インストールを確認してください：
++
+[source,console]
+----
+kwctl --version
+----
+
+--
+Windows::
++
+--
+Windows にインストールします
+
+. `kwctl` をダウンロードしてください：
+    .. ブラウザを開き、https://github.com/kubewarden/kwctl/releases/latest[{short-project-name} リリースページ] に移動します。
+    .. `kwctl-windows-x86_64.zip` ファイルをダウンロードしてください。
+
+. ダウンロードした zip ファイルからファイルを抽出してください。次の内容が含まれます：
++
+* `kwctl-windows-x86_64.exe`: `kwctl` バイナリ。
+* `kwctl-windows-x86_64.sig`: バイナリを検証するための署名ファイル。
+* `kwctl-windows-x86_64.pem`: 署名を検証するための証明書ファイル。
+
+. バイナリファイルの名前を `kwctl-windows-x86_64.exe` から `kwctl.exe` に変更して、使いやすくします。
+
+. バイナリをあなたの `PATH` 環境変数でカバーされている場所に移動してください。
+
+. インストールを確認してください。新しいコマンドプロンプトまたは PowerShell ウィンドウを開き、`kwctl` のインストールを確認してください：
++
+[source,console]
+----
+kwctl --version
+----
+--
+====
+
+== シェルの補完をインストールする
+
+`kwctl` CLIには、シェル用の補完コマンドを生成するための`--shell`オプションがあります。このコマンドの出力を使用して、シェルに補完を統合できます。
+
+[source,console]
+----
+kwctl completions --shell [bash|elvish|fish|powershell|zsh]
+----

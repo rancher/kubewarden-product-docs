@@ -1,0 +1,264 @@
+include::partial$variables.adoc[]
+
+= 共通のタスク
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: kwctl CLIツールを使用して、Kubernetesクラスター内のポリシーを{project-name}で管理します。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["common-tasks"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:current-version: {page-origin-branch}
+
+これは、Kubernetesクラスター内でxref:quick-start.adoc#installation[インストール{project-name}]した後の一般的なタスクを説明します。
+
+個別のタスクは論理的な順序で配置されています。
+
+== ポリシーのテスト
+
+{short-project-name}は、ポリシーを見つけてローカルでテストするために2つのツールを使用します：
+
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub]、{short-project-name}ポリシーのためのパッケージフィルターを使用
+* https://github.com/kubewarden/kwctl[`kwctl`]、CLIツール
+
+=== Artifact Hub
+
+Artifact Hubは、コミュニティによって寄稿されたポリシーをホストしています。例えば、{short-project-name}の開発者によって作成された、https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[廃止されたKubernetes Pod Security Policies]の代替品を見つけることができます。
+
+下のスクリーンショットに示されているように、興味のあるポリシーを見つけたら、`Install`ボタンを選択し、`kwctl`を使用してクラスターのポリシーを取得します。
+
+image::tasks-artifact-hub.png[Artifact Hub]
+
+[NOTE]
+====
+
+以前は、{short-project-name}ポリシーはhttps://hub.kubewarden.io[{short-project-name} Policy Hub]で見つけることができました。これはhttps://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[廃止されました]。
+ポリシーは現在、https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io]から入手可能です。
+
+====
+
+
+=== `kwctl` CLIツール
+
+`kwctl`は{short-project-name}のCLIツールで、ポリシーの作成者とクラスター管理者がKubernetesクラスターに適用する前にポリシーをテストするためのものです。
+
+このツールは`docker` CLIツールと似たインターフェースを持っています。
+
+==== 使用例
+
+`kwctl`を使用して、これらのシナリオで役立てることができます：
+
+_ポリシーの著者として_
+
+* _ポリシーのエンドツーエンドテスト_：作成したKubernetesリクエストに対してポリシーをテストし、ポリシーが期待通りに動作することを確認してください。実行中のクラスターへのアクセスを必要とするコンテキスト対応ポリシーもテストできます。
+* _Wasmモジュールにメタデータを埋め込む_：バイナリには、実行に必要な権限の注釈が含まれています。これらの注釈は`kwctl`を使用して検査および変更できます。
+* _ポリシーをOCIレジストリに公開する_：バイナリは完全に準拠したOCIオブジェクトであり、OCIレジストリに保存できます。
+
+_クラスター管理者として_
+
+* _リモートポリシーを検査する_：OCIレジストリまたはHTTPサーバーにあるポリシーが指定された場合、そのポリシーに関するすべての静的情報を表示します。
+* _クラスター内のポリシーのドライラン_：作成したKubernetesリクエストに対してポリシーをテストし、提供した入力データに基づいてポリシーが期待通りに動作することを確認してください。実行中のクラスターへのアクセスを必要とするコンテキスト対応ポリシーもドライランモードでテストできます。
+* _ポリシーの初期`ClusterAdmissionPolicy`スキャフォールディングを生成する_：
+  必要な設定をすべて含む`YAML`ファイルを生成し、`kubectl`を使用してKubernetesクラスターに適用できます。
+
+==== インストール
+
+`kwctl`の安定版リリース用のバイナリは、https://github.com/kubewarden/kwctl/releases[GitHubリポジトリ]から入手できます。GitHubのhttps://github.com/kubewarden/kwctl[リポジトリ]から`kwctl`をビルドするには、https://www.rust-lang.org/tools/install[Rust]開発環境が必要です。
+
+==== 使用方法
+
+次のコマンドを実行することで、すべての`kwctl`オプションとサブコマンドをリストできます：
+
+[subs="+attributes",shell]
+----
+$ kwctl --help
+kwctl 0.2.5
+{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {short-project-name} policies
+
+USAGE:
+    kwctl [OPTIONS] <SUBCOMMAND>
+
+OPTIONS:
+    -h, --help       Print help information
+    -v               Increase verbosity
+    -V, --version    Print version information
+
+SUBCOMMANDS:
+    annotate       Add {short-project-name} metadata to a WebAssembly module
+    completions    Generate shell completions
+    digest         Fetch the digest of its OCI manifest
+    help           Print this message or the help of the given subcommand(s)
+    inspect        Inspect {short-project-name} policy
+    policies       Lists all downloaded policies
+    pull           Pulls a {short-project-name} policy from a given URI
+    push           Pushes a {short-project-name} policy to an OCI registry
+    rm             Removes a {short-project-name} policy from the store
+    run            Runs a {short-project-name} policy from a given URI
+    scaffold       Scaffold a Kubernetes resource or configuration file
+    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+----
+
+ここにいくつかのコマンド使用例があります:
+
+* _ポリシーを一覧表示する_: ローカル`kwctl`レジストリに保存されているすべてのポリシーを一覧表示します
+ ** コマンド: `kwctl policies`
+* _ポリシーを取得する_: ポリシーをダウンロードしてローカル`kwctl`ストアに保存します
+ ** コマンド: `kwctl pull <policy URI>`
++
+[subs="+attributes",shell]
+----
+$ kwctl pull registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+
+$ kwctl policies
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+| Policy                                                       | Mutating | Context aware | SHA-256      | Size     |
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+| registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 | no       | no            | 59e34f482b40 | 21.86 kB |
++--------------------------------------------------------------+----------+---------------+--------------+----------+
+----
+* _ポリシーの動作を理解する_: ポリシーメタデータを検査します
+ ** コマンド: `kwctl inspect <policy URI>`
++
+[subs="+attributes",shell]
+----
+  $ kwctl inspect registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+  Details
+  title:              pod-privileged
+  description:        Limit the ability to create privileged containers
+  author:             Flavio Castelli
+  url:                https://github.com/kubewarden/pod-privileged-policy
+  source:             https://github.com/kubewarden/pod-privileged-policy
+  license:            Apache-2.0
+  mutating:           false
+  context aware:      false
+  execution mode:     kubewarden-wapc
+  protocol version:   1
+
+  Annotations
+  io.kubewarden.kwctl 0.1.9
+
+  Rules
+  ────────────────────
+  ---
+  - apiGroups:
+      - ""
+    apiVersions:
+      - v1
+    resources:
+      - pods
+    operations:
+      - CREATE
+  ────────────────────
+
+  Usage
+  This policy doesn't have a configuration. Once enforced, it will reject
+  the creation of Pods that have at least a privileged container defined.
+----
+* _ポリシーを評価する_:ポリシーを評価し、利用可能な場合は、要件に合った適切な設定値を見つけます。
++
+https://kubernetes.io/docs/reference/[Kubernetes REST API]にある程度の慣れが必要です。
+
+ ** コマンド: `kwctl run -r <"Kubernetes Admission request" file path> -s <"JSON document" file path> <policy URI>`
+ ** シナリオ1:
+  *** 評価のリクエスト:'privileged'コンテナなしでポッドを作成します
++
+[subs="+attributes",shell]
+----
+$ kwctl run registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 -r unprivileged-pod-request.json
+{"uid":"C6E115F4-A789-49F8-B0C9-7F84C5961FDE","allowed":true,"status":{"message":""}}
+----
+
+  *** ダウンロードしたポリシーバイナリを使用した同等のコマンド:
++
+[subs="+attributes",shell]
+----
+`$ kwctl run file://$PWD/pod-privileged-policy.wasm -r unprivileged-pod-request.json
+{"uid":"C6E115F4-A789-49F8-B0C9-7F84C5961FDE","allowed":true,"status":{"message":""}}
+----
+
+  *** 結果:ポリシーはリクエストを許可します
+ ** シナリオ2:
+  *** 評価のリクエスト:少なくとも1つの'privileged'コンテナを持つポッドを作成します
+  *** コマンド:
++
+[subs="+attributes",shell]
+----
+kwctl run registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9 -r privileged-pod-request.json
+----
+
+  *** ダウンロードしたポリシーバイナリを使用した同等のコマンド: `kwctl run file://$PWD/pod-privileged-policy.wasm -r privileged-pod-request.json`
+  *** 出力:
++
+[subs="+attributes",json]
+----
+{
+  "uid": "8EE6AF8C-C8C8-45B0-9A86-CB52A70EC50D",
+  "allowed": false,
+  "status": { "message": "User 'kubernetes-admin' cannot schedule privileged containers" }
+}
+----
+
+  *** 結果:ポリシーはリクエストを拒否します
+
++
+より複雑な例については、ブログ記事https://www.kubewarden.io/blog/2021/06/kwctl-intro-for-kubernetes-administrators/[Kubernetes管理者への`kwctl`の紹介]を参照してください。
+
+== ポリシーを適用する
+
+ポリシーを`ClusterAdmissionPolicy`定義し、それを`kubectl`を使用してクラスターにデプロイすることでポリシーを適用します。
+
+`kwctl`は、適用したいポリシーをもとに`ClusterAdmissionPolicy`を生成するのに役立ちます。
+
+`ClusterAdmissionPolicy`を生成し、それをクラスターに適用した後、以下のxref:quick-start.adoc#_example_enforce_your_first_policy[クイックスタート]に記載されている手順に従うことができます。
+
+* ポリシー`ClusterAdmissionPolicy`から`manifest`を生成し、ファイルに保存します。
+ ** コマンド: `kwctl scaffold manifest -t ClusterAdmissionPolicy <policy URI> > <"policy name".yaml>`
++
+[subs="+attributes",shell]
+----
+$ kwctl scaffold manifest -t ClusterAdmissionPolicy registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9
+---
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/pod-privileged:v0.1.9"
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+  mutating: false
+----
+
++
+
+[TIP]
+====
+デフォルトでは、`name`の値は`generated-policy`に設定されています。
+`ClusterAdmissionPolicy`をデプロイする前に、編集することをお勧めします。
+前の例の名前は`privileged-pods`に設定されています。
+====
+
+* `ClusterAdmissionPolicy`をKubernetesクラスターにデプロイします。
+ ** コマンド: `kubectl apply -f <"policy name".yaml>`
++
+[subs="+attributes",shell]
+----
+$ kubectl apply -f pod-privileged-policy.yaml
+clusteradmissionpolicy.policies.kubewarden.io/privileged-pods created
+----
+
+`ClusterAdmissionPolicy`をデプロイした後、クラスターに送信されたすべてのリクエストは、ポリシーの範囲内であればポリシーによって評価されます。
+
+== 次のステップ
+
+* xref:tutorials/writing-policies/index.adoc[ポリシーの作成]は、異なる言語でポリシーを書く方法とWebAssemblyバイナリを生成する方法を説明しており、それらは{short-project-name}によって使用できます。
+* xref:../explanations/distributing-policies.adoc[ポリシーの配布]は、ポリシーをhttps://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCIレジストリ]に公開する方法を説明しています。

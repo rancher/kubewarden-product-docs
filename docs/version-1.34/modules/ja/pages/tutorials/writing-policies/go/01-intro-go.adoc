@@ -1,0 +1,94 @@
+include::partial$variables.adoc[]
+= Goでポリシーを作成する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: TinyGoを使い、Go開発者向けに特別に設計された便利なライブラリやツールを活用して、効果的なAdmission Controllerの検証ポリシーを作成できます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Goでのポリシーの作成"]
+:sidebar_label: Goでポリシーを作成する
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+GoのWebAssemblyサポートは急速に進化しています。
+このページは2023年12月に最終更新されました。
+====
+
+
+公式のGoコンパイラは、v1.21以降、ブラウザ外で実行するためのWebAssemblyバイナリを生成できます。
+
+{project-name}で使用可能なWebAssemblyバイナリを構築できる別のGoコンパイラがあります。
+このコンパイラプロジェクトはhttps://tinygo.org/[TinyGo]です。
+
+____
+TinyGoは、LLVMに基づいた新しいコンパイラを作成することで、Goプログラミング言語を組み込みシステムや現代のウェブに持ち込みます。
+
+TinyGoプログラムは、BBC micro:bitやArduino Unoなど、94種類以上の異なるマイクロコントローラボードでコンパイルして実行できます。
+
+TinyGoは、非常にコンパクトなサイズのWebAssembly（Wasm）コードも生成できます。
+WebAssemblyシステムインターフェース（WASI）ファミリーのインターフェースをサポートするウェブブラウザやサーバー、エッジコンピューティング環境向けにプログラムをコンパイルできます。
+____
+
+{short-project-name}プロジェクトは、現在、2つの理由からTinyGoの使用を推奨しています：
+
+* バイナリが小さい
+* 関数をランタイムにエクスポートする能力によるhttps://wapc.io[waPC]のサポート
+
+== TinyGoの制限
+
+TinyGoはまだすべてのGo機能をサポートしていません。現在のプロジェクトの状況を確認するには、TinyGo言語サポートhttps://tinygo.org/lang-support/[ページ]をご覧ください。
+現在、最大の制限は完全にサポートされた`reflect`パッケージがないことです。
+これは、公式のKubernetes Go APIタイプ（例：`k8s.io/api/core/v1`）がコンパイルされないことを意味します。
+
+{short-project-name} ポリシーは、ポリシー設定や Kubernetes によって受信されたリクエストなどの JSON データを処理する必要があります。
+
+TinyGo の現在の制限にもかかわらず、それを使用して {short-project-name} 検証ポリシーを書くことは依然として簡単です。
+
+== ツール
+
+{short-project-name} ポリシーを書くには、TinyGo のバージョンが `v0.28.1` よりも大きい必要があります。
+しかし、最良の結果を得るためには最新のバージョンを使用してください。
+
+[CAUTION]
+====
+古いバージョンの TinyGo を使用すると、Go のリフレクションのサポートが限られているため、ランタイムエラーが発生します。
+====
+
+
+これらの Go ライブラリは、{short-project-name} ポリシーを書く際に役立ちます：
+
+* https://github.com/kubewarden/policy-sdk-go[{short-project-name} Go SDK]：
+必要なコードの量を減らす構造と関数を提供します。
+また、テストヘルパーも提供します。
+* https://github.com/kubewarden/k8s-objects[Kubernetes Go タイプ]：
+https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io[公式 Kubernetes Go タイプ]は、TinyGo では使用できません。
+このモジュールは、TinyGo に優しい方法で全ての Kubernetes タイプを提供します。
+* https://github.com/tidwall/gjson[gjson]：
+これは、JSON ドキュメントの迅速なナビゲーションとデータ取得のためのクエリ言語を提供します。
+このライブラリは、Go の `encoding/json` によって提供される `stdlib` パッケージを使用していないため、TinyGo で使用可能です。
+* https://github.com/deckarep/golang-set[mapset]：
+https://en.wikipedia.org/wiki/Set_(abstract_data_type)[Set] データ構造の Go 実装を提供します。
+このライブラリは、{short-project-name} ポリシーにおいて一般的な操作である Set `union`、`intersection`、`difference` などの操作を書くためのコード量を削減します。
+
+最後に、{short-project-name} プロジェクトは、https://github.com/kubewarden/go-policy-template[テンプレート Go ポリシー プロジェクト]を提供し、{short-project-name} Go ポリシーを作成するために使用できます。
+
+== TinyGo の依存関係を取得する
+
+TinyGo を取得する最も簡単な方法は、アップストリームのコンテナイメージを使用することです。
+公式リリースはhttps://hub.docker.com/r/tinygo/tinygo[こちら]であり、開発ブランチからのビルドは自動的にhttps://hub.docker.com/r/tinygo/tinygo-dev[こちら]にプッシュされます。
+
+必要に応じて、TinyGoのhttps://tinygo.org/getting-started/[はじめに]ページを参照して、詳細情報を得てください。
+
+== チュートリアルの前提条件
+
+このチュートリアルでは、開発マシンにこれらのツールが必要です：
+
+* dockerまたは他のコンテナエンジン：WebAssemblyポリシーを構築するために使用されます。
+公式のTinyGoコンテナイメージに同梱されているコンパイラを使用します。
+* https://github.com/bats-core/bats-core[bats]：テストを書くために使用され、その実行を自動化します。
+* https://github.com/kubewarden/kwctl/releases[`kwctl`]：
+Kubernetesの外でポリシーを実行するために{short-project-name}が提供するCLIツール、その他のアクションのために。
+これはドキュメントのxref:tutorials/testing-policies/index.adoc[このセクション]で説明されています。

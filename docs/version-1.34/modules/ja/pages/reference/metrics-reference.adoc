@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= メトリクスの参照
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}の公開されたプラットフォームメトリクスを使用して、クラスターのメトリクスとパターンを探索し、意思決定プロセスを支援します。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "metrics", "reference"]
+:sidebar_label: メトリクスの参照
+:sidebar_position: 30
+:current-version: {page-origin-branch}
+
+{short-project-name}は関連するプラットフォームメトリクスを公開し、クラスター管理者やポリシー開発者がパターンや潜在的な問題を特定できるようにします。
+
+== ポリシーサーバー
+
+ポリシーサーバーコンポーネントは、ポリシーを初期化し、実行します。
+Kubernetes APIサーバーからリクエストを受信すると、ポリシーにリクエストを転送し、ポリシーが提供する応答をKubernetes APIサーバーに返します。
+
+=== Metrics
+
+[NOTE]
+====
+https://opentelemetry.io/docs/concepts/signals/baggage/[バゲージ]メトリクスにキーと値の属性が追加され、追加情報を提供します。
+====
+
+
+|===
+| 名前 | タイプ | バゲージ
+
+| `kubewarden_policy_evaluations_total`
+| カウンタ
+| <<_kubewarden_policy_evaluations_total,バゲージ>>
+|===
+
+==== `kubewarden_policy_evaluations_total`
+
+===== バゲージ
+
+|===
+| ラベル | 説明
+
+| `policy_name`
+| ポリシーの名前
+
+| `resource_name`
+| 評価されたリソースの名前
+
+| `resource_kind`
+| 評価されたリソースの種類
+
+| `resource_namespace`
+| 評価されたリソースのネームスペース。リソースがクラスター・スコープの場合は存在しません。
+
+| `resource_request_operation`
+| 操作タイプ: `CREATE`, `UPDATE`, `DELETE`, `PATCH`, `WATCH`...
+
+| `accepted`
+| リクエストは受け入れられましたか？
+
+| `mutated`
+| リクエストは変更されましたか？
+
+| `error_code`
+| 拒否された場合、ポリシーによって返されるエラーコード（あれば）。
+  ポリシーが提供しなかった場合は存在しません。
+|===
