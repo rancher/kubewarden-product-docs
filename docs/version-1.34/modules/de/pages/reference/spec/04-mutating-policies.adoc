@@ -1,0 +1,165 @@
+include::partial$variables.adoc[]
+= Mutierende Richtlinien
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie mutierende Richtlinien, indem Sie Validierungsfunktionen (validate und validate_settings) in einem waPC (whatever-after Policy Configurator) implementieren, um Objektmutationen in Kubernetes-Clustern vorzuschlagen.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "mutating-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "Richtlinienspezifikation", "mutierende Richtlinien"]
+:sidebar_label: Mutierende Richtlinien
+:current-version: {page-origin-branch}
+
+Die Struktur mutierender Richtlinien ist die gleiche wie die der validierenden Richtlinien:
+
+* Sie müssen `validate` und `validate_settings` waPC-Funktionen registrieren.
+* Die Kommunikations-API, die zwischen dem Host und der Richtlinie verwendet wird, ist die gleiche wie die, die von validierenden Richtlinien verwendet wird.
+
+Mutierende Richtlinien akzeptieren eine Anfrage und können eine Mutation des eingehenden Objekts vorschlagen, indem sie ein `ValidationResponse` Objekt zurückgeben, das so aussieht:
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": <object to be created>
+}
+----
+
+Das `mutated_object` Feld enthält das Objekt, das die Richtlinie im Kubernetes-Cluster erstellen möchte, serialisiert in JSON.
+
+== Ein konkretes Beispiel
+
+Angenommen, die Richtlinie hat folgendes `ValidationRequest` erhalten:
+
+[subs="+attributes",json]
+----
+{
+  "settings": {},
+  "request": {
+    "operation": "CREATE",
+    "object": {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "security-context-demo-4"
+      },
+      "spec": {
+        "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": ["NET_ADMIN", "SYS_TIME"]
+            }
+          }
+        }
+        ]
+      }
+    }
+  }
+}
+----
+
+[NOTE]
+====
+
+Nur wichtige Felder sind im `request` Objekt für dieses Beispiel enthalten.
+
+====
+
+
+Diese Anfragegenerierung erfolgt, weil jemand versucht hat, einen Pod zu erstellen, der so aussehen würde:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+----
+
+Angenommen, die Richtlinie antwortet mit folgendem `ValidationResponse`:
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "name": "security-context-demo-4"
+    },
+    "spec": {
+      "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": [
+                "NET_ADMIN",
+                "SYS_TIME"
+              ],
+              "drop": [
+                "BPF"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+----
+
+Das würde zur Annahme der Anfrage führen, aber der endgültige Pod würde so aussehen:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+        drop:
+        - BPF
+----
+
+Wie Sie sehen können, hat die Richtlinie den `securityContext.capabilities.drop` Abschnitt des einzigen im Pod deklarierten Containers geändert.
+
+Der Container gibt jetzt die `BPF` Fähigkeit aufgrund der Richtlinie auf.
+
+== Zusammenfassung
+
+Dies sind die Funktionen, die eine mutierende Richtlinie implementieren muss:
+
+|===
+| *waPC-Funktionsname* | *Eingabepayload* | *Ausgabepayload*
+
+| `validate`
+| `\{  "request": \{    // AdmissionReview.request data  \},  "settings": \{    // your policy configuration  \}\}`
+| `\{  **// mandatory**  "accepted": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,  // optional, ignored if accepted  "code": integer,   // JSON Object to be created  // Can be used only when the  // request is accepted  "mutated_object": object\}`
+
+| `validate_settings`
+| `\{  // your policy configuration\}`
+| `\{  **// mandatory**  "validate": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,\}`
+|===
