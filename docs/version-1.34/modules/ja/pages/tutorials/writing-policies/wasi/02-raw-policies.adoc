@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 生のポリシーを書く
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 任意のJSONドキュメントを評価するRawポリシーを作成し、カスタムの検証および変更ロジックを定義します。

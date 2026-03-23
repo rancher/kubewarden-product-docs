@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 定义策略设置
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过 {project-name} 策略在 src/types.ts 和 src/index.ts 文件中定义和实现有效的策略设置结构。

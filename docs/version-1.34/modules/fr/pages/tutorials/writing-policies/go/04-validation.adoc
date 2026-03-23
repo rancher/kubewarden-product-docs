@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Écrire la logique de validation
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Apprenez à écrire et à tester la logique de validation en Go en extrayant les informations pertinentes des charges utiles entrantes et en créant des objets de configuration.

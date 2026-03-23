@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 使用 JSON 查询进行验证
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过从 Kubernetes 对象的 JSON 表示中提取相关数据来实现验证逻辑。

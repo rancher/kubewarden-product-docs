@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Mode de surveillance
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez les ClusterAdmissionPolicies ou AdmissionPolicies pour le mode de surveillance afin de suivre et d'analyser les actions des stratégies sans modifier les requêtes entrantes.

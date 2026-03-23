@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Criando uma nova política
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Crie uma política que avalie todos os recursos que possuem namespace e proíba sua criação no namespace padrão para aprendizado prático.

@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 使用 Rancher 备份运算符进行备份和恢复
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用 Rancher Backup Operator 在任何 Kubernetes 集群上配置和管理备份和恢复。

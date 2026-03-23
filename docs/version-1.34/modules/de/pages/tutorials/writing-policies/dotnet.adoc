@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = C#
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Erkunden und Erstellen von Validierungs- und Mutationsrichtlinien zur Zulassungskontrolle mithilfe des .NET Core SDK mit WASI-Unterstützung auf WebAssembly-Plattformen wie Kubernetes.

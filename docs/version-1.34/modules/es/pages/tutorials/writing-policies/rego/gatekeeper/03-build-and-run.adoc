@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Crea y ejecuta una directiva de Gatekeeper
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Desarrolla y despliega una directiva de Gatekeeper utilizando la sintaxis y herramientas de Rego que ya conoces para hacer cumplir el control de admisión en entornos de Kubernetes.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Politiques CEL contextuelles
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurer des stratégies contextuelles pour garantir des règles d'Ingress uniques entre les hôtes, évitant ainsi les conflits avec les bibliothèques d'extensions CEL de {project-name}.

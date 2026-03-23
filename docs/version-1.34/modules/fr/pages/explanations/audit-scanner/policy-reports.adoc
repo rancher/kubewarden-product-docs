@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Scanner d'audit - Rapports de stratégie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Stockez et interrogez les résultats des analyses de stratégie du scanner d'audit en utilisant soit des objets Rapport soit des objets ClusterReport au sein de votre cluster Kubernetes.

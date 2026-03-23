@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 確認 {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: {project-name} チームが生成したさまざまなアーティファクトを検証し、SBOM と来歴ファイルを使用して安全なサプライチェーンを確保します。

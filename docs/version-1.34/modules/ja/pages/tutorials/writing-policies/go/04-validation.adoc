@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 検証ロジックの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Goでの検証ロジックの作成とテスト方法を学び、受信したペイロードから関連情報を抽出し、設定オブジェクトを作成します。

@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Admission Controller ネームスペースでの評価を許可する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Admission Controller を構成して、自身のネームスペースでポリシー評価を許可する方法
 :keywords: ["policies", "ClusterAdmissionPolicies", "ClusterAdmissionPoliciesGroup", "configuration", "namespaces"]
 :doc-persona: ["kubewarden-operator"]

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 验证策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用特定于策略的设置评估您的验证请求，以确定接受或拒绝Kubernetes AdmissionReview对象。

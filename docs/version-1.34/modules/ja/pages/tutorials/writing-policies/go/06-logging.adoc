@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ログ記録
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ポリシーで構造化ログ記録を行うために、oneLogプロジェクトのGo SDK統合を利用してロガーの初期化を設定します。

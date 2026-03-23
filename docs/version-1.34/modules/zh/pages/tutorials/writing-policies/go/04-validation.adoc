@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 编写验证逻辑
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 学习如何通过提取传入有效负载中的相关信息并创建设置对象来编写和测试 Go 中的验证逻辑。

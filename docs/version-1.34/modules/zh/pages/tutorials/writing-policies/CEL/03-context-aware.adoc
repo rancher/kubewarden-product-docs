@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 上下文感知CEL策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 配置上下文感知策略，以确保主机之间的唯一Ingress规则，防止与{project-name}的CEL扩展库产生冲突。

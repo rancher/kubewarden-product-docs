@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Construisez et exécutez une stratégie OPA pour {short-project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Construisez une stratégie OPA personnalisée pour votre projet en construisant un paquet de stratégie Rego, en le compilant en une cible WASM et en l'intégrant à kwctl.

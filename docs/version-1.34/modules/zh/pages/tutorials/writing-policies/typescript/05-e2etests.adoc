@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 端到端测试
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 学习如何使用 BATS 和 kwctl 编写和运行全面的端到端测试，以验证策略行为。

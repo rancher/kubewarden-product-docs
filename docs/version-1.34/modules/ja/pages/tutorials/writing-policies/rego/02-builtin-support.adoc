@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ビルトインサポート
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: WebAssemblyモジュールで利用可能なビルトイン関数を特定し、それらの実装とRegoポリシー開発における使用法を理解します。

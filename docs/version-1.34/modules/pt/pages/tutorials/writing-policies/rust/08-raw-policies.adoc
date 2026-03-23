@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Políticas brutas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Saiba mais sobre políticas brutas que avaliam documentos JSON arbitrários, além de ver exemplos de implementação de políticas em Rust.

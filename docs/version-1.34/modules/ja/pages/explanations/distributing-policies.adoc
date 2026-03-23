@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ポリシーの配布
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: kwctlのようなOCI準拠のレジストリを介してポリシーを安全に配布し、{project-name}ポリシー管理を通じてクラスターのセキュリティを確保します。

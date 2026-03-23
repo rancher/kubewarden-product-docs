@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 自定义 OpenTelemetry Collector
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 配置 {project-name} 以安全地将遥测数据发送到集群内部署的自定义 OpenTelemetry Collector。

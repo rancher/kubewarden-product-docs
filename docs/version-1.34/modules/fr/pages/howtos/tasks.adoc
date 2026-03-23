@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Tâches courantes
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Gérez les stratégies dans votre cluster Kubernetes avec {project-name} en utilisant l'outil CLI kwctl.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Validación utilizando consultas JSON
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implementa la lógica de validación utilizando consultas JSON extrayendo los datos relevantes de la representación JSON de un objeto de Kubernetes.

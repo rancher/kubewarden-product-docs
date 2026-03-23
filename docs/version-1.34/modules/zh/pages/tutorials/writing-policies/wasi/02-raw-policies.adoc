@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 编写原始策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 编写原始策略，通过定义自定义验证和变异逻辑来评估任意 JSON 文档。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 配置策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过选择特定的名称空间或设置自定义拒绝消息来配置策略，并使用 AdmissionPolicyGroup 否定结果。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ログ記録
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: {project-name}のSLOGライブラリとの統合機能を利用して、ポリシーのログ記録機能を構成・初期化します。

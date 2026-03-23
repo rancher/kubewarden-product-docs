@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 端到端测试
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 了解如何编写和自动化针对 TinyGo 生成的 WebAssembly 二进制文件的端到端测试，使用 bats 和 kwctl。

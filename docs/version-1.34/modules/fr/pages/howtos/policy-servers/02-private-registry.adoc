@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Configuration des PolicyServers pour utiliser des registres privés
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez les PolicyServers pour utiliser des registres privés en créant un secret de configuration Docker et en configurant le champ spec.imagePullSecret dans la configuration.

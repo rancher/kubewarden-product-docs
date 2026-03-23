@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ポリシー設定の定義
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: settings.goファイルのコードを修正して、ポリシー設定を定義し、正規表現のマーシャリングおよびアンマーシャリングを行うカスタム関数の実装を含めます。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Capacidades do host do Sigstore
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Aprenda como implementar as capacidades do host do Sigstore usando políticas CEL no Kubewarden para verificar imagens de contêiner e impor controle de admissão seguro.

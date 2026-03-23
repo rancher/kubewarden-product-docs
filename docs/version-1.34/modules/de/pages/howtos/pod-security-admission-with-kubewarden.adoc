@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Verwendung von Pod-Sicherheitszulassung mit {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie die Pod-Sicherheitszulassung in einem Kubernetes-Cluster mit {project-name}, um Pods abzusichern.

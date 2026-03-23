@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Stratégies de modification
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurer les stratégies de modification en implémentant des fonctions de validation (validate et validate_settings) dans un waPC (Configurateur de Stratégies Whatever-After) pour proposer des mutations d'objets dans des clusters Kubernetes.

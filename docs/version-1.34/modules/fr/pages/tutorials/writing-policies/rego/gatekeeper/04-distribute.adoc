@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Distribution d'une stratégie de Gatekeeper avec {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Distribuez les stratégies de Gatekeeper à travers les clusters Kubernetes en annotant les fichiers de stratégie avec des métadonnées et en les déployant via ClusterAdmissionPolicy.

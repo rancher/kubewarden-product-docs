@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = PolicyServersをプライベートレジストリで使用するように設定する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Dockerの設定シークレットを作成し、設定のspec.imagePullSecretフィールドを設定することで、PolicyServersをプライベートレジストリを使用するように構成します。

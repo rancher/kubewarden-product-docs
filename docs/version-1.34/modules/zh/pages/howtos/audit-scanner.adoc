@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 审计扫描器
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用 {project-name} 中的审计扫描器功能验证您的集群的合规状态，以确保其正确配置。

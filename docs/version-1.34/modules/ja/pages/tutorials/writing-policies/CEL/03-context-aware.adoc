@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = コンテキスト認識 CELポリシー
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ホスト間で一意のIngressルールを確保し、{project-name}のCEL拡張機能ライブラリとの競合を防ぐために、コンテキスト認識ポリシーを構成します。

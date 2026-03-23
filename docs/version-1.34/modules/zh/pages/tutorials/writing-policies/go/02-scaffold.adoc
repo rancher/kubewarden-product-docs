@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 创建新的验证策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 探索创建一个新的验证策略，该策略拒绝带有黑名单标签的 Pods，同时使用用户提供的正则表达式验证标签以确保安全性。

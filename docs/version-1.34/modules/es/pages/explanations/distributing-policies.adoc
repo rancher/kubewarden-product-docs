@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Distribuyendo directivas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Distribuye directivas de forma segura a través de un registro compatible con OCI utilizando herramientas como kwctl, y asegura la seguridad del clúster mediante {project-name} la gestión de directivas.

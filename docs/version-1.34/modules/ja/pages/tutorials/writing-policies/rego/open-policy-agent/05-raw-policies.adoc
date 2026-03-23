@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 生のポリシーの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 任意のJSONドキュメントを評価し、システム内のアクセス制御ルールを強制する生のポリシーの書き方を学びましょう。

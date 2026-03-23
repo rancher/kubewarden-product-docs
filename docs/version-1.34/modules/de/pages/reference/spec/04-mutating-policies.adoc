@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Mutierende Richtlinien
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie mutierende Richtlinien, indem Sie Validierungsfunktionen (validate und validate_settings) in einem waPC (whatever-after Policy Configurator) implementieren, um Objektmutationen in Kubernetes-Clustern vorzuschlagen.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 如何使用策略组
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 实施具有特定规则的策略组，根据镜像签名和其他标准，拒绝不合规的Pod。

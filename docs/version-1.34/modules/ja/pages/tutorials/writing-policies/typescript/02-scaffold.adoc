@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 新しいバリデーションポリシーの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ポリシー設定の構成を通じて、Podオブジェクトの無効なホスト名を拒否する新しいバリデーションポリシーを作成し、提供されたツールでテストします。

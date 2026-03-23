@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Publicar directivas en Artifact Hub
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Publicar {project-name} directivas en Artifact Hub creando un diseño de repositorio Git bien formateado y configurando GitHub Actions para empaquetado automatizado, facilitando la integración continua.

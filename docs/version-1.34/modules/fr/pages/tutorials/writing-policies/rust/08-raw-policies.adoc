@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Stratégies brutes
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Découvrez les stratégies brutes qui évaluent des documents JSON arbitraires, ainsi que des exemples de mise en œuvre de stratégies en Rust.

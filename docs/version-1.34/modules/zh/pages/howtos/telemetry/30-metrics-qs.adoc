@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 指标快速入门
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用 Prometheus 和通过 Helm 图表启用的 {project-name} 在策略服务器上配置指标报告以进行数据收集。

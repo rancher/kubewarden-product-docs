@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Permitindo avaliações no namespace do Admission Controller
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Como configurar o Admission Controller para permitir a avaliação de políticas em seu próprio namespace
 :keywords: ["políticas", "ClusterAdmissionPolicies", "ClusterAdmissionPoliciesGroup", "configuração", "namespaces"]
 :doc-persona: ["kubewarden-operator"]

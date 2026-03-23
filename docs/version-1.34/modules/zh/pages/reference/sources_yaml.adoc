@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = sources.yaml的参考
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过指定源权限的路径和格式以及不安全的源，配置您的sources.yaml文件以与PolicyServer CRs一起使用。

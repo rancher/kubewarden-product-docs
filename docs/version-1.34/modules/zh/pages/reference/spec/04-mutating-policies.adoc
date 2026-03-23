@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 变更策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过在 waPC（Policy 配置器）中实现验证函数（validate 和 validate_settings）来配置变更策略，以便在 Kubernetes 集群中提出对象变更。

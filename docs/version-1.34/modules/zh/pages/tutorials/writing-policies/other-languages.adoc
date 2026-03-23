@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 其他语言
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 了解如何使用各种以 WebAssembly 模块和 WASI 接口为目标的编程语言来编写 {project-name} 策略。

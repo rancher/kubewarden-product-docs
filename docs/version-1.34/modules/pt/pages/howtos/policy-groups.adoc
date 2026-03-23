@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Como usar grupos de políticas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implemente grupos de políticas com regras específicas que rejeitam Pods não conformes com base em assinaturas de imagem e outros critérios.

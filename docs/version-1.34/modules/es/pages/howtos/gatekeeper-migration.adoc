@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Migrando directivas de Gatekeeper a {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configura una directiva de {project-name} migrando una directiva de Gatekeeper existente a través de dos pasos principales: compilar el código Rego en WebAssembly.

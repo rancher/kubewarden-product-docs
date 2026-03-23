@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Testando operadores de cluster
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Teste as políticas de operadores de cluster com kwctl usando diferentes configurações e objetos de solicitação de validação para validar as configurações da política.

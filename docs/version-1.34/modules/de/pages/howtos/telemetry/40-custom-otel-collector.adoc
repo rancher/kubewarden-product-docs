@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Benutzerdefinierter OpenTelemetry Collector
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie den {project-name}, um Telemetriedaten sicher an einen benutzerdefinierten OpenTelemetry Collector zu senden, der innerhalb des Clusters bereitgestellt wird.

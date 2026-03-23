@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 監査スキャナー - ポリシーレポート
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Kubernetesクラスター内で、ReportまたはClusterReportオブジェクトを使用して監査スキャナーのポリシースキャン結果を保存および照会します。

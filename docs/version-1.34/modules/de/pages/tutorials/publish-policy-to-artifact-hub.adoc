@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Richtlinien im Artifact Hub veröffentlichen
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Veröffentlichen Sie {project-name} Richtlinien im Artifact Hub, indem Sie ein gut strukturiertes Git-Repository-Layout erstellen und GitHub Actions für die automatisierte Paketierung konfigurieren, um Continuous Integration zu ermöglichen.

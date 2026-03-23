@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 代理配置
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: 使用代理与 {project-name}。
 :keywords: ["{project-name}", "kubewarden", "kubernetes", "proxy", "proxies"]
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]

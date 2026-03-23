@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 自定义证书颁发机构
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 配置自定义证书颁发机构以便与{project-name}安装一起使用，以确保安全通信和身份验证。

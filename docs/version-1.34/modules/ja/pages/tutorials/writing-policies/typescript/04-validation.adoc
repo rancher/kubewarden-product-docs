@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 検証ロジックの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: src/index.tsファイルでKubernetesリソースの検証ロジックを作成し、受信したリクエストデータにアクセスして応答を返します。

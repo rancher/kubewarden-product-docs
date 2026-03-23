@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = C#
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 探索并编写使用 .NET 内核 SDK 和 WASI 支持的 admission control 策略的验证和变更，适用于 Kubernetes 等 WebAssembly 平台。

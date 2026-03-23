@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 验证 {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 验证 {project-name} 团队生成的不同工件，以确保通过使用 SBOM 和溯源文件实现安全的供应链。

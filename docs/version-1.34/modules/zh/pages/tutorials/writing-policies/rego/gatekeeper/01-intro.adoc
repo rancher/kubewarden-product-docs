@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Gatekeeper 支持
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 访问中央 Gatekeeper 策略并了解如何将其与 Kubernetes 准入控制器集成。

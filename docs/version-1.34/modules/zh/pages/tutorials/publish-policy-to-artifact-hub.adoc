@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 将策略发布到 Artifact Hub
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过创建格式良好的 Git 储存库布局并配置 GitHub Actions 进行自动打包，促进持续集成，将 {project-name} 策略发布到 Artifact Hub。

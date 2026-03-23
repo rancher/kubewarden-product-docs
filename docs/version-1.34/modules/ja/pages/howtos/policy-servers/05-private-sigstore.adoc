@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = プライベートSigstoreインスタンスを使用するためのPolicyServersの設定
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: ポリシー署名検証のために、{project-name}でプライベートまたは自己ホスト型のSigstoreインスタンスを使用するようにPolicyServersを設定します。
 :keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]

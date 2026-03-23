@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Création d'une nouvelle stratégie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Créez une stratégie qui évalue toutes les ressources de l'espace de noms et interdit leur création dans l'espace de noms par défaut pour un apprentissage pratique.

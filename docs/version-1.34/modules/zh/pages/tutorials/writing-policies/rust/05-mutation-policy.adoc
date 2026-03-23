@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 创建新的变异策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 配置一个新的 {project-name} 变异策略，以变更带有自定义注释的传入对象，然后进行测试。

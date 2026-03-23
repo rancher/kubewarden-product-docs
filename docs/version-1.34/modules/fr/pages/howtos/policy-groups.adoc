@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Comment utiliser les groupes de stratégies
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implémentez des groupes de stratégies avec des règles spécifiques qui rejettent les Pods non conformes en fonction des signatures d'image et d'autres critères.

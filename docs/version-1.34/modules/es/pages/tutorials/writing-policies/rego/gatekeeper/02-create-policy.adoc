@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Creando una nueva política de Rego de Gatekeeper
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implementa políticas de Rego de Gatekeeper para rechazar recursos que apunten al espacio de nombres por defecto creando y probando una nueva política.

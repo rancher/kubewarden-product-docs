@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 常用任务
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用 {project-name} 和 kwctl CLI 工具管理 Kubernetes 集群中的策略。

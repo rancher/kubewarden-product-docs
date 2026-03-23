@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 构建并运行 Gatekeeper 策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用熟悉的 Rego 语法和工具开发并部署 Gatekeeper 策略，以在 Kubernetes 环境中执行准入控制。

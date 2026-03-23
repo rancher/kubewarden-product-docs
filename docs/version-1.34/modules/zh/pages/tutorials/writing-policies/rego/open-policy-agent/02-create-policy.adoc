@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 创建新策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 创建一个评估所有名称空间资源并禁止在默认名称空间中创建它们的策略，以便进行实践学习。

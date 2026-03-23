@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ValidatingAdmissionPolicy 迁移
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过 kwctl 命令的迁移步骤将 ValidatingAdmissionPolicy 迁移到 {project-name}，以实现平滑的策略过渡。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Créer une nouvelle stratégie de validation
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Explorez la création d'une nouvelle stratégie de validation qui rejette les Pods avec des étiquettes sur la liste de refus, tout en validant les étiquettes avec des expressions régulières fournies par l'utilisateur pour garantir la sécurité.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Erstellen einer neuen Validierungsrichtlinie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Erforschen Sie die Erstellung einer neuen Validierungsrichtlinie, die Pods mit auf der Sperrliste stehenden Labels ablehnt, während sie Labels mit vom Benutzer bereitgestellten regulären Ausdrücken validiert, um die Sicherheit zu gewährleisten.

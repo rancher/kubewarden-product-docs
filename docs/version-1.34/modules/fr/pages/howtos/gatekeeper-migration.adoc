@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Migration des stratégies de Gatekeeper vers {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez une stratégie {project-name} en migrant une stratégie Gatekeeper existante à travers deux étapes principales : compiler le code Rego en WebAssembly.

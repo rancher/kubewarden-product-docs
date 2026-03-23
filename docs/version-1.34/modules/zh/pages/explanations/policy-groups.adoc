@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 策略组
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过策略组组合简单策略来了解创建复杂策略，特别是使用 AdmissionPolicyGroup 和 ClusterAdmissionPolicyGroup 定义。

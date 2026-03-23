@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 新しいバリデーションポリシーの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 拒否リストのラベルを持つPodを拒否し、ユーザーが提供した正規表現でラベルを検証する新しいバリデーションポリシーの作成方法を説明します。

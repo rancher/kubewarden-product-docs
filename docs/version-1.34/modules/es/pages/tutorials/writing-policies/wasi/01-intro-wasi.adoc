@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = WASI
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Escribe directivas WASI que interactúen con primitivas del sistema cuando una limitación en el compilador de Go impida usar el mecanismo de comunicación waPC.

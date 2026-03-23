@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 分发一个 OPA 策略，使用 {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 用相关元数据注解您的 Rego 策略，然后将其推送到 OCI 注册表以准备部署。

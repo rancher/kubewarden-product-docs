@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Tests de bout en bout
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Découvrez comment écrire et automatiser des tests de bout en bout exécutés contre le binaire WebAssembly produit par TinyGo avec bats et kwctl.

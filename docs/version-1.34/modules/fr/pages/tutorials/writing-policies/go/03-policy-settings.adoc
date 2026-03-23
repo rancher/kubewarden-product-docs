@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Définir les paramètres de stratégie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Modifiez le code dans le fichier settings.go pour définir les paramètres de stratégie, y compris l'implémentation de fonctions personnalisées pour la sérialisation et la désérialisation des expressions régulières.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Création d'une nouvelle stratégie Rego pour Gatekeeper
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implémentez des stratégies Rego pour Gatekeeper afin de rejeter les ressources ciblant l'espace de noms par défaut en créant et en testant une nouvelle stratégie.

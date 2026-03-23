@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Registro
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configura la inicialización del registrador para el registro estructurado en tu política utilizando la integración del SDK de Go del proyecto oneLog.

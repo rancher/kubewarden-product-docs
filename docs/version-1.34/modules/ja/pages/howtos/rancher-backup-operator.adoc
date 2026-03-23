@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Rancher Backup Operatorを使用したバックアップと復元
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 任意のKubernetesクラスターでrancher-backupオペレーターを使用してバックアップと復元を構成および管理します。

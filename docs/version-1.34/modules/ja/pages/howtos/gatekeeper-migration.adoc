@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Gatekeeperのポリシーを{project-name}に移行する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 既存のGatekeeperポリシーを移行し、RegoコードをWebAssemblyにコンパイルするという2つの主要なステップを通じて、{project-name}ポリシーを構築します。

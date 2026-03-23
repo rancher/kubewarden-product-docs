@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Configuration du proxy
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Utiliser des proxies avec {project-name}.
 :keywords: ["{project-name}", "kubewarden", "kubernetes", "proxy", "proxies"]
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]

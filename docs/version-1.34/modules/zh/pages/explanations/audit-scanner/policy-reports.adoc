@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 审计扫描器 - 策略报告
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 在 Kubernetes 集群中使用 Report 或 ClusterReport 对象存储和查询审计扫描器策略扫描结果。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 变更策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 根据预定义设置，在ClusterAdmissionPolicy中配置并管理变更策略以重建请求。

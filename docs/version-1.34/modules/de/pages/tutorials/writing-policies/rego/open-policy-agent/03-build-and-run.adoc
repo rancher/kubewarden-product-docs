@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Erstellen und führen Sie eine OPA-Richtlinie für {short-project-name} aus.
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Erstellen Sie eine benutzerdefinierte OPA-Richtlinie für Ihr Projekt, indem Sie ein Rego-Paket erstellen, es in ein WASM-Ziel kompilieren und mit kwctl integrieren.

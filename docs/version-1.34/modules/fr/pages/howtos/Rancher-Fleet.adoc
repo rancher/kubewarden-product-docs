@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Gérer {project-name} avec Rancher Fleet
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Gérez {project-name} les charts Helm en utilisant Rancher Fleet et les CRDs Kubernetes pour mettre en œuvre une approche GitOps.

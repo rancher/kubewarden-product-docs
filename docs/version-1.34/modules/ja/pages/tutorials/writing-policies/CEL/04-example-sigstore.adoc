@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Sigstoreホスト機能
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: KubewardenでCELポリシーを使用してSigstoreホスト機能を実装し、コンテナイメージを検証し、安全なアドミッションコントロールを強制する方法を学びましょう。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Erstellen einer neuen Mutationsrichtlinie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie eine neue {project-name} Mutationsrichtlinie, um eingehende Objekte mit benutzerdefinierten Annotationen zu mutieren, und testen Sie sie anschließend.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Migration von Gatekeeper-Richtlinien zu {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie eine {project-name}-Richtlinie, indem Sie eine vorhandene Gatekeeper-Richtlinie in zwei Hauptschritten migrieren: Kompilierung von Rego-Code in WebAssembly.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Test des opérateurs de cluster
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Testez les stratégies des opérateurs de cluster avec kwctl en utilisant différentes configurations et objets de demande de validation pour valider les paramètres de la stratégie.

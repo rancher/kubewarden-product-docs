@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 编写验证逻辑
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 编写验证逻辑以通过解析有效负载并验证 Pod 对象来检查传入请求的有效性。

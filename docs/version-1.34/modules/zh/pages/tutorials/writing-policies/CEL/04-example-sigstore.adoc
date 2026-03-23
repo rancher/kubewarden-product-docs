@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Sigstore 主机能力
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 了解如何使用 CEL 策略在 Kubewarden 中实现 Sigstore 主机能力，以验证容器镜像并强制执行安全的准入控制。

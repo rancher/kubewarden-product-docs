@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ポリシー設定の定義
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ポリシーの整合性を効率的に管理するための基盤を確立するために、コード内でポリシー設定と構造を定義してください。すべての変更が確実に追跡されるようにしてください。具体的には、誰が変更を行ったのか、いつ行ったのか、そして何が変更されたのかが記録されている必要があります。

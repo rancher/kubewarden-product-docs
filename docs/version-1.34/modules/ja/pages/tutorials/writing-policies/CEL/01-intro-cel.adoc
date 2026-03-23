@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = CELの概要
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: CEL（計算式言語）について、Kubernetesの検証ルールやKubernetes APIへの拡張のために設計された、高速でポータブル、安全な式言語です。

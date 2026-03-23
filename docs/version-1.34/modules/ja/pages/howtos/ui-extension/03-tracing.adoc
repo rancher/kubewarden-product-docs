@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = トレース
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ポリシー評価に関する詳細な情報を取得し、{project-name}のデプロイメントに関連する問題をデバッグするために、トレースを有効にします。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Distribution des stratégies
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Distribuez les stratégies de manière sécurisée via un registre conforme à l'OCI en utilisant des outils comme kwctl, et assurez la sécurité du cluster grâce à {project-name} la gestion des stratégies.

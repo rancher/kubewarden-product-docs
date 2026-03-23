@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 内置支持
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 确定哪些内置函数可用于 WebAssembly 模块，并了解它们在 Rego 策略开发中的实现和使用。

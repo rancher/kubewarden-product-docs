@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 配置 PolicyServer 以使用私有仓库
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过创建 Docker 配置密钥并在配置中设置 spec.imagePullSecret 字段，配置 PolicyServer 以使用私有仓库。

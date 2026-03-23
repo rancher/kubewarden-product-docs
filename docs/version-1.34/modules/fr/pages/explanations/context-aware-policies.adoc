@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Stratégies conscientes du contexte
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Les développeurs peuvent créer des stratégies conscientes du contexte qui récupèrent des informations sur le cluster Kubernetes à l'exécution pour déterminer les critères d'acceptation de la demande d'admission.

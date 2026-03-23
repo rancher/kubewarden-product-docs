@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Konfiguration des {project-name} Stacks für die Produktion
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie Toleranzen und Affinitätsregeln für eine optimale Planung und Zuverlässigkeit innerhalb des {project-name} Stacks in einem Kubernetes-Cluster.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Démarrage rapide des métriques
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez le reporting des métriques sur le serveur de stratégie en utilisant Prometheus et {project-name} activé via des charts Helm pour la collecte de données.

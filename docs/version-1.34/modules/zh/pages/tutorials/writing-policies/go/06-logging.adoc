@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 日志记录
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用oneLog项目的Go SDK集成，在您的策略中配置结构化日志记录的初始化。

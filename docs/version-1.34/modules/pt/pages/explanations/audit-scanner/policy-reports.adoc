@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Scanner de Auditoria - Relatórios de políticas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Armazene e consulte os resultados das varreduras de políticas do Audit Scanner usando objetos Report ou ClusterReport dentro do seu cluster Kubernetes.

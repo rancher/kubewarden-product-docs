@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Capacités d'hôte de Sigstore
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Apprenez à mettre en œuvre les capacités d'hôte de Sigstore en utilisant des stratégies CEL dans Kubewarden pour vérifier les images de conteneurs et appliquer un contrôle d'admission sécurisé.

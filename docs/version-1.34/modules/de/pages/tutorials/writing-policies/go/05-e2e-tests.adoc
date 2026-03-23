@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = End-to-End-Tests
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Entdecken Sie, wie Sie End-to-End-Tests schreiben und automatisieren, die gegen das von TinyGo erzeugte WebAssembly-Binärformat mit bats und kwctl ausgeführt werden.

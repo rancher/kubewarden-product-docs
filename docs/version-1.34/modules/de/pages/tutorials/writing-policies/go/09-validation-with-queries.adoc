@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Validierung mit JSON-Abfragen
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implementieren Sie die Validierungslogik mit JSON-Abfragen, indem Sie relevante Daten aus der JSON-Darstellung eines Kubernetes-Objekts extrahieren.

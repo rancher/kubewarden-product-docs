@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Directivas de mutación
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configura directivas de mutación implementando funciones de validación (validate y validate_settings) en un waPC (Configurador de directivas whatever-after) para proponer mutaciones de objetos en clústeres de Kubernetes.

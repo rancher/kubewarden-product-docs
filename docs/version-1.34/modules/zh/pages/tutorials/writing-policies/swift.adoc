@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Swift
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 了解如何通过 SwiftWasm 使用支持 WebAssembly 的 Swift 编译器来访问构建 {project-name} 策略的工具。

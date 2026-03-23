@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 使用 Pod 安全准入与 {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 在 Kubernetes 集群中配置 Pod 安全准入 {project-name}，以保护 Pods。

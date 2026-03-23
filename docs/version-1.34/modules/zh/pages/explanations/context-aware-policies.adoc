@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 上下文感知策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 开发者可以创建上下文感知策略，在运行时获取Kubernetes集群信息，以确定AdmissionRequest的接受标准。

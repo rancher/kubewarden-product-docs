@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Metriken Kurzanleitung
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie die Metrikberichterstattung auf dem Policy Server mit Prometheus und {project-name}, das über Helm-Charts für die Datenerfassung aktiviert ist.

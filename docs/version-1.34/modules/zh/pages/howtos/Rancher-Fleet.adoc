@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 使用 Rancher Fleet 管理 {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用 Rancher Fleet 和 Kubernetes 自定义资源定义（CRD）管理 {project-name} Helm 图表，以实现 GitOps 方法。

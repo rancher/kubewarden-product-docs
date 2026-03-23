@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Tests pour les auteurs de stratégies
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Apprenez à tester les auteurs de stratégies avec kwctl, en utilisant soit bats soit des tests standards, spécifiquement pour les stratégies {project-name} en Wasm.

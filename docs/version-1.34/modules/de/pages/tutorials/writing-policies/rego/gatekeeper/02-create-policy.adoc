@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Erstellen einer neuen Gatekeeper Rego-Richtlinie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implementieren Sie Gatekeeper Rego-Richtlinien, um Ressourcen abzulehnen, die auf den Standard-Namespace abzielen, indem Sie eine neue Richtlinie erstellen und testen.

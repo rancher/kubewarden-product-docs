@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Erlauben von Bewertungen im Namespace des Admission Controllers
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: So konfigurieren Sie den Admission Controller, um die Richtlinienevaluierung in seinem eigenen Namespace zuzulassen
 :keywords: ["Richtlinien", "ClusterAdmissionPolicies", "ClusterAdmissionPoliciesGroup", "Konfiguration", "Namespaces"]
 :doc-persona: ["kubewarden-operator"]

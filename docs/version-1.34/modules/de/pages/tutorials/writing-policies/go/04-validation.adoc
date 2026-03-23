@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Die Validierungslogik schreiben
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Lernen Sie, wie man Validierungslogik in Go schreibt und testet, indem Sie relevante Informationen aus eingehenden Payloads extrahieren und Einstellobjekte erstellen.

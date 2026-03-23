@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ポリシー設定の定義
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: src/types.tsおよびsrc/index.tsファイル内の{project-name}ポリシーを通じて、効果的なポリシー設定構造を定義し、実装します。

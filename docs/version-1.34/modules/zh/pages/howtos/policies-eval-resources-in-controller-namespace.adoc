@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 允许在 Admission Controller 名称空间中进行评估
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :description: 如何配置 Admission Controller 以允许在其自身名称空间中进行策略评估
 :keywords: ["policies", "ClusterAdmissionPolicies", "ClusterAdmissionPoliciesGroup", "configuration", "namespaces"]
 :doc-persona: ["kubewarden-operator"]

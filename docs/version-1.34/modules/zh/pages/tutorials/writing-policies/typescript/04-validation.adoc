@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 编写验证逻辑
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 在 src/index.ts 文件中为 Kubernetes 资源编写验证逻辑，访问传入的请求数据以返回响应。

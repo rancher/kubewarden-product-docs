@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 監査スキャナー
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: {project-name}内の監査スキャナー機能を使用して、クラスターのコンプライアンス状態を確認し、適切な構成がされていることを保証します。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 验证 Rancher 应用程序集合镜像
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 配置 PolicyServers 以使用 Docker 配置密钥进行身份验证并从 Rancher 应用程序集合中拉取镜像。

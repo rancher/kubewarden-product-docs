@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Escribiendo lógica de validación
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Escribe la lógica de validación para comprobar la validez de las solicitudes entrantes analizando las cargas útiles y verificando los objetos Pod.

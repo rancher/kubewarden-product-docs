@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Installation en isolation physique
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez un registre privé avec {project-name} des images et des stratégies pour installer {project-name} dans un environnement isolé physiquement.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 分发策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过使用kwctl等工具，将策略安全地分发到OCI兼容注册表，并通过{project-name}策略管理确保集群安全。

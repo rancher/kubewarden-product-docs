@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Rancher Fleetを使用した{project-name}の管理
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Rancher FleetとKubernetesカスタムリソース定義（CRD）を使用して、GitOpsアプローチを実装するために{project-name} Helmチャートを管理します。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = WASI
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Goコンパイラの制限によりwaPC通信メカニズムを使用できない場合に、システムプリミティブと対話するWASIポリシーを作成します。

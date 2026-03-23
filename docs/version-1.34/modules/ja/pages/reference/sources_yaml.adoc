@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = sources.yamlの参照
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: PolicyServer CRと連携するために、ソース権限のパスとフォーマット、さらに安全でないソースを指定して、sources.yamlファイルを設定してください。

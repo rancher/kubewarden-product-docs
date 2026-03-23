@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Tareas habituales
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Gestiona políticas en tu clúster de Kubernetes con {project-name} utilizando la herramienta CLI kwctl.

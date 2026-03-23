@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Artifact Hubにポリシーを公開する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 整然としたGitリポジトリのレイアウトを作成し、GitHub Actionsを設定して自動パッケージ化を行い、継続的インテグレーションを促進することで、{project-name}ポリシーをArtifact Hubに公開します。

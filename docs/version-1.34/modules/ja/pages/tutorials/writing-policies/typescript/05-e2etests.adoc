@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = エンドツーエンドテスト
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ポリシーの動作に対する包括的なエンドツーエンドテストをBATSとkwctlを使用して作成し、実行する方法を学びます。

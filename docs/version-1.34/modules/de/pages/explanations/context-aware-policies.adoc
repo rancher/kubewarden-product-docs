@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Kontextabhängige Richtlinien
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Entwickler können kontextabhängige Richtlinien erstellen, die zur Laufzeit Informationen über Kubernetes-Cluster abrufen, um die Kriterien für die Akzeptanz von AdmissionRequest zu bestimmen.

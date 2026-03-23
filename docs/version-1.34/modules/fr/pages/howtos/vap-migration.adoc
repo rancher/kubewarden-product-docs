@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Migration de la stratégie ValidatingAdmissionPolicy
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Migrer une stratégie ValidatingAdmissionPolicy vers {project-name} via les étapes de migration de la commande kwctl pour une transition de stratégie fluide.

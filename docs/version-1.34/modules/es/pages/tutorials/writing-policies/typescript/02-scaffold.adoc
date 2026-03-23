@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Creando una nueva directiva de validación
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Crea una nueva directiva de validación para rechazar nombres de host no válidos en objetos Pod a través de la configuración de los ajustes de la directiva, probada con las herramientas proporcionadas.

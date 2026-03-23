@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = エンドツーエンドテスト
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: TinyGoによって生成されたWebAssemblyバイナリに対して実行されるエンドツーエンドテストの記述方法と自動化方法を学びましょう。

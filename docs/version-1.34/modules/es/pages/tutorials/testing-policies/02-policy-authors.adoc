@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Pruebas para autores de directivas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Aprende a probar autores de directivas con kwctl, ya sea utilizando bats o pruebas estándar, específicamente para directivas de {project-name} en Wasm.

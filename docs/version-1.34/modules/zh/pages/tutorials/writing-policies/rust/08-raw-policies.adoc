@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 原始策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 了解评估任意 JSON 文档的原始策略，以及查看 Rust 中策略实现的示例。

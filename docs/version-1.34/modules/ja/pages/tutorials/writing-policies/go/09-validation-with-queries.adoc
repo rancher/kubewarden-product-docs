@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = JSONクエリを使用した検証
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: KubernetesオブジェクトのJSON表現から関連データを抽出することによって、JSONクエリを使用した検証ロジックを実装します。

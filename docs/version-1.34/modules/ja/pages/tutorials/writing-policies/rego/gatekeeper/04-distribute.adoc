@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Gatekeeperポリシーは{project-name}を使用して配布する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Kubernetesクラスター全体にGatekeeperポリシーを配布するには、ポリシーファイルにメタデータを注釈し、ClusterAdmissionPolicyを介してデプロイする必要があります。

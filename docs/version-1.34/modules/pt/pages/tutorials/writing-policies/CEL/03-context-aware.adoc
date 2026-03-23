@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Políticas CEL com reconhecimento de contexto
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configure políticas com reconhecimento de contexto para garantir regras de Ingress únicas entre hosts, evitando conflitos com as bibliotecas de extensão CEL de {project-name}.

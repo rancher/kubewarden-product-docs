@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Migración de ValidatingAdmissionPolicy
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Migra un ValidatingAdmissionPolicy a {project-name} a través de los pasos de migración del comando kwctl para una transición de política fluida.

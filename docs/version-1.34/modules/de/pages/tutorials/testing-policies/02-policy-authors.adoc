@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Testen für Richtlinienautoren
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Erfahren Sie, wie Sie Richtlinienautoren mit kwctl testen, entweder mit bats oder Standardtests, speziell für {project-name} Richtlinien in Wasm.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = コンテキスト認識ポリシー
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 開発者は、Kubernetesクラスターの情報を実行時に取得し、AdmissionRequestの受け入れ基準を決定するコンテキスト認識ポリシーを作成できます。

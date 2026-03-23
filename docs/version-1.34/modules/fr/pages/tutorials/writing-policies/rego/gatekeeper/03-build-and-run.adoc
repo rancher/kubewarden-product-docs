@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Créez et exécutez une stratégie Gatekeeper
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Développez et déployez une stratégie Gatekeeper en utilisant une syntaxe et des outils Rego familiers pour appliquer le contrôle d'admission dans des environnements Kubernetes.

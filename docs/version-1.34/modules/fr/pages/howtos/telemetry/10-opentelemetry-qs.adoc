@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Démarrage rapide Open Telemetry
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez et déployez le collecteur OpenTelemetry en mode sidecar en utilisant le graphique Helm Kubernetes officiel pour un déploiement simple et amélioré.

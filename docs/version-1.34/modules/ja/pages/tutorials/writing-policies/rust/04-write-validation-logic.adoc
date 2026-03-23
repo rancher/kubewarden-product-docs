@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 検証ロジックの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 受信リクエストの有効性を確認するために、ペイロードを解析し、Podオブジェクトを検証する検証ロジックを作成します。

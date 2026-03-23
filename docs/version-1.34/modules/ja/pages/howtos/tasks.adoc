@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = 共通のタスク
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: kwctl CLIツールを使用して、Kubernetesクラスター内のポリシーを{project-name}で管理します。

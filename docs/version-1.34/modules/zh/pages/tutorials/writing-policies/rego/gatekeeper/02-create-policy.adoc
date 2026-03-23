@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 创建新的 Gatekeeper Rego 策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过创建和测试新策略，实施 Gatekeeper Rego 策略以拒绝针对默认名称空间的资源。

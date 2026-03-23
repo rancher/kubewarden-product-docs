@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 针对策略作者的测试
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 学习如何使用kwctl测试策略作者，可以使用bats或标准测试，特别是针对{project-name}策略在Wasm中的测试。

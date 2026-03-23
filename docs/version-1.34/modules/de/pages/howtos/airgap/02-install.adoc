@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Air-Gap-Installation
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie ein privates Registry mit {project-name} Bildern und Richtlinien, um {project-name} in einer Air-Gapped-Umgebung zu installieren.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = モニターモード
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: モニターモードのためにClusterAdmissionPoliciesまたはAdmissionPoliciesを設定して、受信リクエストを変更することなくポリシーアクションを追跡および分析します。

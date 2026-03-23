@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Distribuer une stratégie OPA avec {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Annoter votre stratégie Rego avec des métadonnées pertinentes, puis la pousser vers un registre OCI pour préparer le déploiement.

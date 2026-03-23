@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Escribiendo directivas en bruto
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Escribe políticas en bruto que evalúen documentos JSON arbitrarios definiendo lógica de validación y mutación personalizadas.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Validierungslogik schreiben
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Schreiben Sie die Validierungslogik, um die Gültigkeit eingehender Anfragen zu überprüfen, indem Sie Payloads analysieren und Pod-Objekte verifizieren.

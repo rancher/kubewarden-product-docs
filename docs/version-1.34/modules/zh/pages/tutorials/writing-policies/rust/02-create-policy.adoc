@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 创建策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 学习创建和配置验证策略，以根据可自定义的拒绝标准控制 Pod 创建请求。

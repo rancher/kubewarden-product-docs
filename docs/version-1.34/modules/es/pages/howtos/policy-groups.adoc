@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Cómo utilizar grupos de directivas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Implementa grupos de directivas con reglas específicas que rechazan Pods no conformes basados en firmas de imagen y otros criterios.

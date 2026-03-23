@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Festlegung von Richtlinieneinstellungen
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Ändern Sie den Code in der settings.go-Datei, um Richtlinieneinstellungen zu definieren, einschließlich der Implementierung benutzerdefinierter Funktionen zum "Marshaling" und "Unmarshaling" von regulären Ausdrücken.

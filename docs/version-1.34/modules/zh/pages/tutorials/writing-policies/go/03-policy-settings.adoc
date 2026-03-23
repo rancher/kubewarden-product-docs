@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 定义策略设置
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 修改settings.go文件中的代码以定义策略设置，包括实现自定义函数用于编组和解组正则表达式。

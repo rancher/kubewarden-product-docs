@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = {project-name}スタックを本番環境用に設定する
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Kubernetesクラスター内の{project-name}スタックの最適なスケジューリングと信頼性のために、トレランスとアフィニティルールを設定します。

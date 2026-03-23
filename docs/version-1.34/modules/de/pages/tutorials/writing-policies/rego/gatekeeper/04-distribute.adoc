@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Verteilen einer Gatekeeper-Richtlinie mit {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Verteilen von Gatekeeper-Richtlinien über Kubernetes-Cluster, indem Richtliniendateien mit Metadaten annotiert und über ClusterAdmissionPolicy bereitgestellt werden.

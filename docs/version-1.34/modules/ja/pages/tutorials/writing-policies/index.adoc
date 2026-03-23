@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = {project-name}ポリシーの作成
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 特定のAPIを介して明確に定義された機能を公開することで、アドミッションコントローラーポリシーを開発します。サポートされている任意のプログラミング言語を使用できます。

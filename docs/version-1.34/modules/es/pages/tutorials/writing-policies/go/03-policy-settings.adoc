@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Definiendo ajustes de la directiva
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Modifica el código en el archivo settings.go para definir los ajustes de la directiva, incluyendo la implementación de funciones personalizadas para la serialización y deserialización de expresiones regulares.

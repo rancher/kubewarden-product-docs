@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Escáner de Auditoría - InformesDeDirectiva
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Almacena y consulta los resultados del escaneo de directivas del escáner de auditoría utilizando objetos de Informe o ClusterReport dentro de tu clúster de Kubernetes.

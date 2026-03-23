@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Validando directivas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Evalúa tus solicitudes de validación utilizando configuraciones específicas de la directiva para determinar la aceptación o el rechazo de objetos Kubernetes AdmissionReview.

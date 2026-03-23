@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Définir les paramètres de stratégie
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Définissez et implémentez des structures de paramètres de stratégie efficaces à travers les stratégies {project-name} dans les fichiers src/types.ts et src/index.ts.

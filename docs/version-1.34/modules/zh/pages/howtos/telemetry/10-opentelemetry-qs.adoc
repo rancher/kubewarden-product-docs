@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = OpenTelemetry 快速入门
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 使用官方 Kubernetes Helm 图表以简单和增强的方式配置和部署 OpenTelemetry 收集器，采用侧车模式。

@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Backup e restauração com o Operador de Backup do Rancher
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configure e gerencie backups e restaurações usando o operador rancher-backup em qualquer cluster Kubernetes.

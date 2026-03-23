@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 変更ポリシー
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Kubernetesクラスター内のオブジェクトの変更を提案するために、waPC（何でも後のポリシーコンフィグレーター）内で検証関数（validateおよびvalidate_settings）を実装することによって、変更ポリシーを構成します。

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Verteilen einer OPA-Richtlinie mit {project-name}
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Annotieren Sie Ihre Rego-Richtlinie mit relevanten Metadaten und pushen Sie sie dann in eine OCI-Registry, um sie für die Implementierung vorzubereiten.

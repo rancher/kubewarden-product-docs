@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Configurando la pila {project-name} para producción
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configura las tolerancias y las reglas de afinidad para una programación y fiabilidad óptimas dentro de la pila {project-name} en un clúster de Kubernetes.

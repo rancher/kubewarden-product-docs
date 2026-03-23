@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Validation des stratégies
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Évaluez vos demandes de validation en utilisant des paramètres spécifiques à la stratégie pour déterminer l'acceptation ou le rejet des objets Kubernetes AdmissionReview.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ポリシーの設定
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 特定のネームスペースを選択するか、カスタム拒否メッセージを設定してポリシーを構成し、AdmissionPolicyGroupを使用して結果を否定します。

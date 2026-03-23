@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Collecteur OpenTelemetry personnalisé
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurez le {project-name} pour envoyer en toute sécurité des données de télémétrie à un collecteur OpenTelemetry personnalisé déployé au sein du cluster.

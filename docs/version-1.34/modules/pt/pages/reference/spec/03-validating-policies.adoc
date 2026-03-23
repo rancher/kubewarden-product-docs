@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Validando políticas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Avalie suas solicitações de validação usando configurações específicas de política para determinar a aceitação ou rejeição de objetos Kubernetes AdmissionReview.

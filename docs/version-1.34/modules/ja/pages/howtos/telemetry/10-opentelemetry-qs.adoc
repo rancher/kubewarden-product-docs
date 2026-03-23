@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = OpenTelemetry クイックスタート
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 公式Kubernetes Helmチャートを使用して、サイドカーモードでOpenTelemetryコレクターを構成およびデプロイします。

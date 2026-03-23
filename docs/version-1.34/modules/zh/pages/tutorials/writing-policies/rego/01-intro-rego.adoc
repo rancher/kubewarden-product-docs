@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Rego
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 了解 Rego 语言的基础知识，包括其与 Open Policy Agent 和 Gatekeeper 框架结合使用以实现代码中的策略。

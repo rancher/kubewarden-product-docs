@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Políticas CEL conscientes del contexto
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configura políticas conscientes del contexto para asegurar reglas de Ingress únicas entre hosts, evitando conflictos con las bibliotecas de extensiones CEL de {project-name}.

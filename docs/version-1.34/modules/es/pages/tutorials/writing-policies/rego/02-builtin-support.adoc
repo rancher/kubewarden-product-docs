@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Soporte integrado
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Determina qué funciones integradas están disponibles para los módulos de WebAssembly y comprende su implementación y uso en el desarrollo de directivas Rego.

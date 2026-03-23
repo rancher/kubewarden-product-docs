@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 创建新的验证策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 创建一个新的验证策略，通过配置策略设置来拒绝 Pod 对象中的无效主机名，并使用提供的工具进行测试。

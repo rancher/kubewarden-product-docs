@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Construa e execute uma política do Gatekeeper
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Desenvolva e implante uma política do Gatekeeper usando a sintaxe e ferramentas Rego familiares para impor controle de admissão em ambientes Kubernetes.

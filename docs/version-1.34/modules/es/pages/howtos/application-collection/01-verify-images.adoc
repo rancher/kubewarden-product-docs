@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Verificar las imágenes de la Colección de Aplicaciones de Rancher
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configurar los PolicyServers para autenticar y obtener imágenes de la Colección de Aplicaciones de Rancher utilizando un Secreto de Configuración de Docker.

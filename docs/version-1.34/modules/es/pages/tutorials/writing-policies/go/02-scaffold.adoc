@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Creando una nueva política de validación
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Explora la creación de una nueva política de validación que rechaza Pods con etiquetas en la lista de denegación, mientras valida etiquetas con expresiones regulares proporcionadas por el usuario para garantizar la seguridad.

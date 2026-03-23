@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = ValidatingAdmissionPolicyマイグレーション
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: ValidatingAdmissionPolicyを{project-name}に移行するために、kwctlコマンドのマイグレーション手順を使用して、スムーズなポリシー移行を行います。

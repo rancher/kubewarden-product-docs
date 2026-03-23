@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Escribiendo la lógica de validación
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Escribe la lógica de validación para los recursos de Kubernetes en el archivo src/index.ts, accediendo a los datos de la solicitud entrante para devolver una respuesta.

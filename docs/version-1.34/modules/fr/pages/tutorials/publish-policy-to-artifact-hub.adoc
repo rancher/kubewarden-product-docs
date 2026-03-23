@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Publier des stratégies sur Artifact Hub
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Publier {project-name} stratégies sur Artifact Hub en créant une mise en page de dépôt Git bien formatée et en configurant GitHub Actions pour l'emballage automatisé, facilitant l'intégration continue.

@@ -1,6 +1,7 @@
 include::partial$variables.adoc[]
 
 = Häufige Tasks
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Verwalten Sie Richtlinien in Ihrem Kubernetes-Cluster mit {project-name} mit dem kwctl CLI-Tool.

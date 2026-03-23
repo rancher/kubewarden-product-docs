@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 为生产配置{project-name}堆栈
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 为 Kubernetes 集群中的{project-name}堆栈配置容忍和亲和性规则，以实现最佳调度和可靠性。

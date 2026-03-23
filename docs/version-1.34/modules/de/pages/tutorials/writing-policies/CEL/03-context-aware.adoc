@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Kontextabhängige CEL-Richtlinien
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Konfigurieren Sie kontextabhängige Richtlinien, um eindeutige Ingress-Regeln über Hosts hinweg sicherzustellen und Konflikte mit den CEL-Erweiterungsbibliotheken von {project-name} zu vermeiden.

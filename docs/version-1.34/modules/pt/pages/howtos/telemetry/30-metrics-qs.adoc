@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Introdução rápida a métricas
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configure a coleta de métricas no Policy Server usando Prometheus e {project-name} habilitado através de Helm charts para coleta de dados.

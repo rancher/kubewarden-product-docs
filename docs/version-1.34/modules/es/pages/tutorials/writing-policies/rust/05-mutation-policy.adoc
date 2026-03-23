@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Creando una nueva política de mutación
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Configura una nueva {project-name} política de mutación para mutar objetos entrantes con anotaciones personalizadas, y luego pruébala.

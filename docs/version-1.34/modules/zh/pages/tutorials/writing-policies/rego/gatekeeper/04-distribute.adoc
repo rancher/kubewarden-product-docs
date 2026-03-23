@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 分发带有{project-name}的Gatekeeper策略
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 通过用元数据注释策略文件，并通过ClusterAdmissionPolicy部署，分发Kubernetes集群中的Gatekeeper策略。

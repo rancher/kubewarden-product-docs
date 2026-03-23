@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = Creación de una directiva
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Aprende a crear y configurar directivas de validación que controlen las solicitudes de creación de Pods basándose en criterios de rechazo personalizables.

@@ -1,5 +1,6 @@
 include::partial$variables.adoc[]
 = 策略评估超时保护
+:page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: 配置策略评估超时以确保及时完成，并通过 Policy Server 的内置保护功能防止资源耗尽。
