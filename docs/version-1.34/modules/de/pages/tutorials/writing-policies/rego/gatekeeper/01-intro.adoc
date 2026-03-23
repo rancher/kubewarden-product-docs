@@ -1,0 +1,35 @@
+include::partial$variables.adoc[]
+= Gatekeeper-Unterstützung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Zugriff auf zentrale Gatekeeper-Richtlinien und erfahren Sie, wie Sie diese mit den Admission Controllern von Kubernetes integrieren können.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "einführung"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rego", "gatekeeper"]
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Die Unterstützung für Gatekeeper beginnt mit diesen Versionen:
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+====
+
+
+Gatekeeper ist ein Projekt, das auf Kubernetes abzielt und sofort einsatzbereite Funktionen für die Integration bietet.
+
+== Kompatibilität mit vorhandenen Richtlinien
+
+Alle bestehenden Gatekeeper-Richtlinien sollten mit {short-project-name} kompatibel sein, wie in diesem Kapitel erklärt.
+
+[IMPORTANT]
+====
+Wenn Sie feststellen, dass dies für Ihre Gatekeeper-Richtlinien nicht zutrifft, melden Sie dies bitte, und wir werden daran arbeiten, sicherzustellen, dass Ihre Gatekeeper-Richtlinien mit {short-project-name} funktionieren.
+====
+
+
+Richtlinien müssen mit der `opa` Kommandozeilenschnittstelle für das Ziel `wasm` kompiliert werden.
+
+Für die Ausführung von Richtlinien können Sie mehr über den Open Policy Agent und seine xref:tutorials/writing-policies/rego/02-builtin-support.adoc[integrierte Unterstützung] in {short-project-name} lesen.

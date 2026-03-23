@@ -1,0 +1,158 @@
+include::partial$variables.adoc[]
+= Distribuyendo directivas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Distribuye directivas de forma segura a través de un registro compatible con OCI utilizando herramientas como kwctl, y asegura la seguridad del clúster mediante {project-name} la gestión de directivas.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:current-version: {page-origin-branch}
+
+Las directivas {project-name} son binarios de WebAssembly (Wasm) evaluados por el servidor de directivas {short-project-name}.
+
+El servidor de directivas {short-project-name} carga directivas de estas fuentes:
+
+* Sistema de archivos local
+* Servidor HTTP(s)
+* Registros compatibles con OCI:
+ ** https://github.com/distribution/distribution[Distribución]
+ ** https://ghcr.io[Registro de contenedores de GitHub]
+ ** https://azure.microsoft.com/en-us/products/container-registry/[Registro de contenedores de Azure]
+ ** https://aws.amazon.com/ecr/[Amazon ECR]
+ ** https://cloud.google.com/artifact-registry/[Registro de contenedores de Google]
+
+{short-project-name} recomienda distribuir directivas {short-project-name} a través de un registro compatible con OCI. Los registros de contenedores son un requisito obligatorio para cualquier clúster de Kubernetes. Tener un único lugar para almacenar y asegurar todos los artefactos requeridos por un clúster es beneficioso.
+
+== Subiendo directivas a un registro compatible con OCI
+
+El formato de imagen https://github.com/opencontainers/image-spec[OCI] permite almacenar cualquier blob binario dentro de un registro de contenedores compatible con OCI.
+
+El registro compatible con OCI *debe soportar artefactos* para poder enviar con éxito una {short-project-name} directiva a él.
+
+Puedes usar la CLI https://github.com/kubewarden/kwctl[`kwctl`] para enviar una {short-project-name} directiva a un registro compatible con OCI.
+
+== Anotando la directiva
+
+También anotas una directiva con `kwctl`. Anotar una directiva {short-project-name} se realiza añadiendo secciones personalizadas de Wasm al binario de la directiva. Esto significa que la directiva empaqueta su propia metadata.
+
+El comando `kwctl annotate` requiere dos entradas:
+
+* la directiva {short-project-name} a anotar, un archivo local en el sistema de archivos.
+* el archivo de anotaciones, un archivo que contiene una descripción en YAML de la metadata de la directiva.
+Este archivo suele estar ubicado en la carpeta raíz del proyecto de tu directiva.
+
+Por ejemplo, puedes guardar este archivo como `metadata.yml` en el directorio actual:
+
+[subs="+attributes",yaml]
+----
+rules:
+- apiGroups: ["*"]
+  apiVersions: ["*"]
+  resources: ["*"]
+  operations: ["*"]
+mutating: false
+annotations:
+  io.kubewarden.policy.title: palindromify
+  io.kubewarden.policy.version: 0.1.0
+  io.kubewarden.policy.description: Allows you to reject palindrome names in resources and namespace names, or to only accept palindrome names
+  io.kubewarden.policy.author: Name Surname <name.surname@example.com>
+  io.kubewarden.policy.url: https://github.com/<org>/palindromify
+  io.kubewarden.policy.source: https://github.com/<org>/palindromify
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.usage: |
+    This is markdown text and as such allows you to define a free form usage text.
+
+    This policy allows you to reject requests if:
+    - The name of the resource is a palindrome name.
+    - The namespace name where this resource is created has a palindrome name.
+
+    This policy accepts the following settings:
+
+    - `+invert_behavior+`: bool that inverts the policy behavior. If enabled, only palindrome names will be accepted.
+----
+
+Ahora, vamos a anotar la directiva:
+
+[subs="+attributes",shell]
+----
+$ kwctl annotate policy.wasm \
+    --metadata-path metadata.yml \
+    --output-path annotated-policy.wasm
+----
+
+El proceso de anotación realiza ciertas optimizaciones en la directiva, por lo que a menudo la directiva anotada es más pequeña que la original. Esto depende considerablemente de la cadena de herramientas utilizada para producir el objeto Wasm original.
+
+[IMPORTANT]
+====
+
+.Usa kwctl inspect para comprobar tu directiva
+[%collapsible]
+======
+
+[subs="+attributes",shell]
+----
+$ kwctl inspect annotated-policy.wasm
+2023-08-24T12:06:27.986401Z  INFO sigstore::cosign::client_builder: Rekor public key not provided. Rekor integration disabled
+2023-08-24T12:06:27.986449Z  INFO sigstore::cosign::client_builder: No Fulcio cert has been provided. Fulcio integration disabled
+Details
+title:                    palindromify
+description:              Allows you to reject palindrome names in resources and namespace names, or to only accept palindrome names
+author:                   Name Surname <name.surname@example.com>
+url:                      https://github.com/<org>/palindromify
+source:                   https://github.com/<org>/palindromify
+license:                  Apache-2.0
+mutating:                 false
+background audit support: true
+context aware:            false
+execution mode:           kubewarden-wapc
+protocol version:         1
+
+Annotations
+io.kubewarden.kwctl       1.7.0-rc2
+
+Rules
+────────────────────
+- apiGroups:
+  - '*'
+  apiVersions:
+  - '*'
+  resources:
+  - '*'
+  operations:
+  - '*'
+────────────────────
+
+Usage
+This is markdown text and as such allows you to define a free form usage text.
+
+This policy allows you to reject requests if:
+
+• The name of the resource is a palindrome name.
+• The namespace name where this resource is created has a palindrome name.
+
+This policy accepts the following settings:
+
+• invert_behavior: bool that inverts the policy behavior. If enabled, only palindrome names will be accepted.
+
+Cannot determine if the policy has been signed. There was an error while attempting to fetch its signatures from the remote registry: invalid uri
+----
+
+======
+====
+
+
+== Enviando la directiva
+
+Puedes enviar una directiva anotada así:
+
+[subs="+attributes",shell]
+----
+$ kwctl push annotated-policy.wasm \
+     <oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1
+----
+
+Se desaconseja enviar directivas no anotadas. El servidor de directivas utiliza la metadata proporcionada por las anotaciones para ejecutar correctamente una directiva. Por defecto, `kwctl push` se niega a enviar tal directiva a un registro compatible con OCI. Si necesitas una directiva sin anotar, utiliza la opción `-&#x200D;-&#x200D;force` de `kwctl push`.
+
+Puedes hacer referencia a una directiva desde el Servidor de Directivas {short-project-name} o `kwctl` como
+`registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

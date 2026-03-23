@@ -1,0 +1,76 @@
+include::partial$variables.adoc[]
+
+= 允许在 Admission Controller 名称空间中进行评估
+:description: 如何配置 Admission Controller 以允许在其自身名称空间中进行策略评估
+:keywords: ["policies", "ClusterAdmissionPolicies", "ClusterAdmissionPoliciesGroup", "configuration", "namespaces"]
+:doc-persona: ["kubewarden-operator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "policies"]
+
+默认情况下，Admission Controller 不允许策略在其自身名称空间中评估资源。这可以防止可能破坏 {short-project-name} 安装的错误配置。
+
+此安全措施分为两层实施。第一层由 `--always-accept-admission-reviews-on-deployments-namespace` CLI 标志控制。
+此标志在 Helm 图表中默认启用，使控制器在 PolicyServer 部署中配置 `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` 环境变量。此变量告诉策略服务器始终接受来自变量中定义的名称空间的入场审查。第二层是 Admission Controller 本身，默认情况下会向集群范围的策略添加名称空间选择器，以跳过控制器运行的名称空间。
+
+然而，在某些情况下，集群管理员可能希望策略在此名称空间中评估资源。本页面解释如何通过禁用两层保护来实现这一点。
+
+== 去除 PolicyServer 保护环境变量
+
+第一步是配置控制器，以便不在 PolicyServer 部署中设置 `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` 环境变量。
+
+为此，请升级您的 {short-project-name} 安装，并将 `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm 图表的 `kubewarden-controller` 值设置为 `false`：
+
+[source,console]
+----
+helm upgrade -n kubewarden
+  --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
+  kubewarden-controller kubewarden/kubewarden-controller
+----
+
+此更改允许策略服务器评估来自任何名称空间的资源。
+完成后，可以配置策略以评估来自 {short-project-name} 名称空间的入场审查。
+
+== 配置策略以在 Admission Controller 名称空间中评估资源
+
+要允许策略评估在 Admission Controller 名称空间中创建的资源，请在规范中部署集群范围的策略，`allowInsideAdmissionControllerNamespace` 字段设置为 `true`：
+
+[NOTE]
+.那么名称空间策略呢？
+====
+此规范字段仅在集群范围的策略中可用。
+因为名称空间策略评估在其部署的同一名称空间中的资源，因此将此字段添加到它们的 CRD 中没有意义。
+此外，Admission Controller 名称空间应由集群管理员管理，他们可以决定是否在此处部署策略。
+====
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: PSP
+    io.kubewarden.policy.severity: medium
+  name: pod-privileged-policy
+spec:
+  module: registry://ghcr.io/kubewarden/policies/pod-privileged:v1.0.10
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+  mutating: false
+  allowInsideAdmissionControllerNamespace: true
+----
+
+此配置选项默认值为 `false`，使控制器跳过添加排除 Admission Controller 名称空间的名称空间选择器，从而允许策略评估来自所有名称空间的资源，包括该名称空间。
+
+[NOTE]
+.我的自定义名称空间选择器怎么办？
+====
+策略 CRD 还允许用户定义自己的名称空间选择器。这些选择器没有改变。这意味着如果用户定义了一个跳过 {short-project-name} 名称空间的选择器，策略仍然会如预期那样忽略该名称空间。
+====

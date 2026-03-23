@@ -1,0 +1,46 @@
+include::partial$variables.adoc[]
+= {short-project-name}のドキュメントに貢献する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 既存のコンテンツの改善、新しいトピックの作成、翻訳の支援を通じて{project-name}のドキュメントに貢献してください。
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "contributing"]
+:sidebar_label: ドキュメントに貢献する
+:sidebar_position: 2
+:current-version: {page-origin-branch}
+
+_{short-project-name}は、新しい貢献者でも経験豊富な貢献者でも、改善の提案を歓迎します。_
+
+以下の方法で{short-project-name}のドキュメントに貢献できます:
+
+* 既存のコンテンツを改善する
+* 新しいコンテンツを作成する
+* (_今後の_) ドキュメントの翻訳を手伝う
+
+== はじめに
+
+ifeval::["{build-type}" == "community"]
+
+誰でもプルリクエストを提出することで変更を提案することができます。また、GitHubのイシューを利用してhttps://github.com/kubewarden/docs[`kubewarden/docs`リポジトリ]にバグや誤字を報告することもできます。
+
+ドキュメントに関与するには、次のことを行ってください。
+
+* https://github.com/kubewarden/docs[ドキュメントリポジトリ]とhttps://docusaurus.io/[静的サイトジェネレーター]に慣れ親しんでください。
+* DocusaurusはMarkdown構文を使用し、https://mdxjs.com/[MDX]をパーサーとして使用します。
+* xref:howtos/contribution-guide/suggesting-an-improvement.adoc[改善を提案する方法]を理解し、プルリクエストを開いてください。
+
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+
+誰でもプルリクエストを提出することで変更を提案することができます。また、GitHubのイシューを利用してhttps://github.com/rancher/kubewarden-product-docs[`rancher/kubewarden-product-docs`リポジトリ]にバグや誤字を報告することもできます。
+
+ドキュメントに関与するには、次のことを行ってください。
+
+* https://github.com/rancher/kubewarden-product-docs[ドキュメントリポジトリ]とhttps://antora.org/[静的サイトジェネレーター]に慣れ親しんでください。
+* AntoraはAsciiDoc構文を使用します。
+* xref:howtos/contribution-guide/suggesting-an-improvement.adoc[改善を提案する方法]を理解し、プルリクエストを開いてください。
+
+endif::[]

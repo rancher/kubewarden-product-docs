@@ -1,0 +1,378 @@
+include::partial$variables.adoc[]
+= 署名検証ポリシー
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 提供された検証ポリシーを使用してクラスターの安全なポリシーを実装するか、選択した言語のSDKを使用してそれを基に構築します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "signature-verifier-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "ポリシー仕様", "署名検証"]
+:sidebar_label: 署名検証ポリシー
+:current-version: {page-origin-branch}
+
+{project-name}はhttps://www.sigstore.dev/[Sigstore]プロジェクトのサポートを実装します。
+これにより、クラスターのための「安全なサプライチェーン」を実装できます。
+
+安全なサプライチェーンの機能の一部は、クラスター内で実行されるすべてのコンテナイメージが署名され、検証されていることを保証することです。
+これにより、記載された著者から発行されたものであり、改ざんされていないことが証明されます。
+詳細については、xref:/howtos/security-hardening/secure-supply-chain.adoc[ポリシー自体の安全なサプライチェーンの実装方法]に関するドキュメントをご確認ください。
+
+Sigstoreの署名は、署名されるOCIオブジェクトの隣にあるコンテナレジストリ内に保存されます。
+それらはコンテナイメージまたはより一般的なOCIアーティファクト、例えば{short-project-name}ポリシーのようなものです。
+オブジェクトが署名されると、その署名はSigstoreによって作成されたOCIオブジェクトのレイヤーとして保存されます。
+コンテナの署名を確認する必要があるポリシーは、これらのレイヤーを確認し、署名自体を確認するために署名レイヤーをプルする必要があります。
+
+これらのOCIレイヤーを取得し、操作することは、WebAssemblyゲスト（ポリシー）の外で行う必要があります。
+したがって、これはWebAssemblyランタイム、すなわち{short-project-name}の`policy-server`または`kwctl`によって行われます。
+
+{short-project-name}ポリシー向けの各種言語SDKがこれを処理します。
+それらは、コンテナイメージ、{short-project-name}ポリシー、Helmチャート、その他の種類のOCIアーティファクトの検証のための関数を提供します。
+これにより、検証のための安全でテストされたコードパスが確保されます。
+
+レジストリからのデータ取得および署名の暗号検証は時間と計算リソースを要するため、WebAssemblyランタイム（PolicyServer、`kwctl`）は、署名の取得と検証計算の両方をキャッシュすることを保証します。
+キャッシュされたエントリは、古いデータが提供されるのを防ぐために、60秒後に自動的に期限切れになります。
+
+== キャッシング
+
+署名検証結果は1分間キャッシュされます。
+
+SDKは、以下のような関数を提供します：
+
+* {blank}
++
+[subs="+attributes",rust]
+----
+verify_pub_keys_image(
+    image_url: string,
+    vector_of_pub_keys: vector<string>,
+    vector_of_sigstore_annotations: Vector<(key, value: string)>
+    )
+    returns (is_trusted: bool, digest_of_verified_image: string)
+----
+
+* {blank}
++
+[subs="+attributes",rust]
+----
+verify_keyless_exact_match(
+    image_url: string,
+    vector_of_tuples_issuer_and_subject: vector<(issuer, subject: string)>,
+    vector_of_sigstore_annotations: vector<(key, value: string)>
+    )
+    returns (is_trusted: bool, digest_of_verified_image: string)
+----
+
+両方の関数は、イメージが署名されていることを確認し、制約を満たしていることを検証します。
+
+[NOTE]
+====
+成功した場合、関数は検証されたイメージのダイジェストを返します。
+今やポリシーの責任は、そのダイジェストからコンテナがインスタンス化されることを保証するとともに、チェックサムと一致しない可能性のあるタグから生成されないようにすることです（その結果、セキュリティ上のリスクが生じる可能性があります）。
+====
+
+
+== 例
+
+{short-project-name}チームは、https://github.com/kubewarden/verify-image-signatures[検証ポリシー]を提供し、すべてのコンテナに対してSigstore署名を強制します。
+RustおよびRust SDKを使用して構築されています。
+ポリシーは、コンテナが署名されていることを保証し、オプションでリクエストを変更します。変更は、検証されたチェックサムをイメージのタグに追加します。
+詳細については、ドキュメントを確認してください。
+
+このポリシーはあらゆるニーズを満たすかもしれませんが、もし異なるUXを望む場合は、もちろん、このポリシーまたはその他のSDK上に独自の実装を構築することも可能です。
+
+== WaPCプロトコル契約
+
+独自の言語SDKを実装している場合、署名を検証するポリシーが使用できる関数は次のとおりです：
+
+=== waPC関数 - `v2/verify`
+
+==== `SigstorePubKeyVerify` 入力
+
+[,hcl]
+----
+{
+  type: "SigstorePubKeyVerify",
+
+  # **mandatory**: image URI to verify
+  "image": string,
+  "pub_keys": [
+    # PEM-encoded public keys
+    string
+    ],
+  # optional:
+  "annotations": [
+      # signature annotations
+      {
+        "key": string,
+        "value": string
+      },
+    ]
+}
+----
+
+==== `SigstorePubKeyVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreKeylessVerify` 入力
+
+[,hcl]
+----
+{
+  type: "SigstoreKeylessVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  "keyless": [
+    # list of (issuer, subject) tuples
+    {
+      # OIDC issuer
+      "issuer": string,
+      # signature subject (mail, CI URL, ...)
+      "subject": string
+    }
+  ],
+  # optional:
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreKeylessVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreKeylessPrefixVerify` 入力
+
+[,hcl]
+----
+{
+  type: "SigstoreKeylessPrefixVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  "keyless_prefix": [
+    # list of (issuer, url_prefix) tuples
+    {
+      # OIDC issuer
+      "issuer": string,
+      # URL Prefix of subject (CI URL, ...)
+      "url_prefix": string
+    }
+  ],
+  # optional:
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreKeylessPrefixVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreGithubActionsVerify` 入力
+
+[,hcl]
+----
+{
+  type: "SigstoreGithubActionsVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  # GitHub owner
+  "owner": string,
+  # optional:
+  # GitHub repository
+  "repo": string
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreGithubActionsVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreCertificateVerify` 入力
+
+[,hcl]
+----
+{
+  type: "SigstoreCertificateVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  # PEM-encoded certificated used to
+  # verify the signature.
+  # The certificate is UTF-8 encoded.
+  # It's an array of bytes of the unicode code pointers of a PEM encoded
+  # certificate string.
+  "certificate": [byte(int), ..., byte(int)],
+  # Optional - certificate chain used to
+  # verify the provided certificate.
+  # When not specified, the certificate
+  # is assumed to be trusted.
+  # The certificate is UTF-8 encoded.
+  # It's an array of bytes of the unicode code pointers of a PEM encoded
+  # certificate string.
+  "certificate_chain": [
+    [byte(int), ..., byte(int)],
+    ...
+    [byte(int), ..., byte(int)]
+  ],
+  # Require the signature layer to have
+  # a Rekor bundle.
+  # Having a Rekor bundle allows further
+  # checks to be performed, e.g. ensuring
+  # the signature has been produced during
+  # the validity time frame of the cert.
+  # Recommended to set to `+true+`
+  require_rekor_bundle: bool,
+  # Optional:
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreCertificateVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+=== waPC関数 - `v1/verify`
+
+==== `SigstorePubKeyVerify` 入力
+
+[,hcl]
+----
+{
+  "SigstorePubKeyVerify": {
+    # **mandatory**: image URI to verify
+    "image": string,
+    "pub_keys": [
+      # PEM-encoded public keys
+      string
+    ],
+    # optional:
+    "annotations": [
+      # signature annotations
+      {
+        "key": string,
+        "value": string
+      },
+    ]
+  }
+}
+----
+
+==== `SigstorePubKeyVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreKeylessVerify` 入力
+
+[,hcl]
+----
+{
+  "SigstoreKeylessVerify": {
+    # mandatory: image URI to verify
+    "image": string,
+    "keyless": [
+      # list of (issuer, subject) tuples
+      {
+        # OIDC issuer
+        "issuer": string,
+        # signature subject (mail, CI URL, ...)
+        "subject": string
+      }
+    ],
+    # optional:
+    "annotations": [
+      # signature annotations
+      {
+        "key": string,
+        "value": string
+      },
+    ]
+  }
+}
+----
+
+==== `SigstoreKeylessVerify` 出力
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----

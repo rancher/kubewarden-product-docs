@@ -1,0 +1,18 @@
+include::partial$variables.adoc[]
+= Guide de contribution
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez comment contribuer aux projets SUSE avec notre guide de contribution complet, qui décrit les étapes et les meilleures pratiques.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["guide-de-contribution", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "contributing"]
+:sidebar_label: Guide de contribution
+:sidebar_position: 1
+:current-version: {page-origin-branch}
+
+_{project-name} accueille tous les contributeurs, qu'ils soient nouveaux ou expérimentés._
+
+ifeval::["{build-type}" == "community"]
+Veuillez consulter le guide de contribution https://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[ici].
+endif::[]

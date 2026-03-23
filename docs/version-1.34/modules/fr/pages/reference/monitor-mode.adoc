@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= Mode de surveillance
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez les ClusterAdmissionPolicies ou AdmissionPolicies pour le mode de surveillance afin de suivre et d'analyser les actions des stratégies sans modifier les requêtes entrantes.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["opérateur-manual", "mode de surveillance"]
+:doc-type: ["reference"]
+:keywords: ["kubernetes", "kubewarden", "mode de surveillance"]
+:sidebar_label: Mode de surveillance
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+Lors de la définition d'une stratégie, vous pouvez choisir entre deux modes, spécifiés dans son xref:reference/CRDs.adoc#admissionpolicyspec[`spec.mode`].
+Vous déployez une stratégie en `mode: protect` par défaut.
+La stratégie accepte, rejette ou modifie ensuite les requêtes.
+
+On peut choisir de déployer une stratégie en mode de surveillance. En mode de surveillance :
+
+* La stratégie accepte toutes les requêtes, comme si la stratégie n'était pas installée.
+* Le `policy-server` trace la stratégie normalement. Si une requête est rejetée ou qu'une stratégie propose une mutation, alors la trace contient les détails.
+* Les métriques du `policy-server` sont mises à jour normalement, avec le mode inclus dans le bagage des métriques. Par conséquent, il est facile de filtrer les stratégies par mode et de se concentrer sur celles déployées en utilisant le mode `monitor`.
+
+Le `mode` est un attribut inclus dans les ressources `ClusterAdmissionPolicy` et `AdmissionPolicy`. Il y a deux valeurs que l'attribut `mode` peut assumer : `monitor` et `protect`. Le `mode` par défaut est `protect` s'il est omis.
+
+Pour créer une stratégie en `monitor mode`, vous devez inclure l'instruction `mode : monitor` comme partie de la spécification de la ressource. Par exemple, dans la section `spec` (marquée ➀), de ce `ClusterAdmissionPolicy` :
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-capabilities
+spec:
+  mode: monitor <1>
+  policyServer: reserved-instance-for-tenant-a
+  module: registry://ghcr.io/kubewarden/policies/psp-capabilities:v0.1.3
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    allowed_capabilities:
+    - CHOWN
+    required_drop_capabilities:
+    - NET_ADMIN
+----
+<1> L'attribut `mode: monitor` se trouve dans la section `spec`.
+
+== Changement de mode de stratégie
+
+Pour des raisons de sécurité, un utilisateur ayant des permissions `UPDATE` sur les ressources de stratégie peut rendre la stratégie plus restrictive. Cela signifie que vous pouvez changer le `mode` d'une `ClusterAdmissionPolicy` ou `AdmissionPolicy` existante de `monitor` à `protect`.
+
+Cependant, vous ne pouvez pas changer le `mode` d'une `ClusterAdmissionPolicy` ou `AdmissionPolicy` existante de `protect` à `monitor`.
+
+Ainsi, pour changer le `mode` d'une stratégie de `protect` à `monitor`, vous devez supprimer la stratégie et la recréer en mode `monitor`. Passer une stratégie de `protect` à `monitor` équivaut à supprimer la stratégie, donc cette approche suppose que l'utilisateur a des permissions de suppression de stratégie.
+
+== Une note sur la mutation des stratégies
+
+Les stratégies de mutation en mode `monitor` ne réaliseront pas de mutation sur la ressource.
+En mode `monitor`, les stratégies enregistrent ce que leur action aurait été. Elles enregistrent également le correctif de mutation qu'elles auraient produit en mode `protect`.
+
+[WARNING]
+====
+Lorsqu'une stratégie de mutation est en mode `monitor`, les stratégies ultérieures évaluent une ressource inchangée, et donc différente, de celle lorsque la stratégie de mutation est en mode `protect`.
+====

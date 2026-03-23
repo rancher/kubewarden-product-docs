@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= Referencia de métricas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explora las métricas y patrones del clúster con las métricas de plataforma expuestas de {project-name} para informar los procesos de toma de decisiones.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "metrics", "reference"]
+:sidebar_label: Referencia de métricas
+:sidebar_position: 30
+:current-version: {page-origin-branch}
+
+{short-project-name} expone métricas relevantes de la plataforma que permiten a los administradores del clúster y a los desarrolladores de directivas identificar patrones y posibles problemas.
+
+== Servidor de Directivas
+
+El componente del Servidor de Directivas inicializa y ejecuta directivas.
+Al recibir solicitudes del servidor de la API de Kubernetes, reenvía la solicitud a la directiva, devolviendo la respuesta proporcionada por la directiva al servidor de la API de Kubernetes.
+
+=== Métricas
+
+[NOTE]
+====
+https://opentelemetry.io/docs/concepts/signals/baggage/[Equipaje] se añaden atributos clave-valor a la métrica para proporcionar información adicional.
+====
+
+
+|===
+| Nombre | Tipo | Equipaje
+
+| `kubewarden_policy_evaluations_total`
+| Contador
+| <<_kubewarden_policy_evaluations_total,Equipaje>>
+|===
+
+==== `kubewarden_policy_evaluations_total`
+
+===== Equipaje
+
+|===
+| Etiqueta | Descripción
+
+| `policy_name`
+| Nombre de la directiva
+
+| `resource_name`
+| Nombre del recurso evaluado
+
+| `resource_kind`
+| Tipo del recurso evaluado
+
+| `resource_namespace`
+| Espacio de nombres del recurso evaluado. No presente si el recurso está en el ámbito del clúster.
+
+| `resource_request_operation`
+| Tipo de operación: `CREATE`, `UPDATE`, `DELETE`, `PATCH`, `WATCH`...
+
+| `accepted`
+| ¿Se aceptó la solicitud?
+
+| `mutated`
+| ¿Se modificó la solicitud?
+
+| `error_code`
+| Código de error devuelto por la directiva si se rechaza, si lo hay.
+  No está presente si la directiva no proporcionó uno.
+|===

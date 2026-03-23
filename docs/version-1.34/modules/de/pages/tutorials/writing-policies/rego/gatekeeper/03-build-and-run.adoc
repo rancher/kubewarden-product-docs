@@ -1,0 +1,91 @@
+include::partial$variables.adoc[]
+= Erstellen und Ausführen einer Gatekeeper-Richtlinie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Entwickeln und Bereitstellen einer Gatekeeper-Richtlinie mit vertrauter Rego-Syntax und -Werkzeugen zur Durchsetzung der Zugangssteuerung in Kubernetes-Umgebungen.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "build-and-run"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Gatekeeper-Richtlinie", "rego"]
+:sidebar_label: Erstellen und Ausführen
+:current-version: {page-origin-branch}
+
+Sie können die Richtlinie genau wie eine Rego-Richtlinie, die auf den Open Policy Agent abzielt, erstellen und ausführen.
+Die Struktur Ihres Projekts ist:
+
+----
+.
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+└── policy.rego
+
+1 directory, 3 files
+----
+
+== Erstellen
+
+Erstellen Sie die Richtlinie, indem Sie den `opa` Befehl ausführen:
+
+[subs="+attributes",shell]
+----
+$ opa build -t wasm -e policy/violation policy.rego
+----
+
+Dies erstellt die Rego-Richtlinie mit:
+
+* `target`: `wasm`. Wir möchten die Richtlinie für das `wasm` Ziel erstellen.
+* `entrypoint`: `policy/violation`. Der Einstiegspunkt ist die `violation` Regel innerhalb des `policy` Pakets.
+* `policy.rego`: erstellen und die `policy.rego` Datei einfügen.
+
+Der vorherige Befehl generiert eine `bundle.tar.gz` Datei.
+Sie können das Wasm-Modul daraus extrahieren:
+
+[subs="+attributes",shell]
+----
+$ tar -xf bundle.tar.gz /policy.wasm
+----
+
+Der Projektbaum sieht wie folgt aus:
+
+----
+.
+├── bundle.tar.gz
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+└── policy.wasm
+
+1 directory, 5 files
+----
+
+Sie können jetzt Ihre Richtlinie ausführen.
+
+== Führen Sie folgendes Kommando aus:
+
+Verwenden Sie `kwctl`, um Ihre Richtlinie wie folgt auszuführen:
+
+ $ kwctl run -e gatekeeper --request-path data/other-ns.json policy.wasm | jq
+ {
+   "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+   "allowed": true
+ }
+
+Dies ist Ihre Ressource, die im Namespace `other` erstellt wurde, sie wird akzeptiert, wie erwartet.
+
+Jetzt können Sie eine Anfrage stellen, die von der Richtlinie abgelehnt wird:
+
+[subs="+attributes",console]
+----
+$ kwctl run -e gatekeeper --request-path data/default-ns.json policy.wasm | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "it is forbidden to use the default namespace"
+  }
+}
+----
+
+Sie können sehen, dass Ihre Gatekeeper-Richtlinie diese Ressource abgelehnt hat.

@@ -1,0 +1,199 @@
+include::partial$variables.adoc[]
+= Vérification {project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Vérifiez les différents artefacts produits par l'équipe {project-name} pour garantir une chaîne d'approvisionnement sécurisée grâce à l'utilisation de SBOMs et de fichiers de provenance.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["sécurité", "vérification-kubewarden"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "sécurité", "vérification"]
+:current-version: {page-origin-branch}
+
+La pile {project-name} fournit différentes attestations et garanties :
+
+- Attestations de provenance : Informe sur le processus de build, les dépendances de build, et aide à reproduire les builds. Implémentez la norme https://slsa.dev/spec/v1.0/[SLSA] (niveau 3 dans notre cas).
+- Attestations SBOM : Contiennent les dépendances logicielles. Aidez les consommateurs en aval à déterminer les vulnérabilités de {short-project-name} et de ses dépendances.
+- Artefacts signés : Indiquent si un artefact est authentique ou non, fournissant une sécurité de la chaîne d'approvisionnement. Cela inclut les livrables, mais aussi les attestations de provenance et de SBOM.
+
+Les artefacts {short-project-name}, les attestations de provenance et les SBOM sont signés en utilisant https://docs.sigstore.dev[Sigstore], avec le flux de travail sans clé. Cela signifie que le certificat de signature contient les informations suivantes, où `*` correspond à tous les caractères suivants :
+
+* émetteur : `https://token.actions.githubusercontent.com`
+* sujet : `https://github.com/kubewarden/*`
+* extension de certificat x509 pour GHA, "github_workflow_repository" : `kubewarden/*`
+
+[IMPORTANT]
+====
+Le sujet utilisé avec l'option `--certificate-identity-regexp` de la CLI cosign dans ce tutoriel utilise les valeurs `https://github.com/kubewarden/*` pour simplifier l'explication. Cependant, cela permet aux artefacts des dépôts ayant le même préfixe de contourner la validation. Par exemple : `github.com/kubewarden/policy-server1`.
+
+Si vous souhaitez une vérification plus sécurisée, vous devez utiliser une URL complète :
+
+----
+https://github.com/kubewarden/policy-server/.github/workflows/container-image.yml@refs/tags/v1.30.0
+----
+
+Notez que l'URL inclut le chemin complet du dépôt, le chemin du fichier de workflow, et le tag de version. Si vous suivez cette meilleure pratique, vous pouvez utiliser l'option `--certificate-identity` de la CLI cosign avec l'URL complète.
+====
+
+L'équipe {short-project-name} s'efforce également d'améliorer la chaîne d'approvisionnement sécurisée et de rendre l'ensemble de la pile conforme au niveau 3 SLSA. Par conséquent, les principaux artefacts incluent également des fichiers SBOM et de provenance. Dans les sections suivantes, nous montrerons comment vérifier les différents artefacts produits par l'équipe {short-project-name} et comment garantir la chaîne d'approvisionnement sécurisée des artefacts en utilisant des fichiers SBOM et de provenance.
+
+[#container-images]
+== Images de conteneur
+
+Pour vérifier les images de conteneur signées sans clé produites par l'équipe {short-project-name}, vous pouvez utiliser la CLI `cosign`. Par exemple, pour vérifier l'image `kubewarden/policy-server`, vous pouvez exécuter la commande suivante :
+
+[source, console]
+----
+cosign verify ghcr.io/kubewarden/policy-server:v1.30.0 \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+Verification for ghcr.io/kubewarden/policy-server:v1.30.0 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+
+<snipped json>
+----
+
+Vous pouvez ensuite vérifier que le certificat dans le JSON retourné contient le bon émetteur, le bon sujet et les bonnes extensions `github_workflow_repository`.
+
+Vous pouvez également vérifier avec link:https://github.com/rancherlabs/slsactl[`slsactl`].
+Par exemple, pour la version 1.30.0 :
+
+[source, console]
+----
+slsactl verify ghcr.io/kubewarden/policy-server:v1.30.0
+----
+
+Il en va de même pour toutes les autres images produites par l'équipe {short-project-name}, telles que `kubewarden/kubewarden-controller` et `kubewarden/audit-scanner`.
+
+Toutes les images de conteneurs ont également des fichiers SBOM et de provenance qui peuvent être utilisés pour garantir la chaîne d'approvisionnement sécurisée des images. Vous pouvez trouver des fichiers d'attestation sur la page de publication du composant ou attachés à l'image de conteneur dans le registre OCI.
+
+Nous utilisons Docker pour construire les images et leurs attestations. Cependant, la commande cosign https://github.com/sigstore/cosign/issues/2688[ne prend pas encore en charge] la vérification des attestations générées par Docker à partir du registre OCI.
+Pour cette raison, vous devez télécharger les fichiers depuis la page de version ou le registre et les vérifier localement. Si vous souhaitez télécharger les fichiers d'attestation depuis le registre OCI, vous pouvez suivre la https://docs.docker.com/build/metadata/attestations/attestation-storage/[documentation Docker] et utiliser des outils comme `crane` ou `docker` lui-même pour télécharger les fichiers depuis le registre.
+
+Lors du téléchargement des fichiers d'attestation depuis la page de version des {short-project-name} composants, vérifiez-les :
+
+[,console]
+----
+$ cosign verify-blob --bundle audit-scanner-attestation-amd64-checksum-cosign.bundle \
+    --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+    --certificate-identity="https://github.com/kubewarden/audit-scanner/.github/workflows/attestation.yml@refs/tags/v1.30.0" \
+    audit-scanner-attestation-amd64-checksum.txt
+Verified OK
+----
+
+Maintenant que l'intégrité des fichiers est vérifiée, vous pouvez inspecter les fichiers SBOM et de provenance.
+Vous pouvez les obtenir à partir de l'image du conteneur, en utilisant link:https://github.com/rancherlabs/slsactl[`slsactl].
+Par exemple, pour la version 1.30.0 :
+
+[,console]
+----
+slsactl download provenance ghcr.io/kubewarden/policy-server:v1.30.0
+slsactl download sbom ghcr.io/kubewarden/policy-server:v1.30.0
+----
+
+== Charts Helm
+
+Vous pouvez trouver {short-project-name} charts Helm dans notre `https://` dépôt Helm traditionnel sous https://charts.kubewarden.io.
+
+Les mêmes charts Helm sont signés via la signature sans clé de Sigstore et poussés vers un registre OCI qui contient à la fois le chart Helm et son attestation de provenance en tant qu'artefacts OCI.
+
+Les charts Helm sont publiés avec un manifeste https://hauler.dev[Hauler] qui répertorie tous les artefacts nécessaires.
+
+=== Vérification avec Hauler
+
+Hauler vérifie automatiquement les artefacts lors de leur téléchargement. Pour plus d'informations, reportez-vous à xref:/howtos/airgap/03-hauler.adoc[notre documentation].
+
+=== Vérification manuelle
+
+Depuis Helm 3.8.0, Helm prend en charge les registres OCI, mais en raison de contraintes, ils ne peuvent pas être recherchés via `helm`. Vous pouvez trouver la https://github.com/orgs/kubewarden/packages?tab=packages&q=charts[liste des charts dans GitHub Container Registry].
+
+Pour vérifier un chart Helm, vous devez avoir `cosign` installé. Ensuite, exécutez la commande suivante, par exemple :
+
+----
+cosign verify ghcr.io/kubewarden/charts/kubewarden-defaults:1.5.4 \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+Verification for ghcr.io/kubewarden/charts/kubewarden-defaults:1.5.4 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+
+<snipped json>
+----
+
+Vous pouvez ensuite vérifier que le certificat dans le JSON retourné contient le bon émetteur, le bon sujet et les bonnes extensions `github_workflow_repository`.
+
+Les attestations de chart sont poussées vers le registre OCI en tant que couche d'artefact. Voir la section xref:#container-images[images de conteneurs] sur la façon de les vérifier.
+
+Les charts {short-project-name} incluent `imagelist.txt` et (`policylist.txt` lorsque cela est pertinent) à l'intérieur du chart. Ainsi, si vous avez déjà vérifié le chart, vous pouvez utiliser ces listes pour vérifier les images de conteneurs consommées et les stratégies.
+
+{short-project-name} suit également les pratiques habituelles concernant les charts Helm. Ainsi, on peut également trouver toutes les images dans les charts Helm avec un plugin tel que https://github.com/cvila84/helm-image[helm-image], ou avec le script suivant :
+
+[subs="+attributes",bash]
+----
+#!/usr/bin/env bash
+helm pull --untar kubewarden/kubewarden-controller && \
+helm pull --untar kubewarden/kubewarden-defaults && \
+{ helm template ./kubewarden-controller; helm template ./kubewarden-defaults } \
+    | yq '..|.image? | select(.)' \
+    | sort -u | sed 's/"//g'
+----
+
+ce qui nous donne :
+
+----
+ghcr.io/kubewarden/kubewarden-controller:v0.5.5
+ghcr.io/kubewarden/policy-server:v0.3.1
+ghcr.io/kubewarden/kubectl:v1.21.4
+----
+
+Maintenant, pour chaque image de cette liste, vous pouvez vérifier leurs signatures Sigstore en suivant les instructions de la xref:#container-images[section précédente].
+
+== kwctl
+
+Les binaires kwctl sont signés en utilisant https://docs.sigstore.dev/cosign/signing/signing_with_blobs/[la signature de blob de Sigstore].
+
+Lorsque vous téléchargez un https://github.com/kubewarden/kwctl/releases/[`kwctl` version] chaque fichier zip contient un fichier de bundle Sigstore que vous pouvez utiliser pour la vérification : `kwctl-*bundle.sigstore`.
+
+Pour vérifier kwctl, vous devez avoir cosign installé, puis exécuter la commande suivante :
+
+----
+cosign verify-blob \
+  --bundle kwctl-linux-x86_64.bundle.sigstore \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  kwctl-linux-x86_64
+
+Verified OK
+----
+
+Vous pouvez ensuite vérifier que le certificat dans le json retourné contient le bon émetteur, le bon sujet et les bonnes extensions `github_workflow_repository`.
+
+Les SBOMs sont signés et publiés dans les https://github.com/kubewarden/kwctl/releases[versions GitHub] du projet.
+
+L'attestation de provenance pour `kwctl` est vérifiée en utilisant https://cli.github.com/manual/gh_attestation_verify[`gh attestation verify`]. Par exemple avec `gh attestation verify kwctl-linux-x86_64 --repo kubewarden/kwctl`.
+
+== Stratégies
+
+Les stratégies maintenues par l'équipe {short-project-name} sont également signées en utilisant le projet Sigstore. Tout comme les images de conteneurs habituelles, on peut les vérifier en utilisant `cosign` :
+
+----
+cosign verify ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.5 \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+Verification for ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.5 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+
+  <snipped json>
+----
+
+Vous pouvez ensuite vérifier que le certificat dans le json retourné contient le bon émetteur, le bon sujet et les bonnes extensions `github_workflow_repository`.

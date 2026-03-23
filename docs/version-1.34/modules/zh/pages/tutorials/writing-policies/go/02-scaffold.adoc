@@ -1,0 +1,163 @@
+include::partial$variables.adoc[]
+= 创建新的验证策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 探索创建一个新的验证策略，该策略拒绝带有黑名单标签的 Pods，同时使用用户提供的正则表达式验证标签以确保安全性。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "编写策略", "go", "创建新的验证策略"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "用 Go 编写策略", "新的验证策略"]
+:current-version: {page-origin-branch}
+
+本教程涵盖创建一个验证 Pod 对象标签的策略。
+
+该策略拒绝所有使用一个或多个黑名单标签的 Pods。
+该策略还使用用户提供的正则表达式验证某些标签。
+
+总结一下，策略设置应如下所示：
+
+[subs="+attributes",yaml]
+----
+# List of labels that cannot be used
+denied_labels:
+- foo
+- bar
+
+# Labels that are validated with user-defined regular expressions
+constrained_labels:
+  priority: "[123]"
+  cost-center: "^cc-\d+"
+----
+
+该策略拒绝创建此 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    foo: hello world
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+它还拒绝创建此 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    cost-center: cc-marketing
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+您可以使用策略的设置强制使用标签规范，无论内容如何：
+
+[subs="+attributes",yaml]
+----
+constrained_labels:
+  mandatory-label: ".*" # <- this label must be present, we don't care about its value
+----
+
+== 搭建新的策略项目
+
+您可以使用 https://github.com/kubewarden/go-policy-template[模板储存库] 创建一个新的策略项目。
+选择页面顶部附近的 "使用此模板" 绿色按钮，并按照 GitHub 的向导进行操作。
+
+在本地克隆该储存库，并将 `go.mod` 文件中的 `module` 指令设置为如下：
+
+[,go]
+----
+module <path to your repository>
+----
+
+[NOTE]
+====
+一个真实的策略会使用一个储存库路径，例如 `github.com/kubewarden/go-policy-template`。
+====
+
+
+== 测试
+
+只要必要的工具到位，`make test` 命令使用 Docker 拉取 TinyGo 编译器镜像，并使用它来构建和测试策略模板。
+
+默认的 `make` 命令构建 `policy.wasm` 目标。然后 `make test` 运行定义的 Go 测试。
+命令 `make e2e-tests` 在 {short-project-name} 集群中使用 https://github.com/bats-core/bats-core[bats] 运行测试。
+克隆完 `go-policy-template` 后，运行这些命令可以检查您是否具备进行教程所需的工具。
+
+.来自 `make` 命令的输出
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+make test
+docker run \
+        --rm \
+        -e GOFLAGS="-buildvcs=false" \
+        -v /home/jhk/projects/suse/tmp/go-kw-demo:/src \
+        -w /src tinygo/tinygo:0.30.0 \
+        tinygo build -o policy.wasm -target=wasi -no-debug .
+Unable to find image 'tinygo/tinygo:0.30.0' locally
+0.30.0: Pulling from tinygo/tinygo
+9aaefb8797c4: Pull complete
+24ab7ca26e01: Pull complete
+ca4ea8be6361: Pull complete
+50380d0859d2: Pull complete
+4f4fb700ef54: Pull complete
+ea0ddd497f04: Pull complete
+01ba28116afb: Pull complete
+Digest: sha256:5cbf5e50aec3a00fcff8bb4ae070a07eea8198187a97b21dff6d873d2274ce7a
+Status: Downloaded newer image for tinygo/tinygo:0.30.0
+go test -v
+=== RUN   TestParsingSettingsWithNoValueProvided
+--- PASS: TestParsingSettingsWithNoValueProvided (0.00s)
+=== RUN   TestIsNameDenied
+--- PASS: TestIsNameDenied (0.00s)
+=== RUN   TestEmptySettingsLeadsToApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestEmptySettingsLeadsToApproval (0.00s)
+=== RUN   TestApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproval (0.00s)
+=== RUN   TestApproveFixture
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproveFixture (0.00s)
+=== RUN   TestRejectionBecauseNameIsDenied
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"info","message":"rejecting pod object","name":"test-pod","denied_names":"foo,test-pod"}
+|
+--- PASS: TestRejectionBecauseNameIsDenied (0.00s)
+PASS
+ok      github.com/kubewarden/go-policy-template        0.004s
+----
+
+和
+
+[subs="+attributes",console]
+----
+make e2e-tests
+bats e2e.bats
+e2e.bats
+ ✓ reject because name is on deny list
+ ✓ accept because name is not on the deny list
+ ✓ accept because the deny list is empty
+
+3 tests, 0 failures
+----
+
+======

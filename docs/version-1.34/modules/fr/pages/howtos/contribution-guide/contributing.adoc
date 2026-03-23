@@ -1,0 +1,46 @@
+include::partial$variables.adoc[]
+= Contribuer à la documentation de {short-project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Contribuez à la documentation de {project-name} en améliorant le contenu existant, en créant de nouveaux sujets et en aidant à la traduction.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "contributing"]
+:sidebar_label: Contribuer à la documentation
+:sidebar_position: 2
+:current-version: {page-origin-branch}
+
+_{short-project-name} accueille les suggestions d'amélioration de tous les contributeurs, qu'ils soient nouveaux ou expérimentés._
+
+Vous pouvez contribuer à la documentation de {short-project-name} en :
+
+* Améliorant le contenu existant
+* Créant du nouveau contenu
+* (_À venir_) Aider à la traduction de la documentation
+
+== Premiers pas
+
+ifeval::["{build-type}" == "community"]
+
+Tout le monde est invité à suggérer des modifications en soumettant une pull request. Vous pouvez également signaler un bug ou une faute de frappe avec l'aide d'un problème GitHub dans le https://github.com/kubewarden/docs[`kubewarden/docs` dépôt].
+
+Pour vous impliquer dans la documentation :
+
+* Familiarisez-vous avec le https://github.com/kubewarden/docs[dépôt de documentation] et le https://docusaurus.io/[générateur de site statique].
+* Docusaurus utilise la syntaxe Markdown et utilise https://mdxjs.com/[MDX] comme parseur.
+* Comprendre comment xref:howtos/contribution-guide/suggesting-an-improvement.adoc[suggérer une amélioration] et ouvrir une pull request.
+
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+
+Tout le monde est invité à suggérer des modifications en soumettant une pull request. Vous pouvez également signaler un bug ou une faute de frappe avec l'aide d'un problème GitHub dans le https://github.com/rancher/kubewarden-product-docs[`rancher/kubewarden-product-docs` dépôt].
+
+Pour vous impliquer dans la documentation :
+
+* Familiarisez-vous avec le https://github.com/rancher/kubewarden-product-docs[dépôt de documentation] et le https://antora.org/[générateur de site statique].
+* Antora utilise la syntaxe AsciiDoc.
+* Comprendre comment xref:howtos/contribution-guide/suggesting-an-improvement.adoc[suggérer une amélioration] et ouvrir une pull request.
+
+endif::[]

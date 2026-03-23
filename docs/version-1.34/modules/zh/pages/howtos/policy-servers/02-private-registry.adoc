@@ -1,0 +1,75 @@
+include::partial$variables.adoc[]
+
+= 配置 PolicyServer 以使用私有仓库
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过创建 Docker 配置密钥并在配置中设置 spec.imagePullSecret 字段，配置 PolicyServer 以使用私有仓库。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "private-registry"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
+:current-version: {page-origin-branch}
+
+可以配置 PolicyServer 使用私有 OCI 仓库的凭据。这允许这些 PolicyServer 从公共和私有仓库下载策略。
+
+一旦您配置 PolicyServer 访问私有仓库，运行在其上的策略也可以访问这些仓库。当策略使用提供的 SDK 或主机能力 API 时，这种方式是有效的。这是因为 PolicyServers 通过定义的策略 SDK 和较低级别的主机能力 API 暴露了该功能。例如，在验证容器镜像签名的策略中就是这种情况。
+
+要实现这一点，您应该创建一个包含私有仓库凭据的 Secret。然后配置您的 PolicyServers 资源，以及您的 Helm 图表以使用它。
+
+== 创建 Secret
+
+PolicyServers 支持常规的 https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Docker 配置密钥]，可以是 `kubernetes.io/dockercfg` 类型或 `kubernetes.io/dockerconfigjson` 类型。您可以使用 `kubectl create secret docker-registry` 创建这些密钥。
+
+您需要**在运行 PolicyServer 的名称空间中**创建该密钥。
+这遵循最小权限原则，并允许不同的 PolicyServers 独立验证来自不同仓库的 OCI 工件。
+
+您可以使用以下命令为 PolicyServer 创建此 Secret:
+
+[subs="+attributes",shell]
+----
+kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker \
+  --docker-username=myuser \
+  --docker-password=mypass123 \
+  --docker-server=myregistry.io
+----
+
+[TIP]
+====
+
+按照xref:/howtos/rancher-backup-operator.adoc#_user_secrets[User secrets]的要求标记 Secret，以便它可以成为 Rancher Backup Operator 执行的备份的一部分。
+
+====
+
+有关如何创建 Docker Secret 的更多信息，请参见https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Kubernetes 文档]。
+
+== 在 PolicyServers 中使用 Secret
+
+一旦您创建了 Secret，就需要配置 PolicyServer 实例。将`spec.imagePullSecret`字段设置为包含凭据的 Secret 的名称：
+
+[subs="+attributes",yaml]
+----
+# Example of a PolicyServer using a private registry
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: default
+spec:
+  image: ghcr.io/kubewarden/policy-server:v1.1.1
+  serviceAccountName: policy-server
+  replicas: 1
+  annotations:
+  imagePullSecret: "secret-ghcr-docker"
+----
+
+== 在 Helm 图表中使用 Secret
+
+从`kubewarden-defaults` Helm 图表部署时，您可以将`policyServer.imagePullSecret`值设置为 Secret 名称。然后，创建的默认 PolicyServer 也能够从您的私有仓库下载策略：
+
+[subs="+attributes",yaml]
+----
+# values file example
+policyServer:
+  telemetry:
+    enabled: False
+  imagePullSecret: secret-ghcr-docker
+----

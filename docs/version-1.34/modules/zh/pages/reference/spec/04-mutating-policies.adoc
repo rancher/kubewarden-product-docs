@@ -1,0 +1,165 @@
+include::partial$variables.adoc[]
+= 变更策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过在 waPC（Policy 配置器）中实现验证函数（validate 和 validate_settings）来配置变更策略，以便在 Kubernetes 集群中提出对象变更。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "mutating-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "策略规范", "变更策略"]
+:sidebar_label: 变更策略
+:current-version: {page-origin-branch}
+
+变更策略的结构与验证策略相同：
+
+* 它们必须注册 `validate` 和 `validate_settings` waPC 函数。
+* 主机与策略之间使用的通信 API 与验证策略使用的相同。
+
+变更策略接受请求，并可以通过返回一个看起来像这样的 `ValidationResponse` 对象来提出对传入对象的变更：
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": <object to be created>
+}
+----
+
+`mutated_object` 字段包含策略希望在 Kubernetes 集群中创建的对象，序列化为 JSON。
+
+== 一个具体的例子
+
+假设策略收到了这个 `ValidationRequest`：
+
+[subs="+attributes",json]
+----
+{
+  "settings": {},
+  "request": {
+    "operation": "CREATE",
+    "object": {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "security-context-demo-4"
+      },
+      "spec": {
+        "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": ["NET_ADMIN", "SYS_TIME"]
+            }
+          }
+        }
+        ]
+      }
+    }
+  }
+}
+----
+
+[NOTE]
+====
+
+在这个例子中，`request` 对象中只有重要字段。
+
+====
+
+
+这个请求生成是因为有人试图创建一个看起来像这样的 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+----
+
+假设策略回复以下 `ValidationResponse`：
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "name": "security-context-demo-4"
+    },
+    "spec": {
+      "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": [
+                "NET_ADMIN",
+                "SYS_TIME"
+              ],
+              "drop": [
+                "BPF"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+----
+
+这将导致请求被接受，但最终的 Pod 看起来像这样：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+        drop:
+        - BPF
+----
+
+正如你所看到的，策略改变了 Pod 中唯一声明的容器的 `securityContext.capabilities.drop` 部分。
+
+由于策略，容器现在放弃了 `BPF` 能力。
+
+== 回顾
+
+这些是变更策略必须实现的函数：
+
+|===
+| *waPC 函数名称*| *输入负载*| *输出负载*
+
+| `validate`
+| `\{  "request": \{    // AdmissionReview.request data  \},  "settings": \{    // your policy configuration  \}\}`
+| `\{  **// mandatory**  "accepted": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,  // optional, ignored if accepted  "code": integer,   // JSON Object to be created  // Can be used only when the  // request is accepted  "mutated_object": object\}`
+
+| `validate_settings`
+| `\{  // your policy configuration\}`
+| `\{  **// mandatory**  "validate": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,\}`
+|===

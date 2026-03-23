@@ -1,0 +1,98 @@
+include::partial$variables.adoc[]
+= Publier des stratégies sur Artifact Hub
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Publier {project-name} stratégies sur Artifact Hub en créant une mise en page de dépôt Git bien formatée et en configurant GitHub Actions pour l'emballage automatisé, facilitant l'intégration continue.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "publier des stratégies", "artifact hub"]
+:sidebar_label: Publier sur Artifact Hub
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+https://artifacthub.io/[Artifact Hub] est un site web où les utilisateurs peuvent trouver, installer et publier des paquets et des configurations pour les projets https://cncf.io[CNCF].
+
+Les stratégies {project-name} peuvent être publiées sur Artifact Hub et rendues découvrables par le large public des utilisateurs de CNCF.
+
+[NOTE]
+====
+Artifact Hub est une plateforme d'agrégation de contenu et n'héberge pas réellement les artefacts qui y sont publiés.
+
+Artifact Hub exige que vous hébergiez physiquement des dépôts d'images de conteneur sur un registre de conteneur ou un serveur web.
+Référez-vous à la section xref:explanations/distributing-policies.adoc[distributing policies] pour plus d'informations sur la façon d'héberger vos stratégies.
+====
+
+
+Ce document se concentre sur les étapes nécessaires pour rendre une stratégie {short-project-name} découvrable sur Artifact Hub.
+
+== Préparez votre dépôt Git
+
+Artifact Hub explore les dépôts Git à la recherche de fichiers de métadonnées spéciaux.
+
+Il existe différents types de mises en page que le dépôt Git peut avoir. Elles sont toutes documentées en profondeur dans la https://artifacthub.io/docs/topics/repositories/#kubewarden-policies-repositories[documentation officielle d'Artifact Hub].
+
+Artifact Hub est flexible et vous permet d'organiser votre code de ces manières :
+
+* Avoir un dépôt Git dédié à Artifact Hub : ce dépôt ne contiendra aucun code source de stratégie. Ce sera une collection des fichiers YAML requis par Artifact Hub.
+
+* Ajoutez un répertoire Artifact Hub dans le dépôt Git contenant le code source de votre stratégie. Il s'agit d'une itération de l'approche précédente, se concentrant sur une seule stratégie, celle qui est définie dans le dépôt Git. Cette approche permet de conserver plusieurs versions de la stratégie publiées sur Artifact Hub.
+
+* Ajoutez les fichiers `artifacthub-pkg.yml` et `artifacthub-repo.yml` à la racine du dépôt Git qui contient le code source de la stratégie. Cette approche est la plus simple. La seule limitation est que seule la dernière version de la stratégie sera visible sur Artifact Hub.
+
+La dernière approche est utilisée dans nos modèles de stratégie officiels. Le dépôt Git qui est créé inclut le fichier `artifacthub-repo.yml`, et nos actions GitHub génèrent et poussent le `artifacthub-pkg.yml` vers une branche `artifacthub` pour qu'Artifact Hub puisse l'utiliser.
+
+== Étapes de publication
+
+Avant de publier une stratégie sur Artifact Hub, vous devez créer un compte https://artifacthub.io/[there].
+
+Avant de publier la stratégie, assurez-vous que votre dépôt Git a la bonne structure, avec un `metadata.yml` bien formaté et les annotations obligatoires.
+
+Si vous souhaitez le faire manuellement, vous pouvez créer le fichier `artifacthub-pkg.yml` en effectuant un `kwctl scaffold artifacthub` (avec la version `>= 1.23`). Cette commande prend le `metadata.yml` dans le chemin actuel et produit un `artifacthub-pkg.yml`. Le `artifacthub-pkg.yml` contient des champs tels que `version:`, `createdAt:`, qui doivent correspondre à un format spécifique et être à jour. Le format du `artifacthub-pkg.yml` est décrit https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml[ici].
+
+Si vous utilisez nos actions GitHub >= `v4.0.0`, le flux de travail de publication peut être configuré avec l'entrée `artifacthub: true`. Si configuré ainsi, après une publication réussie (après que la stratégie a été construite, signée et poussée avec succès), nos actions GitHub ont un dernier travail qui génère le `artifacthub-pkg.yml` pour vous, puis engage et pousse les modifications vers la branche `artifacthub`. Les fichiers canoniques sont toujours ceux de la branche `main`. Pour le comportement des versions précédentes de nos actions GitHub, consultez la documentation des versions antérieures à 1.23.
+
+Enfin, assurez-vous que votre stratégie est publiée dans un registre de conteneurs ou sur un serveur web.
+
+[NOTE]
+====
+En ce moment, le contenu du fichier `artifacthub-repo.yml` n'est pas pertinent.
+====
+
+
+Une fois que tout est en place, connectez-vous à Artifact Hub et allez à votre https://artifacthub.io/control-panel/repositories?page=1[plan de contrôle].
+
+Décidez si vous souhaitez publier la stratégie en tant qu'utilisateur ou sous une organisation Artifact Hub à laquelle vous appartenez. Cela se fait en choisissant le bon _"contexte du panneau de contrôle"_.
+
+Ensuite, appuyez sur le _"Ajouter"_ bouton et remplissez le formulaire :
+
+* Choisissez _"{short-project-name} stratégies"_ comme type :
+* Entrez un _"Nom"_ et un _"Nom d'affichage"_ de votre choix.
+* Entrez l'URL de votre dépôt Git.
+* Entrez `artifacthub` comme la branche à suivre.
+
+Enfin, appuyez sur le _"Ajouter"_ bouton. Cela vous ramènera à la page _"Dépôts"_, où vous verrez votre dépôt fraîchement créé.
+
+Chaque dépôt a plusieurs champs d'information. Trouvez la propriété _"ID"_ du dépôt que vous venez de créer et copiez-la.
+
+Retournez à votre dépôt Git et modifiez le `artifacthub-repo.yml`. Assurez-vous que la clé `repositoryID` trouvée à l'intérieur du document a la valeur que vous venez de copier depuis la page web d'Artifact Hub.
+
+[TIP]
+====
+Le format du fichier `artifacthub-repo.yml` est défini https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml[ici].
+
+C'est maintenant le bon moment pour faire quelques personnalisations supplémentaires à ce fichier.
+====
+
+
+Une fois que vous avez terminé les modifications, validez le fichier `artifacthub-repo.yml` mis à jour et poussez-le. Lors du prochain scan, Artifact Hub trouvera ce fichier et ajoutera le https://artifacthub.io/docs/topics/repositories/#verified-publisher[_"Éditeur Vérifié"_ badge] à votre dépôt Artifact Hub.
+
+== Maintenir Artifact Hub en synchronisation
+
+N'oubliez pas de mettre à jour le contenu du fichier `artifacthub-pkg.yml` chaque fois que vous publiez une nouvelle version de votre stratégie. Par exemple, vous devez mettre à jour le champ `io.kubewarden.policy.version` (qui correspond généralement à l'étiquette de stratégie OCI) et toute autre annotation que vous souhaitez modifier.
+
+[NOTE]
+====
+Le contenu du fichier `artifacthub-repo.yml` n'a pas besoin d'être modifié.
+====
+

@@ -1,0 +1,320 @@
+include::partial$variables.adoc[]
+= クラスターオペレーターのテスト
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 異なる設定と検証リクエストオブジェクトを使用して、kwctlでクラスターオペレーターのポリシーをテストし、ポリシー設定を検証します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "cluster-operators"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
+:current-version: {page-origin-branch}
+
+Kubernetesクラスターオペレーターとして、使用したい{project-name}ポリシーのテストを行いたいと思うでしょう。
+
+次のような質問があるでしょう：
+
+* 必要な検証/変異結果を得るための正しいポリシー設定は何ですか？
+* 私が次のことを行うとき、すべてが期待通りに動作し続けることをどのように確認できますか：
+ ** ポリシーを新しいバージョンにアップグレードする場合？
+ ** Kubernetesリソースを追加/変更する場合？
+ ** ポリシーの設定パラメータを変更する場合？
+ ** などなど？
+
+{short-project-name}には、Kubernetesの外部でポリシーのテストを許可するユーティリティ、https://github.com/kubewarden/kwctl[`kwctl`]があります。
+
+`kwctl`を使用するには、次の入力で呼び出します：
+
+. 実行するポリシーのWebAssemblyバイナリファイルURI。
+{short-project-name}ポリシーは次の場所から読み込むことができます：
+ ** ローカルファイルシステム `file://`
+ ** HTTP(S)サーバー `https://`
+ ** OCIレジストリ `registry://`。
+. テストするためのAdmissionリクエストオブジェクト。
+`--request-path`引数を指定して渡します。
+`--request-path`を`-`に設定して`stdin`を使用します。
+. `--settings-json`フラグを介してインラインJSONとしてのランタイムのポリシー設定。
+または、`--settings-path`を介してファイルシステムから読み込まれるJSONまたはYAMLファイル。
+
+テスト`kwctl`の後、`ValidationResponse`オブジェクトを標準出力に出力します。
+
+`kwctl`の事前ビルドされたバイナリをダウンロードできます
+https://github.com/kubewarden/kwctl/releases[こちら]。
+
+== テストの例
+
+このセクションでは、異なる設定と検証リクエストオブジェクトを使用して、https://github.com/kubewarden/psp-apparmor[psp-apparmor]ポリシーをテストする方法について説明します。
+
+=== `AdmissionReview`リクエストを作成します。
+
+ポリシーをテストするために、`AdmissionReview`オブジェクトを保持するファイルを作成する必要があります。
+
+次の内容で`pod-req-no-specific-apparmor-profile.json`という名前のファイルを作成できます：
+
+.pod-req-no-specific-apparmor-profile.json
+[%collapsible]
+======
+
+[subs="+attributes",json]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "kind": {
+    "kind": "Pod",
+    "version": "v1"
+  },
+  "object": {
+    "metadata": {
+      "name": "no-apparmor"
+    },
+    "spec": {
+      "containers": [
+        {
+          "image": "nginx",
+          "name": "nginx"
+        }
+      ]
+    }
+  },
+  "operation": "CREATE",
+  "requestKind": {"version": "v1", "kind": "Pod"},
+  "userInfo": {
+    "username": "alice",
+    "uid": "alice-uid",
+    "groups": ["system:authenticated"]
+  }
+}
+----
+
+======
+
+このリクエストは、使用するAppArmorプロファイルを指定しないPodを作成しようとしています。
+これは、`annotation`キーを持つ`container.apparmor.security.beta.kubernetes.io/<container-name>`がないためです。
+
+次の内容で`pod-req-apparmor-unconfined.json`という名前のファイルを作成できます：
+
+.pod-req-apparmor-unconfined.json
+[%collapsible]
+======
+
+[subs="+attributes",json]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "kind": {
+    "kind": "Pod",
+    "version": "v1"
+  },
+  "object": {
+    "metadata": {
+      "name": "privileged-pod",
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/nginx": "unconfined"
+      }
+    },
+    "spec": {
+      "containers": [
+        {
+          "image": "nginx",
+          "name": "nginx"
+        }
+      ]
+    }
+  },
+  "operation": "CREATE",
+  "requestKind": {"version": "v1", "kind": "Pod"},
+  "userInfo": {
+    "username": "alice",
+    "uid": "alice-uid",
+    "groups": ["system:authenticated"]
+  }
+}
+----
+
+======
+
+このリクエストは、`unconfined` AppArmorプロファイルで実行される`nginx`という名前のコンテナを持つPodを作成しようとしています。
+これはチュートリアル目的のみです。
+`unconfined`モードでの実行は悪いセキュリティ慣行です。
+
+今、次の内容で`pod-req-apparmor-custom.json`という名前のファイルを作成できます：
+
+.pod-req-apparmor-custom.json
+[%collapsible]
+======
+
+[subs="+attributes",json]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "kind": {
+    "kind": "Pod",
+    "version": "v1"
+  },
+  "object": {
+    "metadata": {
+      "name": "privileged-pod",
+      "annotations": {
+        "container.apparmor.security.beta.kubernetes.io/nginx": "localhost/nginx-custom"
+      }
+    },
+    "spec": {
+      "containers": [
+        {
+          "image": "nginx",
+          "name": "nginx"
+        }
+      ]
+    }
+  },
+  "operation": "CREATE",
+  "requestKind": {"version": "v1", "kind": "Pod"},
+  "userInfo": {
+    "username": "alice",
+    "uid": "alice-uid",
+    "groups": ["system:authenticated"]
+  }
+}
+----
+
+======
+
+[NOTE]
+====
+これらはすべて簡略化された`AdmissionReview`オブジェクトです。
+ポリシーのテストに関連するフィールドのみが使用されます。
+====
+
+
+=== ポリシーをテストする
+
+今、`kwctl`を使用してAppArmorプロファイルを指定せずにPodの作成をテストできます。
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-no-specific-apparmor-profile.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+----
+
+ポリシーはリクエストを受け入れ、次のような出力を生成します。
+
+[subs="+attributes",console]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": true
+}
+----
+
+ポリシーは`unconfined` AppArmorプロファイルを持つPodの作成を拒否します。
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-apparmor-unconfined.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "These AppArmor profiles are not allowed: [\"unconfined\"]"
+  }
+}
+----
+
+両方の場面で、設定を一切提供せずにポリシー*なし*を実行しました。
+https://github.com/kubewarden/psp-apparmor#configuration[ポリシーのドキュメント]によれば、これはデフォルト以外のプロファイルの使用を防ぐ結果になります。
+
+カスタム`nginx`プロファイルを使用しているPodもポリシーによって拒否されます。
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-apparmor-custom.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "These AppArmor profiles are not allowed: [\"localhost/nginx-custom\"]"
+  }
+}
+----
+
+デフォルトの動作を変更し、選択したAppArmorプロファイルを使用できるようにすることができます。
+
+[subs="+attributes",console]
+----
+$ kwctl run \
+    --request-path pod-req-apparmor-custom.json \
+    --settings-json '{"allowed_profiles": ["runtime/default", "localhost/nginx-custom"]}' \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4 \
+    | jq
+----
+
+今、リクエストは成功します。
+
+[subs="+attributes",console]
+----
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": true
+}
+----
+
+== 自動化
+
+https://github.com/bats-core/bats-core[bats]を使用してこれらのすべてのステップを自動化することができます。
+
+一連のテストを作成し、それらの実行を既存のCIおよびCDパイプラインに統合することができます。
+
+コマンドは`bats`テストに「ラップ」することができます。
+
+.バットテスト
+[%collapsible]
+======
+
+[,bash]
+----
+@test "all is good" {
+  run kwctl run \
+    --request-path pod-req-no-specific-apparmor-profile.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ $(expr "$output" : '.*"allowed":true.*') -ne 0 ]
+}
+
+@test "reject" {
+  run kwctl run \
+    --request-path pod-req-apparmor-custom.json \
+    registry://ghcr.io/kubewarden/policies/psp-apparmor:v0.1.4
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ $(expr "$output" : '.*"allowed":false.*') -ne 0 ]
+}
+----
+
+======
+
+`bats`コードがファイル`e2e.bats`にある場合、次のようにテストを実行できます。
+
+[subs="+attributes",console]
+----
+$ bats e2e.bats
+ ✓ all is good
+ ✓ reject
+
+2 tests, 0 failures
+----
+
+xref:tutorials/writing-policies/go/05-e2e-tests.adoc[この]セクションでは、ポリシーのエンドツーエンドテストの作成について詳しく説明しています。

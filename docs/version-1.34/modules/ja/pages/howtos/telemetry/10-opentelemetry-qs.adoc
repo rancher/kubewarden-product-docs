@@ -1,0 +1,143 @@
+include::partial$variables.adoc[]
+= OpenTelemetry クイックスタート
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 公式Kubernetes Helmチャートを使用して、サイドカーモードでOpenTelemetryコレクターを構成およびデプロイします。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "opentelemetry", "quick-start"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "opentelemetry", "OpenTelemetry", "クイックスタート"]
+:sidebar_label: OpenTelemetry
+:current-version: {page-origin-branch}
+
+https://opentelemetry.io/[OpenTelemetry]は、Cloud Native Computing Foundation (CNCF)の監視のためのフレームワークです。マイクロサービスがメトリクス、ログ、およびトレースを提供できるようにします。
+
+{project-name}のコンポーネントは、OpenTelemetry SDKを使用して、データをOpenTelemetryコレクター（エージェントと呼ばれる）に報告します。
+
+このガイドでは、公式Kubernetes Helmチャートを使用して、`sidecar`モードでOpenTelemetryコレクターをデプロイする方法を説明します。
+
+これはOpenTelemetryを使用したシンプルなデプロイメントパターンです。最終的なセットアップは次のようになります：
+
+* {short-project-name}スタック（ポリシーサーバー、コントローラー）の各PodにはOpenTelemetryサイドカーがあります。
+* サイドカーは、OpenTelemetryプロトコル（OTLP）を介して{short-project-name}コンポーネントからトレースおよび監視情報を受信します。
+* OpenTelemetryコレクター：
+ ** トレースイベントを中央のJaegerインスタンスに送信します。
+ ** 特定のポートでPrometheusメトリクスを公開します。
+
+{short-project-name} Helmチャートは、OpenTelemetryコレクターのすべての可能なデプロイメントシナリオをカバーしていません。{short-project-name}を構成して、OpenTelemetryコレクターにデータを送信することも可能です。そのシナリオに関するドキュメントは、xref:./40-custom-otel-collector.adoc[カスタム
+OpenTelemetryガイド]にあります。
+
+最初にKubernetesクラスターにOpenTelemetryをデプロイし、次のセクションでトレースとメトリクスに特に対処できるようにします。
+
+== Kubernetesクラスターのセットアップ
+
+[NOTE]
+====
+このセクションには、テレメトリのクイックスタート用のKubernetesクラスターを作成するための手順が記載されています。
+
+すでにKubernetesクラスターが利用可能な場合は、このセクションをスキップしても構いません。
+====
+
+https://minikube.sigs.k8s.io/docs/[minikube]を使用してテスト用のKubernetesクラスターを作成できます。
+
+Minikubeには多くのバックエンドがありますが、この場合はlibvirtに依存するhttps://minikube.sigs.k8s.io/docs/drivers/kvm2/[kvm2]ドライバーを使用できます。
+
+`libvirtd`が正しくマシン上で実行されていると仮定して、次のコマンドを発行します：
+
+[subs="+attributes",console]
+----
+minikube start --driver=kvm2
+----
+
+コマンドは、次のような出力を生成します。
+
+[subs="+attributes",console]
+----
+$ minikube start --driver=kvm2
+😄  minikube v1.23.2 on Opensuse-Leap 15.3
+✨  Using the kvm2 driver based on user configuration
+👍  Starting control plane node minikube in cluster minikube
+🔥  Creating kvm2 VM (CPUs=2, Memory=6000MB, Disk=20000MB) ...
+🐳  Preparing Kubernetes v1.22.2 on Docker 20.10.8 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+----
+
+クラスターが準備完了になったら、ガイドの残りの部分を続けることができます。
+
+=== Traefikをインストールする
+
+次のテレメトリガイドでは、Kubernetes `Ingress`リソースを使用してJaeger UIを公開する際に、https://traefik.io/traefik/[Traefik]をIngressコントローラーとして使用します。
+
+Helmチャートを使用してTraefikをインストールします。
+
+[,console]
+----
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+
+helm install --wait \
+  --namespace traefik \
+  --create-namespace \
+  traefik traefik/traefik
+----
+
+次のガイドでは、`Ingress`を使用して標準のKubernetesを作成し、`ingressClassName: traefik`を使用してJaeger Query UIをTraefikサービス経由でルーティングします。
+
+Traefikをインストールしたくない場合、トレースガイドではJaegerに直接アクセスするためのフォールバックとして`kubectl port-forward`を保持します。
+
+[#install-opentelemetry]
+== OpenTelemetryをインストールする
+
+[NOTE]
+====
+最新のサポートされているコンポーネントバージョンについては、xref:/reference/dependency-matrix.adoc[依存関係マトリックス]を参照してください。
+====
+
+OpenTelemetry Collectorサイドカーの自動注入をPolicyServerポッドに管理するために、https://github.com/open-telemetry/opentelemetry-operator[OpenTelemetry
+Operator]を使用します。
+
+OpenTelemetry Operatorは、クラスター内にhttps://cert-manager.io/docs/installation/[cert-manager]のインストールを必要とします。
+
+
+[subs="+attributes",console]
+----
+helm repo add jetstack https://charts.jetstack.io
+
+helm install --wait \
+    --namespace cert-manager \
+    --create-namespace \
+    --set crds.enabled=true \
+    --version 1.18.2 \
+    cert-manager jetstack/cert-manager
+----
+
+cert-managerが実行されていると、OpenTelemetryオペレーターHelmチャートをインストールできます。
+
+[NOTE]
+====
+
+執筆時点（2024年11月11日）で、最新のOpenTelemetryオペレーターのチャートバージョンは`0.65.0`です。
+
+====
+
+[subs="+attributes",console]
+----
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+
+helm install --wait \
+  --namespace open-telemetry \
+  --create-namespace \
+  --version 0.97.1 \
+  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
+  my-opentelemetry-operator open-telemetry/opentelemetry-operator
+----
+
+== OpenTelemetryの統合
+
+次の章に進んで、アプリケーションメトリクス（Prometheus統合を通じて）およびアプリケーショントレーシング（Jaeger統合を通じて）を有効にすることができます。

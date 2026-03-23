@@ -1,0 +1,48 @@
+include::partial$variables.adoc[]
+= Escrevendo {project-name} políticas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Desenvolva políticas de controlador de admissão expondo funcionalidades bem definidas por meio de uma API específica usando qualquer linguagem de programação suportada.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["escrevendo-políticas"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas"]
+:sidebar_label: Escrevendo Políticas
+:current-version: {page-origin-branch}
+
+Esta seção introduz {project-name} políticas usando analogias de computação tradicional.
+
+Uma política {short-project-name} é como um programa que realiza uma tarefa.
+Ela recebe os dados de entrada, realiza o processamento com esses dados e retorna um resultado.
+
+Os dados de entrada são solicitações de admissão do Kubernetes.
+O resultado do processamento é uma resposta de validação, que informa ao Kubernetes se deve aceitar, rejeitar ou modificar os dados de entrada, a solicitação de admissão.
+
+O componente https://github.com/kubewarden/policy-server[policy-server] de {short-project-name} realiza essas operações.
+
+O servidor de políticas não inclui nenhuma capacidade de processamento de dados.
+Você adiciona capacidades de processamento em tempo de execução com complementos.
+Esses complementos são as {short-project-name} políticas.
+
+Portanto, uma {short-project-name} política é como um https://en.wikipedia.org/wiki/Plug-in_%28computing%29[plug-in tradicional] do programa "servidor de políticas".
+
+Recapitulando:
+
+* As {short-project-name} políticas são plug-ins que expõem um conjunto de funcionalidades bem definidas (validar um objeto de solicitação do Kubernetes, validar as configurações de políticas fornecidas pelo usuário e outras funções) usando uma API bem definida.
+* O servidor de políticas é o programa "principal" que carrega os plug-ins (também conhecidos como políticas) e usa suas funcionalidades expostas para aceitar, rejeitar ou modificar solicitações do Kubernetes.
+
+Escrever {short-project-name} políticas consiste em escrever a lógica de negócios de validação e, em seguida, expô-la por meio de uma API bem definida.
+
+== Requisitos da linguagem de programação
+
+Você fornece {short-project-name} políticas como https://webassembly.org/[WebAssembly] binários.
+
+Os autores de políticas podem escrever políticas usando qualquer linguagem de programação que suporte WebAssembly como um alvo de compilação.
+A lista de linguagens suportadas está em constante evolução, https://github.com/appcypher/awesome-wasm-langs[esta página] fornece uma boa visão geral do cenário do WebAssembly.
+
+Atualmente, o WebAssembly não possui uma maneira oficial de compartilhar tipos de dados complexos entre o host e um convidado WebAssembly.
+Para superar essa limitação, {short-project-name} políticas utilizam o projeto https://github.com/wapc[waPC], que fornece um canal de comunicação bidirecional.
+
+Portanto, a linguagem de programação de sua escolha deve ter um SDK de convidado waPC disponível.
+Se esse não for o caso, sinta-se à vontade para entrar em contato.
+A equipe do projeto pode ajudá-lo a superar essa limitação.

@@ -1,0 +1,493 @@
+// This file was converted from Markdown to AsciiDoc.
+
+include::partial$variables.adoc[]
+= kwctl CLI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: kwctl CLI
+:description: Erforschen Sie das \`kwctl` Kommandozeilenwerkzeug zur Verwaltung von {project-name} Richtlinien und zur Durchführung von Aufgaben wie das Laden von Richtlinien.
+:keywords: CLI, Referenz, kwctl
+:doc-persona: kubewarden-operator
+:doc-type: Referenz
+:doc-topic: Betriebsanleitung
+
+== Kommandozeilenhilfe für `kwctl`
+
+Dieses Dokument enthält den Hilfetext für das `kwctl` Kommandozeilenwerkzeug.
+
+*Überblick über den Befehl:*
+
+* <<kwctl,`kwctl`>>
+* <<kwctl-annotate,`kwctl annotate`>>
+* <<kwctl-bench,`kwctl bench`>>
+* <<kwctl-completions,`kwctl completions`>>
+* <<kwctl-digest,`kwctl digest`>>
+* <<kwctl-docs,`kwctl docs`>>
+* <<kwctl-info,`kwctl info`>>
+* <<kwctl-inspect,`kwctl inspect`>>
+* <<kwctl-load,`kwctl load`>>
+* <<kwctl-policies,`kwctl policies`>>
+* <<kwctl-pull,`kwctl pull`>>
+* <<kwctl-push,`kwctl push`>>
+* <<kwctl-rm,`kwctl rm`>>
+* <<kwctl-run,`kwctl run`>>
+* <<kwctl-save,`kwctl save`>>
+* <<kwctl-scaffold,`kwctl scaffold`>>
+* <<kwctl-scaffold-admission-request,`kwctl scaffold admission-request`>>
+* <<kwctl-scaffold-artifacthub,`kwctl scaffold artifacthub`>>
+* <<kwctl-scaffold-manifest,`kwctl scaffold manifest`>>
+* <<kwctl-scaffold-vap,`kwctl scaffold vap`>>
+* <<kwctl-scaffold-verification-config,`kwctl scaffold verification-config`>>
+* <<kwctl-verify,`kwctl verify`>>
+
+[[kwctl]]
+=== `kwctl`
+
+Werkzeug zur Verwaltung von {project-name} Richtlinien
+
+*Verwendung:* `kwctl [OPTIONS] <COMMAND>`
+
+==== Unterbefehle
+
+* `annotate` — Fügt {short-project-name} Metadaten zu einem WebAssembly-Modul hinzu
+* `bench` — Führt Benchmarktests an einer {short-project-name} Richtlinie durch
+* `completions` — Generiert Shell-Vervollständigungen
+* `digest` — Ruft den Digest aus dem OCI-Manifest einer Richtlinie ab
+* `docs` — Generiert die Markdown-Dokumentation für kwctl-Befehle
+* `info` — Zeigt Systeminformationen an
+* `inspect` — Untersucht die {short-project-name} Richtlinie
+* `load` — Lädt Richtlinien aus einer tar.gz-Datei
+* `policies` — Listet alle heruntergeladenen Richtlinien auf
+* `pull` — Holt eine {short-project-name} Richtlinie von einer angegebenen URI
+* `push` — Schiebt eine {short-project-name} Richtlinie in ein OCI-Registry
+* `rm` — Entfernt eine {short-project-name} Richtlinie aus dem Speicher
+* `run` — Führt eine {short-project-name} Richtlinie von einer gegebenen URI aus
+* `save` — Speichert Richtlinien in einer tar.gz-Datei
+* `scaffold` — Erstellt eine Kubernetes-Ressource oder Konfigurationsdatei
+* `verify` — Überprüft eine {short-project-name} Richtlinie von einer gegebenen URI mit Sigstore
+
+==== Optionen
+
+* `-v`, `--verbose <VERBOSE>` — Erhöht die Ausführlichkeit
+* `--no-color <NO-COLOR>` — Deaktiviert die farbige Ausgabe
+
+[[kwctl-annotate]]
+=== `kwctl annotate`
+
+Fügen Sie {short-project-name} Metadaten zu einem WebAssembly-Modul hinzu
+
+*Verwendung:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
+
+==== Argumente
+
+* `<WASM-PATH>` — Pfad zum zu annotierenden WebAssembly-Modul
+
+==== Optionen
+
+* `-m`, `--metadata-path <PATH>` — Datei, die die Metadaten enthält
+* `-o`, `--output-path <PATH>` — Ausgabedatei
+* `-u`, `--usage-path <PATH>` — Datei, die die Nutzungsinformationen der Richtlinie enthält
+
+[[kwctl-bench]]
+=== `kwctl bench`
+
+Führt Benchmarktests an einer {short-project-name} Richtlinie durch.
+
+Die Richtlinie kann auf folgende Weise angegeben werden:
+- URI: z.B. `registry://ghcr.io/kubewarden/policies/psp-policy:latest` oder `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
+- SHA-Präfix: z.B. `c3b80a10f9c3` (erfordert, dass die Richtlinie bereits abgerufen wurde)
+- Lokale WASM-Datei: z.B. `file://home/tux/new-policy/psp-policy.wasm`
+- Lokale YAML-Datei: z.B. `file://home/tux/cluster-admission-policy.yaml` (enthält Deklarationen von {short-project-name} benutzerdefinierten Ressourcen wie `ClusterAdmissionPolicy`, `AdmissionPolicy` usw.)
+
+Standardverhalten:
+Wenn das Schema weggelassen wird, wird `file://` angenommen, das im aktuellen Verzeichnis verwurzelt ist.
+
+Hinweise zu {short-project-name} benutzerdefinierten Ressourcen:
+- Flags `--request-path`, `--settings-path` und `--settings-json` werden ignoriert; Einstellungen werden aus der Definition der benutzerdefinierten Ressource gelesen.
+- Das `--execution-mode` Flag gilt für alle Richtlinien in der YAML-Datei.
+- Das `--raw` Flag kann nicht verwendet werden, da die benutzerdefinierten Ressourcen von {short-project-name} `raw` Richtlinien nicht unterstützen.
+
+Nur die folgenden Attribute der Definition der benutzerdefinierten Ressource (CRD) werden bewertet: +
+- Richtlinienmodul +
+- Richtlinieneinstellungen +
+- Kontextabhängige Ressourcen, auf die die Richtlinie zugreifen kann
+
+Andere Felder, wie `rules`, `matchConditions`, `objectSelector` und `namespaceSelector`, werden ignoriert.
+
+Eine YAML-Datei kann mehrere Deklarationen von benutzerdefinierten Ressourcen enthalten. In diesem Fall bewertet `kwctl` jede Richtlinie in der Datei mit derselben Anfrage während jeder Bewertung.
+
+*Verwendung:* `kwctl bench [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== Argumente
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Richtlinien-URI, SHA-Präfix oder YAML-Datei, die {short-project-name} Richtlinienressourcen enthält. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
+
+==== Optionen
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Gewährt Zugriff auf die Kubernetes-Ressourcen, die im `contextAwareResources` Abschnitt der Richtlinie definiert sind. Warnung: Überprüfen Sie die Liste der Ressourcen sorgfältig, um Missbrauch zu vermeiden. Standardmäßig deaktiviert
+* `--cert-email <VALUE>` — Erwartete E-Mail im Fulcio-Zertifikat
+* `--cert-oidc-issuer <VALUE>` — Erwarteter OIDC-Issuer in Fulcio-Zertifikaten
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — Deaktiviert die Nutzung des wasmtime-Caches
+* `--docker-config-json-path <PATH>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für die Registry anzugeben
+* `--dump-results-to-disk <DUMP_RESULTS_TO_DISK>` — Legt Ergebnisse in target/tiny-bench/label/.. ab, wenn das Ziel gefunden werden kann. Wird verwendet, um vorherige Durchläufe zu vergleichen
+* `-e`, `--execution-mode <MODE>` — Die Laufzeit, die verwendet werden soll, um diese Richtlinie auszuführen +
+  Mögliche Werte: `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — Erwarteter GitHub-Besitzer in den in CD-Pipelines generierten Zertifikaten
+* `--github-repo <VALUE>` — Erwartetes GitHub-Repository in den in CD-Pipelines generierten Zertifikaten
+* `--measurement-time <SECONDS>` — Wie lange der Benchmark 'laufen sollte', num_samples hat Vorrang, sodass das Benchmarking länger dauert, um num_samples zu sammeln, wenn der zu benchmarkende Code langsamer ist als dieses zulässige Zeitlimit
+* `--num-resamples <NUM>` — Wie viele Resamples durchgeführt werden sollen
+* `--num-samples <NUM>` — Wie viele Resamples durchgeführt werden sollen. Empfohlen mindestens 50, über 100 scheint kein signifikant anderes Ergebnis zu liefern.
+* `--raw <RAW>` — Validiere eine rohe Anfrage +
+  Standardwert: `false`
+* `--record-host-capabilities-interactions <FILE>` — Protokolliere alle Richtlinien- und Hostfähigkeiten-Kommunikationen in die angegebene Datei. Nützlich, um später mit dem Flag '--replay-host-capabilities-interactions' kombiniert zu werden
+* `--replay-host-capabilities-interactions <FILE>` — Während des Austauschs von Richtlinien und Hostfähigkeiten gibt der Host die Antworten zurück, die in der bereitgestellten Datei gefunden wurden. Dies ist nützlich, um Richtlinien auf reproduzierbare Weise zu testen, da keine externen Interaktionen mit OCI-Registrierungen, DNS, Kubernetes durchgeführt werden.
+* `-r`, `--request-path <PATH>` — Datei, die das Kubernetes-Zulassungsanfrageobjekt im JSON-Format enthält
+* `--settings-json <VALUE>` — JSON-Zeichenfolge, die die Einstellungen für diese Richtlinie enthält
+* `-s`, `--settings-path <PATH>` — Datei, die die Einstellungen für diese Richtlinie enthält
+* `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst.
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
+* `--verification-config-path <PATH>` — YAML-Datei, die Informationen zur Verifizierungskonfiguration enthält (Signaturen, öffentliche Schlüssel...)
+* `-k`, `--verification-key <PATH>` — Pfad zum Schlüssel, der zur Überprüfung der Richtlinie verwendet wird. Kann mehrfach wiederholt werden
+* `--warm-up-time <SECONDS>` — Wie lange die Benchmarks aufwärmen sollen
+
+[[kwctl-completions]]
+=== `kwctl completions`
+
+Generiere Shell-Vervollständigungen
+
+*Verwendung:* `kwctl completions --shell <VALUE>`
+
+==== Optionen
+
+* `-s`, `--shell <VALUE>` — Shell-Typ +
+  Mögliche Werte: `bash`, `elvish`, `fish`, `powershell`, `zsh`
+
+[[kwctl-digest]]
+=== `kwctl digest`
+
+Ruft den Digest aus dem OCI-Manifest einer Richtlinie ab
+
+*Verwendung:* `kwctl digest [OPTIONS] <uri>`
+
+==== Argumente
+
+* `<URI>` — Richtlinien-URI
+
+==== Optionen
+
+* `--docker-config-json-path <PATH>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für die Registry anzugeben
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+
+[[kwctl-docs]]
+=== `kwctl docs`
+
+Generiert die Markdown-Dokumentation für kwctl-Befehle
+
+*Verwendung:* `kwctl docs --output <FILE>`
+
+==== Optionen
+
+* `-o`, `--output <FILE>` — Pfad, wo die Dokumentationsdatei gespeichert wird
+
+[[kwctl-info]]
+=== `kwctl info`
+
+Zeige Systeminformationen an
+
+*Verwendung:* `kwctl info`
+
+[[kwctl-inspect]]
+=== `kwctl inspect`
+
+Untersuche die {short-project-name} Richtlinie
+
+*Verwendung:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
+
+==== Argumente
+
+* `<URI_OR_SHA_PREFIX>` — Richtlinien-URI oder SHA-Präfix. Unterstützte Schemes: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
+
+==== Optionen
+
+* `--docker-config-json-path <PATH>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für die Registry anzugeben
+* `-o`, `--output <FORMAT>` — Ausgabeformat +
+  Mögliche Werte: `yaml`
+* `--show-signatures <SHOW-SIGNATURES>` — Zeige Sigstore-Signaturen an
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+
+[[kwctl-load]]
+=== `kwctl load`
+
+Lädt Richtlinien aus einer tar.gz-Datei
+
+*Verwendung:* `kwctl load --input <input>`
+
+==== Optionen
+
+* `--input <INPUT>` — Lädt Richtlinien aus dem Tarball
+
+[[kwctl-policies]]
+=== `kwctl policies`
+
+Listet alle heruntergeladenen Richtlinien auf
+
+*Verwendung:* `kwctl policies`
+
+[[kwctl-pull]]
+=== `kwctl pull`
+
+Holt eine {short-project-name} Richtlinie von einer gegebenen URI
+
+*Verwendung:* `kwctl pull [OPTIONS] <uri>`
+
+==== Argumente
+
+* `<URI>` — Richtlinien-URI. Unterstützte Schemes: registry://, https://, file://
+
+==== Optionen
+
+* `--cert-email <VALUE>` — Erwartete E-Mail im Fulcio-Zertifikat
+* `--cert-oidc-issuer <VALUE>` — Erwarteter OIDC-Issuer in Fulcio-Zertifikaten
+* `--docker-config-json-path <DOCKER_CONFIG>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für das Registry anzugeben.
+* `--github-owner <VALUE>` — Erwarteter GitHub-Besitzer in den in CD-Pipelines generierten Zertifikaten
+* `--github-repo <VALUE>` — Erwartetes GitHub-Repository in den in CD-Pipelines generierten Zertifikaten
+* `-o`, `--output-path <PATH>` — Ausgabedatei. Wenn nicht angegeben, wird sie im {short-project-name} Store heruntergeladen
+* `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst.
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
+* `--verification-config-path <PATH>` — YAML-Datei, die Informationen zur Verifizierungskonfiguration enthält (Signaturen, öffentliche Schlüssel...)
+* `-k`, `--verification-key <PATH>` — Pfad zum Schlüssel, der zur Überprüfung der Richtlinie verwendet wird. Kann mehrfach wiederholt werden
+
+[[kwctl-push]]
+=== `kwctl push`
+
+Überträgt eine {short-project-name} Richtlinie an das OCI-Registry
+
+*Verwendung:* `kwctl push [OPTIONS] <policy> <uri>`
+
+Die in den Metadaten der Richtlinie gefundenen Annotationen werden Teil des OCI-Manifests sein.
+Die mehrzeiligen Annotationen werden übersprungen, da sie nicht mit der OCI-Spezifikation kompatibel sind.
+Die Annotation 'io.kubewarden.policy.source' wird als 'org.opencontainers.image.source' propagiert, um Tools wie renovatebot zu ermöglichen, Richtlinienaktualisierungen zu erkennen.
+
+==== Argumente
+
+* `<POLICY>` — Richtlinie zum Pushen. Kann der Pfad zu einer lokalen Datei, eine Richtlinie-URI oder das SHA-Präfix einer Richtlinie im Store sein.
+* `<URI>` — Richtlinie-URI. Unterstützte Schemes: registry://
+
+==== Optionen
+
+* `--docker-config-json-path <PATH>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für das Registry anzugeben
+* `-f`, `--force <FORCE>` — Auch eine nicht annotierte Richtlinie pushen
+* `-o`, `--output <PATH>` — Ausgabeformat +
+  Standardwert: `text` +
+  Mögliche Werte: `text`, `json`
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+
+[[kwctl-rm]]
+=== `kwctl rm`
+
+Entfernt eine {short-project-name} Richtlinie aus dem Store
+
+*Verwendung:* `kwctl rm <uri_or_sha_prefix>`
+
+==== Argumente
+
+* `<URI_OR_SHA_PREFIX>` — Richtlinie-URI oder SHA-Präfix.
+
+[[kwctl-run]]
+=== `kwctl run`
+
+Führen Sie eine oder mehrere {short-project-name} Richtlinien lokal aus.
+
+Die Richtlinie kann auf folgende Weise angegeben werden:
+- URI: z.B. `registry://ghcr.io/kubewarden/policies/psp-policy:latest` oder `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
+- SHA-Präfix: z.B. `c3b80a10f9c3` (erfordert, dass die Richtlinie bereits abgerufen wurde)
+- Lokale WASM-Datei: z.B. `file://home/tux/new-policy/psp-policy.wasm`
+- Lokale YAML-Datei: z.B. `file://home/tux/cluster-admission-policy.yaml` (enthält Deklarationen von {short-project-name} benutzerdefinierten Ressourcen wie `ClusterAdmissionPolicy`, `AdmissionPolicy` usw.)
+
+Standardverhalten:
+Wenn das Schema weggelassen wird, wird `file://` angenommen, das im aktuellen Verzeichnis verwurzelt ist.
+
+Hinweise zu {short-project-name} benutzerdefinierten Ressourcen:
+- Flags `--request-path`, `--settings-path` und `--settings-json` werden ignoriert; Einstellungen werden aus der Definition der benutzerdefinierten Ressource gelesen.
+- Das `--execution-mode` Flag gilt für alle Richtlinien in der YAML-Datei.
+- Das `--raw` Flag kann nicht verwendet werden, da die benutzerdefinierten Ressourcen von {short-project-name} `raw` Richtlinien nicht unterstützen.
+
+Nur die folgenden Attribute der Definition der benutzerdefinierten Ressource (CRD) werden bewertet:
+- Richtlinienmodul
+- Richtlinieneinstellungen
+- Kontextabhängige Ressourcen, auf die die Richtlinie zugreifen kann
+
+Andere Felder, wie `rules`, `matchConditions`, `objectSelector` und `namespaceSelector`, werden ignoriert.
+
+Eine YAML-Datei kann mehrere Deklarationen von benutzerdefinierten Ressourcen enthalten. In diesem Fall bewertet `kwctl` jede Richtlinie in der Datei mit derselben Anfrage während jeder Bewertung.
+
+*Verwendung:* `kwctl run [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== Argumente
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy-URI, SHA-Präfix oder YAML-Datei, die {short-project-name} Richtlinienressourcen enthält. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
+
+==== Optionen
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Gewährt Zugriff auf die Kubernetes-Ressourcen, die im `contextAwareResources` Abschnitt der Richtlinie definiert sind. Warnung: Überprüfen Sie die Liste der Ressourcen sorgfältig, um Missbrauch zu vermeiden. Standardmäßig deaktiviert
+* `--cert-email <VALUE>` — Erwartete E-Mail im Fulcio-Zertifikat
+* `--cert-oidc-issuer <VALUE>` — Erwarteter OIDC-Issuer in Fulcio-Zertifikaten
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — Deaktiviert die Nutzung des wasmtime-Caches
+* `--docker-config-json-path <PATH>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für das Registry anzugeben
+* `-e`, `--execution-mode <MODE>` — Die Laufzeit, die verwendet werden soll, um diese Richtlinie auszuführen +
+  Mögliche Werte: `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — Erwarteter GitHub-Besitzer in den in CD-Pipelines generierten Zertifikaten
+* `--github-repo <VALUE>` — Erwartetes GitHub-Repository in den in CD-Pipelines generierten Zertifikaten
+* `--raw <RAW>` — Validiere eine rohe Anfrage +
+  Standardwert: `false`
+* `--record-host-capabilities-interactions <FILE>` — Protokolliere die gesamte Kommunikation der Richtlinien- und Hostfähigkeiten in die angegebene Datei. Nützlich, um später mit dem Flag '--replay-host-capabilities-interactions' kombiniert zu werden
+* `--replay-host-capabilities-interactions <FILE>` — Während des Austauschs von Richtlinien und Hostfähigkeiten gibt der Host die Antworten zurück, die in der bereitgestellten Datei gefunden wurden. Dies ist nützlich, um Richtlinien auf reproduzierbare Weise zu testen, da keine externen Interaktionen mit OCI-Registries, DNS, Kubernetes durchgeführt werden.
+* `-r`, `--request-path <PATH>` — Datei, die das Kubernetes-Zulassungsanfrageobjekt im JSON-Format enthält
+* `--settings-json <VALUE>` — JSON-Zeichenfolge, die die Einstellungen für diese Richtlinie enthält
+* `-s`, `--settings-path <PATH>` — Datei, die die Einstellungen für diese Richtlinie enthält
+* `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
+* `--verification-config-path <PATH>` — YAML-Datei, die Informationen zur Verifizierungskonfiguration enthält (Signaturen, öffentliche Schlüssel...)
+* `-k`, `--verification-key <PATH>` — Pfad zum Schlüssel, der zur Überprüfung der Richtlinie verwendet wird. Kann mehrfach wiederholt werden
+
+[[kwctl-save]]
+=== `kwctl save`
+
+Richtlinien in eine tar.gz-Datei speichern
+
+*Verwendung:* `kwctl save --output <FILE> <policies>...`
+
+==== Argumente
+
+* `<POLICIES>` — Liste der zu speichernden Richtlinien
+
+==== Optionen
+
+* `-o`, `--output <FILE>` — Pfad, wo die Datei gespeichert wird
+
+[[kwctl-scaffold]]
+=== `kwctl scaffold`
+
+Erstellen Sie eine Kubernetes-Ressource oder eine Konfigurationsdatei
+
+*Verwendung:* `kwctl scaffold <COMMAND>`
+
+==== Unterbefehle
+
+* `admission-request` — Erstellen Sie ein AdmissionRequest-Objekt
+* `artifacthub` — Erstellen Sie eine artifacthub-pkg.yml-Datei aus einer metadata.yml-Datei
+* `manifest` — Geben Sie ein Kubernetes-Ressourcenmanifest aus
+* `vap` — Konvertieren Sie ein Kubernetes `ValidatingAdmissionPolicy` in ein {short-project-name} `ClusterAdmissionPolicy`
+* `verification-config` — Geben Sie eine Standard-Sigstore-Verifizierungskonfigurationsdatei aus
+
+[[kwctl-scaffold-admission-request]]
+=== `kwctl scaffold admission-request`
+
+Erstellen Sie ein AdmissionRequest-Objekt
+
+*Verwendung:* `kwctl scaffold admission-request [OPTIONS] --operation <TYPE>`
+
+==== Optionen
+
+* `--object <PATH>` — Die Datei, die das neue Objekt enthält, das zugelassen wird
+* `--old-object <PATH>` — Die Datei, die das vorhandene Objekt enthält
+* `-o`, `--operation <TYPE>` — {short-project-name} benutzerdefinierter Ressourcentyp +
+  Mögliche Werte: `CREATE`
+
+[[kwctl-scaffold-artifacthub]]
+=== `kwctl scaffold artifacthub`
+
+Erstellen Sie eine artifacthub-pkg.yml-Datei aus einer metadata.yml-Datei
+
+*Verwendung:* `kwctl scaffold artifacthub [OPTIONS]`
+
+==== Optionen
+
+* `-m`, `--metadata-path <PATH>` — Datei, die die Metadaten der Richtlinie enthält
+* `-o`, `--output <FILE>` — Pfad, in dem die artifact-pkg.yml-Datei gespeichert wird
+* `-q`, `--questions-path <PATH>` — Datei, die den Fragen-ui-Inhalt der Richtlinie enthält
+* `-v`, `--version <VALUE>` — Semver-Version der Richtlinie
+
+[[kwctl-scaffold-manifest]]
+=== `kwctl scaffold manifest`
+
+Geben Sie ein Kubernetes-Ressourcenmanifest aus
+
+*Verwendung:* `kwctl scaffold manifest [OPTIONS] --type <VALUE> <uri_or_sha_prefix>`
+
+==== Argumente
+
+* `<URI_OR_SHA_PREFIX>` — Richtlinien-URI oder SHA-Präfix. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
+
+==== Optionen
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Verwendet die Metadaten der Richtlinie, um zu definieren, auf welche Kubernetes-Ressourcen die Richtlinie zugreifen kann. Warnung: Überprüfen Sie die Liste der Ressourcen sorgfältig, um Missbrauch zu vermeiden. Standardmäßig deaktiviert
+* `--cert-email <VALUE>` — Erwartete E-Mail im Fulcio-Zertifikat
+* `--cert-oidc-issuer <VALUE>` — Erwarteter OIDC-Issuer in Fulcio-Zertifikaten
+* `--docker-config-json-path <DOCKER_CONFIG>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für das Registry anzugeben
+* `--fulcio-cert-path <PATH>` — Pfad zum Fulcio-Zertifikat. Kann mehrfach wiederholt werden
+* `--github-owner <VALUE>` — Erwarteter GitHub-Besitzer in den in CD-Pipelines generierten Zertifikaten
+* `--github-repo <VALUE>` — Erwartetes GitHub-Repository in den in CD-Pipelines generierten Zertifikaten
+* `--rekor-public-key-path <PATH>` — Pfad zum Rekor-öffentlichen Schlüssel. Kann mehrfach wiederholt werden
+* `--settings-json <VALUE>` — JSON-Zeichenfolge, die die Einstellungen für diese Richtlinie enthält
+* `-s`, `--settings-path <PATH>` — Datei, die die Einstellungen für diese Richtlinie enthält
+* `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+* `--title <VALUE>` — Titel der Richtlinie
+* `-t`, `--type <VALUE>` — {short-project-name} benutzerdefinierter Ressourcentyp +
+  Mögliche Werte: `ClusterAdmissionPolicy`, `AdmissionPolicy`
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
+* `--verification-config-path <PATH>` — YAML-Datei, die Informationen zur Verifizierungskonfiguration enthält (Signaturen, öffentliche Schlüssel...)
+* `-k`, `--verification-key <PATH>` — Pfad zum Schlüssel, der zur Überprüfung der Richtlinie verwendet wird. Kann mehrfach wiederholt werden
+
+[[kwctl-scaffold-vap]]
+=== `kwctl scaffold vap`
+
+Konvertieren Sie ein Kubernetes `ValidatingAdmissionPolicy` in ein {short-project-name} `ClusterAdmissionPolicy`
+
+*Verwendung:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
+
+==== Optionen
+
+* `-b`, `--binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml>` — Die Datei, die die Definition der ValidatingAdmissionPolicyBinding enthält
+* `--cel-policy <URI>` — Das CEL-Richtlinienmodul, das verwendet werden soll +
+  Standardwert: `ghcr.io/kubewarden/policies/cel-policy:latest`
+* `-p`, `--policy <VALIDATING-ADMISSION-POLICY.yaml>` — Die Datei, die die Definition der ValidatingAdmissionPolicy enthält
+
+[[kwctl-scaffold-verification-config]]
+=== `kwctl scaffold verification-config`
+
+Geben Sie eine Standardkonfigurationsdatei zur Überprüfung von Sigstore aus
+
+*Verwendung:* `kwctl scaffold verification-config`
+
+[[kwctl-verify]]
+=== `kwctl verify`
+
+Überprüfen Sie eine {short-project-name} Richtlinie von einer gegebenen URI unter Verwendung von Sigstore
+
+*Verwendung:* `kwctl verify [OPTIONS] <uri>`
+
+==== Argumente
+
+* `<URI>` — Richtlinien-URI. Unterstützte Schemes: registry://
+
+==== Optionen
+
+* `--cert-email <VALUE>` — Erwartete E-Mail im Fulcio-Zertifikat
+* `--cert-oidc-issuer <VALUE>` — Erwarteter OIDC-Issuer in Fulcio-Zertifikaten
+* `--docker-config-json-path <PATH>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für die Registry anzugeben
+* `--github-owner <VALUE>` — Erwarteter GitHub-Besitzer in den in CD-Pipelines generierten Zertifikaten
+* `--github-repo <VALUE>` — Erwartetes GitHub-Repository in den in CD-Pipelines generierten Zertifikaten
+* `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst
+* `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
+* `--verification-config-path <PATH>` — YAML-Datei, die Informationen zur Verifizierungskonfiguration enthält (Signaturen, öffentliche Schlüssel...)
+* `-k`, `--verification-key <PATH>` — Pfad zum Schlüssel, der zur Überprüfung der Richtlinie verwendet wird. Kann mehrfach wiederholt werden
+
+'''
+
+Dieses Dokument wurde automatisch von https://crates.io/crates/clap-markdown[`clap-markdown`] generiert.

@@ -1,0 +1,489 @@
+include::partial$variables.adoc[]
+= 编写验证逻辑
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 学习如何通过提取传入有效负载中的相关信息并创建设置对象来编写和测试 Go 中的验证逻辑。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "validation-logic"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "golang", "go"]
+:sidebar_label: 验证逻辑
+:sidebar_position: 32
+:current-version: {page-origin-branch}
+
+验证逻辑应位于 `validate.go` 文件中。
+
+您的验证逻辑需要：
+
+* 从传入的 `payload` 对象中提取相关信息。
+* 根据输入和策略设置返回响应。
+
+传入的有效负载是一个 JSON 对象，描述在xref:reference/spec/03-validating-policies.adoc[本文件]中，您可以通过两种方式从中获取数据：
+
+. 将 JSON 数据解组为 Go 类型。
+. 执行 JSON 查询（类似于 https://stedolan.github.io/jq/[`jq`]）。
+
+本节文档重点介绍第一种方法，使用 Go 类型。
+第二种方法的描述在后面的 xref:tutorials/writing-policies/go/09-validation-with-queries.adoc[使用查询的验证] 部分中。
+
+[NOTE]
+====
+
+依赖 Kubernetes 对象，而不是进行类似 jq 的搜索，会导致生成更大的 WebAssembly 模块。
+使用 Kubernetes 对象的策略大约为 1.5&nbsp;MB，而使用 `gjson` 的策略大约为 300&nbsp;KB。
+
+除了大小，使用 Kubernetes 对象的策略在第一次执行时需要更多时间。
+后续调用很快，因为 {project-name} 使用了 Wasmtime 的缓存功能。
+第一次执行可能需要大约 20 秒 `kwctl`，而后续执行需要 1 到 2 秒。
+因此，{short-project-name} 策略服务器的启动时间较慢，但随后策略评估时间通常不受使用 Kubernetes 对象的影响。
+====
+
+
+== `validate` 函数
+
+由脚手架模板提供的策略在 `validate.go` 中已经包含 `validate` 函数。
+您需要对其进行一些更改以完成本教程。
+
+完成时，函数应如下所示：
+
+[,go]
+----
+func validate(payload []byte) ([]byte, error) {
+    // NOTE 1
+    // Create a ValidationRequest instance from the incoming payload
+    validationRequest := kubewarden_protocol.ValidationRequest{}
+    err := json.Unmarshal(payload, &validationRequest)
+    if err != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(err.Error()),
+            kubewarden.Code(400))
+    }
+
+    // NOTE 2
+    // Create a Settings instance from the ValidationRequest object
+    settings, err := NewSettingsFromValidationReq(&validationRequest)
+    if err != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(err.Error()),
+            kubewarden.Code(400))
+    }
+
+    // NOTE 3
+    // Access the **raw** JSON that describes the object
+    podJSON := validationRequest.Request.Object
+
+    // NOTE 4
+    // Try to create a Pod instance using the RAW JSON we got from the
+    // ValidationRequest.
+    pod := &corev1.Pod{}
+    if err := json.Unmarshal([]byte(podJSON), pod); err != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(
+                fmt.Sprintf("Cannot decode Pod object: %s", err.Error())),
+            kubewarden.Code(400))
+    }
+
+    logger.DebugWithFields("validating pod object", func(e onelog.Entry) {
+        e.String("name", pod.Metadata.Name)
+        e.String("namespace", pod.Metadata.Namespace)
+    })
+
+    // NOTE 5
+    for label, value := range pod.Metadata.Labels {
+        if err := validateLabel(label, value, &settings); err != nil {
+            return kubewarden.RejectRequest(
+                kubewarden.Message(err.Error()),
+                kubewarden.NoCode)
+        }
+    }
+
+    return kubewarden.AcceptRequest()
+}
+----
+
+代码包含 `NOTE` 个部分：
+
+. 通过反序列化 JSON 有效负载来创建 `kubewarden_protocol.ValidationRequest`。
+. 通过使用您在 `settings.go` 文件中之前定义的函数来创建 `Settings` 对象。
+. 访问属于 `ValidationRequest` 的 Pod 的原始 JSON 表示。
+. 反序列化 Pod 对象。
+. 遍历 Pod 的标签。
+您使用一个名为 `validateLabel` 的新函数来识别违反策略的标签。
+
+您还需要在 `validate.go` 文件中定义 `validateLabel` 函数：
+
+[,go]
+----
+func validateLabel(label, value string, settings *Settings) error {
+    if settings.DeniedLabels.Contains(label) {
+        return fmt.Errorf("Label %s is on the deny list", label)
+    }
+
+    regExp, found := settings.ConstrainedLabels[label]
+    if found {
+        // This is a constrained label
+        if !regExp.Match([]byte(value)) {
+            return fmt.Errorf("The value of %s doesn't pass user-defined constraint", label)
+        }
+    }
+
+    return nil
+}
+----
+
+== 测试验证代码
+
+现在您可以编写单元测试以检查验证代码的行为。
+在 `validate_test.go` 文件中找到测试。
+
+您应该替换脚手架文件的内容以匹配以下内容：
+
+.`validate_test.go`
+[%collapsible]
+======
+
+[,go]
+----
+package main
+
+import (
+    "regexp"
+    "testing"
+
+    "encoding/json"
+
+    mapset "github.com/deckarep/golang-set/v2"
+    corev1 "github.com/kubewarden/k8s-objects/api/core/v1"
+    metav1 "github.com/kubewarden/k8s-objects/apimachinery/pkg/apis/meta/v1"
+    kubewarden_protocol "github.com/kubewarden/policy-sdk-go/protocol"
+    kubewarden_testing "github.com/kubewarden/policy-sdk-go/testing"
+)
+
+func TestValidateLabel(t *testing.T) {
+    // NOTE 1
+    cases := []struct {
+        podLabels         map[string]string
+        deniedLabels      mapset.Set[string]
+        constrainedLabels map[string]*RegularExpression
+        expectedIsValid   bool
+    }{
+        {
+            // ➀
+            // Pod has no labels -> should be accepted
+            podLabels:         map[string]string{},
+            deniedLabels:      mapset.NewThreadUnsafeSet[string]("owner"),
+            constrainedLabels: map[string]*RegularExpression{},
+            expectedIsValid:   true,
+        },
+        {
+            // ➁
+            // Pod has labels, none is denied -> should be accepted
+            podLabels: map[string]string{
+                "hello": "world",
+            },
+            deniedLabels:      mapset.NewThreadUnsafeSet[string]("owner"),
+            constrainedLabels: map[string]*RegularExpression{},
+            expectedIsValid:   true,
+        },
+        {
+            // ➂
+            // Pod has labels, one is denied -> should be rejected
+            podLabels: map[string]string{
+                "hello": "world",
+            },
+            deniedLabels:      mapset.NewThreadUnsafeSet[string]("hello"),
+            constrainedLabels: map[string]*RegularExpression{},
+            expectedIsValid:   false,
+        },
+        {
+            // ➃
+            // Pod has labels, one has constraint that is respected -> should be accepted
+            podLabels: map[string]string{
+                "cc-center": "team-123",
+            },
+            deniedLabels: mapset.NewThreadUnsafeSet[string]("hello"),
+            constrainedLabels: map[string]*RegularExpression{
+                "cc-center": {
+                    Regexp: regexp.MustCompile(`+team-\d++`),
+                },
+            },
+            expectedIsValid: true,
+        },
+        {
+            // ➄
+            // Pod has labels, one has constraint that are not respected -> should be rejected
+            podLabels: map[string]string{
+                "cc-center": "team-kubewarden",
+            },
+            deniedLabels: mapset.NewThreadUnsafeSet[string]("hello"),
+            constrainedLabels: map[string]*RegularExpression{
+                "cc-center": {
+                    Regexp: regexp.MustCompile(`+team-\d++`),
+                },
+            },
+            expectedIsValid: false,
+        },
+        {
+            // ➅
+            // Settings have a constraint, pod doesn't have this label -> should be rejected
+            podLabels: map[string]string{
+                "owner": "team-kubewarden",
+            },
+            deniedLabels: mapset.NewThreadUnsafeSet[string]("hello"),
+            constrainedLabels: map[string]*RegularExpression{
+                "cc-center": {
+                    Regexp: regexp.MustCompile(`+team-\d++`),
+                },
+            },
+            expectedIsValid: false,
+        },
+    }
+
+    // NOTE 2
+    for _, testCase := range cases {
+        settings := Settings{
+            DeniedLabels:      testCase.deniedLabels,
+            ConstrainedLabels: testCase.constrainedLabels,
+        }
+
+        pod := corev1.Pod{
+            Metadata: &metav1.ObjectMeta{
+                Name:      "test-pod",
+                Namespace: "default",
+                Labels:    testCase.podLabels,
+            },
+        }
+
+        payload, err := kubewarden_testing.BuildValidationRequest(&pod, &settings)
+        if err != nil {
+            t.Errorf("Unexpected error: %+v", err)
+        }
+
+        responsePayload, err := validate(payload)
+        if err != nil {
+            t.Errorf("Unexpected error: %+v", err)
+        }
+
+        var response kubewarden_protocol.ValidationResponse
+        if err := json.Unmarshal(responsePayload, &response); err != nil {
+            t.Errorf("Unexpected error: %+v", err)
+        }
+
+        if testCase.expectedIsValid && !response.Accepted {
+            t.Errorf("Unexpected rejection: msg %s - code %d with pod labels: %v, denied labels: %v, constrained labels: %v",
+                *response.Message, *response.Code, testCase.podLabels, testCase.deniedLabels, testCase.constrainedLabels)
+        }
+
+        if !testCase.expectedIsValid && response.Accepted {
+            t.Errorf("Unexpected acceptance with pod labels: %v, denied labels: %v, constrained labels: %v",
+                testCase.podLabels, testCase.deniedLabels, testCase.constrainedLabels)
+        }
+    }
+}
+----
+
+======
+
+该测试使用 "测试用例驱动" 方法。
+您首先定义一个 `struct`，它保存测试用例所需的数据，见 `NOTE 1`：
+
+[,go]
+----
+struct {
+        podLabels         map[string]string
+        deniedLabels      mapset.Set[string]
+        constrainedLabels map[string]*RegularExpression
+        expectedIsValid   bool
+}
+----
+
+然后您声明几个测试用例。
+它们在上面的可折叠代码块中以 ➀ 到 ➅ 的起始行标记。
+
+例如，您应该将没有标签的 Pod 视为有效。
+您可以使用以下输入值进行测试：
+
+[,go]
+----
+{
+  podLabels:         map[string]string{},
+  deniedLabels:      mapset.NewThreadUnsafeSet[string]("owner"),
+  constrainedLabels: map[string]*RegularExpression{},
+  expectedIsValid:   true,
+}
+----
+
+测试以这种方式定义新场景，直到 `NOTE 2`。
+在这里，您可以使用以下代码遍历不同的测试用例：
+
+. 通过使用 `testCase` 提供的数据创建一个 `BasicSettings` 对象。
+. 创建一个 `Pod` 对象，并将 `testCase` 中定义的标签分配给它。
+. 创建一个 `payload` 对象。使用 {short-project-name} SDK 的辅助函数：`kubewarden_testing.BuildValidationRequest` 来完成此操作。
+此函数以请求相关的对象、`Pod` 和描述设置的对象（`BasicSettings` 实例）作为输入。
+. 最后，代码调用您的 `validate` 函数并对结果进行检查。
+
+现在，您可以运行所有单元测试，包括在 `settings_test.go` 中定义的测试，方法是：
+
+[,console]
+----
+make test
+----
+
+这将产生以下输出：
+
+.来自 `make test` 的输出
+[%collapsible]
+======
+
+[,shell]
+----
+make test
+go test -v
+=== RUN   TestParsingSettingsWithNoValueProvided
+--- PASS: TestParsingSettingsWithNoValueProvided (0.00s)
+=== RUN   TestIsNameDenied
+--- PASS: TestIsNameDenied (0.00s)
+=== RUN   TestParseValidSettings
+--- PASS: TestParseValidSettings (0.00s)
+=== RUN   TestParseSettingsWithInvalidRegexp
+--- PASS: TestParseSettingsWithInvalidRegexp (0.00s)
+=== RUN   TestDetectValidSettings
+--- PASS: TestDetectValidSettings (0.00s)
+=== RUN   TestDetectNotValidSettingsDueToBrokenRegexp
+--- PASS: TestDetectNotValidSettingsDueToBrokenRegexp (0.00s)
+=== RUN   TestDetectNotValidSettingsDueToConflictingLabels
+--- PASS: TestDetectNotValidSettingsDueToConflictingLabels (0.00s)
+=== RUN   TestValidateLabel
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+    validate_test.go:126: Unexpected acceptance with pod labels: map[owner:team-kubewarden], denied labels: Set{hello}, constrained labels: map[cc-center:team-\d+]
+--- FAIL: TestValidateLabel (0.00s)
+FAIL
+exit status 1
+FAIL    github.com/kubewarden/go-policy-template        0.003s
+make: *** [Makefile:29: test] Error 1
+----
+
+======
+
+正如您所看到的，所有 `Settings` 测试都通过了，但有一个 `TestValidateLabel` 的测试用例没有通过：
+
+[,console]
+----
+validate_test.go:126: Unexpected acceptance with pod labels: map[owner:team-kubewarden], denied labels: Set{hello}, constrained labels: map[cc-center:team-\d+]
+----
+
+在这种情况下，您的策略设置表示 Pods 必须有一个标签，键为 `cc-center`，满足 `team-\d+` 正则表达式。
+被测试的 Pod 没有这个标签，因此您应该拒绝它。
+然而，这并没有发生，因此您可以在下一部分中修复此问题。
+
+[NOTE]
+====
+您可能会想知道为什么单元测试的输出中会出现像 `NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}` 这样的行。
+
+策略中的 `logger` 语句会产生此输出。
+这仅在代码在 WebAssembly 上下文之外运行时发生。
+当策略在 {short-project-name} 中评估时，这不会发生，在该上下文中，`logger` 语句会发出 OpenTelemetry 事件。
+====
+
+
+=== 修复损坏的单元测试
+
+要修复您发现的损坏测试，您需要修改位于 `validate.go` 中的 `validate` 验证函数。
+
+目前，您验证逻辑的核心是以下几行：
+
+[,go]
+----
+for label, value := range pod.Metadata.Labels {
+    if err := validateLabel(label, value, &settings); err != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(err.Error()),
+            kubewarden.NoCode)
+    }
+}
+----
+
+在这里，您遍历每个标签以检查它是否未被拒绝，并且它是否没有违反用户指定的约束。
+然而，您并没有确保 Pod 拥有 `Settings.ConstrainedLabels` 中指定的所有标签。
+
+在 `for` 循环后添加新代码：
+
+[,go]
+----
+for requiredLabel := range settings.ConstrainedLabels {
+    _, found := pod.Metadata.Labels[requiredLabel]
+    if !found {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(fmt.Sprintf(
+                "Constrained label %s not found inside of Pod",
+                requiredLabel),
+            ),
+            kubewarden.NoCode)
+    }
+}
+----
+
+再次运行单元测试：
+
+[,console]
+----
+make test
+----
+
+这将输出：
+
+.最终 `make test` 的输出
+[%collapsible]
+======
+
+[,console]
+----
+make test
+go test -v
+=== RUN   TestParsingSettingsWithNoValueProvided
+--- PASS: TestParsingSettingsWithNoValueProvided (0.00s)
+=== RUN   TestIsNameDenied
+--- PASS: TestIsNameDenied (0.00s)
+=== RUN   TestParseValidSettings
+--- PASS: TestParseValidSettings (0.00s)
+=== RUN   TestParseSettingsWithInvalidRegexp
+--- PASS: TestParseSettingsWithInvalidRegexp (0.00s)
+=== RUN   TestDetectValidSettings
+--- PASS: TestDetectValidSettings (0.00s)
+=== RUN   TestDetectNotValidSettingsDueToBrokenRegexp
+--- PASS: TestDetectNotValidSettingsDueToBrokenRegexp (0.00s)
+=== RUN   TestDetectNotValidSettingsDueToConflictingLabels
+--- PASS: TestDetectNotValidSettingsDueToConflictingLabels (0.00s)
+=== RUN   TestValidateLabel
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestValidateLabel (0.00s)
+PASS
+ok      github.com/kubewarden/go-policy-template        0.003s
+----
+
+======
+
+如您所见，这次所有测试都通过了。
+您现在可以进入下一步，编写端到端测试。

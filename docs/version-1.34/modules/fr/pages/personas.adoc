@@ -1,0 +1,34 @@
+include::partial$variables.adoc[]
+= À qui ce projet est-il destiné ? Les personas.
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: À qui ce projet est-il destiné ? Les personas.
+:keywords: ["{project-name}", kubewarden, documentation, personas]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [explanation]
+
+## {project-name} personas
+
+[cols="1,2", options="header"]
+|===
+|Persona |Description
+
+|**Utilisateur de stratégie**
+|Quelqu'un qui prend une stratégie et l'utilise dans un cluster. Ils déploient des stratégies et observent les résultats. Ils configurent les paramètres de la stratégie mais n'écrivent pas le code interne de la stratégie (s'il y en a un).
+
+|**Opérateur**
+|Quelqu'un qui opère {short-project-name} dans un cluster. Installe et maintient {short-project-name}.
+
+|**Distributeur de stratégie**
+|Quelqu'un qui a écrit une stratégie et souhaite la partager avec d'autres. Ils veulent que la stratégie soit consommée par le rôle « utilisateur de stratégie ». Un distributeur de {short-project-name} stratégies, vers des endroits tels qu'ArtifactHub ou des dépôts OCI privés.
+
+|**Développeur de stratégie**
+|Une personne qui conçoit et écrit des stratégies pour {short-project-name} afin que d'autres puissent les consommer.
+
+|**Intégrateur**
+|Construit avec, en utilisant, ou sur {short-project-name}. Peut-être une interface utilisateur personnalisée ou un outil d'aide pour générer des stratégies.
+
+|**Développeur**
+|Une personne travaillant sur l'ensemble de produits {short-project-name}. Construire {short-project-name} lui-même.
+|===

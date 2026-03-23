@@ -1,0 +1,265 @@
+include::partial$variables.adoc[]
+
+= Air-Gap-Installation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie ein privates Registry mit {project-name} Bildern und Richtlinien, um {project-name} in einer Air-Gapped-Umgebung zu installieren.
+:doc-persona: [„kubewarden-operator“, „kubewarden-integrator“]
+:doc-topic: [„Operator-Handbuch“, „Air Gap“, „Installation“]
+:doc-type: [„howto“]
+:keywords: ["{project-name}", "Kubewarden", "Kubernetes", "Air-Gap-Installation"]
+:current-version: {page-origin-branch}
+
+Für eine Air-Gapped-Installation von {project-name} benötigen Sie ein privates Open Container Initiative (OCI) Registry, das von Ihrem Kubernetes-Cluster aus zugänglich ist.
+{short-project-name} Richtlinien sind WebAssembly-Module, daher können Sie sie als OCI-Artefakte in einem OCI-konformen Registry speichern. Sie müssen die Bilder und Richtlinien von {short-project-name} in dieses OCI-Registry hinzufügen. Sie können auf eine Liste von {short-project-name} Artefakten auf der Seite xref:/reference/artifacts.adoc[Artefaktverzeichnis] verweisen. Die folgenden Abschnitte beschreiben den Prozess.
+
+[NOTE]
+====
+Wir empfehlen die Verwendung von link:https://docs.hauler.dev/docs/intro[Hauler].
+Siehe unsere xref:/howtos/airgap/03-hauler.adoc[Hauler-Dokumentationsseite].
+
+Alternativ können Sie den unten aufgeführten manuellen Prozess verwenden.
+====
+
+
+== Speichern Sie Helm-Charts lokal
+
+Sie müssen die folgenden Helm-Charts auf Ihren Arbeitsplatz herunterladen:
+
+[,console]
+----
+helm pull kubewarden/kubewarden-crds
+helm pull kubewarden/kubewarden-controller
+helm pull kubewarden/kubewarden-defaults
+helm pull kubewarden/sbomscanner
+----
+
+[NOTE]
+====
+Optional können Sie die Signaturen der xref:/tutorials/verifying-kubewarden.adoc#_helm_charts[Helm-Charts] und xref:/tutorials/verifying-kubewarden.adoc#_container_images[Containerbilder] überprüfen.
+====
+
+== Speichern Sie Containerbilder lokal
+
+. Jedes unserer Helm-Charts enthält ein `imagelist.txt` mit den von ihm verwendeten Containerbildern und, falls zutreffend, ein `policylist.txt` mit den OCI-Wasm-Modulen der Richtlinien, die es ebenfalls verwendet.
++
+Um sie zu erhalten, können Sie Folgendes tun:
++
+[,console]
+----
+helm pull --untar \
+  kubewarden/kubewarden-crds \
+  kubewarden/kubewarden-controller \
+  kubewarden/kubewarden-defaults \
+  kubewarden/sbomscanner
+----
++
+Und dann fügen Sie sie in eine Datei zusammen:
++
+[,console]
+----
+cat */imagelist.txt > kubewarden-images.txt
+----
+
+. Laden Sie `kubewarden-save-images.sh` und `kubewarden-load-images.sh` aus dem https://github.com/kubewarden/utils[Utilities-Repository] herunter.
+. Speichern Sie {short-project-name} Containerbilder in einer `.tar.gz` Datei:
++
+[,shell]
+----
+ ./kubewarden-save-images.sh \
+   --image-list ./kubewarden-images.txt \
+   --images kubewarden-images.tar.gz
+----
++
+Docker beginnt mit dem Herunterladen der Bilder, die für eine Air-Gap-Installation verwendet werden. Dieser Vorgang kann ein paar Minuten dauern. Nach Abschluss hat Ihr aktuelles Verzeichnis, in dem Sie den Befehl ausgeführt haben, ein Tarball, `kubewarden-images.tar.gz`.
+
+== Richtlinien lokal speichern
+
+. Fügen Sie alle Richtlinien, die Sie verwenden möchten, in eine `policies.txt` Datei ein:
++
+[,console]
+----
+cat */policylist.txt > policies.txt
+----
++
+Eine Datei mit einer Liste der Standardrichtlinien befindet sich auf der {short-project-name} Standard- https://github.com/kubewarden/helm-charts/releases/[Release-Seite].
+
+. Laden Sie `kubewarden-save-policies.sh` und `kubewarden-load-policies.sh` aus dem https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller` Repository] herunter.
+
+. Richtlinien in eine `.tar.gz` Datei speichern:
++
+[,shell]
+----
+./kubewarden-save-policies.sh --policies-list policies.txt
+----
++
+Verwenden Sie `kwctl`, um die Richtlinien herunterzuladen. Das `kubewarden-policies.tar.gz` Archiv enthält die Richtlinien.
+
+== Helm-Charts
+
+Sie müssen die folgenden Helm-Charts auf Ihren Arbeitsplatz herunterladen:
+
+[,shell]
+----
+helm pull kubewarden/kubewarden-crds
+helm pull kubewarden/kubewarden-controller
+helm pull kubewarden/kubewarden-defaults
+----
+
+== Private Registry befüllen
+
+Verschieben Sie diese Dateien in die Air-Gapped-Umgebung:
+
+* Helm-Charts im `tgz`-Format (zum Beispiel `kubewarden-crds-1.23.0.tgz`)
+* `kubewarden-policies.tar.gz`,
+* `kubewarden-images.tar.gz`,
+* `kubewarden-load-images.sh`,
+* `kubewarden-load-policies.sh` und
+* `policies.txt`
+
+. Laden Sie {short-project-name} Bilder in das private Registry. Sie müssen den Docker-Client gegen das lokale Registry authentifizieren.
++
+[,shell]
+----
+ ./kubewarden-load-images.sh \
+   --image-list ./kubewarden-images.txt \
+   --images kubewarden-images.tar.gz \
+   --registry <REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+. Laden Sie die {short-project-name} Richtlinien in das private Registry. Sie sollten sich authentifizieren, um das lokale Registry (`kwctl` verwendet denselben Mechanismus zur Authentifizierung wie `docker`, eine `~/.docker/config.json` Datei)
++
+[,shell]
+----
+ ./kubewarden-load-policies.sh \
+   --policies-list policies.txt \
+   --policies kubewarden-policies.tar.gz \
+   --registry <REGISTRY.YOURDOMAIN.COM:PORT> \
+   --sources-path sources.yml
+----
+
+[CAUTION]
+====
+
+Der `kwctl` Befehl benötigt die `sources.yaml` Datei, um sich mit Registries in diesen Kategorien zu verbinden:
+
+* Eine Authentifizierung ist erforderlich
+* Ein selbstsigniertes Zertifikat wird verwendet
+* Es erfolgt keine TLS-Terminierung
+
+Verweisen Sie auf xref:howtos/custom-certificate-authorities.adoc[den Abschnitt über benutzerdefinierte Zertifizierungsstellen] in der Dokumentation, um zu erfahren, wie Sie die `sources.yaml` Datei konfigurieren.
+
+====
+
+
+== Installieren Sie {short-project-name}
+
+Jetzt, da Ihr privates Registry alles Erforderliche hat, können Sie {short-project-name} installieren. Der einzige Unterschied zu einer Standardinstallation von {short-project-name} besteht darin, dass Sie das Registry in den Containerbildern und Richtlinien auf das private Registry ändern müssen.
+
+Installieren Sie den {short-project-name} Stack:
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-crds kubewarden-crds.tgz
+----
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-controller kubewarden-controller.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+[CAUTION]
+====
+
+Um das im `kubewarden-controller` Chart verfügbare Policy Reporter Subchart zu verwenden, müssen Sie andere, spezifische Werte für das Subchart in einer Air-Gapped-Umgebung definieren. Ein Beispiel finden Sie unten:
+
+[,shell]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden-controller.tgz \
+    --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set auditScanner.policyReporter=true \
+    --set policy-reporter.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.ui.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.image.repository=kyverno/policy-reporter \
+    --set policy-reporter.ui.image.repository=kyverno/policy-reporter-ui
+----
+
+Es ist notwendig, `auditScanner.policyReporter` zu definieren, um das Subchart zu aktivieren und 4 weitere Werte zu konfigurieren, um das Registry und das Repository, in dem Sie die Policy Reporter Images speichern, zu konfigurieren. Für weitere Informationen zu den Werten des Policy Report Subcharts verweisen Sie auf die https://github.com/kyverno/policy-reporter/tree/policy-reporter-2.19.4/charts/policy-reporter[Policy Reporter Dokumentation].
+
+====
+
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults kubewarden-defaults.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+[CAUTION]
+====
+
+Um die empfohlenen Richtlinien, die vom `kubewarden-defaults` Helm Chart aus einem anderen Registry als `global.cattle.systemDefaultRegistry` installiert wurden, herunterzuladen, verwenden Sie die `recommendedPolicies.defaultPoliciesRegistry` Konfiguration.
+Diese Konfiguration ermöglicht es Benutzern, ein Registry anzugeben, das speziell für das Abrufen der OCI-Artefakte der Richtlinien vorgesehen ist. Es ist besonders nützlich, wenn ihr Container-Image-Repository keine OCI Artefakte unterstützt.
+
+Um zu installieren und auf den Abschluss der Installation zu warten, verwenden Sie den folgenden Befehl:
+
+[,console]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults kubewarden-defaults.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+  --set recommendedPolicies.defaultPoliciesRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+Wenn die `recommendedPolicies.defaultPoliciesRegistry` Konfiguration nicht festgelegt ist, wird das `global.cattle.systemDefaultRegistry` als Standardregistry verwendet.
+
+====
+
+
+Schließlich müssen Sie den Policy Server so konfigurieren, dass er Richtlinien aus Ihrem privaten Registry abruft. Bitte beachten Sie den Abschnitt xref:howtos/policy-servers/02-private-registry.adoc[Verwendung des privaten Registry] der Dokumentation.
+
+Jetzt können Sie {short-project-name} Richtlinien in Ihrem Cluster erstellen. Richtlinien müssen in Ihrem privaten Registry verfügbar sein.
+
+[,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v0.2.2
+  rules:
+  - apiGroups: [""]
+    apiVersions: [“v1”]
+    resources: [“pods”]
+    operations:
+    - CREATE
+  mutating: false
+EOF
+----
+
+[CAUTION]
+====
+
+`PolicyServer` Ressourcen müssen das im privaten Registry verfügbare Image verwenden.
+Beispiel:
+
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: reserved-instance-for-tenant-a
+spec:
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
+  replicas: 2
+  serviceAccountName: sa
+----
+
+====
+

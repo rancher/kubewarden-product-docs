@@ -1,0 +1,62 @@
+include::partial$variables.adoc[]
+= 建议文档改进
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过在 GitHub 上打开一个问题，清楚地说明缺失、过时、错误或需要质量审查的内容，来启动文档改进。
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution", "improvement"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "suggesting an improvement"]
+:sidebar_label: 建议文档改进
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+如果您注意到 {short-project-name} 文档存在问题或想要建议新内容，请打开一个问题。您只需拥有一个 https://github.com/join[GitHub 账号] 和一个浏览器。
+
+通常，{short-project-name} 的任何新文档工作都始于 GitHub 上的一个问题。
+ifeval::["{build-type}" == "community"]
+https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name} 文档团队] 审查、分类并标记它们。
+endif::[]
+ifeval::["{build-type}" == "product"]
+https://github.com/orgs/rancher/teams/docs[{short-project-name} 文档团队] 审查、分类并标记它们。
+endif::[]
+任何人都可以参与任何问题的工作，包括报告者，但在开始任何工作之前，您应该将其分配给自己，以避免重复工作。
+
+== 打开一个问题
+
+要建议对现有文档内容的改进或报告错误，请打开一个问题。
+
+* 点击顶部的 GitHub Octocat 图标。这会将您重定向到
+ifeval::["{build-type}" == "community"]
+  https://github.com/kubewarden/docs[用于 {short-project-name} 的文档储存库]。
+endif::[]
+ifeval::["{build-type}" == "product"]
+  https://github.com/rancher/kubewarden-product-docs[用于 {short-project-name} 的文档储存库]。
+endif::[]
+* 导航到问题选项卡并点击 *新问题*。
+* 描述问题或改进建议。细节越多，越好。
+* 点击 *提交新问题*。
+* 提交问题后，您可以将其分配给自己，或者等待社区成员来处理。文档团队和社区的成员可能会在处理您的问题之前请求澄清。您应该主动检查您的问题或https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notifications[开启 GitHub 通知]。
+
+== 新内容建议
+
+要建议新内容，请通过以下机制提交问题：
+
+* 选择您认为内容所属的部分中的现有页面，然后点击 *创建一个问题*。或
+ifeval::["{build-type}" == "community"]
+* 导航到https://github.com/kubewarden/docs/issues/new/choose[GitHub]并直接提交问题。
+endif::[]
+ifeval::["{build-type}" == "product"]
+* 导航到https://github.com/rancher/kubewarden-product-docs/issues/new/choose[GitHub]并直接提交问题。
+endif::[]
+
+== 如何让您的贡献产生实际效果？
+
+没有贡献是太大或太小的。然而，为了使社区获得最大价值，我们请求您在报告问题时遵循以下几点：
+
+* 专注于提供问题的清晰描述。一些关键点需要考虑，包括描述缺失、过时、错误或需要定性和技术改进的内容。
+* 描述该问题对用户的具体影响。
+* 限制问题的范围。如果范围较大，请将其拆分为问题内的较小任务。例如，"创建贡献指南"的范围较广，因为与该问题相关的任务会很多。
+  然而，"修复快速入门页面上的语法错误"是一个范围更窄的问题，只需要一个拉取请求。
+* 交叉检查现有问题以避免重复工作。
+* 检查是否存在现有的拉取请求或问题。检查您在打开的问题中引用现有问题或拉取请求，以便为可能想要参与的贡献者提供上下文。

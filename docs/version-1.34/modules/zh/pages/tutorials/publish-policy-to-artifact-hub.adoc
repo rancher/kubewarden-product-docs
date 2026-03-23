@@ -1,0 +1,98 @@
+include::partial$variables.adoc[]
+= 将策略发布到 Artifact Hub
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过创建格式良好的 Git 储存库布局并配置 GitHub Actions 进行自动打包，促进持续集成，将 {project-name} 策略发布到 Artifact Hub。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "publishing policies", "artifact hub"]
+:sidebar_label: 发布到 Artifact Hub
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+https://artifacthub.io/[Artifact Hub] 是一个用户可以查找、安装和发布 https://cncf.io[CNCF] 项目的软件包和配置的网站。
+
+可以在 Artifact Hub 上发布 {project-name} 策略，并使广大 CNCF 用户能够发现它。
+
+[NOTE]
+====
+Artifact Hub 是一个内容聚合平台，实际上并不托管发布在其上的工件。
+
+Artifact Hub 要求您在容器注册表或 Web 服务器上物理托管容器镜像仓库。
+请参阅 xref:explanations/distributing-policies.adoc[distributing policies] 部分以获取有关如何托管您的策略的更多信息。
+====
+
+
+本文件重点介绍使 {short-project-name} 策略在 Artifact Hub 上易于被发现的必要步骤。
+
+== 准备您的 Git 储存库
+
+Artifact Hub 会爬取 Git 储存库以查找特殊的元数据文件。
+
+Git 储存库可以有不同类型的布局。它们在 https://artifacthub.io/docs/topics/repositories/#kubewarden-policies-repositories[官方 Artifact Hub 文档] 中有详细记录。
+
+Artifact Hub 灵活，允许您以以下方式组织代码：
+
+* 拥有一个专门用于 Artifact Hub 的 Git 储存库：该储存库将不包含任何策略源代码。它将是 Artifact Hub 所需 YAML 文件的集合。
+
+* 在包含您的策略源代码的 Git 储存库中添加一个 Artifact Hub 目录。这是之前方法的一个迭代，专注于单个策略，即在 Git 储存库中定义的策略。这种方法允许在 Artifact Hub 上保留策略的多个版本。
+
+* 将 `artifacthub-pkg.yml` 和 `artifacthub-repo.yml` 文件添加到包含策略源代码的 Git 储存库的根目录。这种方法是最简单的。唯一的限制是，只有最新版本的策略会在 Artifact Hub 上可见。
+
+最后一种方法在我们的官方策略模板中使用。所搭建的 Git 储存库包括 `artifacthub-repo.yml` 文件，我们的 GitHub Actions 会生成并将 `artifacthub-pkg.yml` 推送到 Artifact Hub 可消费的 `artifacthub` 分支。
+
+== 发布步骤
+
+在将策略发布到 Artifact Hub 之前，您必须创建一个账户 https://artifacthub.io/[在这里]。
+
+在发布策略之前，请确保您的 Git 储存库具有正确的布局，其中包含格式良好的 `metadata.yml` 以及必要的注释。
+
+如果您想手动执行此操作，可以通过执行`kwctl scaffold artifacthub`（版本`>= 1.23`）来创建`artifacthub-pkg.yml`文件。此命令将当前路径中的`metadata.yml`作为输入，并输出一个`artifacthub-pkg.yml`。`artifacthub-pkg.yml` 包含诸如 `version:`、`createdAt:` 等字段，这些字段需要符合特定格式并保持最新。`artifacthub-pkg.yml` 的格式在 https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml[这里] 中有描述。
+
+如果您使用我们的 GitHub Actions >= `v4.0.0`，则可以使用输入 `artifacthub: true` 配置发布工作流。如果如此配置，在策略成功构建、签名并推送后，我们的 GitHub Actions 将执行最后一个任务，为您生成 `artifacthub-pkg.yml`，然后提交并推送更改至 `artifacthub` 分支。规范文件始终位于 `main` 分支中。有关我们 GitHub Actions 先前版本的行为，请参阅 1.23 之前的文档版本。
+
+最后，请确保您的策略发布在容器注册表或 Web 服务器上。
+
+[NOTE]
+====
+当前 `artifacthub-repo.yml` 文件的内容并不相关。
+====
+
+
+一切就绪后，登录到 Artifact Hub 并前往您的 https://artifacthub.io/control-panel/repositories?page=1[控制面板]。
+
+决定您是以个人身份发布策略，还是在您所属的 Artifact Hub 组织下发布。这需要选择正确的 _"控制面板上下文"_。
+
+然后点击 _"添加"_ 按钮，并填写表单：
+
+* 选择_"{short-project-name} 策略"_作为类型。
+* 请输入一个 _"名称"_和 _"显示名称"_。
+* 输入您的 Git 储存库的 URL。
+* 请输入 `artifacthub` 作为要跟踪的分支。
+
+最后，点击 _"添加"_ 按钮。这将带您返回到 _"仓库"_ 页面，您将在此看到新创建的仓库。
+
+每个仓库都有几个信息字段。找到您刚创建的仓库的 _"ID"_ 属性，并复制它。
+
+返回到您的 Git 储存库并编辑 `artifacthub-repo.yml`。确保文档中 `repositoryID` 键的值与您刚从 Artifact Hub 网页复制的值相同。
+
+[TIP]
+====
+`artifacthub-repo.yml` 文件的格式在 https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml[这里] 中定义。
+
+现在是对该文件进行进一步自定义的好时机。
+====
+
+
+完成更改后，提交更新的 `artifacthub-repo.yml` 文件并推送。在下次扫描期间，Artifact Hub 将找到此文件，并将 https://artifacthub.io/docs/topics/repositories/#verified-publisher[_"已验证发布者"_ 徽章] 添加到您的 Artifact Hub 仓库。
+
+== 保持 Artifact Hub 同步
+
+每次发布新版本的策略时，请务必更新 `artifacthub-pkg.yml` 文件的内容。例如，您必须更新 `io.kubewarden.policy.version` 字段（通常与策略 OCI 标签匹配），以及任何您希望更改的其他注释。
+
+[NOTE]
+====
+`artifacthub-repo.yml` 文件的内容无需更改。
+====
+

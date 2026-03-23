@@ -1,0 +1,98 @@
+include::partial$variables.adoc[]
+= 分发带有{project-name}的Gatekeeper策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过用元数据注释策略文件，并通过ClusterAdmissionPolicy部署，分发Kubernetes集群中的Gatekeeper策略。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "distribute"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "gatekeeper", "rego"]
+:current-version: {page-origin-branch}
+
+策略必须被注释才能被推送，并最终由Kubernetes集群中的{project-name} `policy-server`执行。
+
+注释和分发Gatekeeper策略类似于分发Open Policy Agent策略。
+
+== 注释策略
+
+您将在策略目录中编写一个`metadata.yaml`文件，内容为：
+
+[subs="+attributes",yaml]
+----
+rules:
+- apiGroups: [""]
+  apiVersions: ["*"]
+  resources: ["*"]
+  operations: ["CREATE"]
+mutating: false
+contextAware: false
+executionMode: gatekeeper
+annotations:
+  io.kubewarden.policy.title: no-default-namespace
+  io.kubewarden.policy.version: 0.1.0 # should match the OCI tag
+  io.kubewarden.policy.description: This policy will reject any resource created inside the default namespace
+  io.kubewarden.policy.author: The {short-project-name} Authors
+  io.kubewarden.policy.url: https://github.com/kubewarden/some-policy
+  io.kubewarden.policy.source: https://github.com/kubewarden/some-policy
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.usage: |
+      This policy is just an example.
+
+      You can write interesting descriptions about the policy here.
+----
+
+您可以看到一切与Open Policy Agent版本的元数据相同，除了`executionMode: gatekeeper`部分。
+
+继续注释策略：
+
+[subs="+attributes",console]
+----
+$ kwctl annotate policy.wasm --metadata-path metadata.yaml --output-path annotated-policy.wasm
+----
+
+== 推送策略
+
+将您的策略推送到OCI注册表：
+
+[subs="+attributes",console]
+----
+$ kwctl push annotated-policy.wasm registry.my-company.com/kubewarden/no-default-namespace-gatekeeper:v0.0.1
+Policy successfully pushed
+----
+
+== 在Kubernetes上部署
+
+您必须先将策略拉取到您的`kwctl`本地存储：
+
+[subs="+attributes",console]
+----
+$ kwctl pull registry://registry.my-company.com/kubewarden/no-default-namespace-gatekeeper:v0.0.1
+pulling policy...
+----
+
+您现在可以创建一个脚手架`ClusterAdmissionPolicy`资源：
+
+[subs="+attributes",console]
+----
+$ kwctl scaffold manifest registry://registry.my-company.com/kubewarden/no-default-namespace-gatekeeper:v0.0.1 --type ClusterAdmissionPolicy
+---
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: generated-policy
+spec:
+  module: "registry://registry.my-company.com/kubewarden/no-default-namespace-gatekeeper:v0.0.1"
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - "*"
+      resources:
+        - "*"
+      operations:
+        - CREATE
+  mutating: false
+----
+
+现在使用这个`ClusterAdmissionPolicy`资源将您的策略部署到Kubernetes集群。

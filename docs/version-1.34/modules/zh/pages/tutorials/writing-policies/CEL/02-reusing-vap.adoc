@@ -1,0 +1,238 @@
+include::partial$variables.adoc[]
+= 重用验证准入策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解如何在Kubernetes中使用{project-name}的（cel-policy）重用和验证准入策略。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "cel", "ValidatingAdmissionPolicies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "ValidatingAdmissionPolicies"]
+:sidebar_label: 重用VAP
+:current-version: {page-origin-branch}
+
+Kubernetes 原生 https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy[验证准入策略]由以下资源组成：
+
+* ValidatingAdmissionPolicy：描述CEL中的逻辑。它可选地接受`spec.paramKind`中的参数。
+* ValidatingAdmissionPolicyBinding：限定策略的作用范围。
+
+让我们看一个具体的例子。这些和其他策略可以与{project-name}的`cel-policy`轻松重用。
+
+== ValidatingAdmissionPolicy
+
+以下的ValidatingAdmissionPolicy是从https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#creating-a-validatingadmissionpolicy[Kubernetes文档]改编而来的。
+
+该策略检查部署中的副本数是否小于或等于默认的`maxreplicas`，即5。用户可以通过使用参数在每个名称空间或部署中覆盖此默认值，并选择一个更小的数字。
+
+它与`ValidatingAdmissionPolicyBinding`绑定。因此，它仅影响标签`environment`设置为`test`的名称空间。
+
+../vap-policy-example.yaml
+[,yaml]
+----
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "replicalimit-policy.example.com"
+spec:
+  failurePolicy: Fail # (1)
+  matchConstraints: # (2)
+    resourceRules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["deployments"]
+  variables: # (3)
+    - name: maxReplicas # hardcoded global default
+      expression: int(5)
+  paramKind: # (4)
+    apiVersion: v1
+    kind: ConfigMap # user-provided override
+  validations: # (5)
+    - expression: |
+        object.spec.replicas <= (
+          has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+          ? int(params.data.overrideReplicas)
+          : variables.maxReplicas
+        )
+      messageExpression: |
+        'The number of replicas must be less than or equal to ' +
+        string( has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+          ? int(params.data.overrideReplicas)
+          : variables.maxReplicas)
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "replicalimit-binding-test.example.com"
+spec:
+  policyName: "replicalimit-policy.example.com"
+  validationActions: [Deny] # (7)
+  matchResources: # (8)
+    namespaceSelector:
+      matchLabels:
+        environment: test
+  paramRef: # (4)
+    name: "replica-limit-override"
+    namespace: "test"
+    parameterNotFoundAction: Deny
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replica-limit-override
+  namespace: test
+data:
+  overrideReplicas: "3"
+----
+
+在这里，我们有一个等效的{short-project-name}策略：
+
+### {short-project-name}的`cel-policy`
+
+../cel-policy-example.yaml
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation # (9)
+    io.kubewarden.policy.severity: low # (9)
+  name: "cel-policy-replica-example"
+spec:
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:v1.4.0
+  failurePolicy: Fail # (6). Webhook behavior. Defaults to "Fail"
+  mode: protect # (7). Defaults to "protect"
+  rules: # (2)
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+  contextAwareResources: # (10). Fine-grained perms for accessing resources
+    - apiVersion: v1
+      kind: ConfigMap
+  settings:
+    failurePolicy: Fail # (1). CEL behavior. Defaults to "Fail"
+    variables: # (3)
+      - name: "replicas"
+        expression: "object.spec.replicas"
+      - name: maxReplicas
+        expression: int(5)
+    paramKind: # (4)
+      apiVersion: v1
+      kind: ConfigMap # user-provided override
+    paramRef: # (4)
+      name: "replica-limit-override"
+      namespace: "test"
+      parameterNotFoundAction: Deny
+    validations: # (5)
+      - expression: |
+          object.spec.replicas <= (
+            has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+            ? int(params.data.overrideReplicas)
+            : variables.maxReplicas
+          )
+        messageExpression: |
+          'The number of replicas must be less than or equal to ' +
+          string( has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+            ? int(params.data.overrideReplicas)
+            : variables.maxReplicas)
+  backgroundAudit: true # (9). Defaults to "true"
+  namespaceSelector: # (8)
+    matchLabels:
+      environment: test
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replica-limit-override
+  namespace: test
+data:
+  overrideReplicas: "3"
+----
+
+注意两个YAML清单上的注释数字。让我们对此进行扩展：
+
+[cols="1,1,1,3", options="header"]
+|===
+| #   | VAP 字段                         | `cel-policy` 字段                       | 说明
+
+| 1    | `failurePolicy`                   | `settings.failurePolicy`                 | CEL 行为，当 CEL 表达式评估为假时，会出现 CEL 运行时错误，或者存在无效或配置错误的 CEL。例如，返回假值的 CEL 表达式、缺少参数或缺少变量。不要与 (6) 混淆。
+| 2   | `matchConstraints`                | `rules`                                  | 两者接受相同的 https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#rulewithoperations-v1-admissionregistration[RuleWithOperations]，该规则指明策略适用于哪种资源。
+| 3   | `variables`                       | `settings.variables`                     | 在 {short-project-name} 的 `cel-policy` 中，定义变量的表达式位于 `settings.variables` 中。除此之外，它们是等效的。
+| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | 在 {short-project-name} 的 `cel-policy` 中，参数定义位于 `settings.paramKind`、`settings.paramRef` 中。除此之外，它们是等效的。
+| 5   | `validations`                     | `settings.validations`                   | 在 {short-project-name} 的 `cel-policy` 中，定义验证的表达式位于 `settings.validations` 中。除此之外，它们是等效的。
+| 6   | `---`                             | `failurePolicy`                          | Webhook 行为，针对 Kubernetes API Webhook 错误或超时，或针对 matchConditions 评估。不要与 (1) 混淆。
+| 7   | `validationActions`               | `mode`                                   | `mode` 的选项有 `protect` 和 `monitor`。在 {short-project-name} 中，审计功能更为全面，见 (9)。
+| 8   | `matchResources`                  | `namespaceSelector`、`objectSelector`   | 定义使用选择器的约束方式。{short-project-name} 的策略将其作为 `namespaceSelector` 和 `objectSelector`。
+| 9   | `auditAnnotations`（未显示） | `backgroundAudit`，注解           | 请改用 {short-project-name} 字段来设置 xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] 中的策略使用情况，以及其类别和严重性以供 OpenReports 使用。
+|10|`---`|`contextAwareResources` 权限|{short-project-name}的策略对读取集群资源具有细粒度的权限。在这里用于读取参数。
+|     | `matchConditions`                 | `matchConditions`                        | {short-project-name}的策略有`matchConditions`（在此示例中未显示）。
+|     | `---`                             | 仅限{short-project-name}的功能                 | 有关其他功能，请参阅其余的教程CEL示例。
+|===
+
+[TIP]
+====
+
+您可以使用`kwctl`工具将VAP策略迁移到{short-project-name}。
+
+此xref:howtos/vap-migration.adoc[VAP迁移how-to]描述了如何进行此操作。
+
+====
+
+
+=== 尚未实施的等效项
+
+有一些VAP功能尚未实施。如果您期待这些功能，请与我们联系。包括：
+
+* VAP https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz[授权库]。
+* VAP https://kubernetes.io/docs/reference/labels-annotations-taints/audit-annotations/[审计注释]（当ValidatingAdmissionPolicyBinding `spec.validationActions`设置为"审计"时，ValidatingAdmissionPolicy `spec.auditAnnotations`）。
+这由{short-project-name}的xref:explanations/audit-scanner/audit-scanner.adoc[审计扫描器]和PolicyReports覆盖，允许审计集群中已有的资源。
+* CEL https://kubernetes.io/docs/reference/using-api/cel/#resource-constraints[资源约束和估算成本限制]。
+这由{short-project-name}的一般xref:reference/policy-evaluation-timeout.adoc[策略超时保护]覆盖。
+
+== 应用策略
+
+像往常一样，我们可以通过实例化其清单来部署我们的策略：
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f ./cel-policy-example.yaml
+----
+
+然后通过实例化一个部署来测试它：
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test
+  labels:
+    environment: test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: test
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+EOF
+
+namespace/test created
+Error from server: error when creating "STDIN":
+  admission webhook "clusterwide-cel-policy-replica-example.kubewarden.admission" denied the request:
+  The number of replicas must be less than or equal to 5
+----

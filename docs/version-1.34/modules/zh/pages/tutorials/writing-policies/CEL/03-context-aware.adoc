@@ -1,0 +1,212 @@
+include::partial$variables.adoc[]
+= 上下文感知CEL策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置上下文感知策略，以确保主机之间的唯一Ingress规则，防止与{project-name}的CEL扩展库产生冲突。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "context-aware", "context", "aware", "ingress"]
+:sidebar_label: 上下文感知策略
+:current-version: {page-origin-branch}
+
+{project-name}的`cel-policy`支持xref:reference/spec/05-context-aware-policies.adoc[上下文感知]功能。该策略能够读取集群信息，并且能够基于除通过准入请求触发策略评估的资源之外的其他现有资源做出决策。
+
+为此，我们可以使用策略中包含的https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{short-project-name}的CEL扩展库（用于主机能力）]。
+
+== 示例：唯一的Ingress
+
+我们来编写一个策略，在创建或更新Ingress时，检查Ingress是否唯一，确保每个主机最多只有一个Ingress规则。
+
+为此，我们声明该策略为上下文感知策略。我们还声明了读取其他Ingress资源所需的细粒度权限。这通过`spec.contextAwareResources`(1)来实现。我们可以像往常一样使用`kwctl`来获得一个起点：
+
+[subs="+attributes",console]
+----
+$ kwctl scaffold manifest -t ClusterAdmissionPolicy \
+  registry://ghcr.io/kubewarden/policies/cel-policy:v1.0.0` \
+  --allow-context-aware
+----
+
+然后我们可以对其进行编辑，使其与我们的Ingress资源相关：
+
+[subs="+attributes", yaml, title="./cel-policy-ingress.yaml"]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: "unique-ingress"
+  annotations:
+    io.kubewarden.policy.category: Best practices
+    io.kubewarden.policy.severity: low
+spec:
+  module: ghcr.io/kubewarden/policies/cel-policy:v1.0.0
+  failurePolicy: Fail
+  rules:
+    - apiGroups: ["networking.k8s.io"]
+      apiVersions: ["v1"]
+      resources: ["ingresses"]
+      operations: ["CREATE", "UPDATE"]
+  contextAwareResources: # (1)
+    - apiVersion: networking.k8s.io/v1
+      kind: Ingress
+
+----
+
+现在，我们需要编写CEL代码，以获取集群中现有的Ingress资源。为此，我们使用[{short-project-name}的CEL扩展库](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities)。
+特别是`kw.k8s`主机能力，允许我们在集群中查询GroupVersionKinds。您可以在[这里](https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library)查看CEL函数的文档。
+
+该库采用构建者模式，与上游Kubernetes的CEL扩展类似；调用CEL函数方法会返回一个CEL对象，该对象本身具有特定的函数方法。这样可以简化我们确定CEL代码的作用范围和返回值的过程。
+
+在这种情况下，我们将使用`kw.k8s.apiVersion("v1").kind("Ingress")`；在这里我们调用`apiVersion()`函数，该函数属于`kw.k8s`库，它返回一个`<ClientBuilder>`对象。该对象具有`<ClientBuilder>.kind()`方法，该方法会返回一个名为`items`的数组，包含所有资源的列表。
+
+这样，我们就可以将集群中的Ingress列表保存在一个变量中：
+
+```yaml
+variables:
+  - name: knownIngresses
+    expression: kw.k8s.apiVersion("networking.k8s.io/v1").kind("Ingress").list().items
+```
+
+然后我们从这些Ingress中构建主机列表。请注意，每个Ingress可以有多个主机，因此该表达式包含一个数组的数组（这是CEL语言目前的一个限制）：
+
+[subs="+attributes",yaml]
+----
+variables:
+  - name: knownHosts
+    expression: |
+      variables.knownIngresses.map(i, i.spec.rules.map(r, r.host))
+----
+
+然而，这并没有正确处理UPDATE操作；为此，我们需要去除当前对象，并从剩余的Ingress中提取主机。
+我们可以在当前对象的`object`上使用`filter()`来实现。
+这样，UPDATE操作就能被正确检查。这也意味着该策略将正确地向审计扫描器报告结果。它看起来像这样：
+
+[subs="+attributes",yaml]
+----
+variables:
+  - name: knownHosts
+    expression: |
+      variables.knownIngresses
+      .filter(i, (i.metadata.name != object.metadata.name) && (i.metadata.namespace != object.metadata.namespace))
+      .map(i, i.spec.rules.map(r, r.host))
+----
+
+我们还需要当前Ingress请求中的主机列表以进行比较：
+
+[subs="+attributes",yaml]
+----
+variables:
+  - name: desiredHosts
+    expression: |
+      object.spec.rules.map(r, r.host)
+----
+
+有了这两个变量，我们可以在已知主机和期望主机之间进行集合交集，如果有任何交集，我们将拒绝：
+
+[subs="+attributes",yaml]
+----
+validations:
+  - expression: |
+      !variables.knownHost.exists_one(hosts, sets.intersects(hosts, variables.desiredHosts))
+    message: "Cannot reuse a host across multiple ingresses"
+----
+
+将所有内容放在一起，策略如下所示：
+
+```yaml title="./cel-policy-ingress.yaml"
+apiVersion: policies.kubewarden.io/v1
+kind:ClusterAdmissionPolicy +
+metadata: +
+  name: "unique-ingress" +
+  annotations: +
+    io.kubewarden.policy.category:最佳实践 +
+    io.kubewarden.policy.severity: low +
+spec: +
+  module: ghcr.io/kubewarden/policies/cel-policy:v1.0.0 +
+  failurePolicy:失败 +
+  rules: +
+    - apiGroups: ["networking.k8s.io"] +
+      apiVersions: ["v1"] +
+      resources: ["ingresses"] +
+      operations: ["CREATE", "UPDATE"] +
+  contextAwareResources: +
+    - apiVersion: networking.k8s.io/v1 +
+      kind:Ingress +
+  settings: +
+    variables: +
+      - name: knownIngresses +
+        expression: | +
+          kw.k8s.apiVersion("networking.k8s.io/v1").kind("Ingress").list().items +
+      - name: knownHosts +
+        expression: | +
+          variables.knownIngresses +
+          .filter(i, (i.metadata.name != object.metadata.name) && (i.metadata.namespace != object.metadata.namespace)) +
+          .map(i, i.spec.rules.map(r, r.host)) +
+      - name: desiredHosts +
+        expression: | +
+          object.spec.rules.map(r, r.host) +
+    validations: +
+      - expression: | +
+          !variables.knownHosts.exists_one(hosts, sets.intersects(hosts, variables.desiredHosts)) +
+        message:"不能在多个ingress之间重用主机"
+
+```
+
+## Deploying the policy
+
+As normal, we can deploy our policy by instantiating its manifest:
+
+```console
+$ kubectl apply -f ./cel-policy-example.yaml
+```
+
+现在我们可以通过实例化Ingress来测试它。第一个会成功，因为没有其他 Ingress 指向该主机：
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-host-foobar-1
+spec:
+  rules:
+  - host: "foo.bar.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/bar"
+        backend:
+          service:
+            name: service1
+            port:
+              number: 80
+EOF
+----
+
+但第二个将导致被拒绝：
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-host-foobar-2
+spec:
+  rules:
+  - host: "foo.bar.com"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/foo"
+        backend:
+          service:
+            name: service2
+            port:
+              number: 80
+EOF
+Error from server: error when creating "STDIN":
+  admission webhook "clusterwide-unique-ingress.kubewarden.admission" denied the request:
+  Cannot reuse a host across multiple ingresses
+----

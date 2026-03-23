@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= {project-name}-Anwendungsfälle
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Einsatzbereiche
+:sidebar_position: 74
+:description: Erfahren Sie mehr über verschiedene Anwendungsfälle für {project-name} in unterschiedlichen Kubernetes-Umgebungen und Personas, einschließlich mehrerer Szenarien.
+:keywords: {project-name}, Dokumentation, Anwendungsfälle, Fallstudien
+:doc-persona: kubewarden-all
+:doc-type: Erklärung
+:doc-topic: Erklärung
+
+Dies sind einige Beispielanwendungsfälle für die xref:/personas.adoc[Personas] von {project-name}.
+
+== Fall A: Als Kubernetes-Operator möchte ich sicherstellen, dass mein Cluster sicher und konform ist.
+
+Ich bereitstelle {project-name} und seine Standardkonfiguration mit seinem `kubewarden-defaults` Helm-Chart im `kubewarden` Namespace. Dies bereitstellt einen Standard-PolicyServer und empfohlene ClusterAdmissionPolicies im `kubewarden` Namespace, ausschließlich unter der Kontrolle des Kubernetes-Operators.
+
+Als Operator kann ich weitere PolicyServer unter einem verwalteten Namespace (wie `kubewarden`) hinzufügen, um die Last zu verteilen und Fehlertoleranz zu gewährleisten.
+
+Operatoren können weitere ClusterAdmissionPolicies und ClusterAdmissionPolicyGroups bereitstellen. Diese überprüfen alle Kubernetes-Ressourcen für jede Art von Operation (GET, CREATE, UPDATE, PATCH, DELETE, PROXY). Dies stellt sicher, dass Operationen im Cluster sicher und konform sind.
+
+Nachfolgend die Möglichkeiten der einzelnen Treiber:
+
+* security
+* Konformität (zu Branchenstandards oder Unternehmensvorschriften)
+* Ressourcenoptimierung (durch mutierende Richtlinien)
+* Governance von Kubernetes-Umgebungen (durch Labels und Namenskonventionen)
+* Bewährte Verfahren
+* Bildverifizierung
+
+Sicherheitsanforderungen ändern sich im Laufe der Zeit. Früher korrekte Bereitstellungen im Cluster sind möglicherweise nicht mehr so. Dennoch hat {short-project-name} diese Operationen im Cluster bereits akzeptiert. In diesen Situationen kann der Betreiber die Audit-Scanner-Funktion bereitstellen, einen CronJob, der regelmäßig ausgeführt wird und die vorhandenen Ressourcen im Cluster bewertet. Dies stellt sicher, dass der Cluster auch über die Zeit hinweg sicher und konform ist.
+
+Der Betreiber kann Richtlinien im `monitor` Modus anstelle des `protect` Modus konfigurieren, um aus dem Zustand des Clusters zu lernen, ohne die Operationen zu blockieren.
+
+Betreiber können Informationen aus Richtlinien und dem {short-project-name} Stack erhalten, indem sie Protokolle und OpenTelemetry-Informationen für Metriken und Tracing konsumieren.
+
+== Fall B: Als Kubernetes-Operator möchte ich meinen Kubernetes-Nutzern ein Framework bereitstellen, damit sie in ihren Namespaces Selbstbedienung leisten können.
+
+Als Operator setze ich {short-project-name} wie in Fall A für eine Auswahl von Richtlinien ein. Dies bietet mir eine sichere Basis im Cluster, die andere Benutzer nicht umgehen können.
+
+Neben Fall A habe ich unterschiedliche Personas pro Namespace: vielleicht Teams, Teamadministratoren, Testbereitstellungen und andere. Ich erlaube jedem Namespace-Administrator, Selbstbedienung zu leisten, indem ich ihm ermögliche, PolicyServer in seinem Namespace sowie namespaced AdmissionPolicies und AdmissionPolicyGroups bereitzustellen.
+Diese Architektur bedeutet, dass sie die Kontrolle über ihren PolicyServer und die Richtlinien haben. Die Richtlinien gelten nur für ihren Namespace und schränken die Ressourcennutzung auf ihren Namespace ein.
+
+Es erlaubt dem Operator auch, laute Mandanten zu segregieren und leistungsstarke PolicyServer für diese Mandanten und Aufgaben zu reservieren, die hohe Durchsatzraten und niedrige Latenzzeiten benötigen, zum Beispiel.
+
+== Fall C: Als Richtlinienautor möchte ich die Werkzeuge und Sprachen verwenden, die ich kenne, um neue Richtlinien zu schreiben.
+
+{short-project-name} erreicht dies, indem es jede Sprache unterstützt, die in WebAssembly kompiliert werden kann, als mögliche Zielsprachen für Richtlinien. Das bedeutet, dass Richtlinienautoren ihre Arbeitsabläufe (`git`, CI, Editoren, Peer-Reviews usw.) und Werkzeuge: Sprachen, Sprachbibliotheken, Testumgebungen und Frameworks usw. wiederverwenden können.
+
+Es erlaubt die Wiederverwendung von domänenspezifischen Sprachen (wie Rego, CEL, Kyverno's YAML+Makros) oder allgemeinen Programmiersprachen (wie Go, Rust, C#, Javascript, jede, die in Wasm kompiliert werden kann). {short-project-name} bietet xref:/tutorials/writing-policies/index.adoc[SDKs] für einige Sprachen als erstklassige Unterstützung.
+
+{short-project-name} Richtlinien können einfache oder komplexe xref:/explanations/context-aware-policies.adoc[kontextbewusste] Richtlinien sein.
+Kontextbewusste Richtlinien werden auch verwendet, um mit separaten Arbeitslasten zu interagieren (zum Beispiel, um Informationen von einem langlaufenden Dienst eines Bildscanners zu erhalten).
+
+== Fall D: Als Systemintegrator möchte ich {short-project-name} als Teil meiner Sicherheits- und Compliance-Lösung wiederverwenden.
+
+Als Systemintegrator möchte ich {short-project-name} wiederverwenden und möglicherweise andere Lösungen einbeziehen, indem ich sie in {short-project-name} integriere.
+
+Als Systemintegrator kann ich Teile von {short-project-name} wiederverwenden. Zum Beispiel die `policy-server`, um Ressourcen, intern oder extern zum Kubernetes-Cluster, über die Funktion xref:/howtos/raw-policies.adoc["raw policies"] zu steuern.
+
+Systemintegratoren können wählen, ob sie `kubewarden-controller` bereitstellen oder die CRDs selbst verwalten. Sie können wählen, ob sie den Audit Scanner nach Bedarf bereitstellen oder skalieren.
+
+Systemintegratoren können neue Komponenten erstellen. Zum Beispiel einen Bildscanner und über eine kontextbewusste Richtlinie mit ihm interagieren, ohne eine monolithische Implementierung in einem Kubernetes-Controller zu haben.
+
+== Nicht-Ziele
+
+{short-project-name} beabsichtigt nicht:
+
+- Die integrierten Sicherheitsfunktionen von Kubernetes zu ersetzen, sondern sie zu ergänzen:
+  - {short-project-name} bietet Migration von PSPs.
+  - Sie können ValidatingAdmissionPolicies und CEL-Richtlinien mit der `cel-policy` von {short-project-name} wiederverwenden.
+  - {short-project-name} Richtlinien können mutierend sein, während Pod Security Admission dies nicht kann.
+  - {short-project-name} Richtlinien profitieren von den Funktionen des {short-project-name} Stacks (Audit Scanner, Telemetrie, CRD-Management).
+- Laufzeitsicherheit wie Eindringungserkennung oder Laufzeit-Container-Isolierung bereitzustellen.
+- Schutz des Hostsystems von Clustern bereitzustellen.
+- Unendliche Flexibilität bei der Ausführung von Richtlinien zu bieten. Um DoS-Angriffe zu verhindern, sind die Verarbeitungszeiten der Richtlinien begrenzt.

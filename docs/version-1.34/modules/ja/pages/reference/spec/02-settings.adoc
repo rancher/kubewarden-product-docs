@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= ポリシー設定
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}のポリシーデータの検証とシリアル化のためにポリシー設定を構成します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "settings"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "ポリシー仕様", "ポリシー設定"]
+:sidebar_label: ポリシー設定
+:current-version: {page-origin-branch}
+
+ポリシーの動作は固定的ではなく、ランタイム時に設定の詳細をポリシーに提供することで柔軟に構成できます。ポリシーの著者は、ポリシー設定の構造を定義する自由があります。
+
+{project-name}はポリシー設定をJSONにシリアル化し、ポリシーが呼び出されるたびにそれを提供します。
+
+== 設定の検証
+
+ポリシーは、ユーザーが提供する設定の正確性を確認するために検証する必要があります。
+
+各ポリシーは、ポリシー設定を検証するために`validate_settings`というwaPC関数を登録します。
+
+`validate_settings`関数は、ユーザーが提供した設定のJSON形式を入力として受け取ります。この関数はそれらを検証し、応答として`SettingsValidationResponse`オブジェクトを返します。
+
+`SettingsValidationResponse`オブジェクトの構造は次のとおりです：
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "valid": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+}
+----
+
+ユーザーが提供した設定が`valid`の場合、`validate_settings`は`message`の内容を無視します。そうでない場合、`validate_settings`は`message`の内容を表示します。
+
+[NOTE]
+====
+
+{short-project-name}のhttps://github.com/chimera-kube/policy-server[policy-server]は、起動時にユーザーが提供したすべてのポリシー設定を検証します。ポリシーサーバーは、少なくとも1つのポリシーが誤った設定パラメータを受け取った場合、直ちにエラーで終了します。
+
+====
+
+
+== 例
+
+例として、次の設定形式を持つhttps://github.com/kubewarden/psp-capabilities[psp-capabilities]ポリシーを考えてみてください。
+
+[subs="+attributes",yaml]
+----
+allowed_capabilities:
+- CHOWN
+
+required_drop_capabilities:
+- NET_ADMIN
+
+default_add_capabilities:
+- KILL
+----
+
+`validate_settings` 関数は、次の JSON ドキュメントを入力として受け取ります：
+
+[subs="+attributes",json]
+----
+{
+  "allowed_capabilities": [
+    "CHOWN"
+  ],
+  "required_drop_capabilities": [
+    "NET_ADMIN"
+  ],
+  "default_add_capabilities": [
+    "KILL"
+  ]
+}
+----
+
+== 要約
+
+各ポリシーは、waPC 関数 `validate_settings` を登録しなければなりません。

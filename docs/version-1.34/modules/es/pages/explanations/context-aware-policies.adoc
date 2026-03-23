@@ -1,0 +1,103 @@
+include::partial$variables.adoc[]
+= Políticas conscientes del contexto
+:revdate: 18-03-2026
+:page-revdate: {revdate}
+:description: Los desarrolladores pueden crear políticas conscientes del contexto que obtienen información del clúster de Kubernetes en tiempo de ejecución para determinar los criterios de aceptación de AdmissionRequest.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "context-aware-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "política consciente del contexto", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "administrador del clúster"]
+:sidebar_label: Políticas conscientes del contexto
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+Los desarrolladores pueden crear políticas que obtienen información de un clúster de Kubernetes en tiempo de ejecución. Estas son políticas conscientes del contexto. Las políticas conscientes del contexto pueden determinar si un `AdmissionRequest` es aceptable utilizando información de los recursos desplegados en el clúster.
+
+[NOTE]
+====
+Las políticas conscientes del contexto solo están disponibles en versiones de {project-name} ≥ v1.6.0.
+====
+
+El control de qué recursos puede acceder una política en el clúster es por parte del https://kubernetes.io/docs/concepts/security/service-accounts/[Service Account] del servidor de políticas. Un administrador del clúster controla a qué puede acceder una política a través de las reglas RBAC de Kubernetes. Las políticas conscientes del contexto solo tienen acceso *lectura* a los recursos solicitados.
+
+Por razones de seguridad, solo las políticas `ClusterAdmissionPolicy` pueden obtener información del clúster de Kubernetes. Esto se debe a que los usuarios no privilegiados pueden desplegar recursos `AdmissionPolicy`.
+
+Si un usuario no privilegiado despliega una política consciente del contexto como un `AdmissionPolicy`, el sistema:
+
+- Bloquea todos los intentos de acceder a los recursos de Kubernetes.
+- Los informa al administrador del clúster.
+
+Por defecto, {short-project-name} bloquea todos los recursos del clúster. Un administrador {project-name} define qué recursos de Kubernetes cada política consciente del contexto puede leer. `contextAwareResources` para hacer esto.
+
+El siguiente ejemplo despliega una política que requiere acceso a los `Deployment` y `Pod` recursos:
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: context-aware-policy
+  namespace: default
+spec:
+  policyServer: default
+  module: "registry://ghcr.io/kubewarden/policies/context-aware-policy:v1.0.0"
+  settings: {}
+  contextAwareResources:
+    - apiVersion: "apps/v1"
+      kind: "deployment"
+    - apiVersion: "v1"
+      kind: "pod"
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployment"]
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+----
+
+Una vez desplegada, esta política puede leer los datos de los recursos `deployment` y `pod`.
+
+Los autores de políticas proporcionan listas de recursos de Kubernetes para su política consciente del contexto. Los autores de políticas hacen esto anotando la política. Los administradores de {project-name} ven los metadatos de la política utilizando el comando `kwctl inspect`. Pueden obtener una lista de recursos a los que la política necesita acceso. Un administrador utiliza esta lista para completar la definición de `ClusterAdmissionPolicy`.
+
+[WARNING]
+====
+
+Para prevenir el abuso del sistema, los administradores de {project-name} deben revisar los recursos a los que accede la política.
+
+Por ejemplo, una política que evalúa objetos Ingress tendría buenas razones para leer los `Ingress` recursos definidos en el clúster. La misma política no puede justificar tener acceso a los recursos `Secret`.
+
+Las políticas deben tener el acceso mínimo necesario para funcionar correctamente.
+
+====
+
+
+[NOTE]
+====
+
+La identificación de recursos de Kubernetes utiliza `apiVersion` y `kind`.
+
+Normalmente, `apiVersion` es una cadena en el formato `<api>/<version>`. Los recursos del grupo de API `core` (Pod, Servicio y otros) no deben definir el nombre del grupo, `<api>`. Solo deben definir el `<version>` (por ejemplo, `v1`).
+
+Para un recurso kernel, el primero no funcionará, el segundo sí lo hará.
+
+[subs="+attributes",console]
+----
+- apiVersion: "core/v1"
+  kind: "pod"
+----
+
+[subs="+attributes",console]
+----
+- apiVersion: "v1"
+  kind: "pod"
+----
+
+Todos los demás recursos de Kubernetes necesitan la definición completa: `<api>/<version>`.
+====
+
+
+== Lecturas adicionales
+
+Puedes encontrar información más detallada sobre políticas conscientes del contexto en xref:../reference/spec/05-context-aware-policies.adoc[esta sección] de la documentación de referencia.

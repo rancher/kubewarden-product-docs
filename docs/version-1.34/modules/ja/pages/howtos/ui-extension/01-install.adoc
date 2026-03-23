@@ -1,0 +1,81 @@
+include::partial$variables.adoc[]
+= Rancher UI拡張機能のクイックスタート
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name} UIをRancher Managerの拡張機能としてインストールする方法を、段階的な手順で案内するガイドを通して学びます。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "rancher ui extension"]
+:current-version: {page-origin-branch}
+
+このセクションでは、https://github.com/rancher/rancher[Rancher Manager]の拡張機能として{project-name} UIをインストールする方法について説明します。
+
+== {short-project-name} UI拡張機能をインストールします
+
+{short-project-name} UIをグローバル拡張機能としてインストールしますが、{short-project-name}コントローラーはRancher UIを通じてクラスター範囲のリソースとしてインストールします。
+
+[NOTE]
+====
+
+エアギャップ環境でのインストールには、xref:howtos/airgap/02-install.adoc[これらの手順]に従ってください。
+
+====
+
+
+拡張機能ページ内で、「有効にする」ボタンを選択し、Rancher拡張機能リポジトリを追加するオプションを選択します。有効にすると、「{short-project-name}」拡張機能項目が自動的に表示されます。この項目を選択して拡張機能をインストールします。インストールが完了すると、{short-project-name}を必要なクラスターにインストールできます。
+
+=== {short-project-name}をインストールします
+
+前の手順に従うと、クラスター内のサイドメニューに{short-project-name}の新しい項目が表示されます。このダッシュボードページは、インストールプロセスをガイドし、前提条件を完了します。
+
+[NOTE]
+====
+
+インストールウィザードの「アプリインストール」ステップ中に、「{short-project-name}をインストール」ボタンがグレーアウトしたままになることがあります。この場合は、ページを更新し、このステップに戻ってください。
+
+====
+
+
+== インストール後
+
+インストールを完了すると、ダッシュボードページとサイドメニューに新しい項目が含まれるようになります。具体的には、ポリシーサーバー、クラスターアドミッションポリシー、およびアドミッションポリシーです。ここから、ポリシーサーバーとポリシーを作成して、クラスター内の動作を制御できます。
+
+*_ダッシュボードビュー_*image:ui_dashboard.png[UIダッシュボード]
+
+=== デフォルトのポリシーサーバーとポリシーを有効にする
+
+ダッシュボードページ内で、「インストールチャート」ボタンを選択して、https://github.com/kubewarden/helm-charts/tree/main/charts/kubewarden-defaults[`kubewarden-defaults`]Helmチャートをインストールできます。このチャートには、デフォルトのポリシーサーバーといくつかのキュレーションされたポリシーが含まれています。
+
+チャートをインストールした後、関連するポリシーとともにデフォルトのポリシーサーバーの詳細をソート可能なテーブルで表示できます。
+
+*_ポリシーサーバー詳細ビュー_*image:ui_policyserver_detail.png[UIポリシーサーバー詳細]
+
+=== ポリシーの作成
+
+ポリシーを作成する際、最初にポリシーグリッドから「カスタムポリシー」オプションが与えられます。ポリシーの名前、モジュール、およびルールに必要な情報を提供してください。{short-project-name}の公式ポリシーにアクセスするために、ポリシーカタログリポジトリを追加することをお勧めします。
+
+*_カスタムポリシーの作成_*image:ui_policy_custom.png[UIポリシーホワイトリスト]
+
+=== 追加機能
+
+xref:howtos/ui-extension/02-metrics.adoc[モニタリング]またはxref:howtos/ui-extension/03-tracing.adoc[トレース]を含めるための指示に従ってください。
+
+== エアギャップ(された)インストール
+
+{short-project-name}はRancher公式拡張機能であるため、Rancherチームは拡張カタログイメージを自動的に生成するメカニズムを提供します。これは、https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[Rancher Managerをインストールする]ためにエアギャップ(された)インスタンス用の`rancher-images.txt`ファイルに追加されます。
+
+このイメージがエアギャップ(された)クラスターにアクセス可能なレジストリにミラーリングされると、Rancher UI内でイメージをインポートできます。これにより、インストール用の{short-project-name} UIチャートを持つローカルHelmリポジトリが作成されます。
+
+=== インストール手順
+
+. https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-resources-setup/secrets[作成] `cattle-ui-plugin-system`ネームスペース内にレジストリシークレットを作成します。*レジストリドメイン名*フィールドにイメージアドレスのドメインを入力してください。
+. *拡張機能*ページに戻ります（例：`https://cluster-ip/dashboard/c/local/uiplugins`）。
+. 右上で、*拡張カタログの管理*を選択します。image:ui_airgap_01.png[カタログの管理]
+. ［*インポート拡張カタログ*］ボタンを選択します。 \image:ui_airgap_02.png[インポートカタログ]
+. *カタログイメージ参照*フィールドに画像アドレスを入力します。
+. *プルシークレット*ドロップダウンメニューから、先ほど作成したシークレットを選択します。image:ui_airgap_03.png[カタログ情報を入力してください。]
+. ［*ロード*］をクリックします。拡張機能は現在、*保留中*です。
+. *拡張機能*ページに戻ります。
+. *利用可能*タブを選択し、*リロード*ボタンをクリックして、拡張機能のリストが最新であることを確認します。 image:ui_airgap_04.png[インストール{short-project-name}]
+. 追加した{short-project-name}拡張機能を見つけて、*インストール*ボタンを選択します。

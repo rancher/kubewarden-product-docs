@@ -1,0 +1,126 @@
+include::partial$variables.adoc[]
+
+= 使用 Rancher 备份运算符进行备份和恢复
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用 Rancher Backup Operator 在任何 Kubernetes 集群上配置和管理备份和恢复。
+:keywords: "{project-name}", Kubernetes, Kubewarden, Rancher Backup Operator, 备份, 恢复
+:doc-persona: Kubewarden-operator, Kubewarden-integrator
+:doc-type: HOWTO
+:doc-topic: operator-manual, Rancher Backup Operator
+:current-version: {page-origin-branch}
+
+`rancher-backup` Operator 可用于在任何 Kubernetes 集群上备份和恢复 Rancher。
+
+自版本 `v9.0.0` 起，`rancher-backup` 支持 {project-name}。这包括：
+
+- 默认的 Rancher 名称空间 `cattle-kubewarden-system`（或 `cattle-kubewarden-*`），以及默认的 {short-project-name} 名称空间 `kubewarden`。
+- 所需的 {short-project-name} 资源通过 Helm 图表安装。
+- {short-project-name} CRD，在恢复后由 {short-project-name} 控制器进行协调。
+- `policy-reporter` 图表的 `kubewarden-controller` 子图表，用于其默认值。这不包括 Grafana 集成或其他插件。
+
+== 用户机密
+
+备份过程不包括用户创建的机密，例如用于 xref:/howtos/policy-servers/02-private-registry.adoc#_creating_the_secret[配置 私有注册表的 PolicyServers] 的机密，除非它们被正确标记。为此，请以以下方式之一标记机密。或者：
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker app.kubernetes.io/part-of=kubewarden
+----
+
+或：
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
+----
+
+== 安装 Rancher Backup Operator
+
+请访问链接：https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html [Rancher Manager] 文档。对于使用 Minikube 安装的类型为 `hostPath` 的 PersistentVolumes，名称为 `standard`，Minikube 开箱即用支持。
+
+需要指示 Backup Operator 通过将值 `optionalResources.kubewarden.enabled` 设置为 `true`，还备份 {short-project-name} 用户定义的 CR。
+
+安装步骤如下：
+
+[source,console]
+----
+helm repo add rancher-charts https://charts.rancher.io
+helm repo update
+helm install --wait --create-namespace -n cattle-resources-system \
+    rancher-backup-crd rancher-charts/rancher-backup-crd
+helm install --wait -n cattle-resources-system \
+    rancher-backup rancher-charts/rancher-backup \
+    --set persistence.enabled=true --set persistence.storageClass=standard \
+    --set optionalResources.kubewarden.enabled=true
+----
+
+== 备份
+
+使用`rancher-resource-set-full`备份{short-project-name}机密。
+这些包括在 Helm 安装时创建的 TLS 机密。
+
+如果您更喜欢使用 `rancher-resource-basic`，请记得备份或手动创建所需的 TLS 机密。
+
+以下是使用 `rancher-resource-set-full` 执行未加密备份到默认位置的示例：
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Backup
+metadata:
+  name: default-location-backup
+spec:
+  resourceSetName: rancher-resource-set-full
+EOF
+backup.resources.cattle.io/default-location-backup created
+----
+
+`rancher-backup` 日志或备份显示备份文件的创建：
+
+[source,shell]
+----
+kubectl logs -n cattle-resources-system -l app.kubernetes.io/name=rancher-backup -f
+...
+INFO[2025/06/26 10:07:48] Processing backup default-location-backup
+INFO[2025/06/26 10:07:48] For backup CR default-location-backup, filename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z
+...
+INFO[2025/06/26 10:07:49] Done with backup
+----
+
+您还可以通过描述资源来查看其状态：
+
+[source,shell]
+----
+kubectl get backups
+NAME                      LOCATION   TYPE       LATEST-BACKUP                                                                              RESOURCESET                 AGE    STATUS
+default-location-backup   PV         One-time   default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   rancher-resource-set-full   111s   Completed
+----
+
+请参阅 Rancher 文档以获取更多 link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_backup[备份示例]。
+
+== 恢复
+
+要从默认位置恢复未加密备份，请在显示备份资源时从 LATEST-BACKUP 列中获取文件名，以创建恢复资源：
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Restore
+metadata:
+  name: restore-default
+spec:
+  backupFilename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z.tar.gz
+EOF
+restore.resources.cattle.io/restore-default created
+
+kubectl get restores
+NAME              BACKUP-SOURCE   BACKUP-FILE                                                                                AGE   STATUS
+restore-default   PV              default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   6s    Completed
+----
+
+请参阅 Rancher 文档以获取更多 link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_restore[恢复示例]。
+
+

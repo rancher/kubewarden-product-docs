@@ -1,0 +1,37 @@
+include::partial$variables.adoc[]
+= Autoridades de Certificación Personalizadas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura autoridades de certificación personalizadas para su uso con instalaciones de {project-name} para garantizar una comunicación y autenticación seguras.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "custom-certificate-authorities"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom certificate authorities"]
+:sidebar_label: Autoridades de Certificación Personalizadas
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+Con ambos `kwctl` y `policy-server` puedes extraer directivas de los registros de Open Container Initiative (OCI) y de servidores HTTP.
+Solo puedes enviar directivas a los registros de OCI.
+Por defecto, se utiliza HTTPS con verificación TLS del host para esto.
+
+Se utiliza el almacén de autoridades de certificación (CA) del sistema para validar la cadena de certificados de confianza del registro OCI.
+En una instalación estándar de {project-name}, el `policy-server` utiliza el almacén de CA que se envía con su contenedor de Linux.
+En el lado del cliente, `kwctl` utiliza el almacén de CA de su sistema operativo.
+
+Si estás utilizando el https://github.com/kubewarden/kubewarden-controller[Controlador], puedes configurar el PolicyServer a través de sus campos xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`].
+
+[NOTE]
+====
+
+El comportamiento predeterminado de `kwctl` y `policy-server` impone HTTPS con certificados de confianza que coinciden con el almacén de CA del sistema.
+Puedes interactuar con registros utilizando certificados no confiables o incluso sin TLS, utilizando la configuración `insecure_sources`.
+Claramente, no es para entornos de producción.
+====
+
+
+== El archivo `sources.yaml`
+
+Puedes ajustar el comportamiento de envío-recepción de `kwctl` y `policy-server` utilizando el archivo `sources.yaml`.
+
+Para detalles de referencia, consulta la referencia xref:../reference/sources_yaml.adoc[`sources.yaml`].

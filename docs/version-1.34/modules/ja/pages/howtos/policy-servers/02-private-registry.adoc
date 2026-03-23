@@ -1,0 +1,75 @@
+include::partial$variables.adoc[]
+
+= PolicyServersをプライベートレジストリで使用するように設定する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Dockerの設定シークレットを作成し、設定のspec.imagePullSecretフィールドを設定することで、PolicyServersをプライベートレジストリを使用するように構成します。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "private-registry"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
+:current-version: {page-origin-branch}
+
+PolicyServersをプライベートOCIレジストリの資格情報を使用するように構成することが可能です。これにより、これらのPolicyServersはパブリックおよびプライベートレジストリからポリシーをダウンロードできます。
+
+PolicyServerをプライベートレジストリにアクセスするように構成すると、その上で実行されるポリシーもこれらのレジストリにアクセスできます。これは、ポリシーが提供されたSDKまたはホスト機能APIを使用する場合に機能します。これは、PolicyServersが定義されたポリシーSDKおよび低レベルのホスト機能APIを通じてその機能を公開するためです。これは、コンテナイメージの署名を検証するポリシーにおいても同様です。
+
+これを達成するためには、プライベートレジストリの資格情報を含むシークレットを作成する必要があります。次に、PolicyServersのリソースとHelmチャートをそれを使用するように構成します。
+
+== シークレットの作成
+
+PolicyServersは通常のhttps://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Docker設定シークレット]をサポートしており、タイプ`kubernetes.io/dockercfg`またはタイプ`kubernetes.io/dockerconfigjson`のいずれかです。これらのシークレットは`kubectl create secret docker-registry`を使用して作成できます。
+
+シークレットは**PolicyServerを実行しているネームスペースで**作成します。
+これは最小特権の原則に従い、異なるPolicyServersが異なるレジストリからOCIアーティファクトを独立して検証できるようにします。
+
+このシークレットは次のコマンドでPolicyServerのために作成します：
+
+[subs="+attributes",shell]
+----
+kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker \
+  --docker-username=myuser \
+  --docker-password=mypass123 \
+  --docker-server=myregistry.io
+----
+
+[TIP]
+====
+
+シークレットにxref:/howtos/rancher-backup-operator.adoc#_user_secrets[ユーザーシークレット]で指定されたラベルを付けて、Rancher Backup Operatorによって行われるバックアップの一部にします。
+
+====
+
+Dockerシークレットの作成方法についての詳細は、https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Kubernetesドキュメント]を参照してください。
+
+== PolicyServersでのシークレットの使用
+
+シークレットを作成したら、PolicyServerインスタンスを設定する必要があります。`spec.imagePullSecret` フィールドに資格情報を含むシークレットの名前を設定してください：
+
+[subs="+attributes",yaml]
+----
+# Example of a PolicyServer using a private registry
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: default
+spec:
+  image: ghcr.io/kubewarden/policy-server:v1.1.1
+  serviceAccountName: policy-server
+  replicas: 1
+  annotations:
+  imagePullSecret: "secret-ghcr-docker"
+----
+
+== Helm チャートでのシークレットの使用
+
+`kubewarden-defaults` Helm チャートからデプロイされると、`policyServer.imagePullSecret` 値をシークレット名に設定できます。その後、作成されたデフォルトのPolicyServerは、あなたのプライベートレジストリからポリシーをダウンロードできるようになります：
+
+[subs="+attributes",yaml]
+----
+# values file example
+policyServer:
+  telemetry:
+    enabled: False
+  imagePullSecret: secret-ghcr-docker
+----

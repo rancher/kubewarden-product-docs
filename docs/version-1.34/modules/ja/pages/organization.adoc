@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= ドキュメントの構成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: 組織
+:sidebar_position: 75
+:description: のために、チュートリアル、説明、ハウツー、リファレンスマテリアルに整理された包括的なドキュメントにアクセスします。{project-name}
+:keywords: ["アドミッションポリシーマネージャー", "{project-name}", ドキュメント, 構成]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [explanation]
+
+{project-name}はプロジェクトのドキュメントを次のように整理します：
+
+* xref:/introduction.adoc[概要]
+* xref:/quick-start.adoc[クイックスタート]
+* _チュートリアル_—例を通じて学ぶ。
+* _説明_—基本的な概念。
+* _ハウツー_—{short-project-name}のタスクを完了する。
+* _リファレンス_
+* 構成—このページ
+* xref:/personas.adoc[ペルソナ]—{short-project-name}は誰のためですか？
+* xref:/disclosure.adoc[セキュリティ]
+* xref:/glossary.adoc[用語集]
+
+ほとんどの資料は、_チュートリアル_、_説明_、_ハウツー_、および_リファレンス_の4つのセクションにあります。セクションは相互に排他的ではないため、重複がある場合があります。{short-project-name}プロジェクトは、link:https://diataxis.fr/[ディアタキシス]ドキュメントフレームワークに従うことを試みています。
+
+== ナビゲーション
+
+左側の目次メニューは、常に現在のドキュメントの位置を示します。
+右側のセクションメニューは、現在のページのセクションを表示します。各ページのメインコンテンツパネルの上部には、'パンくずリスト'機能もあります。
+
+== 検索
+
+各ページのヘッダーパネルには検索ボックス機能があります。
+
+== 編集
+
+各ページの下部にはGitHubのページソースへのリンクがあります。
+
+== その他のリソース
+
+また、次のものも維持されています：
+
+* link:https://github.com/kubewarden/rfc[RFCs]はプロジェクトのために用意されています。
+* link:https://www.kubewarden.io/blog/[ブログ投稿]は、{community-name}リリースに関連する一連の投稿です。
+* {community-name}の管理におけるlink:https://github.com/kubewarden/community[コミュニティ]に関連するアイテム。

@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= 构建和分发策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 按照以下基本步骤有效地构建和分发适用于您的 {project-name} 设置的策略。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "编写策略", "rust", "构建和分发"]
+:sidebar_label: 构建和分发策略
+:current-version: {page-origin-branch}
+
+== 构建策略
+
+到目前为止，您已经构建了与开发机器相同操作系统和架构的策略。
+
+现在是时候将策略构建为 WebAssembly 二进制文件，即 `.wasm` 文件。
+
+您使用以下命令：
+
+[subs="+attributes",console]
+----
+make policy.wasm
+----
+
+此命令以发布模式构建代码，并以 WebAssembly 作为编译目标。
+
+构建生成一个 `policy.wasm` 文件：
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+== 分发策略
+
+{project-name} 文档在 xref:../../../explanations/distributing-policies.adoc[分发策略] 部分中记录了策略的分发。
+
+== 更多示例
+
+您可以在 {short-project-name} 的 GitHub 空间中找到更多 Rust {short-project-name} 策略。https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[此查询]可以帮助您找到它们。
+
+该查询显示的 {short-project-name} 策略库具有自动化以下任务的 GitHub Actions：
+
+* 在拉取请求和代码合并到主分支后运行单元测试和代码检查。
+* 以 `release` 模式构建策略，并将其作为工件推送到 OCI 注册表。

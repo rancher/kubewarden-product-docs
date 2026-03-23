@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= Chemin de mise à niveau
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Mettez à niveau votre {project-name} pile en utilisant des stratégies de versionnement et des règles de compatibilité prises en charge parmi ses composants.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["manuel-opérateur", "chemin-de-mise-à-niveau"]
+:doc-type: ["reference"]
+:keywords: ["chemin de mise à niveau", "support"]
+:sidebar_label: Chemin de mise à niveau
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {project-name}Versionnement de la pile
+
+Le projet {short-project-name} utilise https://semver.org/[Versionnement sémantique] pour définir la version de la "pile" de tous ses composants : la version suit le modèle `MAJOR.MINOR.PATCH`. La version prise en charge est la dernière version publiée.
+
+Les composants {short-project-name} qui suivent les règles pour la version de la "pile" sont :
+
+* le graphique `kubewarden-crds`, dans leur champ appVersion.
+
+* le graphique `kubewarden-controller`, dans leur champ appVersion.
+
+* le graphique `kubewarden-defaults`, dans leur champ appVersion.
+
+* le tag d'image `policy-server` pour ceux déployés manuellement. La ressource par défaut est déjà gérée par le graphique `kubewarden-defaults`.
+
+* `kwctl`Binaire.
+
+== Compatibilité des versions de la pile parmi les composants
+
+Le graphique `kubewarden-crds`, le graphique `kubewarden-controller`, le graphique `kubewarden-defaults`, toute image `policy-server` déployée manuellement, et `kwctl` doivent exécuter la même version `MAJOR`.`MINOR`.`PATCH`.
+
+Par conséquent, si la version `kubewarden-controller` en cours d'exécution est `1.1.2`, les ``policy-server``s et la version `kwctl` utilisée devraient également être `1.1.2`.
+
+== Versions des graphiques Helm
+
+Les graphiques Helm définissent le champ `version` et le champ `appVersion`. Le champ `appVersion` informe de la version de la "pile" {short-project-name} comme mentionné précédemment. Le champ `version` suit également https://semver.org/[versionnement sémantique] et décrit les changements compatibles avec les versions antérieures dans les modèles de graphiques et `values.yaml`.
+
+== Options de mise à jour
+
+Lors de la mise à niveau des composants, vous pouvez mettre à niveau plusieurs versions de la pile `PATCH` en une seule opération. Cependant, la mise à niveau de plusieurs `MAJOR` ou `MINOR` versions de la pile dans une seule mise à niveau n'est *pas* prise en charge.
+
+Par exemple, vous pouvez mettre à niveau les composants de la version `1.1.10` à `1.1.nn` dans une seule mise à niveau. Mais la mise à niveau de `1.1.10` à `1.5.0` n'est pas prise en charge. Dans ces cas, vous devez mettre à niveau individuellement chaque version `MAJOR`/`MINOR` entre les deux versions. Par conséquent, il est nécessaire de mettre à niveau `1.1.10` vers `1.2.0`, puis `1.3.0`, puis `1.4.0` et enfin vers `1.5.0`. Pour mettre à niveau une version `MAJOR` vers une autre, vous devez appliquer toutes les mises à jour `MINOR` entre les deux versions `MAJOR`.
+
+.Exemple de graphique de support de chemin de mise à niveau
+[mermaid]
+....
+%%{init: "theme": "neutral"}%% diagramme de flux LR; accTitle: Graphique de support de chemin de mise à niveau accDescr: Un diagramme montrant les chemins de mise à niveau recommandés et pris en charge pour {short-project-name}.
+  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|Non recommandé|1.2.0(1.2.0); 1.0.2-->|Non pris en charge|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray : 3 5
+  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
+....
+
+== Ordre de mise à niveau
+
+Les utilisateurs de {short-project-name} doivent mettre à niveau la pile en commençant par le graphique `kubewarden-crds`, puis le graphique `kubewarden-controller`. Après cela, mettez à niveau le `policy-server` (via le graphique `kubewarden-defaults` ou en mettant à jour les images de ceux personnalisés) et `kwctl`.
+
+== Rétrogradations
+
+Les rétrogradations ne sont *pas* prises en charge, et {short-project-name} ne les teste pas. Néanmoins, on peut raisonnablement s'attendre à ce qu'elles fonctionnent.
+
+== SDK, politiques
+
+Les SDK de stratégie pour les différentes langues et stratégies maintenues par l'équipe {short-project-name} suivent leur propre versionnement sémantique. {short-project-name} prend en charge la dernière version. Il n'est pas nécessaire de prévoir un chemin de mise à niveau pour eux, juste une mise à jour vers la dernière version.
+
+Les modifications apportées à la pile {short-project-name} peuvent signifier que les stratégies et les SDK reçoivent des mises à jour pour utiliser les dernières fonctionnalités {short-project-name}. {short-project-name} veille à effectuer ces mises à jour de manière rétrocompatible.
+
+Par exemple, une version mineure {short-project-name} ajoutant la prise en charge d'Audit Scanner (`v1.7.0`) signifie que les stratégies disposent d'un nouveau champ `spec.backgroundAudit`. Ceci est optionnel, rétrocompatible et défini par défaut sur `true`.

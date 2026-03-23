@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= {project-name}とは
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Kubernetesのポリシー管理における{project-name}の役割について学びましょう。これにはコンプライアンスの遵守とリソースの最適化が含まれます。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["introduction"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "cncf", "cncfサンドボックス", "kubernetes", "アドミッションポリシー管理者"]
+:sidebar_label: 概要
+:sidebar_position: 1
+:slug: /
+:current-version: {page-origin-branch}
+
+{project-name}はKubernetesポリシーエンジンです。
+Kubernetesのためのユニバーサルポリシーエンジンを目指しています。
+
+{intro-paragraph}
+
+== {project-name}はどのように役立ちますか？
+
+{short-project-name}はKubernetes環境におけるポリシーのアドミッションと強制に柔軟性を提供します。
+
+=== 利点と価値
+
+- https://webassembly.org[WebAssembly]バイナリを生成する任意のプログラミング言語を使用してポリシーを記述します。
+- WebAssemblyは、プロセッサとオペレーティングシステム間でのポリシーの互換性を可能にします。
+- 他のポリシーエンジンからのポリシーを再利用することができ、再記述の必要がありません。
+- https://opencontainers.org[OCI]準拠のレジストリなど、標準的で安全なメカニズムを使用してポリシーを配布します。
+- アドミッションにおけるポリシーの強制により、コンプライアンスに準拠したワークロードのみが実行されます。
+- {short-project-name}監査スキャナーは、時間の経過とともにポリシーの強制を積極的かつ継続的にチェックします。
+- https://slsa.dev[SLSA]（ソフトウェアアーティファクトのためのサプライチェーンレベル）ツールとプラクティスを使用してポリシーを検証します。
+- {project-name}はアドミッションポリシー管理に対する包括的なアプローチを提供します。
+- CNCFのメンバーシップと成長するオープンソースコミュニティおよびエコシステムは、透明性、コラボレーション、改善において{short-project-name}を支援します。
+
+=== 使用例
+
+- セキュリティハードニング。例えば、コンテナの権限を制限するポリシーを強制したり、ネットワークポリシーを強制したり、安全でないイメージレジストリをブロックしたりします。
+- コンプライアンスの監査です。ワークロードが組織または規制の基準およびベストプラクティスに準拠していることを確認します。
+- リソースの最適化です。リソースの制限と割り当てを強制します。
+
+使用例のさらなる文書はxref:use-cases.adoc[使用例]ページにあります。
+
+== {short-project-name}に初めてですか？
+
+{short-project-name}プロジェクトに初めての場合は、xref:quick-start.adoc[クイックスタートガイド]とxref:explanations/architecture.adoc[アーキテクチャ]ページから始めてください。
+その後は、あなたの興味がどこに向かうかによります。ポリシー開発者向けには、チュートリアルに言語特有のセクションがあります。統合者および管理者向けには、「ハウツー」セクションがあります。説明セクションには、役立つ背景資料が含まれています。また、xref:glossary.adoc[用語集]もあります。
+
+== WebAssemblyとは何ですか？
+
+https://webassembly.org/[WebAssemblyの公式ウェブサイト]に記載されているように：
+
+____
+WebAssembly（略称Wasm）は、スタックベースの仮想マシン用のバイナリ命令形式です。Wasmは、プログラミング言語のためのポータブルなコンパイルターゲットとして設計されており、クライアントおよびサーバーアプリケーションのためにウェブ上での展開を可能にします。
+____
+
+Wasmは元々、ブラウザの「拡張機能」として考案されました。しかし、WebAssemblyコミュニティは、ブラウザの外でWasmコードを実行できるようにするための取り組みに従事しています。
+
+== なぜWebAssemblyを使用するのですか？
+
+ユーザーは、ツールチェーンがWasmバイナリを生成できる限り、好きなプログラミング言語を使用してKubernetesポリシーを書くことができます。
+
+Wasmモジュールはポータブルで、一度構築されると、あらゆる種類のプロセッサアーキテクチャとオペレーティングシステムで実行できます。例えば、Apple Silicon上で開発・構築されたポリシーは、変換なしでAMD64/Intel64 Linux上で実行できます。
+
+ポリシーの著者は、自分のスキル、ツール、ベストプラクティスを再利用できます。ポリシーは「従来の」プログラムであり、再利用可能なブロック（通常のライブラリ）を持つことができます。それらをリンティングおよびテストでき、現在のCIおよびCDワークフローに組み込むことができます。
+
+== ポリシー配布
+
+標準のウェブサーバーを使用して{short-project-name}ポリシーを提供することができます。または、より良い方法として、https://github.com/opencontainers/artifacts[OCIアーティファクト]としてOCI準拠のレジストリに公開することができます。
+
+ifeval::["{build-type}" == "community"]
+
+== ベンダーの中立性
+
+{short-project-name}はCNCFによって定義されたリンク:https://contribute.cncf.io/maintainers/community/vendor-neutrality/[ベンダー中立]プロジェクトです。
+
+endif::[]

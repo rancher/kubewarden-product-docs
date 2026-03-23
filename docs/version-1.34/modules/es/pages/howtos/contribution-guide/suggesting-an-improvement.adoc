@@ -1,0 +1,62 @@
+include::partial$variables.adoc[]
+= Sugerir una mejora en la documentación
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Inicia una mejora en la documentación abriendo un problema en GitHub con detalles claros sobre lo que falta, está desactualizado, es erróneo o requiere una revisión de calidad.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution", "improvement"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "suggesting an improvement"]
+:sidebar_label: Sugerir mejoras en la documentación
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+Si notas un problema en la documentación {short-project-name} o quieres sugerir nuevo contenido, abre un problema. Solo necesitas acceso a una https://github.com/join[cuenta de GitHub] y un navegador.
+
+Normalmente, cualquier nuevo trabajo de documentación para {short-project-name} comienza con un problema en GitHub.
+ifeval::["{build-type}" == "community"]
+El https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name} equipo de documentación] revisa, categoriza y etiqueta los problemas.
+endif::[]
+ifeval::["{build-type}" == "product"]
+El https://github.com/orgs/rancher/teams/docs[{short-project-name} equipo de documentación] revisa, categoriza y etiqueta los problemas.
+endif::[]
+Todo el mundo es bienvenido a trabajar en cualquier problema, incluyendo al reportador, pero deberías asignártelo antes de comenzar cualquier trabajo para evitar esfuerzos duplicados.
+
+== Abrir un problema
+
+Para sugerir mejoras en el contenido de la documentación existente o reportar un error, abre un problema.
+
+* Haz clic en el icono de GitHub Octocat en la parte superior. Esto te redirige a la
+ifeval::["{build-type}" == "community"]
+  https://github.com/kubewarden/docs[repositorio de documentación para {short-project-name}].
+endif::[]
+ifeval::["{build-type}" == "product"]
+  https://github.com/rancher/kubewarden-product-docs[repositorio de documentación para {short-project-name}].
+endif::[]
+* Navega a la pestaña de Problemas y haz clic en *Nuevo problema*.
+* Describe el problema o la sugerencia de mejora. Cuantos más detalles, mejor.
+* Haz clic en *Enviar nuevo problema*.
+* Después de enviar el problema, puedes asignártelo a ti mismo o esperar a que un miembro de la comunidad lo recoja. Los miembros del equipo de documentación y de la comunidad pueden solicitar aclaraciones antes de que puedan actuar sobre tu problema. Debes comprobar activamente tu problema o https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notifications[activar las notificaciones de GitHub].
+
+== Sugerencias de nuevo contenido
+
+Para sugerir nuevo contenido, por favor presenta un problema utilizando uno de estos mecanismos:
+
+* Elige una página existente en la sección que crees que corresponde al contenido y haz clic en *Crear un problema*. O bien
+ifeval::["{build-type}" == "community"]
+* Navega a https://github.com/kubewarden/docs/issues/new/choose[GitHub] y presenta el problema directamente.
+endif::[]
+ifeval::["{build-type}" == "product"]
+* Navega a https://github.com/rancher/kubewarden-product-docs/issues/new/choose[GitHub] y presenta el problema directamente.
+endif::[]
+
+== ¿Cómo puedes hacer que una contribución cuente?
+
+Ninguna contribución es demasiado grande o pequeña. Sin embargo, para que la comunidad obtenga el máximo valor, solicitamos que sigas lo siguiente al informar de un problema:
+
+* Concéntrate en proporcionar una descripción clara del problema. Algunos puntos clave a considerar serían describir lo que falta, está desactualizado, es erróneo o requiere mejora cualitativa y técnica.
+* Describe el impacto específico que el problema tiene en los usuarios.
+* Limita el alcance del problema. Si el alcance es grande, divídelo en tareas más pequeñas dentro de un problema. Por ejemplo, "Crear una Guía de Contribuciones" tiene un alcance amplio, ya que habría múltiples tareas asociadas con el problema.
+  Sin embargo, "Corregir un error gramatical en la página de Inicio Rápido" es un problema de alcance más limitado que solo requeriría una única solicitud de extracción.
+* Verifica los problemas existentes para evitar trabajo duplicado.
+* Comprueba si existe una solicitud de extracción o un problema. Asegúrate de referenciar el problema o la solicitud de extracción existente dentro del problema que estás abriendo para dar contexto a los contribuyentes que puedan querer trabajar en él.

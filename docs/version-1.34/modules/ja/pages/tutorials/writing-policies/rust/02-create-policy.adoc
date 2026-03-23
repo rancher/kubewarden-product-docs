@@ -1,0 +1,112 @@
+include::partial$variables.adoc[]
+= ポリシーの作成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: カスタマイズ可能な拒否基準に基づいてPodの作成リクエストを制御する検証ポリシーを作成および構成する方法を学びます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "creating-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "ポリシーの作成"]
+:sidebar_label: ポリシーの作成
+:current-version: {page-origin-branch}
+
+例として、Podの作成リクエストを処理するシンプルな検証ポリシーを作成します。
+
+ポリシーはPodの`metadata.name`属性を確認し、無効な名前を持つPodを拒否します。
+無効な名前のリストは、ポリシーのエンドユーザーによって構成可能であるべきです。
+
+ポリシー設定は次のようになります。
+
+[subs="+attributes",yaml]
+----
+invalid_names:
+- bad_name1
+- bad_name2
+----
+
+ポリシーは次のようなPodの作成を受け入れるべきです。
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+ポリシーは次のようなPodの作成を拒否するべきです。
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad_name1
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== 新しいポリシープロジェクトのスキャフォールディング
+
+`cargo generate`とhttps://github.com/kubewarden/rust-policy-template[テンプレートプロジェクト]を使用して、新しいポリシープロジェクトを作成できます。
+
+まず、`cargo-generate`をインストールします。これにはhttps://pkgs.org/download/openssl-devel[openssl-devel]が必要です。
+
+[subs="+attributes",shell]
+----
+cargo install cargo-generate
+----
+
+次に、プロジェクトを次のようにスキャフォールディングします。
+
+[subs="+attributes",shell]
+----
+cargo generate --git https://github.com/kubewarden/rust-policy-template \
+               --branch main \
+               --name demo
+----
+
+コマンドは次のような出力を生成します。
+
+[subs="+attributes",console]
+----
+🔧   Creating project called `+demo+`...
+✨   Done! New project created /<some-path-name>/demo
+----
+
+これにより、`demo`サブディレクトリに新しいポリシープロジェクトが作成されます。
+
+[NOTE]
+====
+
+デモでGitHubコンテナレジストリ機能を使用する予定がある場合は、https://docs.github.com/en/packages/working-with-a-github-packages-registry/enabling-improved-container-support-with-the-container-registry#enabling-the-container-registry-for-your-personal-account[改善されたコンテナサポートを有効にする]必要があります。
+====
+
+
+=== テスト
+
+次のように試すことができます。
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+これにより、生成されたスキャフォールディングがテストされます。すべてが正しく配置されていれば、次のような出力で終わる一連のコンパイルメッセージが表示されます。
+
+[subs="+attributes",console]
+----
+running 4 tests
+test settings::tests::validate_settings ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+test tests::reject_pod_with_invalid_name ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

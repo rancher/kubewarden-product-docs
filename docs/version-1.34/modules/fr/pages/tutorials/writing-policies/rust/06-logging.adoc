@@ -1,0 +1,61 @@
+include::partial$variables.adoc[]
+= Consignation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez les capacités de journalisation pour votre stratégie en utilisant l'intégration de {project-name} avec la bibliothèque SLOG et en l'initialisant.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "rédaction-de-stratégies", "rust", "journalisation"]
+:doc-type: ["tutorial"]
+:keywords: ["{project-name}", kubewarden, "kubernetes", "journalisation"]
+:sidebar_label: Consignation
+:current-version: {page-origin-branch}
+
+Vous pouvez faire en sorte que votre stratégie effectue une journalisation.
+Le `policy-server` ou le `kwctl` transmet ces entrées de journal avec les informations appropriées.
+
+La bibliothèque de journalisation choisie pour le SDK Rust est https://github.com/slog-rs/slog[`slog`].
+C'est une crate populaire, bien connue et s'intègre proprement avec {project-name}.
+
+== Initialisez le journaliseur
+
+Le projet recommande de créer un évier global vers lequel vous pouvez journaliser, depuis où cela est nécessaire dans votre stratégie.
+Pour cela, utilisez la crate `lazy_static` :
+
+[subs="+attributes",rust]
+----
+use slog::{o, Logger};
+
+lazy_static! {
+    static ref LOG_DRAIN: Logger = Logger::root(
+        logging::KubewardenDrain::new(),
+        o!("policy" => "sample-policy")
+    );
+}
+----
+
+== Consommation du journaliseur
+
+Maintenant, depuis les fonctions `validate` ou `validate_settings`, vous pouvez journaliser en utilisant les macros exportées par `slog` qui correspondent à chaque niveau de journalisation pris en charge :
+
+[subs="+attributes",rust]
+----
+use slog::{info, o, warn, Logger};
+
+fn validate(payload: &[u8]) -> CallResult {
+    // ...
+    info!(LOG_DRAIN, "starting validation");
+    // ...
+    warn!(
+        LOG_DRAIN, "structured log";
+        "some_resource_name" => &some_resource_name
+    );
+    // ...
+}
+----
+
+La bibliothèque `slog` envoie tous les journaux au drain initialisé dans la variable globale.
+Cela se synchronise avec l'évaluateur de stratégie exécutant la stratégie.
+C'est soit `kwctl` soit le `policy-server`.
+Ensuite, l'évaluateur de stratégie journalise cette information, ajoutant d'autres informations contextuelles connues, telles que la requête Kubernetes `uid`.
+
+Plus d'informations sur les https://docs.rs/slog/2.7.0/slog/macro.log.html[macros de journalisation] offertes par slog se trouvent dans sa https://docs.rs/slog/2.7.0/slog/index.html[documentation].

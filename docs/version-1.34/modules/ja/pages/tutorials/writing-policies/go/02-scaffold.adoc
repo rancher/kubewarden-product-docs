@@ -1,0 +1,163 @@
+include::partial$variables.adoc[]
+= 新しいバリデーションポリシーの作成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 拒否リストのラベルを持つPodを拒否し、ユーザーが提供した正規表現でラベルを検証する新しいバリデーションポリシーの作成方法を説明します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "creating a new validation policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Goでのポリシー作成", "新しいバリデーションポリシー"]
+:current-version: {page-origin-branch}
+
+このチュートリアルでは、Podオブジェクトのラベルを検証するポリシーの作成について説明します。
+
+このポリシーは、拒否リストにある1つ以上のラベルを使用するすべてのPodを拒否します。
+このポリシーは、ユーザーが提供した正規表現を使用して特定のラベルも検証します。
+
+要約すると、ポリシー設定は次のようになります：
+
+[subs="+attributes",yaml]
+----
+# List of labels that cannot be used
+denied_labels:
+- foo
+- bar
+
+# Labels that are validated with user-defined regular expressions
+constrained_labels:
+  priority: "[123]"
+  cost-center: "^cc-\d+"
+----
+
+このPodの作成は拒否されます：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    foo: hello world
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+このPodの作成も拒否されます：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    cost-center: cc-marketing
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+ポリシーの設定を使用して、内容に関係なくラベル仕様の使用を強制できます：
+
+[subs="+attributes",yaml]
+----
+constrained_labels:
+  mandatory-label: ".*" # <- this label must be present, we don't care about its value
+----
+
+== 新しいポリシープロジェクトのスキャフォールディング
+
+https://github.com/kubewarden/go-policy-template[テンプレートリポジトリ]を使用して新しいポリシープロジェクトを作成できます。
+ページの上部近くにある「このテンプレートを使用」緑のボタンを選択し、GitHubのウィザードに従ってください。
+
+リポジトリをローカルにクローンし、`go.mod`ファイルの`module`ディレクティブを次のように設定します：
+
+[,go]
+----
+module <path to your repository>
+----
+
+[NOTE]
+====
+実際のポリシーは、`github.com/kubewarden/go-policy-template`のようなリポジトリパスを使用します。
+====
+
+
+== テスト
+
+必要なツールが整っている場合、`make test`コマンドはDockerを使用してTinyGoコンパイラのイメージをプルし、それを使用してポリシーテンプレートをビルドおよびテストします。
+
+デフォルトの`make`コマンドは、`policy.wasm`ターゲットをビルドします。次に、`make test`が定義されたGoテストを実行します。
+コマンド`make e2e-tests`は、https://github.com/bats-core/bats-core[bats]を使用して{short-project-name}クラスター内でテストを実行します。
+`go-policy-template`をクローンした後、これらのコマンドを実行すると、チュートリアルに必要なツールが揃っているか確認できます。
+
+.`make`コマンドからの出力
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+make test
+docker run \
+        --rm \
+        -e GOFLAGS="-buildvcs=false" \
+        -v /home/jhk/projects/suse/tmp/go-kw-demo:/src \
+        -w /src tinygo/tinygo:0.30.0 \
+        tinygo build -o policy.wasm -target=wasi -no-debug .
+Unable to find image 'tinygo/tinygo:0.30.0' locally
+0.30.0: Pulling from tinygo/tinygo
+9aaefb8797c4: Pull complete
+24ab7ca26e01: Pull complete
+ca4ea8be6361: Pull complete
+50380d0859d2: Pull complete
+4f4fb700ef54: Pull complete
+ea0ddd497f04: Pull complete
+01ba28116afb: Pull complete
+Digest: sha256:5cbf5e50aec3a00fcff8bb4ae070a07eea8198187a97b21dff6d873d2274ce7a
+Status: Downloaded newer image for tinygo/tinygo:0.30.0
+go test -v
+=== RUN   TestParsingSettingsWithNoValueProvided
+--- PASS: TestParsingSettingsWithNoValueProvided (0.00s)
+=== RUN   TestIsNameDenied
+--- PASS: TestIsNameDenied (0.00s)
+=== RUN   TestEmptySettingsLeadsToApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestEmptySettingsLeadsToApproval (0.00s)
+=== RUN   TestApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproval (0.00s)
+=== RUN   TestApproveFixture
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproveFixture (0.00s)
+=== RUN   TestRejectionBecauseNameIsDenied
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"info","message":"rejecting pod object","name":"test-pod","denied_names":"foo,test-pod"}
+|
+--- PASS: TestRejectionBecauseNameIsDenied (0.00s)
+PASS
+ok      github.com/kubewarden/go-policy-template        0.004s
+----
+
+および
+
+[subs="+attributes",console]
+----
+make e2e-tests
+bats e2e.bats
+e2e.bats
+ ✓ reject because name is on deny list
+ ✓ accept because name is not on the deny list
+ ✓ accept because the deny list is empty
+
+3 tests, 0 failures
+----
+
+======

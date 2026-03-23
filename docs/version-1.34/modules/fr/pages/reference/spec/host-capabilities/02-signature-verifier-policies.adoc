@@ -1,0 +1,386 @@
+include::partial$variables.adoc[]
+= Stratégies de vérification de signature
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Mettez en œuvre des stratégies sécurisées pour votre cluster en utilisant la stratégie de vérification fournie, ou développez-la avec le SDK de votre langage choisi.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-de-stratégies", "spécification", "capacités-hôtes", "stratégies-de-vérification-de-signature"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "spécification de stratégie", "vérificateur de signature"]
+:sidebar_label: Stratégies de vérification de signature
+:current-version: {page-origin-branch}
+
+{project-name} implémente le support pour le projet
+https://www.sigstore.dev/[Sigstore].
+Cela permet de mettre en œuvre une "Chaîne d'Approvisionnement Sécurisée" pour votre cluster.
+
+Une partie de la fonction de la chaîne d'approvisionnement sécurisée est de s'assurer que toutes les images de conteneurs exécutées dans le cluster sont signées et vérifiées.
+Cela prouve qu'elles proviennent de leurs auteurs déclarés, sans falsification.
+Pour en savoir plus, consultez la documentation sur
+xref:/howtos/security-hardening/secure-supply-chain.adoc[comment nous mettons en œuvre une Chaîne d'Approvisionnement Sécurisée pour les stratégies elles-mêmes].
+
+Les signatures Sigstore sont stockées dans des registres de conteneurs,
+à côté de l'objet OCI étant signé.
+Elles peuvent être une image de conteneur ou un artefact OCI plus générique,
+comme une {short-project-name} stratégie.
+Lorsqu'un objet est signé,
+ses signatures sont stockées comme des couches d'un objet OCI créé par Sigstore.
+Les stratégies nécessitant de vérifier les signatures des conteneurs doivent vérifier ces couches,
+et doivent extraire les couches de signature pour vérifier les signatures elles-mêmes.
+
+L'obtention et l'exploitation de ces couches OCI doivent se faire en dehors de l'invité WebAssembly (la stratégie).
+Ainsi, cela est effectué par le composant d'exécution WebAssembly,
+le {short-project-name} `policy-server` ou `kwctl`.
+
+Les différents SDK de langage pour les stratégies {short-project-name} s'occupent de cela.
+Ils fournissent des fonctions pour la vérification des images de conteneurs,
+des stratégies {short-project-name}, des graphiques Helm et d'autres types d'artefacts OCI.
+Cela garantit un chemin de code sûr et testé pour la vérification.
+
+Extraire des données d'un registre et vérifier cryptographiquement les signatures peut être coûteux en temps et en ressources informatiques, donc le composant d'exécution WebAssembly (PolicyServer, `kwctl`) garantit que les extractions de signatures et les calculs de vérification sont mis en cache.
+Les entrées mises en cache expirent automatiquement après 60 secondes pour aider à prévenir la diffusion de données obsolètes.
+
+== Caching
+
+Les résultats de vérification des signatures sont mis en cache pendant une minute.
+
+Les SDK fournissent des fonctions similaires à celles-ci :
+
+* {blank}
++
+[subs="+attributes",rust]
+----
+verify_pub_keys_image(
+    image_url: string,
+    vector_of_pub_keys: vector<string>,
+    vector_of_sigstore_annotations: Vector<(key, value: string)>
+    )
+    returns (is_trusted: bool, digest_of_verified_image: string)
+----
+
+* {blank}
++
+[subs="+attributes",rust]
+----
+verify_keyless_exact_match(
+    image_url: string,
+    vector_of_tuples_issuer_and_subject: vector<(issuer, subject: string)>,
+    vector_of_sigstore_annotations: vector<(key, value: string)>
+    )
+    returns (is_trusted: bool, digest_of_verified_image: string)
+----
+
+Les deux fonctions vérifient que l'image est signée et satisfont aux contraintes.
+
+[NOTE]
+====
+En cas de succès, les fonctions retournent le digest de l'image vérifiée.
+Il est désormais de la responsabilité de la stratégie de s'assurer que les conteneurs sont instanciés à partir de ce digest, et non à partir d'une étiquette qui pourrait ne pas correspondre à ce digest de somme de contrôle (et donc être compromise).
+====
+
+
+== Un exemple
+
+L'équipe {short-project-name} https://github.com/kubewarden/verify-image-signatures[fournit une stratégie de vérification] qui impose les signatures Sigstore pour tous les conteneurs.
+Il est construit en utilisant Rust et avec le SDK Rust.
+La stratégie garantit que les conteneurs sont signés, et optionnellement, modifie les requêtes. La mutation ajoute la somme de contrôle vérifiée à l'étiquette de l'image.
+Consultez la documentation pour des détails spécifiques.
+
+Cette stratégie peut couvrir tous vos besoins, mais si vous préférez une expérience utilisateur différente, bien sûr, vous pouvez construire dessus ou sur l'un des autres SDK.
+
+== Contrat de protocole WaPC
+
+Dans le cas où vous implémentez votre propre SDK de langage, voici les fonctions qu'une stratégie, qui vérifie les signatures, peut utiliser :
+
+=== fonction waPC - `v2/verify`
+
+==== `SigstorePubKeyVerify` entrée
+
+[,hcl]
+----
+{
+  type: "SigstorePubKeyVerify",
+
+  # **mandatory**: image URI to verify
+  "image": string,
+  "pub_keys": [
+    # PEM-encoded public keys
+    string
+    ],
+  # optional:
+  "annotations": [
+      # signature annotations
+      {
+        "key": string,
+        "value": string
+      },
+    ]
+}
+----
+
+==== `SigstorePubKeyVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreKeylessVerify` entrée
+
+[,hcl]
+----
+{
+  type: "SigstoreKeylessVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  "keyless": [
+    # list of (issuer, subject) tuples
+    {
+      # OIDC issuer
+      "issuer": string,
+      # signature subject (mail, CI URL, ...)
+      "subject": string
+    }
+  ],
+  # optional:
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreKeylessVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreKeylessPrefixVerify` entrée
+
+[,hcl]
+----
+{
+  type: "SigstoreKeylessPrefixVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  "keyless_prefix": [
+    # list of (issuer, url_prefix) tuples
+    {
+      # OIDC issuer
+      "issuer": string,
+      # URL Prefix of subject (CI URL, ...)
+      "url_prefix": string
+    }
+  ],
+  # optional:
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreKeylessPrefixVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreGithubActionsVerify` entrée
+
+[,hcl]
+----
+{
+  type: "SigstoreGithubActionsVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  # GitHub owner
+  "owner": string,
+  # optional:
+  # GitHub repository
+  "repo": string
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreGithubActionsVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreCertificateVerify` entrée
+
+[,hcl]
+----
+{
+  type: "SigstoreCertificateVerify",
+
+  # mandatory: image URI to verify
+  "image": string,
+  # PEM-encoded certificated used to
+  # verify the signature.
+  # The certificate is UTF-8 encoded.
+  # It's an array of bytes of the unicode code pointers of a PEM encoded
+  # certificate string.
+  "certificate": [byte(int), ..., byte(int)],
+  # Optional - certificate chain used to
+  # verify the provided certificate.
+  # When not specified, the certificate
+  # is assumed to be trusted.
+  # The certificate is UTF-8 encoded.
+  # It's an array of bytes of the unicode code pointers of a PEM encoded
+  # certificate string.
+  "certificate_chain": [
+    [byte(int), ..., byte(int)],
+    ...
+    [byte(int), ..., byte(int)]
+  ],
+  # Require the signature layer to have
+  # a Rekor bundle.
+  # Having a Rekor bundle allows further
+  # checks to be performed, e.g. ensuring
+  # the signature has been produced during
+  # the validity time frame of the cert.
+  # Recommended to set to `+true+`
+  require_rekor_bundle: bool,
+  # Optional:
+  "annotations": [
+    # signature annotations
+    {
+      "key": string,
+      "value": string
+    },
+  ]
+}
+----
+
+==== `SigstoreCertificateVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+=== fonction waPC - `v1/verify`
+
+==== `SigstorePubKeyVerify` entrée
+
+[,hcl]
+----
+{
+  "SigstorePubKeyVerify": {
+    # **mandatory**: image URI to verify
+    "image": string,
+    "pub_keys": [
+      # PEM-encoded public keys
+      string
+    ],
+    # optional:
+    "annotations": [
+      # signature annotations
+      {
+        "key": string,
+        "value": string
+      },
+    ]
+  }
+}
+----
+
+==== `SigstorePubKeyVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----
+
+==== `SigstoreKeylessVerify` entrée
+
+[,hcl]
+----
+{
+  "SigstoreKeylessVerify": {
+    # mandatory: image URI to verify
+    "image": string,
+    "keyless": [
+      # list of (issuer, subject) tuples
+      {
+        # OIDC issuer
+        "issuer": string,
+        # signature subject (mail, CI URL, ...)
+        "subject": string
+      }
+    ],
+    # optional:
+    "annotations": [
+      # signature annotations
+      {
+        "key": string,
+        "value": string
+      },
+    ]
+  }
+}
+----
+
+==== `SigstoreKeylessVerify` sortie
+
+[,hcl]
+----
+{
+   # true if image verified
+   "is_trusted": boolean,
+   # digest of verified image
+   "digest": string
+}
+----

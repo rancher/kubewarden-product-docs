@@ -1,0 +1,174 @@
+include::partial$variables.adoc[]
+= 使用 JSON 查询进行验证
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过从 Kubernetes 对象的 JSON 表示中提取相关数据来实现验证逻辑。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "validation-using-json"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "使用 JSON 查询进行验证"]
+:current-version: {page-origin-branch}
+
+前面的部分展示了如何通过使用描述 Kubernetes 对象的 Go 类型来编写xref:tutorials/writing-policies/go/04-validation.adoc[验证]策略。
+
+还有另一种编写验证逻辑的方法，通过使用临时查询从 JSON 文档中提取相关数据。
+
+这种_"jq-like"_方法在策略需要深入查看 Kubernetes 对象时非常有用。
+在处理可选的内部对象时尤其有帮助。
+
+本文档使用 JSON 查询重新实现了早期的代码，而不是将 JSON 负载解组为 Go 类型。
+
+== `validate` 函数
+
+您可以使用刚刚创建的策略，并将其`validate`函数更改为不使用定义 Kubernetes 对象的 Go 类型。
+
+您可以改为使用https://github.com/tidwall/gjson[`gjson`]库从原始 JSON 对象中提取数据。
+
+首先，您需要更改需求部分。
+代码应如下所示：
+
+[,go]
+----
+import (
+    "encoding/json"
+    "fmt"
+
+    mapset "github.com/deckarep/golang-set/v2"
+    kubewarden "github.com/kubewarden/policy-sdk-go"
+    kubewarden_protocol "github.com/kubewarden/policy-sdk-go/protocol"
+    "github.com/tidwall/gjson"
+)
+----
+
+将`validate`函数更改为如下：
+
+.`validate` 函数
+[%collapsible]
+======
+
+[,go]
+----
+func validate(payload []byte) ([]byte, error) {
+    // Create a ValidationRequest instance from the incoming payload
+    validationRequest := kubewarden_protocol.ValidationRequest{}
+    err := json.Unmarshal(payload, &validationRequest)
+    if err != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(err.Error()),
+            kubewarden.Code(400))
+    }
+
+    // Create a Settings instance from the ValidationRequest object
+    settings, err := NewSettingsFromValidationReq(&validationRequest)
+    if err != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(err.Error()),
+            kubewarden.Code(400))
+    }
+
+    // Access the **raw** JSON that describes the object
+    podJSON := validationRequest.Request.Object
+
+    // NOTE 1
+    data := gjson.GetBytes(
+        podJSON,
+        "metadata.labels")
+
+    var validationErr error
+    labels := mapset.NewThreadUnsafeSet[string]()
+    data.ForEach(func(key, value gjson.Result) bool {
+        // NOTE 2
+        label := key.String()
+        labels.Add(label)
+
+        // NOTE 3
+        validationErr = validateLabel(label, value.String(), &settings)
+
+        // keep iterating if there are no errors
+        return validationErr == nil
+    })
+
+    // NOTE 4
+    if validationErr != nil {
+        return kubewarden.RejectRequest(
+            kubewarden.Message(validationErr.Error()),
+            kubewarden.NoCode)
+    }
+
+    // NOTE 5
+    for requiredLabel := range settings.ConstrainedLabels {
+        if !labels.Contains(requiredLabel) {
+            return kubewarden.RejectRequest(
+                kubewarden.Message(fmt.Sprintf("Constrained label %s not found inside of Pod", requiredLabel)),
+                kubewarden.NoCode)
+        }
+    }
+
+    return kubewarden.AcceptRequest()
+}
+----
+
+======
+
+`validate`函数的第一部分与之前相似。
+'NOTE'标记了更改。
+
+. 您使用`gjson`选择器来获取请求中嵌入的对象提供的`label`映射。
+. 您使用`gjson`辅助函数来遍历查询的结果。
+如果查询没有结果，循环将不会发生。
+. 您使用`validateLabel`函数来验证标签及其值，如之前所述。
+您还将 Pod 中找到的标签添加到之前定义的`mapset.Set`中。
+. 如果验证产生错误，您会立即返回验证拒绝的回复。
+. 如之前所述，您遍历`constrainedLabels`以检查所有标签是否在 Pod 中指定。
+代码已稍作更改，以利用之前填充的`mapset.Set`。
+
+== 测试验证代码
+
+单元测试和端到端测试不需要任何更改，您可以像之前一样运行它们：
+
+[subs="+attributes",console]
+----
+make test
+----
+
+[subs="+attributes",console]
+----
+go test -v
+=== RUN   TestParseValidSettings
+--- PASS: TestParseValidSettings (0.00s)
+=== RUN   TestParseSettingsWithInvalidRegexp
+--- PASS: TestParseSettingsWithInvalidRegexp (0.00s)
+=== RUN   TestDetectValidSettings
+--- PASS: TestDetectValidSettings (0.00s)
+=== RUN   TestDetectNotValidSettingsDueToBrokenRegexp
+--- PASS: TestDetectNotValidSettingsDueToBrokenRegexp (0.00s)
+=== RUN   TestDetectNotValidSettingsDueToConflictingLabels
+--- PASS: TestDetectNotValidSettingsDueToConflictingLabels (0.00s)
+=== RUN   TestValidateLabel
+--- PASS: TestValidateLabel (0.00s)
+PASS
+ok      github.com/kubewarden/go-policy-template    0.002s
+----
+
+[subs="+attributes",console]
+----
+make e2e-tests
+----
+
+[subs="+attributes",console]
+----
+bats e2e.bats
+e2e.bats
+ ✓ accept when no settings are provided
+ ✓ accept because label is satisfying a constraint
+ ✓ accept labels are not on deny list
+ ✓ reject because label is on deny list
+ ✓ reject because label is not satisfying a constraint
+ ✓ reject because constrained label is missing
+ ✓ fail settings validation because of conflicting labels
+ ✓ fail settings validation because of invalid constraint
+
+8 tests, 0 failures
+----
+
+所有测试都按预期工作。

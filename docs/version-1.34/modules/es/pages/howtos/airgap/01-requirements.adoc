@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+
+= Requisitos para instalar {project-name} en una instalación en un entorno aislado
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Infórmate sobre los requisitos de instalación para {project-name} en entornos aislados, incluyendo registros privados compatibles y detalles de compatibilidad.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manual-del-operador", "entorno aislado", "requisitos"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "air gap installation"]
+:sidebar_label: Requisitos
+:current-version: {page-origin-branch}
+
+. Registro privado que soporta artefactos OCI. Es necesario para almacenar imágenes de contenedores y políticas. Hay una lista de registros compatibles con la Iniciativa de Contenedor Abierto (OCI) xref:reference/oci-registries-support.adoc[aquí].
+. https://github.com/kubewarden/kwctl[`kwctl`] 1.3.1 o posterior.
+. docker v20.10.6 o posterior.

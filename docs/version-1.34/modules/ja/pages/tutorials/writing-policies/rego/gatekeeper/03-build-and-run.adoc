@@ -1,0 +1,91 @@
+include::partial$variables.adoc[]
+= ゲートキーパーのポリシーをビルドして実行する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Kubernetes環境内でアドミッションコントロールを強制するために、馴染みのあるRego構文とツールを使用してゲートキーパーのポリシーを開発およびデプロイします。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "build-and-run"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "gatekeeperポリシー", "rego"]
+:sidebar_label: ビルドして実行する
+:current-version: {page-origin-branch}
+
+ポリシーは、Open Policy Agentを対象としたRegoポリシーとまったく同じ方法でビルドして実行できます。
+プロジェクトの構造は次のとおりです：
+
+----
+.
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+└── policy.rego
+
+1 directory, 3 files
+----
+
+== ビルド
+
+ポリシーをビルドするには、`opa`コマンドを実行します：
+
+[subs="+attributes",shell]
+----
+$ opa build -t wasm -e policy/violation policy.rego
+----
+
+これにより、次の内容を持つRegoポリシーがビルドされます：
+
+* `target`: `wasm`.`wasm`ターゲット用のポリシーをビルドします。
+* `entrypoint`: `policy/violation`.エントリーポイントは、`violation`パッケージ内の`policy`ルールです。
+* `policy.rego`: `policy.rego`ファイルをビルドして含めます。
+
+前のコマンドは`bundle.tar.gz`ファイルを生成します。
+そこからWasmモジュールを抽出できます：
+
+[subs="+attributes",shell]
+----
+$ tar -xf bundle.tar.gz /policy.wasm
+----
+
+プロジェクトツリーは次のようになります：
+
+----
+.
+├── bundle.tar.gz
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+└── policy.wasm
+
+1 directory, 5 files
+----
+
+これでポリシーを実行できます。
+
+== 実行
+
+次のように`kwctl`を使用してポリシーを実行します：
+
+ $ kwctl run -e gatekeeper --request-path data/other-ns.json policy.wasm | jq
+ {
+   "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+   "allowed": true
+ }
+
+これは`other`というネームスペースで作成されたあなたのリソースです。期待通りに受け入れられました。
+
+これで、ポリシーによって拒否されるリクエストを実行できます。
+
+[subs="+attributes",console]
+----
+$ kwctl run -e gatekeeper --request-path data/default-ns.json policy.wasm | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "it is forbidden to use the default namespace"
+  }
+}
+----
+
+ゲートキーパーのポリシーがこのリソースを拒否したことがわかります。

@@ -1,0 +1,193 @@
+include::partial$variables.adoc[]
+= Protection contre le dépassement de délai d'évaluation des stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez les délais d'évaluation des stratégies pour garantir une réalisation rapide et éviter l'épuisement des ressources grâce à la fonctionnalité de protection intégrée du serveur de stratégies.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manuel-opérateur", "délai-évaluation-stratégie"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "protection contre le dépassement de délai des stratégies"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+Cette fonctionnalité est disponible à partir de {project-name} v1.5.0 pour le délai par serveur de stratégies et à partir de v1.29.0 pour le délai par stratégie.
+
+====
+
+La protection contre le dépassement de délai d'évaluation des stratégies est une fonctionnalité de sécurité des stratégies et du serveur de stratégies. Son objectif est de limiter le temps que peut prendre l'évaluation d'une demande.
+
+== Fonction
+
+Vous pouvez écrire {short-project-name} stratégies en utilisant à la fois des langages de programmation traditionnels (comme xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] et xref:../tutorials/writing-policies/index.adoc[d'autres]) ou en utilisant le langage de requête spécial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Les deux approches ont des mérites, donc un objectif de {short-project-name} est de permettre aux auteurs de stratégies de choisir le meilleur outil pour leurs besoins.
+
+Lors de l'utilisation d'un langage traditionnel https://en.wikipedia.org/wiki/Turing_completeness[complet de Turing], il est possible de rencontrer des problèmes tels que :
+
+* https://en.wikipedia.org/wiki/Infinite_loop[Boucles infinies]
+* https://en.wikipedia.org/wiki/Deadlock[Interblocages]
+* Code lent manquant d'optimisations
+* Opérations intensives en calcul
+
+La fonctionnalité de protection contre le dépassement de délai d'évaluation des stratégies interrompt l'évaluation d'une demande après une période de temps prédéfinie. Cela garantit que le serveur de stratégies dispose toujours de ressources de calcul disponibles pour traiter les demandes entrantes.
+
+== limites
+
+Actuellement, la protection contre le dépassement de délai d'évaluation des stratégies est capable d'interrompre la plupart des évaluations longues. Il existe certains cas particuliers qui ne sont pas encore gérés.
+Cela inclut l'invocation d'une instruction `sleep` depuis une stratégie et les interblocages.
+
+Une future version du serveur de stratégies abordera ces scénarios.
+
+Enfin, le délai d'évaluation des stratégies affecte toutes les stratégies hébergées par une instance de Policy Server. Actuellement, il n'existe aucun moyen d'ajuster le délai d'évaluation des stratégies sur une base par stratégie.
+
+== Configuration
+
+Toutes les valeurs des délais d'évaluation par stratégie, le délai d'évaluation par Policy Server et les délais des webhooks sont validées afin qu'elles soient toutes dans des valeurs acceptables les unes par rapport aux autres. Par exemple, il n'est pas possible de définir une valeur de délai d'évaluation des stratégies qui soit supérieure au délai des webhooks de Kubernetes.
+
+### Par stratégie
+
+À partir de {short-project-name} v1.29.0, chaque {short-project-name} stratégie peut définir sa propre valeur de délai via son attribut `spec.timeoutEvalSeconds`. Cela ne doit pas être confondu avec `spec.timeoutSeconds`, utilisé pour le délai des webhooks (voir la section [ci-dessous](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+
+Le `spec.timeoutEvalSeconds` est granulaire, permettant un réglage par stratégie de leur délai d'évaluation.
+
+Ce paramètre a la priorité sur la configuration globale du délai d'évaluation par Policy Server.
+
+Par exemple, pour définir un délai d'évaluation plus long pour une stratégie spécifique :
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Secrets
+    io.kubewarden.policy.severity: medium
+  name: env-variable-secrets-scanner
+spec:
+  module: registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.6
+  settings: {}
+  timeoutEvalSeconds: 10 // Set evaluation timeout
+  mutating: false
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+----
+
+=== Par serveur de stratégie
+
+À partir de {short-project-name} v1.5.0, les Policy Servers sont livrés avec un délai d'évaluation configurable, activé par défaut. L'interruption d'une évaluation de demande a lieu après 2 secondes. Cette configuration affecte toutes les stratégies programmées dans ce serveur de stratégie. Le délai configurable par stratégie `spec.timeoutEvalSeconds` a la priorité sur ce paramètre par serveur de stratégie.
+
+Vous pouvez ajuster ce comportement en utilisant ces variables d'environnement :
+
+* `KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION` : Cela désactive complètement l'évaluation des stratégies. Toute valeur assignée désactive la fonctionnalité.
+* `KUBEWARDEN_POLICY_TIMEOUT` : Cela définit une valeur de délai différente. La valeur est en secondes avec une valeur par défaut de `2`.
+
+Lors de l'utilisation de la https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/PolicyServer/v1@v1.4.2[`PolicyServer`] Définition de Ressource Personnalisée Kubernetes, vous pouvez définir ces variables d'environnement comme suit :
+
+[source,yaml]
+----
+# A Policy Server that has policy evaluation timeout disabled
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: no-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION
+      value: "true"
+---
+
+# A Policy Server that has policy evaluation timeout enabled,
+# with a 3 seconds timeout value
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: custom-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_POLICY_TIMEOUT
+      value: "3"
+----
+
+== Comparaison avec le délai d'attente du Contrôleur d'Admission Dynamique Kubernetes
+
+{short-project-name} est une implémentation de https://en.wikipedia.org/wiki/Webhook[webhook] du https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Contrôleur d'Admission Dynamique Kubernetes].
+
+En interne, le serveur API Kubernetes effectue une requête HTTP vers le serveur de stratégies de {short-project-name} décrivant un événement sur le point de se produire. Après la requête HTTP, le Serveur API Kubernetes attend une réponse. Cependant, le serveur API Kubernetes n'attend pas indéfiniment. Après un certain temps, il considère que la requête a expiré.
+
+En citant la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[documentation officielle de Kubernetes] :
+
+____
+Parce que les webhooks ajoutent à la latence des requêtes API, ils doivent être évalués aussi rapidement que possible. `timeoutSeconds` permet de configurer combien de temps le serveur API doit attendre qu'un webhook réponde avant de considérer l'appel comme un échec.
+
+Si le délai d'attente expire avant que le webhook ne réponde, l'appel au webhook sera ignoré ou l'appel API sera rejeté en fonction de la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy[politique d'échec].
+
+La valeur du délai d'attente doit être comprise entre 1 et 30 secondes.
+
+Le délai d'attente pour un webhook d'admission est par défaut de 10 secondes.
+____
+
+Cela signifie que, indépendamment de la fonctionnalité de délai d'attente d'évaluation des stratégies, chaque demande d'admission Kubernetes est soumise à un délai d'attente.
+
+Chaque stratégie {short-project-name} peut définir sa propre valeur de délai d'attente via l'attribut `timeoutSeconds` des ressources personnalisées `ClusterAdmissionPolicy` et `AdmissionPolicy`.
+Par défaut, la valeur du délai d'attente est de 10 secondes.
+
+[IMPORTANT]
+====
+
+Toutes les demandes d'admission Kubernetes faites à un serveur de stratégies sont soumises à deux délais d'attente différents :
+
+* La valeur du délai d'attente du serveur API Kubernetes. Fixée à 10 secondes par défaut, réglable sur une base par stratégie via l'attribut `spec.timeoutSeconds` dédié sur la Ressource Personnalisée de Politique.
+* Le délai d'attente d'évaluation de la stratégie. Défini dans le serveur de stratégies via des variables d'environnement ou par stratégie via l'attribut `spec.timeoutEvalSeconds` sur la ressource personnalisée de stratégie.
+
+====
+
+Vous pouvez maintenant examiner les scénarios suivants pour mieux comprendre les différences entre le délai d'expiration du Webhook de Kubernetes et le délai d'évaluation de la stratégie de {short-project-name}.
+
+
+=== {short-project-name} Le délai d'évaluation de la stratégie est désactivé.
+
+Supposons que vous ayez un serveur de stratégies dont la fonction de délai d'évaluation de la stratégie est désactivée, et qu'aucune stratégie programmée sur celui-ci n'ait défini son champ `spec.timeoutEvalSeconds`. Ce serveur de stratégies héberge une stratégie affectée par un bug qui provoque une boucle infinie lors de l'évaluation.
+
+Le serveur API de Kubernetes envoie une demande d'admission pour évaluation par cette stratégie défectueuse. En conséquence, l'évaluation de la stratégie entre dans une boucle infinie.
+Pendant ce temps, le serveur API de Kubernetes attend une réponse.
+
+Après 10 secondes, le délai d'expiration du webhook de Kubernetes se produit, et la demande est traitée selon la politique d'échec du webhook.
+
+Maintenant, le serveur de stratégies a des ressources informatiques bloquées dans cette boucle infinie.
+Avec le temps, avec davantage de demandes d'admission déclenchant la stratégie défectueuse, le serveur de stratégies manque de ressources informatiques. Il est incapable de répondre au serveur API de Kubernetes. Ceci équivaut à une attaque par déni de service (DOS) sur le serveur de stratégies.
+
+=== {short-project-name} Le délai d'évaluation de la stratégie est activé.
+
+Supposons un scénario où le même serveur de stratégies a maintenant la fonction de délai d'évaluation de la stratégie activée, soit globalement dans le serveur de stratégies, soit dans la stratégie via le champ `spec.timeoutEvalSeconds`, et le délai d'évaluation de la stratégie est de 2 secondes.
+
+Le serveur API de Kubernetes envoie une demande d'admission pour évaluation par cette stratégie défectueuse. En conséquence, l'évaluation de la stratégie entre dans une boucle infinie.
+Pendant ce temps, le serveur API de Kubernetes attend une réponse.
+
+Après deux secondes, la fonction de délai d'évaluation de la stratégie de {short-project-name} interrompt l'évaluation de la stratégie et produit une réponse de rejet. La réponse contient un message expliquant que le rejet s'est produit parce que l'évaluation de la stratégie n'a pas été complétée à temps.
+
+[NOTE]
+====
+
+Définir le délai d'évaluation de la stratégie de {short-project-name} à une valeur aussi élevée que le délai d'expiration du webhook de Kubernetes n'est pas un bon choix.
+
+Bien que l'évaluation de la stratégie soit toujours interrompue, réduisant les chances d'une attaque par déni de service (DOS), la réponse finale de rejet n'est pas produite par le serveur de stratégies. Le rejet provient du serveur API de Kubernetes avec le délai d'expiration du webhook.
+
+En conséquence, il est plus difficile pour les utilisateurs et les opérateurs Kubernetes de détecter ces stratégies lentes ou défectueuses. La seule preuve de l'interruption de l'évaluation des stratégies se trouve dans les journaux du serveur de stratégies et les événements de trace.
+
+====
+

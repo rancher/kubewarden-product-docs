@@ -1,0 +1,69 @@
+include::partial$variables.adoc[]
+= {project-name} in einer großangelegten Umgebung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie {project-name}s mit {project-name}, um hohe Verfügbarkeit und Leistung in anspruchsvollen großangelegten Umgebungen sicherzustellen.
+:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, produktion]
+:doc-persona: Kubewarden-operator, Kubewarden-integrator
+:doc-type: howto
+:doc-topic: operator-handbuch, policy-server, produktion
+:sidebar_label: Implementierung im großen Maßstab
+:sidebar_position: 21
+
+Dieser Abschnitt beschreibt eine reale Implementierung von {project-name} in einer anspruchsvollen, großangelegten Umgebung. Es wird veranschaulicht, wie man {short-project-name} für hohe Verfügbarkeit und Leistung konfiguriert und was man unter hoher Last erwarten kann.
+
+[IMPORTANT]
+====
+Wenn Sie weitere Tipps sehen möchten, wie Sie {short-project-name} in der Produktion ausführen können, werfen Sie einen Blick in die xref:/howtos/production-deployments.adoc[Produktionsimplementierungen] Dokumentation.
+====
+
+== Umgebungsübersicht
+
+Die Infrastruktur besteht aus etwa 20 Kubernetes-Clustern. Die größten dieser Cluster zeichnen sich durch erhebliche Größe und Ressourcenvolumen aus:
+
+* Knoten: ~400
+* Namespaces: ~4.000
+* Verwaltete Ressourcen:
+** Pods: 10.000
+** RoleBindings: 13.000
+** Ingresses: 12.000
+** Implementierungen: 8.000
+** Services: 13.000
+
+== Die {short-project-name}-Konfiguration
+
+Um den Anforderungen dieser Umgebung gerecht zu werden, wird {short-project-name} mit einem Fokus auf Arbeitslastisolierung und hohe Verfügbarkeit konfiguriert.
+
+* Richtliniendurchsetzung: 22 `ClusterAdmissionPolicies` werden in den Clustern durchgesetzt, ohne Namespace-spezifische `AdmissionPolicies`.
+* PolicyServer Architecture: Zwei separate `PolicyServer` Implementierungen werden verwendet, um Arbeitslasten zu isolieren:
+** Eine `PolicyServer` ist ausschließlich für kontextabhängige Richtlinien vorgesehen.
+** Eine zweite `PolicyServer` behandelt alle anderen, nicht kontextabhängigen Richtlinien.
+* Skalierbarkeit und Ressourcen:
+** Reproduktionen: Jede `PolicyServer` Implementierung läuft mit 15 Replikaten, um das hohe Anfragevolumen zu bewältigen.
+** Ressourcenzuweisung: Jedes Replikat erhält 300 MB Speicher und 4 CPU-Kerne.
+
+== Leistungskennzahlen
+
+Diese Konfiguration verwaltet erfolgreich eine hohe Rate von Zulassungsanfragen und hält dabei eine vorhersehbare Leistung aufrecht.
+
+* Durchsatz der Zulassungsanfragen: Die Cluster verarbeiten bis zu 300 Zulassungsanfragen pro Sekunde (einschließlich Webhook-Validierungen und Audit-Scans).
+* Richtlinienlatenz:
+** Typische Latenz: Kontextabhängige Richtlinien benötigen in der Regel etwa 500 ms zur Ausführung.
+** Zeitüberschreitungen: In dieser Umgebung mit hoher Durchsatzrate sind die Webhook-Zeitüberschreitungen auf 2,5 Sekunden konfiguriert, während die `PolicyServer` Zeitüberschreitung auf 10 Sekunden eingestellt ist. Während die meisten Anfragen schnell sind, ist die Infrastruktur so aufgebaut, dass sie gelegentliche langsame Operationen bewältigen kann, ohne die Stabilität des API-Servers zu gefährden.
+
+== Leistung des Audit-Scanners
+
+Der Audit-Scanner wird genutzt, um die kontinuierliche Einhaltung über die Vielzahl von Ressourcen sicherzustellen.
+
+* Häufigkeit: Alle 4 Stunden wird ein clusterweites Audit durchgeführt.
+* Konfiguration: Der Audit-Job ist für maximale Parallelität optimiert, um die Laufzeit zu reduzieren:
+
+[source,shell]
+----
+--parallel-namespaces: "10"
+--parallel-resources: "20"
+--parallel-policies: "20"
+--page-size: "1000"
+----
+
+* Audit-Dauer: Selbst im größten Cluster mit Zehntausenden von Ressourcen wird ein vollständiger Audit-Job in

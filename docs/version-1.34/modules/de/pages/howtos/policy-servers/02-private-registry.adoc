@@ -1,0 +1,75 @@
+include::partial$variables.adoc[]
+
+= Konfigurieren von PolicyServern zur Verwendung privater Registries
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie PolicyServern, um private Registries zu verwenden, indem Sie ein Docker-Konfigurationsgeheimnis erstellen und das Feld spec.imagePullSecret in der Konfiguration konfigurieren.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "private-registry"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
+:current-version: {page-origin-branch}
+
+Es ist möglich, PolicyServern so zu konfigurieren, dass sie die Anmeldeinformationen privater OCI-Registries verwenden. Dies ermöglicht es diesen PolicyServern, Richtlinien aus öffentlichen und privaten Registries herunterzuladen.
+
+Sobald Sie den PolicyServer so konfigurieren, dass er auf private Registries zugreift, können auch die darauf laufenden Richtlinien auf diese Registries zugreifen. Dies funktioniert, wenn Richtlinien die bereitgestellten SDKs oder Hostfähigkeits-APIs verwenden. Das liegt daran, dass PolicyServern diese Funktionalität über die definierten Richtlinien-SDKs und die niedrigere Hostfähigkeits-API bereitstellen. Dies ist beispielsweise der Fall bei Richtlinien, die die Signaturen von Container-Images überprüfen.
+
+Um dies zu erreichen, sollten Sie ein Geheimnis erstellen, das die Anmeldeinformationen der privaten Registries enthält. Konfigurieren Sie dann die Ressourcen dieser PolicyServer und anschließend Ihr Helm-Chart, um das Geheimnis zu verwenden.
+
+== Erstellen des Geheimnisses
+
+PolicyServer unterstützen die üblichen https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Docker-Konfigurationsgeheimnisse], entweder vom Typ `kubernetes.io/dockercfg` oder vom Typ `kubernetes.io/dockerconfigjson`. Sie können diese Geheimnisse mit `kubectl create secret docker-registry` erstellen.
+
+Sie erstellen das Geheimnis **im Namespace, in dem Sie Ihren PolicyServer ausführen**.
+Dies folgt dem Prinzip der minimalen Berechtigung und ermöglicht es verschiedenen PolicyServern, OCI-Artefakte unabhängig von verschiedenen Registries zu validieren.
+
+Sie erstellen dieses Geheimnis für den PolicyServer mit dem folgenden Befehl:
+
+[subs="+attributes",shell]
+----
+kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker \
+  --docker-username=myuser \
+  --docker-password=mypass123 \
+  --docker-server=myregistry.io
+----
+
+[TIP]
+====
+
+Kennzeichnen Sie das Geheimnis wie in xref:/howtos/rancher-backup-operator.adoc#_user_secrets[User secrets] angegeben, damit es Teil der von Rancher Backup Operator durchgeführten Sicherungen ist.
+
+====
+
+Für weitere Informationen zur Erstellung der Docker-Geheimnisse siehe die https://kubernetes.io/docs/concepts/configuration/secret/#docker-config-secrets[Kubernetes-Dokumentation].
+
+== Das Geheimnis in PolicyServern verwenden.
+
+Sobald Sie das Geheimnis erstellt haben, ist es notwendig, die PolicyServer-Instanz zu konfigurieren. Setzen Sie das `spec.imagePullSecret`-Feld mit dem Namen des Geheimnisses, das die Anmeldeinformationen enthält:
+
+[subs="+attributes",yaml]
+----
+# Example of a PolicyServer using a private registry
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: default
+spec:
+  image: ghcr.io/kubewarden/policy-server:v1.1.1
+  serviceAccountName: policy-server
+  replicas: 1
+  annotations:
+  imagePullSecret: "secret-ghcr-docker"
+----
+
+== Das Geheimnis in Helm-Charts verwenden.
+
+Wenn es aus dem `kubewarden-defaults` Helm-Chart bereitgestellt wird, können Sie den `policyServer.imagePullSecret`-Wert auf den Namen des Geheimnisses setzen. Dann ist der erstellte Standard-Policy-Server in der Lage, Richtlinien auch von Ihrer privaten Registry herunterzuladen:
+
+[subs="+attributes",yaml]
+----
+# values file example
+policyServer:
+  telemetry:
+    enabled: False
+  imagePullSecret: secret-ghcr-docker
+----

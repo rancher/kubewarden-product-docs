@@ -1,0 +1,32 @@
+include::partial$variables.adoc[]
+
+= 安全披露
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 调查型安全研究人员与{project-name}的团队合作，使用负责任的披露协议识别漏洞。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["security", "disclosure"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "安全", "披露"]
+:sidebar_label: 安全披露
+:sidebar_position: 80
+:current-version: {page-origin-branch}
+
+{project-name}团队感谢善意的、道德的安全研究人员对安全漏洞进行的调查工作。{short-project-name}遵循[负责任的披露](https://en.wikipedia.org/wiki/Responsible_disclosure)的做法，以最佳方式保护{short-project-name}的用户群体免受安全问题的影响。在{short-project-name}方面，这意味着：
+
+* {short-project-name}优先响应安全事件。
+* {short-project-name}在可行的情况下尽快发布问题修复，优先考虑风险。
+* {short-project-name}始终透明地让社区知道任何影响他们的事件。
+
+如果您在{short-project-name}中发现了安全漏洞，报告漏洞的最简单方法是通过https://github.com/kubewarden/community/security/advisories[GitHub上的安全标签]。此机制允许维护者与您私下沟通，您无需加密您的消息。
+
+或者，您可以通过发送xref:mailto:cncf-kubewarden-maintainers@lists.cncf.io.adoc[cncf-kubewarden-maintainers@lists.cncf.io]的电子邮件以*未加密*的方式负责任地披露。请在未先与我们验证的情况下，不要在公共场合讨论潜在漏洞。
+
+您也可以在Kubernetes Slack服务器的https://kubernetes.slack.com/archives/C03L52JRAFM[slack-room]中与我们交谈。
+
+安全团队收到后：
+
+* 审核报告，验证漏洞，并回复确认和/或进一步的信息请求。
+* 在处理完报告的安全漏洞后，{short-project-name}会通知研究人员，研究人员可以选择公开披露。
+
+请参考https://github.com/kubewarden/community[社区储存库]以了解更多关于项目治理和安全策略的信息。

@@ -1,0 +1,91 @@
+include::partial$variables.adoc[]
+= Crea y ejecuta una directiva de Gatekeeper
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Desarrolla y despliega una directiva de Gatekeeper utilizando la sintaxis y herramientas de Rego que ya conoces para hacer cumplir el control de admisión en entornos de Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "build-and-run"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "gatekeeper policy", "rego"]
+:sidebar_label: Crea y ejecuta
+:current-version: {page-origin-branch}
+
+Puedes crear y ejecutar la directiva exactamente de la misma manera que una directiva de Rego dirigida al Open Policy Agent.
+La estructura de tu proyecto es:
+
+----
+.
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+└── policy.rego
+
+1 directory, 3 files
+----
+
+== Construir
+
+Construye la directiva ejecutando el comando `opa`:
+
+[subs="+attributes",shell]
+----
+$ opa build -t wasm -e policy/violation policy.rego
+----
+
+Esto construye la directiva de Rego, con:
+
+* `target`: `wasm`. Queremos construir la directiva para el objetivo `wasm`.
+* `entrypoint`: `policy/violation`. El punto de entrada es la regla `violation` dentro del paquete `policy`.
+* `policy.rego`: construir e incluir el archivo `policy.rego`.
+
+El comando anterior genera un archivo `bundle.tar.gz`.
+Puedes extraer el módulo Wasm de él:
+
+[subs="+attributes",shell]
+----
+$ tar -xf bundle.tar.gz /policy.wasm
+----
+
+El árbol del proyecto se ve como el siguiente:
+
+----
+.
+├── bundle.tar.gz
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+└── policy.wasm
+
+1 directory, 5 files
+----
+
+Ahora puedes ejecutar tu directiva.
+
+== Ejecute:
+
+Utiliza `kwctl` para ejecutar tu directiva de la siguiente manera:
+
+ $ kwctl run -e gatekeeper --request-path data/other-ns.json policy.wasm | jq
+ {
+   "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+   "allowed": true
+ }
+
+Este es tu recurso creado en el espacio de nombres llamado `other`, se acepta, como se esperaba.
+
+Ahora puedes ejecutar una solicitud que es rechazada por la directiva:
+
+[subs="+attributes",console]
+----
+$ kwctl run -e gatekeeper --request-path data/default-ns.json policy.wasm | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "it is forbidden to use the default namespace"
+  }
+}
+----
+
+Puedes ver que tu directiva de Gatekeeper rechazó este recurso.

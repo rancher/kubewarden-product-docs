@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= 依赖矩阵
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解 {project-name} 的依赖关系，包括它们的版本约束。
+:doc-persona: [“kubewarden-all”]
+:doc-topic: [“operator-manual”, “dependencies”]
+:doc-type: [“reference”]
+:keywords: [“dependency”, “dependencies”, “CRD”, “charts”, “matrix”]
+:sidebar_label: 依赖矩阵
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+此页面列出了 {project-name} 的依赖关系及其相关的版本约束。提供的范围之外的版本可能有效，但未经过测试。
+
+== OpenTelemetry、指标和追踪依赖关系
+
+在撰写时，https://opentelemetry.io[OpenTelemetry] 堆栈仍在不断改进。然而，它尚不稳定，未公告的向后不兼容更改仍然会发生。{short-project-name} 开发者努力跟踪 OpenTelemetry 堆栈的变化并进行调整。该项目针对已知有效的 OpenTelemetry、指标和追踪堆栈进行测试。
+
+== 可选依赖关系
+
+特定功能所需。
+
+[cols=”,^,^,^"]
+|===
+| 图表依赖关系 | Helm 图表 `appVersion`| Helm 图表 `version`| 功能
+
+| `open-telemetry/opentelemetry-operator` 图表
+| `≥ 0.104`
+| 示例：`0.97.1`
+| OTEL
+
+| `prometheus-community/kube-prometheus-stack` 图表
+| `≥ v0.69`
+| 示例：`77.13.0`
+| 指标
+
+| `jaegertracing/jaeger-operator` 图表
+| `≥ 1.49 < 2`
+| 示例：`2.57.0`
+| 跟踪
+
+| `kyverno/policy-reporter` 图表
+| `≥ 2 < 4`
+| 在 `kubewarden-controller` 图表中作为子图表
+| 策略报告用户界面
+|===
+
+[cols=",^,^,^"]
+|===
+| CRD 依赖关系 | 版本 | Helm 图表 `version`| 功能
+
+| （已弃用，计划移除）`policyreports.wgpolicyk8s.io` CRD
+| `v1beta1`
+| 在 `kubewarden-defaults` 图表中或手动安装
+| 审计扫描器
+
+| `openreports.io` CRD
+| `v1alpha2`
+| 在 `kubewarden-defaults` 图表中或手动安装
+| 审计扫描器
+|===
+
+== Rancher
+
+在 {short-project-name} 中对 Rancher 图表储存库中提供的监控和追踪 Helm 图表进行测试。

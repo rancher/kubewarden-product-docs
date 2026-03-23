@@ -1,0 +1,166 @@
+include::partial$variables.adoc[]
+= Stratégies sensibles au contexte
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explorer les capacités des stratégies sensibles au contexte dans le contrôle d'admission, y compris l'accès aux ressources et la mise en cache, pour optimiser l'évaluation des stratégies.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-de-stratégies", "spécification", "stratégies-sensibles-au-contexte"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "spécification de stratégie", "stratégies sensibles au contexte"]
+:sidebar_label: Stratégies sensibles au contexte
+:current-version: {page-origin-branch}
+
+Le `policy-server` a la capacité d'exposer des informations sur le cluster aux stratégies, afin qu'elles puissent prendre des décisions basées sur d'autres ressources existantes, et pas seulement sur les détails fournis par la demande d'admission.
+
+Le serveur de stratégies hébergeant la stratégie récupère les ressources Kubernetes. Les règles RBAC appliquées au compte de service du serveur de stratégies régulent l'accès à Kubernetes.
+
+Le serveur de stratégies `default` déployé par les charts Helm {project-name} a accès aux ressources Kubernetes suivantes :
+
+* Espaces de noms
+* Services
+* Ingress
+
+[CAUTION]
+====
+
+Le serveur de stratégies effectue la mise en cache des résultats obtenus à partir du serveur API Kubernetes pour réduire la charge sur cette partie noyau de Kubernetes. Cela signifie que les informations peuvent être obsolètes ou manquantes.
+
+====
+
+
+== Matrice de support
+
+[cols=",^,"]
+|===
+| Type de stratégie | Support | Notes
+
+| Langages de programmation traditionnels
+| ✅
+| -
+
+| Rego
+| ✅
+| Depuis la version {short-project-name} 1.9
+
+| WASI
+| ✅
+| Depuis la version {short-project-name} 1.10.0, uniquement pour le SDK Go
+|===
+
+== Contraintes
+
+La priorité de {short-project-name} est de réduire le nombre de requêtes contre le serveur API Kubernetes. {short-project-name} considère deux contraintes :
+
+* Utilisation de la mémoire : Le processus du serveur de stratégies met en cache les données récupérées de Kubernetes en mémoire. Plus les données récupérées sont nombreuses, plus les Pods du serveur de stratégies consomment de la mémoire.
+* Cohérence : Le cache conservé par le serveur de stratégies pourrait contenir des données obsolètes. De nouvelles ressources pourraient manquer, des ressources supprimées pourraient encore être disponibles et celles modifiées pourraient avoir des données anciennes. Cela pourrait affecter l'évaluation des stratégies.
+
+=== Lister plusieurs ressources
+
+Les stratégies de {short-project-name} peuvent récupérer plusieurs ressources en même temps. Par exemple, elles peuvent effectuer une requête comme « récupérer tous les Pods définis dans l'espace de noms `default` qui ont l'étiquette `color` définie sur ``green`` ».
+
+Avec une telle requête, le serveur de stratégies récupère toutes les ressources correspondant aux critères de l'utilisateur. La récupération des ressources se fait par lots pour réduire la charge sur le serveur API Kubernetes. Avant de stocker les ressources en mémoire, le serveur de stratégies supprime l'attribut `managedFields` de chaque ressource pour réduire la quantité de mémoire consommée. Cet attribut n'est pas utile pour les stratégies et prend une quantité significative de mémoire.
+
+Le serveur de stratégies crée ensuite un https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes[Kubernetes watch] pour maintenir la liste mise en cache des objets à jour. Le serveur de stratégies ne contrôle pas la vitesse à laquelle le serveur API Kubernetes envoie des notifications concernant les changements de ressources. Cela dépend de différents facteurs externes, comme le nombre de watches créés contre le serveur API Kubernetes et sa charge.
+
+Enfin, le code actuel présente la limitation suivante. Étant donné ces deux requêtes :
+
+* `kubectl get pods -n default`
+* `kubectl get pods -n default -l color=green`
+
+Le serveur de stratégies crée deux watches et duplique tous les Pods de la deuxième requête. Cette limitation sera supprimée dans les futures versions de {short-project-name}.
+
+=== Récupérer une ressource spécifique
+
+Les stratégies de {short-project-name} peuvent obtenir une ressource spécifique définie à l'intérieur du cluster.
+Par exemple, elles peuvent effectuer une requête comme "obtenir le Pod nommé `psql-0` défini à l'intérieur de l'espace de noms `db`."
+
+Par défaut, cette requête récupère l'objet et le stocke dans un cache en mémoire pendant cinq secondes. Pendant ces cinq secondes, les stratégies reçoivent des données mises en cache.
+
+L'auteur de la stratégie peut également décider de faire une requête directe, en contournant le cache.
+Des données fraîches sont toujours fournies. Cela entraîne une charge supplémentaire sur le serveur API Kubernetes (en fonction de la fréquence de déclenchement des stratégies) et introduit plus de latence lors de l'évaluation d'une demande d'admission.
+
+Le comportement de requête directe ou mise en cache est configuré au niveau de chaque requête par l'auteur de la stratégie utilisant les SDK {short-project-name}.
+
+== ClusterAdmissionPolicies
+
+Les ClusterAdmissionPolicies ont le champ https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/ClusterAdmissionPolicy/v1#spec-contextAwareResources[spec.contextAwareResources].
+Ce champ fournit une liste de ressources `GroupVersionKind` auxquelles la stratégie doit accéder. Cela permet aux rédacteurs de stratégies d'expédier les "permissions" dont la stratégie a besoin avec la stratégie. De plus, cela permet aux opérateurs de stratégies de revoir les "permissions" nécessaires à la stratégie au moment du déploiement.
+
+=== Tester des stratégies sensibles au contexte localement
+
+En plus d'exécuter des stratégies dans un cluster pour des tests de bout en bout, vous pouvez utiliser l'utilitaire CLI `kwctl` pour exécuter des stratégies et simuler des requêtes contre le cluster.
+
+Pour cela, `kwctl run` peut d'abord enregistrer toutes les interactions avec le cluster dans un fichier :
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --record-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+qui crée le fichier suivant `replay-session.yml` :
+
+[subs="+attributes",yaml]
+----
+# replay-session.yml
+---
+- type: Exchange
+  request: |
+    !KubernetesGetResource
+    api_version: /v1
+    kind: Pod
+    name: p-testing
+    namespace: local
+    disable_cache: true
+  response:
+    type: Success
+    payload: '{"apiVersion":"","kind":"Pod", <snipped> }'
+----
+
+En utilisant la session de replay, vous pouvez maintenant simuler les interactions du cluster sans avoir besoin d'un cluster, ce qui est idéal pour les tests CI et de bout en bout :
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --replay-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+== SDKs de langue
+
+Les SDKs de langue qui prennent en charge le contexte du cluster exposent des fonctions qui permettent aux stratégies de récupérer l'état actuel du cluster.
+
+[TIP]
+====
+
+Si vous souhaitez plus d'informations sur la fonction waPC utilisée par les SDKs, consultez la documentation de référence xref:reference/spec/host-capabilities/06-kubernetes.adoc[Kubernetes capacités].
+
+====
+
+
+=== Rust
+
+Consultez les fonctions exposant cette fonctionnalité dans la https://docs.rs/kubewarden-policy-sdk/0.8.7/kubewarden_policy_sdk[documentation de référence du SDK Rust].
+
+=== Ok
+
+Consultez les fonctions exposant cette fonctionnalité dans la https://pkg.go.dev/github.com/kubewarden/policy-sdk-go[documentation de référence du SDK Go].
+
+== Stratégies Rego
+
+=== Gatekeeper
+
+L'exposition d'informations contextuelles est sous la clé `data.inventory`, comme Gatekeeper.
+
+La population de l'inventaire se fait avec les ressources auxquelles la stratégie a accès via le champ `spec.contextAwareResources`.
+
+=== Open Policy Agent
+
+L'exposition d'informations contextuelles est sous la clé `data.kubernetes`, comme https://github.com/open-policy-agent/kube-mgmt[`kube-mgmt`] le fait par défaut.
+
+La population de l'inventaire se fait avec les ressources auxquelles la stratégie a accès via le champ `spec.contextAwareResources`.

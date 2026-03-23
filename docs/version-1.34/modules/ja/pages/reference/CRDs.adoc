@@ -1,0 +1,23 @@
+include::partial$variables.adoc[]
+= カスタムリソース定義 (CRD)
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: のカスタムリソース定義 (CRD){project-name} について学び、関連する API リファレンスにアクセスしてください。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["operator-manual", "crd"]
+:doc-type: ["reference"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "カスタムリソース定義", "CRD"]
+:sidebar_label: カスタムリソース定義 (CRD)
+:sidebar_position: 5
+:current-version: {page-origin-branch}
+
+{project-name} のカスタムリソース定義は、このページと https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev] で確認できます。
+
+////
+API REFERENCE GOES BELOW.
+From a file generated in the kubewarden/kubewarden-controller repo
+in docs/crds.
+////
+
+include::latest@shared:en:partial$CRD-docs-for-docs-repo-v1.33-forward.adoc[]

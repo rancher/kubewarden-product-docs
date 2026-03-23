@@ -1,0 +1,108 @@
+include::partial$variables.adoc[]
+= Erstellen einer neuen Gatekeeper Rego-Richtlinie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Implementieren Sie Gatekeeper Rego-Richtlinien, um Ressourcen abzulehnen, die auf den Standard-Namespace abzielen, indem Sie eine neue Richtlinie erstellen und testen.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "create-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Gatekeeper Rego-Richtlinie"]
+:sidebar_label: Eine neue Richtlinie erstellen
+:current-version: {page-origin-branch}
+
+Für dieses Tutorial implementieren Sie die gleiche Richtlinie, die Sie mit xref:tutorials/writing-policies/rego/open-policy-agent/02-create-policy.adoc[Open Policy Agent] geschrieben haben.
+Nämlich eine Richtlinie, die eine Ressource ablehnt, wenn sie auf den `default` Namespace abzielt.
+
+[NOTE]
+====
+Es gibt eine https://github.com/kubewarden/gatekeeper-policy-template[Repository-Vorlage], die Sie als Basis verwenden können, um eine vorhandene Richtlinie zu portieren.
+====
+
+
+== Anforderungen
+
+Sie benötigen die folgenden Tools:
+
+* `opa`
+* `kwctl`
+
+== Die Richtlinie
+
+Gatekeeper-Richtlinien müssen keine oder mehrere Verstöße zurückgeben.
+Wenn keine Verstöße gemeldet werden, wird die Anfrage akzeptiert.
+Wenn ein oder mehrere Verstöße gemeldet werden, wird die Anfrage abgelehnt.
+
+Erstellen Sie ein neues Verzeichnis mit dem Namen `rego-policy`.
+Erstellen Sie darin eine `policy.rego`-Datei mit dem Inhalt:
+
+[,rego]
+----
+package policy
+
+violation[{"msg": msg}] {
+        input.review.object.metadata.namespace == "default"
+        msg := "it is forbidden to use the default namespace"
+}
+----
+
+In diesem Fall ist der Einstiegspunkt `policy/violation`, und aufgrund der Funktionsweise von Rego kann die Richtlinie die folgenden Ergebnisse haben:
+
+* 1 Verstoß zurückgeben: das überprüfte Objekt zielt auf den Standard-Namespace ab.
+* 0 Verstöße zurückgeben: das überprüfte Objekt entspricht der Richtlinie.
+
+Nehmen Sie sich einen Moment Zeit, um diese Richtlinie mit der in der Open Policy Agent-Sektion geschriebenen zu vergleichen.
+Diese musste die gesamte `AdmissionReview` Antwort erstellen, und die Eingaben waren leicht unterschiedlich.
+Im Gatekeeper-Modus wird das `AdmissionRequest`-Objekt mit dem `input.review`-Attribut bereitgestellt.
+Alle Attribute des `AdmissionRequest` sind zusammen mit `object` lesbar.
+
+Jetzt können Sie die Anfragen erstellen, die im nächsten Abschnitt bewertet werden sollen.
+
+Zuerst erstellen Sie eine `default-ns.json`-Datei mit den folgenden Inhalten im `data`-Verzeichnis:
+
+[subs="+attributes",json]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "nginx",
+        "namespace": "default",
+        "uid": "04dc7a5e-e1f1-4e34-8d65-2c9337a43e64"
+      }
+    }
+  }
+}
+----
+
+Erstellen Sie jetzt ein weiteres `AdmissionReview`-Objekt, das diesmal auf einen anderen Namespace als den `default` abzielt.
+Nennen Sie diese Datei `other-ns.json`.
+Es enthält die folgenden Inhalte:
+
+[subs="+attributes",json]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "nginx",
+        "namespace": "other",
+        "uid": "04dc7a5e-e1f1-4e34-8d65-2c9337a43e64"
+      }
+    }
+  }
+}
+----
+
+Sie können sehen, dass dies eine weitere Pod-Erstellungsanfrage simuliert, diesmal unter einem Namespace namens `other`.

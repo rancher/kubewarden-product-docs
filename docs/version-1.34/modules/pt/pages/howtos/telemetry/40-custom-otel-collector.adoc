@@ -1,0 +1,339 @@
+include::partial$variables.adoc[]
+
+= Coletor OpenTelemetry Personalizado
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configure o {project-name} para enviar dados de telemetria de forma segura para um coletor OpenTelemetry personalizado implantado dentro do cluster.
+:keywords: kubewarden, kubernetes, métricas, rastreamento, opentelemetry
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manual-do-operador, telemetria, métricas, início rápido
+
+Este guia explica como configurar o {short-project-name} para enviar dados de telemetria para um coletor OpenTelemetry já implantado no cluster.
+
+Você deve implantar apenas uma instância do https://opentelemetry.io/docs/collector/[Coletor OpenTelemetry] no cluster.
+
+== Instalar dependências
+
+Primeiro, comece instalando as dependências do Coletor OpenTelemetry.
+
+Você precisa de comunicação criptografada entre os componentes do {project-name} e o coletor. Você pode usar https://cert-manager.io/[cert-manager] para gerenciar todos os certificados necessários para comunicação segura.
+
+Os traços do Coletor OpenTelemetry são enviados para uma instância do https://www.jaegertracing.io/[Jaeger].
+
+A pilha do {short-project-name} envia métricas para o Coletor OpenTelemetry.
+Este expõe as métricas como um endpoint Prometheus. As métricas são então coletadas por uma instância do Prometheus e armazenadas em seu banco de dados. A mesma instância do Prometheus também expõe uma interface para visualizar e usar as métricas.
+
+Os recursos que você cria são definidos no Namespace `kubewarden` e pressupõem a sua existência. Devido a isso, você deve começar criando o Namespace:
+
+[source,console]
+----
+kubectl create namespace kubewarden
+----
+
+=== Instalar cert-manager e OpenTelemetry
+
+Você instala o cert-manager e o operador OpenTelemetry desta forma:
+
+[source,console]
+----
+helm repo add jetstack https://charts.jetstack.io
+helm install --wait \
+  --namespace cert-manager \
+  --create-namespace \
+  --set crds.enabled=true \
+  --version 1.18.2 \
+  cert-manager jetstack/cert-manager
+
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm install --wait \
+  --namespace open-telemetry \
+  --create-namespace \
+  --version 0.97.1 \
+  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
+  my-opentelemetry-operator open-telemetry/opentelemetry-operator
+----
+
+Você configura a comunicação entre os componentes {short-project-name} e o Coletor OpenTelemetry usando mTLS.
+
+Para fazer isso, você precisa criar toda a Infraestrutura de Chave Pública (PKI):
+
+[source,yaml]
+----
+# pki.yaml file
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-client-certificate
+  namespace: kubewarden
+spec:
+  dnsNames:
+  - kubewarden.kubewarden.svc
+  - kubewarden.kubewarden.svc.cluster.local
+  issuerRef:
+  kind: Issuer
+  name: my-selfsigned-issuer
+  secretName: my-client-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: my-certificate
+  namespace: kubewarden
+spec:
+  dnsNames:
+  - my-collector-collector.kubewarden.svc
+  - my-collector-collector.kubewarden.svc.cluster.local
+  issuerRef:
+  kind: Issuer
+  name: my-selfsigned-issuer
+  secretName: my-server-cert
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: my-selfsigned-issuer
+  namespace: kubewarden
+spec:
+  selfSigned: {}
+----
+Aplique o manifesto:
+[source,console]
+----
+kubectl apply -f pki.yaml
+----
+
+=== Instale o Jaeger e o Prometheus
+
+Depois disso, você instala https://www.jaegertracing.io/[Jaeger] para armazenar e visualizar eventos de rastreamento.
+
+[source,console]
+----
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+helm upgrade -i --wait \
+  --namespace jaeger \
+  --create-namespace \
+  --version 2.57.0 \
+  jaeger-operator jaegertracing/jaeger-operator \
+  --set rbac.clusterRole=true
+
+kubectl apply -f - <<EOF
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: my-open-telemetry
+  namespace: jaeger
+spec: {}
+EOF
+----
+
+Se você instalou o Traefik no início rápido do OpenTelemetry, exponha a interface de consulta do Jaeger com este `Ingress`:
+
+[yaml]
+----
+kubectl apply -f - <<EOF +
+apiVersion: networking.k8s.io/v1 +
+kind: Ingress +
+metadata: +
+  name: my-open-telemetry-query +
+  namespace: jaeger +
+spec: +
+  ingressClassName: traefik +
+  rules: +
+    - http: +
+        paths: +
+          - path: / +
+            pathType: Prefix +
+            backend: +
+              service: +
+                name: my-open-telemetry-query +
+                port: +
+                  number: 16686
+EOF
+----
+
+Agora você instala https://prometheus.io/[Prometheus] para armazenar e visualizar métricas.
+
+[source,console]
+----
+cat <<EOF > kube-prometheus-stack-values.yaml
+prometheus:
+  additionalServiceMonitors:
+  - name: kubewarden
+    selector:
+    matchLabels:
+      app.kubernetes.io/instance: kubewarden.my-collector
+    namespaceSelector:
+    matchNames:
+      - kubewarden
+    endpoints:
+    - port: prometheus
+    interval: 10s
+EOF
+
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm install --wait --create-namespace \
+  --namespace prometheus \
+  --version 77.13.0 \
+  --values kube-prometheus-stack-values.yaml \
+  prometheus prometheus-community/kube-prometheus-stack
+----
+
+[NOTE]
+====
+
+O monitor de serviço do Prometheus obtém as métricas {short-project-name} raspando o coletor OpenTelemetry em execução no `kubewarden` Namespace.
+
+====
+
+== Instale o Coletor OpenTelemetry
+
+Agora você pode implantar um Coletor OpenTelemetry personalizado no `kubewarden` Namespace.
+
+[source,yaml]
+----
+# otel-collector.yaml file
+apiVersion: opentelemetry.io/v1beta1
+kind: OpenTelemetryCollector
+metadata:
+  name: my-collector
+  namespace: kubewarden
+spec:
+  mode: deployment # This configuration is omittable.
+  volumes:
+  - name: server-certificate
+    secret:
+    secretName: my-server-cert
+  - name: client-certificate
+    secret:
+    secretName: my-client-cert
+  volumeMounts:
+  - name: server-certificate
+    mountPath: /tmp/etc/ssl/certs/my-server-cert
+    readOnly: true
+  - name: client-certificate
+    mountPath: /tmp/etc/ssl/certs/my-client-cert
+    readOnly: true
+  config:
+  receivers:
+    otlp:
+    protocols:
+      grpc:
+      tls:
+        cert_file: /tmp/etc/ssl/certs/my-server-cert/tls.crt
+        key_file: /tmp/etc/ssl/certs/my-server-cert/tls.key
+        client_ca_file: /tmp/etc/ssl/certs/my-client-cert/ca.crt
+  processors: {}
+  exporters:
+    debug:
+    verbosity: normal
+    prometheus:
+    endpoint: ":8080"
+    otlp/jaeger:
+    endpoint: "my-open-telemetry-collector.jaeger.svc.cluster.local:4317"
+    tls:
+      insecure: true
+  service:
+    pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: []
+      exporters: [debug, prometheus]
+    traces:
+      receivers: [otlp]
+      processors: []
+      exporters: [debug, otlp/jaeger]
+----
+Aplique o manifesto:
+[source,console]
+----
+kubectl apply -f otel-collector.yaml
+----
+
+Essa configuração usa um pipeline de processamento trivial para receber eventos de rastreamento e encaminhá-los para o Jaeger. Ele também recebe métricas e as expõe para coleta pelo Prometheus.
+
+Você protege a comunicação entre a pilha {short-project-name} e o Coletor OpenTelemetry usando mTLS. No entanto, a comunicação entre o Coletor OpenTelemetry e o Jaeger não está segura, para reduzir a complexidade do exemplo.
+
+== Instale a pilha {short-project-name}
+
+Quando o Coletor OpenTelemetry estiver em execução, você pode implantar {short-project-name} da maneira usual.
+
+Você precisa configurar os componentes {short-project-name} para que eles enviem eventos e métricas para o OpenTelemetry Collector.
+
+[source,yaml]
+----
+# values.yaml
+telemetry:
+  mode: custom
+  metrics: True
+  tracing: True
+  custom:
+  endpoint: "https://my-collector-collector.kubewarden.svc:4317"
+  insecure: false
+  otelCollectorCertificateSecret: "my-server-cert"
+  otelCollectorClientCertificateSecret: "my-client-cert"
+----
+
+O Secret referenciado pela chave `otelCollectorCertificateSecret` deve ter uma entrada chamada `ca.crt`. Isso contém o certificado da CA que emitiu o certificado usado pelo OpenTelemetry Collector.
+
+O Secret referenciado pela chave `otelCollectorClientCertificateSecret` deve ter as seguintes entradas: as chaves `tls.crt` e `tls.key`. Esses são o certificado do cliente e sua chave usados pela pilha {short-project-name} para se autenticar contra o OpenTelemetry Collector.
+
+Deixe esses valores vazios se você não usar criptografia ou mTLS.
+
+Instale a pilha {short-project-name}:
+
+[source,console]
+----
+helm install --wait \
+  --namespace kubewarden --create-namespace \
+  kubewarden-crds kubewarden/kubewarden-crds
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  --values values.yaml \
+  kubewarden-controller kubewarden/kubewarden-controller
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=monitor
+----
+
+Agora tudo está em ordem.
+
+== Explorando a interface do Jaeger
+
+Você pode ver os eventos de rastreamento gerados por {short-project-name} usando a interface web do Jaeger. Eles estão agrupados sob o serviço `kubewarden-policy-server`:
+
+image::jaeger-custom-otel-collector.png[O painel do Jaeger]
+
+Para acessar a interface do Jaeger com o Traefik, faça o port-forward do serviço Traefik:
+
+[source,console]
+----
+kubectl -n traefik port-forward service/traefik 8080:80
+----
+
+A interface web é acessível em `\http://localhost:8080`.
+
+Se você preferir contornar o Traefik, faça o port-forward do serviço de consulta do Jaeger diretamente:
+
+[source,console]
+----
+kubectl -n jaeger port-forward service/my-open-telemetry-query 16686
+----
+
+A interface web é acessível em `\http://localhost:16686`.
+
+== Explorando a interface do Prometheus
+
+Você pode acessar a interface do Prometheus fazendo o port-forward para sua máquina local:
+
+[source,console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-operated 9090
+----
+
+A interface web agora é acessível em `\http://localhost:9090`.
+

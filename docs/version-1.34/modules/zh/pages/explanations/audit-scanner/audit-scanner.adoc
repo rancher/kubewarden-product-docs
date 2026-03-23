@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= 审计扫描器是什么？
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解审计扫描器在持续验证各集群符合准入控制策略方面的作用。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "审计扫描器", "kubernetes"]
+:sidebar_label: 审计扫描器
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+
+审计扫描器功能从 {project-name} 1.7.0 版本开始提供
+
+====
+
+
+`audit-scanner` 组件不断检查集群中的资源。它会标记未遵守集群中部署的 {short-project-name} 策略的资源。
+
+策略会随着时间而演变。会有新的策略部署和策略更新。
+版本和配置设置会发生变化。这可能导致集群中已经存在的资源不再合规。审计扫描功能为 Kubernetes 管理员提供了一种工具，能够不断验证其集群的合规状态。
+
+为了说明审计扫描器在 {short-project-name} 中的使用，考虑以下场景。
+
+假设 Bob 正在集群中部署一个 WordPress Pod。Bob 是 Kubernetes 的新手，犯了一个错误，部署了一个以特权容器运行的 Pod。此时，没有策略阻止这一行为，因此 Pod 成功地在集群中创建。
+
+几天后，Kubernetes 管理员 Alice 强制执行一项 {short-project-name} 策略，禁止创建特权容器。Bob 部署的 Pod 继续在集群中运行，因为它已经存在。
+
+审计扫描器生成的报告让 Alice 能够识别所有违反创建策略的工作负载。这包括由 Bob 创建的 WordPress Pod。
+
+审计扫描器的操作方式为：
+
+* 识别所有需要审计的资源
+* 对于每个资源，它构建一个合成的准入请求，包含该资源的数据。
+* 它将每个准入请求发送到仅用于审计请求的策略服务器端点。
+
+对于评估请求的策略，真实请求和审计请求之间没有区别。这个审计策略服务器端点具有收集评估数据的工具。因此，用户可以使用他们的监控工具来分析审计扫描器数据。
+
+== 启用审计扫描器
+
+您可以从{short-project-name} 1.7.0版本开始启用审计扫描器。
+
+详细的安装说明在xref:howtos/audit-scanner.adoc[审计扫描器使用指南]中。
+
+== 策略
+
+默认情况下，审计扫描器评估每个策略。希望在审计扫描器中跳过策略评估的操作员必须在策略定义中将`spec.backgroundAudit`字段设置为`false`。
+
+此外，{short-project-name}中的策略现在支持两个可选注释：
+
+* `io.kubewarden.policy.severity`注释允许您指定策略违规的严重性级别，例如`critical`、`high`、`medium`、`low`或`info`。
+* `io.kubewarden.policy.category`注释允许您根据特定领域或目的对策略进行分类，例如`PSP`、`compliance`或`performance`。
+
+有关更多信息，请参见策略作者的xref:tutorials/writing-policies/index.adoc[文档]。
+
+== 权限和服务账户
+
+{short-project-name}中的审计扫描器需要特定的基于角色的访问控制（RBAC）配置，以便能够扫描Kubernetes资源并保存结果。安装会创建一个具有这些权限的正确默认服务账户。用户可以创建自己的服务账户来配置对资源的访问。
+
+默认审计扫描器 `ServiceAccount` 绑定到 Kubernetes 提供的 `view` `ClusterRole`。此 `ClusterRole` 允许对命名空间内广泛的 Kubernetes 资源进行只读访问。您可以在 https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles[Kubernetes 文档] 中找到有关此角色的更多详细信息。
+
+审计扫描器绑定到一个 `ClusterRole`，该 授予对 {short-project-name} 资源类型的读取访问权限，以及对 `PolicyReport` CRD 的读写访问权限。 这些权限允许扫描器获取资源，以进行审计评估并根据评估结果创建策略报告。

@@ -1,0 +1,90 @@
+include::partial$variables.adoc[]
+= Roh-Richtlinien schreiben
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie Roh-Richtlinien schreiben, die beliebige JSON-Dokumente auswerten und Zugriffskontrollregeln in Ihrem System durchsetzen.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "raw-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "roh-richtlinien", "open-policy-agent", "opa", "rego"]
+:sidebar_label: Roh-Richtlinien
+:current-version: {page-origin-branch}
+
+Roh-Richtlinien sind Richtlinien, die beliebige JSON-Dokumente auswerten können.
+Für weitere Informationen zu Roh-Richtlinien verweisen Sie bitte auf die xref:howtos/raw-policies.adoc[Roh-Richtlinien] Seite.
+
+== Beispiel
+
+Die folgenden Beispiele sollten Ihnen vertraut sein, wenn Sie die xref:tutorials/writing-policies/rego/open-policy-agent/02-create-policy.adoc[Validierung] Seite dieses Tutorials abgeschlossen haben.
+
+[NOTE]
+====
+Denken Sie daran, die Richtlinie als `raw` zu kennzeichnen, indem Sie das `policyType` Feld in der `metadata.yml` Konfiguration verwenden.
+Bitte beziehen Sie sich auf die xref:tutorials/writing-policies//metadata.adoc[Metadaten] Spezifikation für weitere Informationen.
+====
+
+
+=== Validation
+
+Sie werden eine Richtlinie schreiben, die eine Anfrage im folgenden Format akzeptiert:
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "products"
+  }
+}
+----
+
+Es wird validiert, dass nur der `admin` Benutzer Ressourcen löschen kann.
+
+Beginnen Sie damit, eine Richtlinie mit der https://github.com/kubewarden/opa-policy-template[OPA-Richtlinienvorlage] zu erstellen.
+
+Zuerst müssen Sie die `policy.rego` Datei so ändern, dass sie wie folgt aussieht:
+
+[,rego]
+----
+package validation
+
+deny[msg] {
+    input.request.action == "delete"
+    input.request.user != "admin"
+    msg := sprintf("user %v is not allowed to delete resources", [input.request.user])
+}
+----
+
+Das `utility/policy.rego` Modul muss geändert werden, um Kubernetes-spezifischen Code zu entfernen:
+
+[,rego]
+----
+package policy
+
+import data.validation
+
+main = {
+    "response": response,
+}
+
+# OPA policy responses need the uid field to be set.
+# If the request doesn't contain a uid, set it to an empty string.
+default uid = ""
+
+uid = input.request.uid
+
+response = {
+    "uid": uid,
+    "allowed": false,
+    "status": {"message": reason},
+} {
+    reason = concat(", ", validation.deny)
+    reason != ""
+} else = {
+    "uid": uid,
+    "allowed": true,
+} {
+    true
+}
+----

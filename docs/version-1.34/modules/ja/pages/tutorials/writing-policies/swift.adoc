@@ -1,0 +1,51 @@
+include::partial$variables.adoc[]
+= スウィフト
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: SwiftWasmを通じてWebAssemblyサポートを持つSwiftコンパイラの使い方を学び、{project-name}ポリシーを構築するためのツールにアクセスします。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "swift"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "swift"]
+:sidebar_label: スウィフト
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+https://swift.org/[公式ウェブサイト]に記載されている通り：
+
+____
+Swiftは、新人にとって親しみやすく、専門家にとって強力な汎用プログラミング言語です。
+それは速く、現代的で、安全で、書くのが楽しいです。
+____
+
+SwiftコンパイラはまだWebAssemblyサポートを持っていませんが、https://swiftwasm.org/[SwiftWasm]プロジェクトはこの機能を持つパッチを当てたコンパイラを提供しています。
+
+SwiftWasmチームは、これらの変更をSwiftプロジェクトに統合する作業を行っています。
+その間、SwiftWasmプロジェクトが提供するツールチェーンを使用して{project-name}ポリシーを構築できます。
+
+[NOTE]
+====
+
+Swiftコードを書くまたは実行するためには、Appleシステムは必要ありません。すべてはLinuxマシンやWindows（Windows用Dockerを使用）でも行うことができます。
+====
+
+
+== 現在の状態
+
+ポリシー作成者は以下のリソースを利用できます：
+
+* https://github.com/kubewarden/policy-sdk-swift[{short-project-name} Swift SDK]：これは、ポリシー作成プロセスを簡素化する``構造体``と関数のセットを提供します。
+* https://github.com/kubewarden/swift-policy-template[{short-project-name} Swiftテンプレートプロジェクト]：このテンプレートを使用して、Swiftベースのポリシーの雛形を作成します。
+このテンプレートには、動作するポリシーとそのライフサイクルを自動化するためのGitHub Actionsのセットが付属しています。
+
+Swiftには重大な制限はなく、いくつかの小さな問題があります：
+
+* ポリシーを_"本番環境で"_使用する前に、いくつかのビルド後の最適化を行うことが重要です：
+ .. Wasmモジュールのサイズを減らすために`wasm-strip`を介してストリップします。
+ .. `wasm-opt`を通じてWasmモジュールを最適化します。
+
+テンプレートリポジトリによって提供されるGitHub Actionがそれをすでに処理しています。
+
+== その他の例
+
+https://github.com/kubewarden/pod-runtime-class-policy/tree/swift-implementation[このGitHubリポジトリのブランチ]にはSwiftで書かれた{short-project-name}ポリシーがあります。

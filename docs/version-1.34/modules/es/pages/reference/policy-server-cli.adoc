@@ -1,0 +1,96 @@
+:sidebar_label: Referencia de la CLI del policy-server
+:sidebar_position: 121
+:title: CLI del policy-server
+:description: Explora la ayuda y las opciones de línea de comandos del policy-server para personalizar y ejecutar el programa \`policy-server`.
+:keywords: [cli, referencia, policy-server]
+:doc-persona: [kubewarden-operator]
+:doc-type: [referencia]
+:doc-topic: [manual-del-operador]
+include::partial$variables.adoc[]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+= {title}
+
+== Ayuda de Línea de Comandos para `policy-server`
+
+Este documento contiene el contenido de ayuda para el programa de línea de comandos `policy-server`.
+
+*Descripción del Comando:*
+
+* link:#policy-server[`policy-server`]
+* link:#policy-server-docs[`policy-server docs`]
+
+=== `policy-server`
+
+*Uso:* `policy-server ++[+OPTIONS+]++ ++[+COMMAND+]++`
+
+==== *Subcomandos:*
+
+* `docs` — Genera la documentación en markdown para los comandos del policy-server
+
+==== *Opciones:*
+
+* `--addr ++<+BIND_ADDRESS+>++` — Vincular a ADDRESS
++
+Valor por defecto: `0.0.0.0`
+* `--always-accept-admission-reviews-on-namespace ++<+NAMESPACE+>++` — Siempre acepta AdmissionReviews que apunten al espacio de nombres dado
+* `--cert-file ++<+CERT_FILE+>++` — Vía a un archivo de certificado X.509 para HTTPS
+* `--client-ca-file ++<+CLIENT_CA_FILE+>++` — Vía a un archivo de certificado CA que emitió el certificado del cliente. Requerido para habilitar mTLS
+* `--daemon` — Si se establece, ejecuta el policy-server en modo daemon
+* `--daemon-pid-file ++<+DAEMON-PID-FILE+>++` — Vía al archivo PID, utilizado solo cuando se ejecuta en modo daemon
++
+Valor por defecto: `policy-server.pid`
+* `--daemon-stderr-file ++<+DAEMON-STDERR-FILE+>++` — Vía al archivo que contiene stderr, utilizado solo cuando se ejecuta en modo daemon
+* `--daemon-stdout-file ++<+DAEMON-STDOUT-FILE+>++` — Vía al archivo que contiene stdout, utilizado solo cuando se ejecuta en modo daemon
+* `--disable-timeout-protection` — Desactivar la protección de tiempo de espera de directivas
+* `--docker-config-json-path ++<+DOCKER_CONFIG+>++` — Vía a un archivo de configuración similar a Docker config.json. Se puede utilizar para indicar detalles de autenticación del registro
+* `--enable-metrics` — Habilitar métricas
+* `--enable-pprof` — Habilitar perfilado pprof
+* `--ignore-kubernetes-connection-failure` — No salir con un error si la conexión con Kubernetes falla. Esto hará que las directivas conscientes del contexto se rompan cuando no haya conexión con Kubernetes.
+* `--key-file ++<+KEY_FILE+>++` — Vía a un archivo de clave privada X.509 para HTTPS
+* `--log-fmt ++<+LOG_FMT+>++` — Formato de salida de registro
++
+Valor por defecto: `text`
++
+Valores posibles: `text`, `json`, `otlp`
+* `--log-level ++<+LOG_LEVEL+>++` — Nivel de registro
++
+Valor por defecto: `info`
++
+Valores posibles: `trace`, `debug`, `info`, `warn`, `error`
+* `--log-no-color` — Desactivar la salida en color para los registros
+* `--policies ++<+POLICIES_FILE+>++` — Archivo YAML que contiene las directivas a cargar y sus configuraciones
++
+Valor por defecto: `policies.yml`
+* `--policies-download-dir ++<+POLICIES_DOWNLOAD_DIR+>++` — Vía de descarga para las directivas
++
+Valor por defecto: `.`
+* `--policy-timeout ++<+MAXIMUM_EXECUTION_TIME_SECONDS+>++` — Interrumpir la evaluación de directivas después del tiempo dado
++
+Valor por defecto: `2`
+* `--port ++<+PORT+>++` — Escuchar en el PUERTO
++
+Valor por defecto: `3000`
+* `--readiness-probe-port ++<+READINESS_PROBE_PORT+>++` —
+Expose readiness endpoint on READINESS+_PROBE_+PORT
++
+Valor por defecto: `8081`
+* `--sigstore-cache-dir ++<+SIGSTORE_CACHE_DIR+>++` — Directorio utilizado para almacenar en caché los datos de sigstore
++
+Valor por defecto: `sigstore-data`
+* `--sources-path ++<+SOURCES_PATH+>++` — Archivo YAML que contiene información de origen (https, registro de hosts inseguros, CA personalizadas…)
+* `--verification-path ++<+VERIFICATION_CONFIG_PATH+>++` — Archivo YAML que contiene información de verificación (URIs, claves, anotaciones…)
+* `--workers ++<+WORKERS_NUMBER+>++` — Número de hilos de trabajo a crear
+
+=== `policy-server docs`
+
+Genera la documentación en markdown para los comandos del policy-server
+
+*Uso:* `policy-server docs --output ++<+FILE+>++`
+
+==== *Opciones:*
+
+* `-o`, `--output ++<+FILE+>++` — vía donde se almacenará el archivo de documentación
+
+Este documento fue generado automáticamente por clap-markdown.

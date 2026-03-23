@@ -1,0 +1,222 @@
+include::partial$variables.adoc[]
+= Protección de los {short-project-name} webhooks
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Webhooks
+:description: Configura directivas de red y autenticación para limitar el acceso a los webhooks en tu clúster de Kubernetes, restringiendo específicamente las conexiones de llamadores no válidos.
+:keywords: kubewarden, kubernetes, seguridad
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: referencia
+:doc-topic: referencia, seguridad
+
+El stack de {project-name} utiliza webhooks para hacer cumplir directivas en un clúster de Kubernetes.
+Cada instancia de `PolicyServer` expone un webhook que el servidor API de Kubernetes llama para validar y mutar recursos. Además, el `kubewarden-controller` expone webhooks para validar y mutar los recursos personalizados proporcionados por el proyecto {short-project-name}.
+
+Para disminuir su superficie de ataque, debes limitar el acceso a estos webhooks a los únicos llamadores válidos que tienen:
+
+* el servidor API de Kubernetes
+* el componente xref:/explanations/audit-scanner/audit-scanner.adoc[escáner de auditoría].
+
+Puedes hacer esto utilizando directivas de red y autenticación de forma independiente, o juntas, para proteger los webhooks contra ataques.
+
+== Bloquear el tráfico externo utilizando directivas de red
+
+Se espera que los webhooks solo acepten solicitudes del servidor API de Kubernetes y del componente escáner de auditoría. Sin embargo, por defecto, los webhooks pueden aceptar tráfico de cualquier fuente. Si estás utilizando una Interfaz de Red de Contenedores (CNI) que soporta Directivas de Red, puedes crear una directiva que bloquee el tráfico que no provenga del servidor API.
+
+El recurso NetworkPolicy integrado en Kubernetes no puede bloquear ni admitir tráfico de los hosts del clúster. Además, el proceso de `kube-apiserver` siempre se está ejecutando en la red del host. Por lo tanto, debes utilizar los recursos avanzados de directivas de red de la CNI en uso. Ejemplos para Calico y Cilium a continuación. Consulta la
+documentación de tu CNI para más detalles.
+
+=== Calico
+
+Utiliza el recurso NetworkPolicy en el grupo de API `crd.projectcalico.org/v1` para definir una directiva de red como la siguiente:
+
+[source,yaml]
+----
+apiVersion: crd.projectcalico.org/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-k8s-and-audit-scanner
+  namespace: kubewarden
+spec:
+  selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+  types:
+    - Ingress
+  ingress:
+    - action: Allow
+      protocol: TCP
+      source:
+        nets:
+        - 192.168.42.0/24
+      destination:
+        selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+    - action: Allow
+      protocol: TCP
+      source:
+        namespaceSelector: 'kubernetes.io/metadata.name == "kubewarden"'
+      destination:
+        selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+----
+
+[NOTE]
+====
+
+Esta directiva de red utiliza selectores de etiquetas introducidos en {short-project-name} 1.23.0. Si estás utilizando una versión anterior, actualiza las etiquetas en la directiva para que coincidan con tu ampliación.
+
+Más específicamente, escribe los
+
+[source,yaml]
+----
+selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+----
+
+selectores como:
+
+[source,yaml]
+----
+selector: 'app.kubernetes.io/name == "kubewarden-controller" || has(kubewarden/policy-server)'
+----
+====
+
+=== Cilium
+
+Utiliza el recurso CiliumNetworkPolicy en el grupo de API `cilium.io/v2` para definir una directiva de red como la siguiente:
+
+[source,yaml]
+----
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: allow-k8s-and-audit-scanner
+  namespace: kubewarden
+spec:
+  endpointSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/component
+        operator: In
+        values:
+          - policy-server
+          - controller
+  ingress:
+    - fromEntities:
+      - host
+      - remote-node
+    - fromEndpoints:
+        - matchLabels:
+            k8s:io.kubernetes.pod.namespace: kubewarden
+----
+
+[NOTE]
+====
+
+Esta directiva de red utiliza selectores de etiquetas introducidos en {short-project-name} 1.23.0. Si estás utilizando una versión anterior, actualiza las etiquetas en la directiva para que coincidan con tu ampliación.
+
+Más específicamente, escribe el
+
+[source,yaml]
+----
+matchExpressions:
+  - key: app.kubernetes.io/component
+    operator: In
+    values:
+      - policy-server
+      - controller
+----
+
+expresión como:
+
+[source,yaml]
+----
+endpointSelector:
+matchExpressions:
+  - key: app.kubernetes.io/name
+    operator: In
+    values:
+      - kubewarden-controller
+  - key: kubewarden/policy-server
+    operator: Exists
+----
+====
+
+== Requiere que el servidor API de Kubernetes se autentique en el webhook
+
+[TIP]
+====
+
+Consulta xref:/howtos/security-hardening/webhook-mtls.adoc[cómo configurar mTLS en el webhook] para una guía paso a paso sobre cómo configurar el servidor API de Kubernetes de K3s para autenticar en el webhook.
+
+====
+
+Los webhooks expuestos por el stack {short-project-name} solo deberían aceptar solicitudes del servidor API de Kubernetes o del componente escáner de auditoría. Por defecto, estos webhooks no requieren que los clientes se autentiquen en ellos. Aceptan cualquier solicitud.
+
+Puedes configurar los webhooks para requerir credenciales de modo que solo el servidor API y los procesos del escáner de auditoría puedan acceder a ellos. Consulta la
+https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers[documentación de Kubernetes] para más información.
+
+. Configura el servidor API para presentar un certificado de cliente al webhook, apuntando a un archivo `AdmissionConfiguration` para configurar los
+`ValidatingAdmissionWebhook` y `MutatingAdmissionWebhook` complementos:
++
+Crea un archivo llamado `admission.yaml` con el siguiente contenido:
++
+[source,yaml]
+----
+apiVersion: apiserver.config.k8s.io/v1
+kind: AdmissionConfiguration
+plugins:
+- name: ValidatingAdmissionWebhook
+ configuration:
+   apiVersion: apiserver.config.k8s.io/v1
+   kind: WebhookAdmissionConfiguration
+   kubeConfigFile: "/etc/k8s/admission/kubeconfig"
+- name: MutatingAdmissionWebhook
+ configuration:
+   apiVersion: apiserver.config.k8s.io/v1
+   kind: WebhookAdmissionConfiguration
+   kubeConfigFile: "/etc/k8s/admission/kubeconfig"
+----
++
+Este es el mismo archivo de configuración utilizado para configurar otros complementos, como
+`PodSecurity`. Si tu distribución o configuración utiliza plug-ins de admisión adicionales, también deberías configurarlos.
+
+. Crea el archivo `kubeconfig` al que se refieren los plug-ins de admisión. {short-project-name} solo admite autenticación con certificado de cliente, así que genera un par de claves TLS y configura el kubeconfig para usar ya sea client-certificate y client-key o client-certificate-data y client-key-data.
++
+Por ejemplo:
++
+[source,yaml]
+----
+apiVersion: v1
+kind: Config
+users:
+- name: '*.kubewarden.svc'
+  user:
+    client-certificate: /path/to/client/cert
+    client-key: /path/to/client/key
+----
+
+. Inicia el binario `kube-apiserver` con la bandera `--admission-control-config-file` apuntando a tu archivo `AdmissionConfiguration`. La forma de hacer esto varía según la distribución, y no se admite de manera universal, como en los proveedores de Kubernetes alojados. Consulta la documentación de tu distribución de Kubernetes.
+
+. Haz que el certificado de la CA raíz que emitió el certificado del cliente del servidor API esté disponible para el stack {short-project-name}.
++
+Pon su contenido en un `ConfigMap` bajo el espacio de nombres `kubewarden` utilizando una clave llamada `client-ca.crt`.
++
+Suponiendo que la CA raíz está disponible en `/etc/k8s/admission/certs/rootCA.crt`, crea el `ConfigMap` con el siguiente comando:
++
+[source,console]
+----
+kubectl create configmap -n kubewarden api-server-mtls \
+   --from-file=client-ca.crt=/etc/k8s/admission/certs/rootCA.crt
+----
+
+. Finalmente, al instalar el Helm chart `kubewarden-controller`, asegúrate de habilitar los siguientes valores:
++
+- Establece `mTLS.enable` en `true`.
+- Establece `mTLS.configMapName` en el nombre del `ConfigMap` que fue creado anteriormente.
++
+El nombre del `ConfigMap` es `api-server-mtls`, así que el comando de Helm para instalar el `kubewarden-controller` es:
++
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+   --set mTLS.enable=true \
+   --set mTLS.configMapName=api-server-mtls
+----
++
+El controlador {short-project-name} crea un certificado de cliente para ser utilizado por el componente del escáner de auditoría. El certificado es rotado automáticamente por el controlador cuando es necesario.

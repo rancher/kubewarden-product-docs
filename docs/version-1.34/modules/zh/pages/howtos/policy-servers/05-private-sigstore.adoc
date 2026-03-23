@@ -1,0 +1,188 @@
+include::partial$variables.adoc[]
+
+= 配置 PolicyServers 使用私有 Sigstore 实例
+:description: 配置 PolicyServers 使用私有或自托管的 Sigstore 实例进行 {project-name} 的策略签名验证。
+:keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "policy-servers", "private-sigstore"]
+:sidebar_label: 使用私有 Sigstore 实例
+:sidebar_position: 5
+
+您可以配置 PolicyServer 使用私有或自托管的 Sigstore 实例进行策略签名验证，而不是使用默认的公共 Sigstore 基础设施。这在隔离环境中或当您操作自己的 Sigstore 部署时非常有用。
+
+== 先决条件
+
+* 一个运行中的私有 Sigstore 实例，具有可访问的 Fulcio、Rekor、TSA 和 CT 日志服务
+* `kubectl` 访问 `kubewarden` 名称空间
+* 本地安装的 https://docs.sigstore.dev/cosign/system_config/installation/[`cosign`] CLI。
+* 本地安装的 https://jqlang.org/[`jq`]
+
+== 步骤 1 - 生成 `ClientTrustConfig` JSON
+
+PolicyServer 期望一个描述您私有 Sigstore 实例的信任锚和签名配置的 `ClientTrustConfig` JSON。
+
+=== 获取证书和公钥
+
+从您的私有 Sigstore 实例中检索以下内容：
+
+* `fulcio.pem` - Fulcio CA 证书链 (PEM)
+* `rekor.pub` - Rekor 透明日志公钥
+* `tsa.pem` - 时间戳授权证书链 (PEM)
+* `ctfe.pub` - CT 日志公钥
+
+[source,shell]
+----
+# Fulcio CA certificate chain
+curl --fail -o fulcio.pem "${FULCIO_URL}/api/v1/rootCert"
+
+# Rekor transparency log public key
+curl --fail -o rekor.pub "${REKOR_URL}/api/v1/log/publicKey"
+
+# Timestamp Authority certificate chain
+curl --fail -o tsa.pem "${TSA_URL}/api/v1/timestamp/certchain"
+
+# CT log public key (from the Kubernetes secret in tuf-system namespace)
+kubectl get secret -o json -n tuf-system ctlog-public-key \
+  | jq -r ".data.public" | base64 -d > ctfe.pub
+----
+
+[WARNING]
+.安全考虑
+====
+
+确保安全地从您的 Sigstore 实例下载证书和密钥。否则，您可能会使用被破坏的数据配置 {project-name}。
+
+上述命令是如何在测试环境中执行此操作的示例。
+请咨询您组织中的相关团队，以了解如何正确获取此信息。
+
+====
+
+=== 生成受信任的根和签名配置
+
+设置指向您的私有 Sigstore 服务 URL 的环境变量：
+
+[source,shell]
+----
+export FULCIO_URL=https://fulcio.example.com
+export REKOR_URL=https://rekor.example.com
+export TSA_URL=https://tsa.example.com
+export CTLOG_URL=https://ctlog.example.com
+export ISSUER_URL=https://oidc.example.com
+----
+
+运行 `cosign` 以生成受信任的根：
+
+[source,shell]
+----
+cosign trusted-root create \
+  --fulcio="url=$FULCIO_URL,certificate-chain=fulcio.pem" \
+  --rekor="url=$REKOR_URL,public-key=rekor.pub,start-time=2024-01-01T00:00:00Z" \
+  --tsa="url=$TSA_URL,certificate-chain=tsa.pem" \
+  --ctfe="url=$CTLOG_URL,public-key=ctfe.pub,start-time=2024-01-01T00:00:00Z" \
+  --out trusted_root.json
+----
+
+运行 `cosign` 以生成签名配置：
+
+[source,shell]
+----
+cosign signing-config create \
+  --fulcio="url=$FULCIO_URL,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --rekor="url=$REKOR_URL,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --rekor-config="ANY" \
+  --oidc-provider="url=$ISSUER_URL/auth,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --tsa="url=$TSA_URL/api/v1/timestamp,api-version=1,start-time=2024-01-01T00:00:00Z,operator=sigstore.dev" \
+  --tsa-config="EXACT:1" \
+  --out signing_config.json
+----
+
+[NOTE]
+====
+`--oidc-provider` 是可选的。仅在您的私有 Sigstore 实例具有专用 OIDC 提供者时包含此项。如果您的策略是使用 Kubernetes 服务账户令牌（通过 `kubectl create token`）签名的，请省略此标志。
+
+`start-time` 值应设置为在您的证书颁发之前的日期（或您的 Sigstore 实例的部署日期）。
+====
+
+有关两个命令的所有可用标志和 JSON 字段定义的完整描述，请参阅 https://docs.sigstore.dev/cosign/system_config/installation/[cosign CLI 参考] 和 https://github.com/sigstore/protobuf-specs[Sigstore 客户端信任配置规范]。
+
+=== 合并为 `trust_config.json`
+
+[source,shell]
+----
+cat << EOF > trust_config.json
+{
+  "mediaType": "application/vnd.dev.sigstore.clienttrustconfig.v0.1+json",
+  "trustedRoot": $(cat trusted_root.json),
+  "signingConfig": $(cat signing_config.json)
+}
+EOF
+----
+
+== 步骤 2 - 在 `kubewarden` 名称空间中创建 ConfigMap
+
+将 `ClientTrustConfig` JSON 存储在具有键 `sigstore-trust-config` 的 ConfigMap 中。ConfigMap **必须** 位于准入控制器名称空间中。在此示例中为 `kubewarden`：
+
+[source,shell]
+----
+kubectl --namespace kubewarden create configmap my-sigstore-trust-config \
+  --from-file=sigstore-trust-config=trust_config.json
+----
+
+== 步骤 3 - 创建验证配置 ConfigMap
+
+创建一个 `verification_config.yaml` 文件，指定您签名策略的证书身份约束。例如，当使用 Kubernetes 服务账户令牌时：
+
+[source,yaml]
+----
+allOf:
+  - kind: genericIssuer
+    issuer: https://kubernetes.default.svc.cluster.local
+    subject:
+      equal: https://kubernetes.io/namespaces/<namespace>/serviceaccounts/<serviceaccount>
+anyOf: null
+----
+
+将 `<namespace>` 和 `<serviceaccount>` 替换为签署策略时使用的名称空间和服务账户。
+
+创建 ConfigMap：
+
+[source,shell]
+----
+kubectl --namespace kubewarden create configmap my-verification-config \
+  --from-file=verification-config=verification_config.yaml
+----
+
+[NOTE]
+====
+ConfigMap 键 **必须** 为 `verification-config`（而不是文件名）。{short-project-name} 查找这个确切的键。
+====
+
+== 步骤 4 - 配置 PolicyServer
+
+在您的 PolicyServer 上设置 `spec.sigstoreTrustConfig` 和 `spec.verificationConfig` 为您创建的 ConfigMaps 的名称：
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: default
+spec:
+  image: ghcr.io/kubewarden/policy-server:latest
+  replicas: 1
+  sigstoreTrustConfig: my-sigstore-trust-config
+  verificationConfig: my-verification-config
+----
+
+控制器将 ConfigMaps 挂载到 policy-server pod 中，并配置它使用您的私有 Sigstore 实例进行签名验证，强制执行验证配置中指定的身份约束。
+
+[WARNING]
+.安全考虑
+====
+
+任何对 `sigstoreTrustConfig` 引用的 ConfigMap 具有写入权限的用户都可以影响策略签名验证。这可能允许他们替换不同的 Sigstore 信任根并绕过签名检查。
+
+使用 Kubernetes RBAC 限制对该 ConfigMap 的访问，遵循最小权限原则。
+
+====

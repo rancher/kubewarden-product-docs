@@ -1,0 +1,468 @@
+include::partial$variables.adoc[]
+= Migrando directivas de Gatekeeper a {project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura una directiva de {project-name} migrando una directiva de Gatekeeper existente a través de dos pasos principales: compilar el código Rego en WebAssembly.
+:keywords: ["{project-name}", kubewarden, gatekeeper]
+:doc-persona:
+  [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
+:doc-type: [howto]
+:doc-topic: [operator-manual]
+
+Esta guía te muestra cómo convertir una directiva de Gatekeeper existente en una directiva de {project-name}. Este proceso implica dos pasos principales:
+. Compila el programa Rego en un módulo de WebAssembly (Wasm).
+. Distribuye el módulo de WebAssembly como una directiva de {short-project-name}.
+
+El tutorial de xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[políticas Rego] cubre la mayor parte del proceso de construcción para compilar el código Rego en un módulo de WebAssembly. Esta guía se centra en el proceso paso a paso de extraer las definiciones de recursos personalizadas (CRDs) de Gatekeeper y migrarlas a una directiva funcional de {short-project-name}. Utiliza una directiva de demostración básica de Gatekeeper.
+
+== Requisitos previos
+
+* link:https://github.com/open-policy-agent/opa/releases[opa]: utilizas esta herramienta para compilar el código en wasm. Esta guía fue escrita utilizando la versión `v1.5.1`.
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: herramienta que utilizas para preparar y ejecutar el módulo de WebAssembly {short-project-name}.
+* link:https://github.com/bats-core/bats-core[`bats`]: herramienta utilizada para ejecutar pruebas de extremo a extremo. Si decides escribir este tipo de pruebas
+* link:https://github.com/mikefarah/yq[`yq`]: herramienta utilizada para extraer datos de archivos YAML.
+
+== Antes de migrar tus directivas
+
+Antes de comenzar el proceso de migrar directivas de Gatekeeper, considera utilizar directivas ya disponibles en el {short-project-name} link:https://artifacthub.io/packages/search?kind=13[catálogo]. Algunas de las link:https://github.com/kubewarden/rego-policies-library[directivas] son directivas de OPA y Gatekeeper disponibles públicamente migradas a {short-project-name}.
+
+Además, echa un vistazo a nuestra documentación de xref:/explanations/comparisons/opa-comparison.adoc[comparación] entre {short-project-name} y Gatekeeper.
+
+== Paso 1: Inicializa tu proyecto de directiva {short-project-name}.
+
+Primero, utiliza el Gatekeeper {short-project-name} link:https://github.com/kubewarden/gatekeeper-policy-template[plantilla] para crear una estructura básica del proyecto de directiva. Esto proporciona objetivos de Makefile para construir y probar tu directiva. Después de crear el código de directiva a partir de la plantilla, ejecuta los comandos de Makefile para verificar que la directiva se construya y las pruebas se realicen con éxito:
+
+[source,console]
+----
+$ make policy.wasm test
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+tar xvf bundle.tar.gz /policy.wasm
+tar: Removing leading `/' from member names
+/policy.wasm
+rm bundle.tar.gz
+touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
+opa test *.rego
+PASS: 2/2
+----
+
+== Paso 2: Migra el código de directiva de Gatekeeper.
+
+Ahora, comienza a migrar la directiva de Gatekeeper. Esto implica convertir un `ConstraintTemplate` y sus recursos asociados `Constraint` en una directiva {short-project-name}. En un contexto {short-project-name}, considera el `ConstraintTemplate` como el código de directiva principal, mientras que las instancias `Constraint` se traducen en instancias de directiva que se ejecutan dentro de {short-project-name}.
+
+Primero, copia el código Rego de tu `ConstraintTemplate` en el archivo `policy.rego` que generó la plantilla {short-project-name}. Para este ejemplo, deberías usar la siguiente link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[directiva de demostración] básica del repositorio de Gatekeeper.
+
+[.details]
+.YAML de directiva de Gatekeeper.
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+      validation:
+        # Schema for the `+parameters+` field
+        openAPIV3Schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+          provided := {label | input.review.object.metadata.labels[label]}
+          required := {label | label := input.parameters.labels[_]}
+          missing := required - provided
+          count(missing) > 0
+          msg := sprintf("you must provide labels: %v", [missing])
+        }
+----
+====
+
+Copia el fragmento de código Rego del campo `rego` en tu archivo `policy.rego`:
+
+[source,console]
+----
+cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
+----
+
+=== Adapta el código Rego para {short-project-name}.
+
+Debes asegurarte de que el nombre `package` utilizado dentro del código Rego sea `policy`.
+Este es el valor esperado en muchos lugares por la plantilla de Gatekeeper {short-project-name}.
+
+Si no lo cambias, tendrás errores al construir la directiva y al ejecutar sus pruebas de extremo a extremo.
+
+Por ejemplo, la directiva de demostración que estamos convirtiendo está definida dentro del paquete `k8srequiredlabels`, este valor debe cambiarse para ser `policy`.
+
+Así es como deben ser los contenidos del archivo `policy.rego`:
+
+[source,rego]
+----
+package policy
+
+violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+provided := {label | input.review.object.metadata.labels[label]}
+required := {label | label := input.parameters.labels[_]}
+missing := required - provided
+count(missing) > 0
+msg := sprintf("you must provide labels: %v", [missing])
+}
+----
+
+Intentar construir el código después de este cambio podría revelar nuevos errores de compilación:
+
+[source,console]
+----
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+error: load error: 2 errors occurred during loading:
+policy.rego:3: rego_parse_error: `+if+` keyword is required before rule body
+policy.rego:3: rego_parse_error: `+contains+` keyword is required for partial set rules
+make: *** [Makefile:4: policy.wasm] Error 1
+----
+
+El autor de la directiva debe corregir estos errores para permitir que el `opa` CLI construya el código con éxito. Los cambios específicos pueden variar dependiendo de la versión `opa` y del código de directiva original. Como estamos migrando una directiva rego anterior a OPA v1, necesitamos actualizar el código para que sea compatible con v1. El código final `policy.rego` se ve así:
+
+[source,rego]
+----
+package policy
+
+violation contains {"msg": msg, "details": {"missing_labels": missing}} if {
+  provided := {label | input.review.object.metadata.labels[label]}
+  required := {label | label := input.parameters.labels[_]}
+  missing := required - provided
+  count(missing) > 0
+  msg = sprintf("you must provide labels: %v", [missing])
+}
+----
+
+Después de ajustar el código, construye la directiva:
+
+[source,console]
+----
+$ make policy.wasm
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+tar xvf bundle.tar.gz /policy.wasm
+tar: Removing leading `/' from member names
+/policy.wasm
+rm bundle.tar.gz
+touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
+----
+
+Hay más información sobre cómo construir directivas de Gatekeeper en nuestro xref:/tutorials/writing-policies/rego/gatekeeper/03-build-and-run.adoc[tutorial].
+
+=== Código de directiva Rego y compatibilidad con OPA v1.0.0
+
+Con el lanzamiento de OPA (Agente de Políticas Abiertas) link:https://github.com/open-policy-agent/opa/releases/tag/v1.0.0[v1.0.0] en diciembre de 2024, se introdujo un cambio importante respecto a la sintaxis de directivas Rego.
+
+Anteriormente, `if` para todas las definiciones de reglas y `contains` para reglas de múltiples valores eran opcionales; ahora, son obligatorios. Este cambio afecta a la mayoría de las directivas más antiguas.
+
+Aquí tienes un resumen de lo que necesitas saber:
+
+* *Sintaxis de OPA v1.0.0*: OPA v1.0.0 exige el uso de `if` para todas las definiciones de reglas y `contains` para reglas de múltiples valores. Las directivas que no se adhieran a esta sintaxis se romperán.
+* *Compatibilidad inversa*: Si necesitas construir directivas más antiguas que no utilizan la nueva sintaxis v1.0.0, debes proporcionar la bandera `--v0-compatible` al comando `opa build`.
+* *Integración de Gatekeeper*: Gatekeeper actualizó su dependencia de OPA a v1.0.0 en su link:https://github.com/open-policy-agent/gatekeeper/releases/tag/v3.19.0[v3.19.0 release].
+* *Versión de Rego en plantillas de Gatekeeper*: Gatekeeper asume que se utiliza la sintaxis `v0` a menos que la plantilla especifique explícitamente `version: "v1"` dentro del campo `source` bajo `code.engine: Rego`.
+
+Consulta link:https://open-policy-agent.github.io/gatekeeper/website/docs/constrainttemplates/#enable-opa-rego-v1-syntax-in-constrainttemplates[esta sección] de la documentación de Gatekeeper para más detalles sobre cómo se manejan las versiones `v0` y `v1` de Rego.
+
+Lo que esto significa para ti:
+
+* Si el CR de Gatekeeper no especifica una versión de Rego, implica que se va a utilizar `v0`. Debes construir la directiva utilizando el comando `OPA_V0_COMPATIBLE=true make`.
+* Si el CR de Gatekeeper especifica explícitamente `version: "v1"`, debes construir la directiva sin ninguna variable de entorno establecida.
+
+== Paso 3: Actualiza y ejecuta pruebas
+
+Aunque se recomienda encarecidamente, los autores de directivas pueden omitir la creación de pruebas para la versión inicial de una directiva. Si esto te aplica, necesitarás deshabilitar los objetivos de Makefile utilizados para ejecutar pruebas. No puedes eliminar estos objetivos por completo, ya que los trabajos CI predeterminados esperan que estén definidos. En su lugar, deberías reemplazar los comandos que llaman a `opa` y `bats` con una operación de "no-op". Por ejemplo, puedes usar un comando `echo` para imprimir una explicación de por qué no se están ejecutando las pruebas.
+
+La plantilla de Gatekeeper {short-project-name} incluye tanto pruebas unitarias de Rego como pruebas de extremo a extremo (e2e) utilizando Bats y `kwctl`. Si planeas incluir pruebas, ambos conjuntos necesitan ser adaptados para tu directiva.
+
+Si tu directiva de Gatekeeper ya tiene pruebas de Rego, puedes copiarlas en el archivo `policy_test.rego`. Estas se ejecutan automáticamente cuando ejecutas el comando `make test`.
+
+[CAUTION]
+====
+Ten en cuenta que cualquier prueba de Rego que escribas en `policy_test.rego` está sujeta a los mismos problemas de compatibilidad detallados en la sección <<_rego_policy_code_and_opa_v1_0_0_compatibility,Código de Directiva de Rego y Compatibilidad con OPA v1.0.0>>.
+====
+
+La directiva que estás migrando en esta guía no tiene pruebas; necesitamos añadirlas nosotros mismos. Por lo tanto, actualizaremos el archivo de prueba `policy_test.rego` con algunas pruebas básicas:
+
+[source,rego]
+----
+package policy
+
+review_required_labels := {
+    "parameters": {"labels": ["test"]},
+    "review": {"object": {"metadata": {"labels": {"test": "value"}}}},
+}
+
+review_missing_labels := {
+    "parameters": {"labels": ["test"]},
+    "review": {"object": {"metadata": {"labels": {"other": "value"}}}},
+}
+
+test_accept if {
+    r = review_required_labels
+    res = violation with input as r
+    count(res) = 0
+}
+
+test_reject if {
+    r = review_missing_labels
+    res = violation with input as r
+    count(res) = 1
+}
+----
+
+Ahora, ejecutar `make test` debería validar tu directiva:
+
+[source,console]
+----
+$ make policy.wasm test
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+tar xvf bundle.tar.gz /policy.wasm
+tar: Removing leading `/' from member names
+/policy.wasm
+rm bundle.tar.gz
+touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
+opa test *.rego
+PASS: 2/2
+----
+
+A continuación, actualiza el archivo de pruebas e2e (`e2e.bats`):
+
+[source,bash]
+----
+#!/usr/bin/env bats
+
+@test "accept because required label is present" {
+  run kwctl run -e gatekeeper annotated-policy.wasm --settings-path test_data/settings.json --request-path test_data/accept_deploy_request.json
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+
+@test "reject because required label is missing" {
+run kwctl run -e gatekeeper annotated-policy.wasm --settings-path test_data/settings.json --request-path test_data/reject_deploy_request.json
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : '.*message.*you must provide labels: \[test\]') -ne 0 ]
+}
+----
+
+Tendrás que crear los archivos `test_data/settings.json`, `test_data/accept_deploy_request.json` y `test_data/reject_deploy_request.json` para soportar estas pruebas.
+
+[.details]
+.test_data/settings.json
+[%collapsible]
+====
+[source,json]
+----
+{
+  "labels": ["test"]
+}
+----
+====
+
+No incluiremos el contenido completo de `accept_deploy_request.json` y `reject_deploy_request.json` aquí, ya que el JSON de `AdmissionRequest` puede ser bastante largo, y queremos mantener esta guía concisa. Sin embargo, puedes usar el comando xref:/reference/kwctl-cli.adoc#_kwctl_scaffold_admission_request[`kwctl scaffold`] para generar estos archivos. La clave para esta guía es que una solicitud debería carecer de la etiqueta requerida, mientras que la otra debería tener la etiqueta definida.
+
+Verifica si las pruebas e2e están pasando:
+
+[source,console]
+----
+$ make e2e-tests
+bats e2e.bats
+e2e.bats
+  ✓ accept because required label is present
+  ✓ reject because required label is missing
+----
+
+[IMPORTANT]
+====
+Los parámetros de la directiva (por ejemplo, las etiquetas en este ejemplo) provienen de la configuración de la directiva. Esto te permite desplegar múltiples instancias de la misma directiva con diferentes parámetros/configuraciones, similar a cómo funcionan las restricciones en Gatekeeper.
+====
+
+== Paso 4: Prepara `metadata.yml` para distribución
+
+Ahora que tienes una directiva funcional, prepara el archivo `metadata.yml` para distribución. Este archivo define anotaciones con la descripción de la directiva, autor, licencia y otra información esencial. Crucialmente, define el `rules` que especifica qué recursos y verbos puede validar la directiva. Esta información impulsa el comando `kwctl scaffold` para generar el manifiesto para desplegar la directiva en tu clúster.
+
+Los CRD de `Constraints` de Gatekeeper, que son instancias de directivas definidas en `ConstraintTemplates`, especifican qué recursos evalúa una instancia de directiva.
+Por lo tanto, si tienes `Constraints` existentes que aplican un `ConstraintTemplate`, ofrecen una buena referencia para los recursos que deberías definir en tu archivo `metadata.yml`. Por ejemplo, en el ejemplo de Gatekeeper utilizado anteriormente, el `K8sRequiredLabels` `Constraint` creado a partir de `k8srequiredlabels` `ConstraintTemplate` se aplica a `Namespaces`:
+
+[source,yaml]
+----
+apiVersion: constraints.gatekeeper.sh/v1beta
+kind: K8sRequiredLabels
+metadata:
+  name: ns-must-have-gk
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Namespace"]
+  parameters:
+    labels: ["gatekeeper"]
+----
+
+Basado en esto, actualiza la sección `rules` de tu `metadata.yml` para incluir un nuevo `rule` para validar `namespaces` durante las operaciones de `CREATE` y `UPDATE`:
+
+[source,yaml]
+----
+rules:
+  - apiGroups: ["apps"]
+    apiVersions: ["v1"]
+    resources: ["deployments"]
+    operations: ["CREATE", "UPDATE"]
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["namespaces"]
+    operations: ["CREATE", "UPDATE"]
+mutating: false
+contextAware: false
+executionMode: gatekeeper
+backgroundAudit: true
+annotations:
+  io.artifacthub.displayName: Policy Name
+  io.artifacthub.resources: Pod
+  io.artifacthub.keywords: pod, cool policy, kubewarden
+  io.kubewarden.policy.ociUrl: ghcr.io/yourorg/policies/policy-name
+  io.kubewarden.policy.title: policy-name
+  io.kubewarden.policy.version: 0.0.1-unreleased
+  io.kubewarden.policy.description: Short description
+  io.kubewarden.policy.author: "Author name <author-email@example.com>"
+  io.kubewarden.policy.url: https://github.com/yourorg/policy-name
+  io.kubewarden.policy.source: https://github.com/yourorg/policy-name
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.severity: medium
+  io.kubewarden.policy.category: Resource validation
+----
+
+Ahora, tu directiva está lista para distribución y ampliación. Consulta la sección xref:/tutorials/writing-policies/rego/gatekeeper/04-distribute.adoc#_pushing_the_policy[Publicando la directiva] del tutorial para aprender cómo enviarla a un registro remoto.
+
+Puedes crear el manifiesto de la directiva usando `kwctl`:
+
+[source,console]
+----
+$ kwctl scaffold manifest --type ClusterAdmissionPolicy annotated-policy.wasm
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: medium
+  name: policy-name
+spec:
+  module: file:///home/jvanz/SUSE/mygatekeeperpolicy/annotated-policy.wasm
+  settings: {}
+  rules:
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    resources:
+    - deployments
+    operations:
+    - CREATE
+    - UPDATE
+  - apiGroups:
+    - ''
+    apiVersions:
+    - v1
+    resources:
+    - namespaces
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+----
+
+=== Define la configuración de la directiva
+
+Esta directiva tiene parámetros, que Gatekeeper define dentro del `Constraint`. Debes actualizar la sección `settings` en el manifiesto de la directiva {short-project-name} generado para incluir estos parámetros requeridos. En el siguiente ejemplo, además de definir la configuración, puedes probar la directiva desde el registro OCI:
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: medium
+  name: policy-name
+spec:
+  module: registry://ghcr.io/jvanz/policies/mygatekeeperpolicy:latest
+  settings:
+    labels:
+      - "gatekeeper"
+  rules:
+    - apiGroups:
+        - apps
+      apiVersions:
+        - v1
+      resources:
+        - deployments
+      operations:
+        - CREATE
+        - UPDATE
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - namespaces
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+----
+
+Intenta desplegar un espacio de nombres que carezca de la etiqueta `gatekeeper` requerida:
+
+[source,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: your-namespace-name
+  labels:
+    purpose: demo
+EOF
+Error from server: error when creating "STDIN": admission webhook "clusterwide-policy-name.kubewarden.admission" denied the request: you must provide labels: [gatekeeper]
+----
+
+Y otro espacio de nombres con la etiqueta requerida:
+
+[source,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: your-namespace-name
+  labels:
+    purpose: demo
+    gatekeeper: test
+EOF
+
+namespace/your-namespace-name created
+----

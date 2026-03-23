@@ -1,0 +1,94 @@
+include::partial$variables.adoc[]
+= Escribir directivas en Go
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Escribe directivas de validación del controlador de admisión efectivas utilizando TinyGo, utilizando sus útiles bibliotecas y herramientas diseñadas específicamente para desarrolladores de Go.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies in Go"]
+:sidebar_label: Escribir directivas en Go
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+El soporte de Go para WebAssembly está evolucionando rápidamente.
+Esta página fue revisada por última vez en diciembre de 2023.
+====
+
+
+El compilador oficial de Go puede producir binarios de WebAssembly, para ejecución fuera de un navegador, desde la versión v1.21.
+
+Hay otro compilador de Go que puede construir binarios de WebAssembly utilizables por {project-name}.
+Este proyecto de compilador es https://tinygo.org/[TinyGo]:
+
+____
+TinyGo lleva el lenguaje de programación Go a sistemas embebidos y a la web moderna creando un nuevo compilador basado en LLVM.
+
+Puedes compilar y ejecutar programas de TinyGo en más de 94 placas de microcontroladores diferentes, como la BBC micro:bit y el Arduino Uno.
+
+TinyGo también puede producir código WebAssembly (Wasm) que es muy compacto en tamaño.
+Puedes compilar programas para navegadores web, así como para entornos de computación en servidor y en el borde que soportan la familia de interfaces del Sistema de Interfaces WebAssembly (WASI).
+____
+
+El proyecto {short-project-name} actualmente sugiere usar TinyGo por dos razones:
+
+* los binarios son más pequeños
+* soporte para https://wapc.io[waPC] por la capacidad de exportar funciones al tiempo de ejecución
+
+== Limitaciones de TinyGo
+
+TinyGo aún no soporta todas las características de Go, consulta la https://tinygo.org/lang-support/[página] de soporte del lenguaje TinyGo para ver el estado actual del proyecto.
+Actualmente, su mayor limitación es la falta de un paquete `reflect` totalmente compatible.
+Esto significa que los tipos de API de Go de Kubernetes oficiales (por ejemplo: `k8s.io/api/core/v1`) no se compilan.
+
+Las directivas {short-project-name} necesitan procesar datos JSON como la configuración de directivas y la solicitud recibida por Kubernetes.
+
+A pesar de las limitaciones actuales de TinyGo, sigue siendo fácil escribir directivas de validación {short-project-name} con él.
+
+== Herramientas
+
+Escribir directivas {short-project-name} requiere una versión de TinyGo mayor que `v0.28.1`.
+Sin embargo, utiliza la última versión para obtener los mejores resultados.
+
+[CAUTION]
+====
+Usar versiones antiguas de TinyGo resulta en errores de tiempo de ejecución debido al soporte limitado para la reflexión de Go.
+====
+
+
+Estas bibliotecas de Go son útiles al escribir una directiva {short-project-name}:
+
+* https://github.com/kubewarden/policy-sdk-go[{short-project-name} Go SDK]:
+Proporciona estructuras y funciones que reducen la cantidad de código necesario.
+También proporciona ayudantes de prueba.
+* https://github.com/kubewarden/k8s-objects[tipos de Go de Kubernetes]:
+Los https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io[tipos de Go oficiales de Kubernetes] no se pueden usar con TinyGo.
+Este módulo proporciona todos los tipos de Kubernetes de una manera compatible con TinyGo.
+* https://github.com/tidwall/gjson[gjson]:
+Esto proporciona un lenguaje de consulta para una navegación rápida de documentos JSON y recuperación de datos.
+Esta biblioteca no utiliza el paquete `encoding/json` proporcionado por el `stdlib` de Go, por lo tanto, es utilizable con TinyGo.
+* https://github.com/deckarep/golang-set[mapset]:
+Proporciona una implementación en Go de la estructura de datos https://en.wikipedia.org/wiki/Set_(abstract_data_type)[Set].
+Esta biblioteca reduce la cantidad de código a escribir, ya que operaciones como Set `union`, `intersection`, `difference` son operaciones comunes en directivas {short-project-name}.
+
+Por último, el proyecto {short-project-name} proporciona un https://github.com/kubewarden/go-policy-template[proyecto de directiva Go de plantilla] que puedes usar para crear directivas Go {short-project-name}.
+
+== Obteniendo dependencias de TinyGo
+
+La forma más fácil de obtener TinyGo es utilizando las imágenes de contenedor de sentido ascendente.
+Las versiones oficiales están https://hub.docker.com/r/tinygo/tinygo[aquí], mientras que las compilaciones de la rama de desarrollo se envían automáticamente https://hub.docker.com/r/tinygo/tinygo-dev[aquí].
+
+Si es necesario, consulta la página de https://tinygo.org/getting-started/[introducción] de TinyGo para más información.
+
+== Requisitos previos del tutorial
+
+Durante este tutorial necesitas estas herramientas en tu máquina de desarrollo:
+
+* docker u otro motor de contenedor: se utiliza para construir la directiva de WebAssembly.
+Estarás utilizando el compilador incluido en la imagen de contenedor oficial de TinyGo.
+* https://github.com/bats-core/bats-core[bats]: se utiliza para escribir las pruebas y automatizar su ejecución.
+* https://github.com/kubewarden/kwctl/releases[`kwctl`]:
+Herramienta CLI proporcionada por {short-project-name} para ejecutar sus directivas fuera de Kubernetes, entre otras acciones.
+Está cubierto en xref:tutorials/testing-policies/index.adoc[esta sección] de la documentación.

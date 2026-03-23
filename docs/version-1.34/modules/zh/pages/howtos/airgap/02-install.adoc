@@ -1,0 +1,265 @@
+include::partial$variables.adoc[]
+
+= 隔离安装
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置一个私有注册表，包含 {project-name} 镜像和策略，以便在隔离的环境中安装 {project-name}。
+:doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
+:doc-topic: [“操作手册”, “隔离”, “安装”]
+:doc-type: [“如何做”]
+:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “隔离安装”]
+:current-version: {page-origin-branch}
+
+要在隔离的环境中安装 {project-name}，您需要一个可由 Kubernetes 集群访问的私有开放容器倡议（OCI）注册表。
+{short-project-name} 策略是 WebAssembly 模块，因此您可以将它们作为 OCI 工件存储在符合 OCI 标准的注册表中。您需要将 {short-project-name} 的镜像和策略添加到此 OCI 注册表中。您可以在 xref:/reference/artifacts.adoc[工件参考] 页面中查看 {short-project-name} 工件的列表。以下部分描述了该过程。
+
+[NOTE]
+====
+我们建议使用 link:https://docs.hauler.dev/docs/intro[Hauler]。
+请参阅我们的 xref:/howtos/airgap/03-hauler.adoc[Hauler 文档页面]。
+
+或者，您可以使用下面列出的手动过程。
+====
+
+
+== 将 Helm 图表保存在本地
+
+您需要将以下 Helm 图表下载到您的工作站：
+
+[,console]
+----
+helm pull kubewarden/kubewarden-crds
+helm pull kubewarden/kubewarden-controller
+helm pull kubewarden/kubewarden-defaults
+helm pull kubewarden/sbomscanner
+----
+
+[NOTE]
+====
+可选地，您可以验证 xref:/tutorials/verifying-kubewarden.adoc#_helm_charts[helm 图表] 和 xref:/tutorials/verifying-kubewarden.adoc#_container_images[容器镜像] 的签名。
+====
+
+== 将容器镜像保存在本地
+
+. 我们的每个 Helm 图表都包含一个 `imagelist.txt`，其中列出了其所使用的容器镜像，并在适用时还包含一个 `policylist.txt`，其中包含了其所使用的策略对应的 OCI Wasm 模块。
++
+要获取它们，您可以执行：
++
+[,console]
+----
+helm pull --untar \
+  kubewarden/kubewarden-crds \
+  kubewarden/kubewarden-controller \
+  kubewarden/kubewarden-defaults \
+  kubewarden/sbomscanner
+----
++
+然后将它们合并为一个文件：
++
+[,console]
+----
+cat */imagelist.txt > kubewarden-images.txt
+----
+
+. 从 https://github.com/kubewarden/utils[utilities 储存库] 下载 `kubewarden-save-images.sh` 和 `kubewarden-load-images.sh`。
+. 将 {short-project-name} 容器镜像保存到 `.tar.gz` 文件中：
++
+[,shell]
+----
+ ./kubewarden-save-images.sh \
+   --image-list ./kubewarden-images.txt \
+   --images kubewarden-images.tar.gz
+----
++
+Docker 开始拉取用于隔离安装的镜像。此过程需要几分钟时间。完成后，您运行命令的当前目录中会有一个 tarball，`kubewarden-images.tar.gz`。
+
+== 本地保存策略
+
+. 将您想要使用的所有策略添加到 `policies.txt` 文件中：
++
+[,console]
+----
+cat */policylist.txt > policies.txt
+----
++
+包含默认策略列表的文件位于 {short-project-name} 默认 https://github.com/kubewarden/helm-charts/releases/[release page] 中。
+
+. 从 https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller` 储存库] 下载 `kubewarden-save-policies.sh` 和 `kubewarden-load-policies.sh`。
+
+. 将策略保存到 `.tar.gz` 文件中：
++
+[,shell]
+----
+./kubewarden-save-policies.sh --policies-list policies.txt
+----
++
+使用 `kwctl` 下载策略。`kubewarden-policies.tar.gz` 存档包含这些策略。
+
+== Helm 图表
+
+您需要将以下 Helm 图表下载到您的工作站：
+
+[,shell]
+----
+helm pull kubewarden/kubewarden-crds
+helm pull kubewarden/kubewarden-controller
+helm pull kubewarden/kubewarden-defaults
+----
+
+== 填充私有注册表
+
+将这些文件移动到隔离的环境中：
+
+* `tgz` 格式的 Helm 图表（例如，`kubewarden-crds-1.23.0.tgz`）
+* `kubewarden-policies.tar.gz`
+* `kubewarden-images.tar.gz`
+* `kubewarden-load-images.sh`
+* `kubewarden-load-policies.sh` 和
+* `policies.txt`
+
+. 将 {short-project-name} 镜像加载到私有注册表中。您需要对本地注册表进行 Docker 客户端身份验证。
++
+[,shell]
+----
+ ./kubewarden-load-images.sh \
+   --image-list ./kubewarden-images.txt \
+   --images kubewarden-images.tar.gz \
+   --registry <REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+. 将 {short-project-name} 策略加载到私有注册表中。您应该对本地注册表进行身份验证 `kwctl`（`kwctl` 使用与 `docker` 相同的机制进行身份验证，`~/.docker/config.json` 文件）
++
+[,shell]
+----
+ ./kubewarden-load-policies.sh \
+   --policies-list policies.txt \
+   --policies kubewarden-policies.tar.gz \
+   --registry <REGISTRY.YOURDOMAIN.COM:PORT> \
+   --sources-path sources.yml
+----
+
+[CAUTION]
+====
+
+`kwctl` 命令需要 `sources.yaml` 文件以连接到以下类别的注册表：
+
+* 需要身份验证
+* 正在使用自签名证书
+* 未进行 TLS 终止
+
+请参阅文档中的 xref:howtos/custom-certificate-authorities.adoc[自定义证书颁发机构] 部分，以了解如何配置 `sources.yaml` 文件
+
+====
+
+
+== 安装 {short-project-name}
+
+现在您的私有注册表已具备所有必要条件，您可以安装 {short-project-name}。与标准 {short-project-name} 安装的唯一区别是您需要将容器镜像和策略中的注册表更改为私有注册表。
+
+安装 {short-project-name} 堆栈：
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-crds kubewarden-crds.tgz
+----
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-controller kubewarden-controller.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+[CAUTION]
+====
+
+要在 `kubewarden-controller` 图表中使用可用的 Policy Reporter 子图表，您需要在隔离的环境中为子图表定义其他特定值。下面是一个示例：
+
+[,shell]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden-controller.tgz \
+    --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set auditScanner.policyReporter=true \
+    --set policy-reporter.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.ui.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.image.repository=kyverno/policy-reporter \
+    --set policy-reporter.ui.image.repository=kyverno/policy-reporter-ui
+----
+
+必须定义 `auditScanner.policyReporter` 以启用子图表，并配置另外 4 个值，用以设置您存储 Policy Reporter 镜像的注册表和储存库。有关 Policy Reporter 子图表值的更多信息，请参阅 https://github.com/kyverno/policy-reporter/tree/policy-reporter-2.19.4/charts/policy-reporter[Policy Reporter 文档]。
+
+====
+
+
+[,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults kubewarden-defaults.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+[CAUTION]
+====
+
+要从非 `global.cattle.systemDefaultRegistry` 注册表下载 `kubewarden-defaults` Helm Chart 安装的推荐策略，请使用 `recommendedPolicies.defaultPoliciesRegistry` 配置。
+此配置允许用户指定一个专门用于提取策略的 OCI 工件的注册表。当他们的容器镜像储存库不支持 OCI 工件时，这尤其有用。
+
+要安装并等待安装完成，请使用以下命令：
+
+[,console]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults kubewarden-defaults.tgz \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+  --set recommendedPolicies.defaultPoliciesRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+如果未设置 `recommendedPolicies.defaultPoliciesRegistry` 配置，则使用 `global.cattle.systemDefaultRegistry` 作为默认注册表。
+
+====
+
+
+最后，您需要配置 Policy Server 以从您的私有注册表中获取策略。请参阅文档的xref:howtos/policy-servers/02-private-registry.adoc[使用私有注册表]部分。
+
+现在您可以在集群中创建 {short-project-name} 策略。策略必须在您的私有注册表中可用。
+
+[,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v0.2.2
+  rules:
+  - apiGroups: [""]
+    apiVersions: [“v1”]
+    resources: [“pods”]
+    operations:
+    - CREATE
+  mutating: false
+EOF
+----
+
+[CAUTION]
+====
+
+`PolicyServer` 资源必须使用您私有注册表中可用的镜像。
+例如：
+
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: reserved-instance-for-tenant-a
+spec:
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
+  replicas: 2
+  serviceAccountName: sa
+----
+
+====
+

@@ -1,0 +1,166 @@
+include::partial$variables.adoc[]
+= Migration der ValidatingAdmissionPolicy
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Migrieren Sie eine ValidatingAdmissionPolicy zu {project-name} über die Migrationsschritte des kwctl-Befehls für einen reibungslosen Übergang der Richtlinie.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["vap-migration"]
+:doc-type: ["howto"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:current-version: {page-origin-branch}
+
+Ab Kubernetes v1.26 bietet die https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy] eine Möglichkeit, benutzerdefinierte Zulassungsrichtlinien in Kubernetes zu schreiben. Die Richtlinien werden mit dem https://cel.dev/[Common Expression Language (CEL)] geschrieben, erweitert um einige https://kubernetes.io/docs/reference/using-api/cel/[Kubernetes-spezifische Erweiterungen].
+Die ValidatingAdmissionPolicy erreichte Stabilität in Kubernetes v1.30.
+
+{project-name} bietet eine CEL-Richtlinie, die in der Lage ist, Kubernetes VAP-Richtlinien ohne Änderungen auszuführen.
+Sie können mehr über die CEL-Richtlinie in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[diesem Abschnitt] der Dokumentation von {short-project-name} lesen.
+xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Dieser Absatz] erklärt die Vorteile der Ausführung von VAP-Richtlinien mit {short-project-name}.
+
+Dieser Leitfaden erklärt, wie Sie das `kwctl`-Tool verwenden, um eine VAP-Richtlinie zu {short-project-name} zu migrieren.
+
+== Migrationsschritte
+
+[NOTE]
+====
+Sie müssen die Version 1.14.0 oder höher von `kwctl` verwenden, um diesem Leitfaden zu folgen.
+====
+
+
+Gegeben ist eine Datei, die diese YAML-Definition eines `ValidatingAdmissionPolicy` enthält:
+
+.`ValidatingAdmissionPolicy` Definition
+[%collapsible]
+======
+[subs="+attributes",yaml]
+----
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "force-liveness-probe"
+spec:
+  failurePolicy: Fail
+  variables:
+    - name: containers_without_liveness_probe
+      expression: |
+        object.spec.template.spec.containers.filter(c, !has(c.livenessProbe)).map(c, c.name)
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["deployments"]
+  validations:
+    - expression: |
+        size(variables.containers_without_liveness_probe) == 0
+      messageExpression: |
+        'These containers are missing a liveness probe: ' + variables.containers_without_liveness_probe.join(' ')
+      reason: Invalid
+----
+======
+
+Und eine Datei, die die `ValidatingAdmissionPolicyBinding`-Ressource enthält:
+
+.`ValidatingAdmissionPolicyBinding` Definition
+[%collapsible]
+======
+[subs="+attributes",shell]
+----
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "kw-scaffold-demo"
+spec:
+  policyName: "force-liveness-probe"
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        docs.kubewarden.io/vap-migration: enabled
+----
+
+======
+
+Sie können die Richtlinie zu {short-project-name} migrieren, indem Sie diese Schritte befolgen:
+
+.`kwctl` Befehl zur Richtlinienmigration
+[%collapsible]
+======
+
+[subs="+attributes",shell]
+----
+$ kwctl scaffold vap \
+    -p vap.yml \
+    -b vap-binding.yml
+----
+
+======
+
+Der Befehl erzeugt eine Ausgabe, die dieser ähnelt:
+
+.Ausgabe der Migration
+[%collapsible]
+======
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: kw-scaffold-demo
+spec:
+  module: ghcr.io/kubewarden/policies/cel-policy:latest
+  settings:
+    failurePolicy: Fail
+    variables:
+      - expression: |
+          object.spec.template.spec.containers.filter(c, !has(c.livenessProbe)).map(c, c.name)
+        name: containers_without_liveness_probe
+    validations:
+      - expression: |
+          size(variables.containers_without_liveness_probe) == 0
+        messageExpression: |
+          'These containers are missing a liveness probe: ' + variables.containers_without_liveness_probe.join(' ')
+        reason: Invalid
+  rules:
+    - apiGroups:
+        - apps
+      apiVersions:
+        - v1
+      resources:
+        - deployments
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+  namespaceSelector:
+    matchLabels:
+      docs.kubewarden.io/vap-migration: enabled
+----
+======
+
+[NOTE]
+====
+
+Der Befehl warnt den Benutzer vor der Verwendung der `latest`-Version der CEL-Richtlinie:
+
+[subs="+attributes",console]
+----
+024-06-24T16:00:16.516062Z  WARN kwctl::scaffold:
+  Using the 'latest' version of the CEL policy could lead to unexpected behavior.
+  It is recommended to use a specific version to avoid breaking changes.
+----
+
+Es wird empfohlen, eine spezifische Version zu verwenden, um inkompatible Änderungen zu vermeiden.
+
+Sie können dies mit dem `--cel-policy`-Schalter wie folgt tun:
+
+[subs="+attributes",console]
+----
+$ kwctl scaffold vap \
+    --cel-policy ghcr.io/kubewarden/policies/cel-policy:v1.0.1 \
+    -p vap.yml \
+    -b vap-binding.yml
+----
+
+====

@@ -1,0 +1,116 @@
+include::partial$variables.adoc[]
+= Construisez et exécutez une stratégie OPA pour {short-project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Construisez une stratégie OPA personnalisée pour votre projet en construisant un paquet de stratégie Rego, en le compilant en une cible WASM et en l'intégrant à kwctl.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "build-and-run"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "construire et exécuter", "open policy agent", "opa", "rego"]
+:current-version: {page-origin-branch}
+
+Dans la section précédente, vous avez écrit votre stratégie Rego.
+La structure ressemble à :
+
+[subs="+attributes",console]
+----
+.
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+└── request.rego
+
+1 directory, 4 files
+----
+
+== Construire
+
+Pour construire :
+
+[subs="+attributes",console]
+----
+$ opa build -t wasm -e policy/main policy.rego request.rego
+----
+
+Cela construit la stratégie Rego, avec :
+
+* `target` : `wasm`.
+Vous souhaitez construire la stratégie pour la cible `wasm`.
+* `entrypoint` : `policy/main`.
+Le point d'entrée est la règle `main` à l'intérieur du paquet `policy`.
+* `policy.rego` :
+Construisez et incluez le fichier `policy.rego`.
+* `request.rego` :
+Construisez et incluez le fichier `request.rego`.
+
+Une fois la construction terminée, `opa build` a généré un fichier `bundle.tar.gz`.
+Vous pouvez l'extraire :
+
+[subs="+attributes",console]
+----
+$ tar -xf bundle.tar.gz /policy.wasm
+----
+
+Maintenant, l'arborescence ressemble à ce qui suit :
+
+[subs="+attributes",console]
+----
+.
+├── bundle.tar.gz
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+├── policy.wasm
+└── request.rego
+
+1 directory, 6 file
+----
+
+Vous avez votre fichier `policy.wasm` :
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+Maintenant, vous l'exécutez.
+
+== Exécutez :
+
+Utilisez `kwctl` pour exécuter la stratégie :
+
+[subs="+attributes",console]
+----
+$ kwctl run -e opa --request-path data/other-ns.json policy.wasm | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": true
+}
+----
+
+Cette demande est acceptée par la stratégie, car il s'agit de la demande pointant vers l'espace de noms `other`.
+
+* `execution-mode` : `opa`.
+Les stratégies Rego peuvent cibler Open Policy Agent ou Gatekeeper.
+Vous devez dire à `kwctl` quel type de stratégie vous exécutez.
+* `request-path` :
+L'emplacement de la requête enregistrée à laquelle `kwctl` envoie la stratégie pour l'évaluation.
+
+Essayez maintenant d'évaluer la requête qui crée le pod à l'intérieur de l'espace de noms `default` :
+
+[subs="+attributes",console]
+----
+$ kwctl run -e opa --request-path data/default-ns.json policy.wasm | jq
+{
+  "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+  "allowed": false,
+  "status": {
+    "message": "it is forbidden to use the default namespace"
+  }
+}
+----
+
+La stratégie rejette la requête, en donnant une raison au serveur API qui est renvoyée à l'utilisateur ou au consommateur de l'API.

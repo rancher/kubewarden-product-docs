@@ -1,0 +1,100 @@
+include::partial$variables.adoc[]
+= Écriture de stratégies en TypeScript/JavaScript
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à rédiger des stratégies de validation {project-name} efficaces en utilisant TypeScript/JavaScript.
+:keywords: kubewarden, kubernetes, écriture de stratégies en TypeScript, écriture de stratégies en JavaScript
+:doc-type: tutoriel
+:doc-topic: kubewarden, écriture-de-stratégies, typescript, javascript, introduction
+:doc-persona: kubewarden-stratégie-développeur
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Le support de TypeScript/JavaScript pour WebAssembly évolue rapidement.
+Cette page a été révisée pour la dernière fois en novembre 2025.
+====
+
+Comme indiqué sur le https://www.typescriptlang.org/[site officiel] :
+
+[quote]
+TypeScript étend JavaScript en ajoutant des types.
+
+En comprenant JavaScript, TypeScript vous fait gagner du temps en détectant les erreurs et en fournissant des corrections avant que vous n'exécutiez le code.
+
+{project-name} utilise https://github.com/bytecodealliance/javy[Javy] (un projet de la Bytecode Alliance) pour construire des binaires WebAssembly à partir de JavaScript et TypeScript.
+
+[quote]
+Javy prend votre code JavaScript et l'exécute dans un contexte WebAssembly.
+
+Il dispose d'un moteur QuickJS intégré compilé en WebAssembly qui peut exécuter JavaScript.
+
+Le projet fournit à la fois une CLI et un ensemble d'API pour l'incorporation et la personnalisation du comportement lors de l'exécution de JavaScript dans WebAssembly.
+
+Le projet {short-project-name} utilise actuellement Javy pour ces raisons :
+
+* Moteur JavaScript mature (QuickJS) compilé en WebAssembly.
+* Support pour l'xref:/tutorials/writing-policies/wasi/01-intro-wasi.adoc[interface WASI] via des fonctions hôtes personnalisées.
+* Des binaires plus petits par rapport à d'autres solutions JavaScript vers WebAssembly.
+* Développement et maintenance actifs par la Bytecode Alliance.
+
+== Limitations de Javy
+
+Javy exécute JavaScript dans un environnement sandboxé WebAssembly avec certaines contraintes :
+
+* *Environnement WASI uniquement* : Accès limité à stdin/stdout/stderr et aux capacités d'hôte explicitement fournies.
+* *Aucune API Node.js* : Les modules Node.js standard comme `fs`, `http` ou `crypto` ne sont pas disponibles.
+* *Bibliothèque standard limitée* : Seules les fonctionnalités JavaScript du noyau et les API explicitement activées sont accessibles.
+* *Exécution monothread* : Pas de support pour les Web Workers ou le multi-threading.
+
+Malgré ces limitations, Javy offre des capacités suffisantes pour écrire des stratégies de validation {short-project-name} efficaces grâce au système de capacités des hôtes.
+
+[WARNING]
+====
+Écrire sur STDOUT enfreint les stratégies - utilisez STDERR pour les journaux à la place.
+====
+
+== Outils
+
+L'écriture de {short-project-name} stratégies nécessite :
+
+* *Node.js* : Composant d'exécution JavaScript.
+* *npm* : Pour la gestion des dépendances.
+* *TypeScript* : Recommandé pour la sécurité des types (optionnel).
+
+[WARNING]
+====
+Assurez-vous d'utiliser Node.js 18 ou une version supérieure. Les versions antérieures peuvent ne pas être compatibles avec la chaîne d'outils de compilation.
+====
+
+Ces bibliothèques TypeScript/JavaScript sont utiles lors de l'écriture d'une {short-project-name} stratégie :
+
+* https://github.com/kubewarden/policy-sdk-js[{short-project-name} SDK JavaScript] : Fournit des structures et des fonctions réduisant la quantité de code nécessaire. Il fournit également des helpers de test et un accès à toutes les capacités de l'hôte.
+* https://github.com/silverlyra/kubernetes-types[Types TypeScript pour Kubernetes] : Fournit des définitions TypeScript pour toutes les ressources Kubernetes, permettant un développement de stratégies sécurisé par types.
+
+Le projet {short-project-name} fournit un https://github.com/kubewarden/js-policy-template[projet de stratégie JavaScript/TypeScript modèle] que vous pouvez utiliser pour créer des stratégies {short-project-name}.
+
+== Obtenir la chaîne d'outils
+
+Le moyen le plus simple d'obtenir la chaîne d'outils est d'utiliser le {short-project-name} SDK JavaScript, qui inclut le plug-in de compilation Javy :
+
+[source,console]
+----
+npm install kubewarden-policy-sdk
+----
+
+Le binaire du plug-in Javy est automatiquement inclus et vous pouvez le trouver à :
+
+[source,console]
+----
+node_modules/kubewarden-policy-sdk/plugin/javy-plugin-kubewarden.wasm
+----
+
+== Prérequis du tutoriel
+
+Au cours de ce tutoriel, vous avez besoin de ces outils sur votre machine de développement :
+
+* *Node.js* : Version 18 ou supérieure avec npm pour la gestion des dépendances.
+* https://github.com/bats-core/bats-core[`bats`] : Utilisé pour écrire les tests et automatiser leur exécution.
+* https://github.com/kubewarden/kwctl/releases[`kwctl` ≥ v1.30] : Outil CLI fourni par {short-project-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions. C'est couvert dans xref:/tutorials/testing-policies/index.adoc[la section des stratégies de test] de la documentation.
+* https://github.com/bytecodealliance/javy[`javy` ≥ 6.0.0] : Outil CLI pour compiler le code JavaScript en modules WebAssembly.

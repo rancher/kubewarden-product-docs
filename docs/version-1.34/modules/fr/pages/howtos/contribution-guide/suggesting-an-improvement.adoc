@@ -1,0 +1,62 @@
+include::partial$variables.adoc[]
+= Suggérer une amélioration de la documentation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Initiez une amélioration de la documentation en ouvrant un problème sur GitHub avec des détails clairs sur ce qui manque, est obsolète, erroné ou nécessite une révision de qualité.
+:doc-persona: ["kubewarden-développeur", "kubewarden-opérateur", "kubewarden-gestionnaire"]
+:doc-topic: ["guide-de-contribution", "docs-contribution", "amélioration"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "suggesting an improvement"]
+:sidebar_label: Suggérer des améliorations de documentation
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+Si vous remarquez un problème avec {short-project-name} documentation ou souhaitez suggérer un nouveau contenu, ouvrez un problème. Vous avez seulement besoin d'accéder à un https://github.com/join[compte GitHub] et à un navigateur.
+
+En général, tout nouveau travail de documentation pour {short-project-name} commence par un problème sur GitHub.
+ifeval::["{build-type}" == "community"]
+L'équipe de documentation https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name}] examine, catégorise et étiquette les problèmes.
+endif::[]
+ifeval::["{build-type}" == "product"]
+L'équipe de documentation https://github.com/orgs/rancher/teams/docs[{short-project-name}] examine, catégorise et étiquette les problèmes.
+endif::[]
+Tout le monde est le bienvenu pour travailler sur n'importe quel problème, y compris le rapporteur, mais vous devez vous l'assigner avant de commencer tout travail pour éviter les efforts en double.
+
+== Ouvrir un problème
+
+Pour suggérer des améliorations au contenu de documentation existant ou signaler une erreur, ouvrez un problème.
+
+* Cliquez sur l'icône Octocat de GitHub en haut. Cela vous redirige vers le
+ifeval::["{build-type}" == "community"]
+  https://github.com/kubewarden/docs[dépôt de documentation pour {short-project-name}].
+endif::[]
+ifeval::["{build-type}" == "product"]
+  https://github.com/rancher/kubewarden-product-docs[dépôt de documentation pour {short-project-name}].
+endif::[]
+* Naviguez vers l'onglet Problèmes et cliquez sur *Nouveau problème*.
+* Décrivez le problème ou la suggestion d'amélioration. Plus il y a de détails, mieux c'est.
+* Cliquez *Soumettre un nouveau problème*.
+* Après avoir soumis le problème, vous pouvez soit vous l'assigner, soit attendre qu'un membre de la communauté s'en occupe. Les membres de l'équipe de documentation et de la communauté pourraient demander des clarifications avant de pouvoir agir sur votre problème. Vous devez vérifier activement votre problème ou https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notifications[activer les notifications GitHub].
+
+== Suggestions de nouveau contenu
+
+Pour suggérer un nouveau contenu, veuillez déposer un problème en utilisant l'un de ces mécanismes :
+
+* Choisissez une page existante dans la section à laquelle vous pensez que le contenu appartient et cliquez *Créer un problème*. OU
+ifeval::["{build-type}" == "community"]
+* Naviguez vers https://github.com/kubewarden/docs/issues/new/choose[GitHub] et déposez le problème directement.
+endif::[]
+ifeval::["{build-type}" == "product"]
+* Naviguez vers https://github.com/rancher/kubewarden-product-docs/issues/new/choose[GitHub] et déposez le problème directement.
+endif::[]
+
+== Comment faire en sorte qu'une contribution compte ?
+
+Aucune contribution n'est trop grande ou trop petite. Cependant, afin que la communauté tire un maximum de valeur, nous vous demandons de suivre ce qui suit lors du signalement d'un problème :
+
+* Concentrez-vous sur la fourniture d'une description claire du problème. Quelques points clés à considérer seraient de décrire ce qui manque, est obsolète, erroné ou nécessite une amélioration qualitative et technique.
+* Décrivez l'impact spécifique que le problème a sur les utilisateurs.
+* Limitez la portée du problème. Si la portée est large, décomposez-la en tâches plus petites au sein d'un problème. Par exemple, "Créer un guide de contribution" a une portée large car il y aurait plusieurs tâches associées au problème.
+  Cependant, "Corriger une erreur grammaticale sur la page de démarrage rapide" est un problème à portée plus étroite qui nécessiterait seulement une seule pull request.
+* Vérifiez les problèmes existants pour éviter le travail en double.
+* Vérifiez s'il existe une pull request ou un problème existant. Assurez-vous de faire référence au problème ou à la pull request existante dans le problème que vous ouvrez pour donner du contexte aux contributeurs qui pourraient vouloir y travailler.

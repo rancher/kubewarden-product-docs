@@ -1,0 +1,90 @@
+include::partial$variables.adoc[]
+= Escrevendo políticas brutas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprenda a escrever políticas brutas que avaliam documentos JSON arbitrários e impõem regras de controle de acesso em seu sistema.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "raw-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "políticas brutas", "agente de política aberta", "opa", "rego"]
+:sidebar_label: Políticas brutas
+:current-version: {page-origin-branch}
+
+Políticas brutas são políticas que podem avaliar documentos JSON arbitrários.
+Para mais informações sobre políticas brutas, consulte a página de xref:howtos/raw-policies.adoc[políticas brutas].
+
+== Exemplo
+
+Os seguintes exemplos devem parecer familiares se você completou a página de xref:tutorials/writing-policies/rego/open-policy-agent/02-create-policy.adoc[validação] deste tutorial.
+
+[NOTE]
+====
+Lembre-se de marcar a política como `raw`, usando o campo `policyType` na configuração `metadata.yml`.
+Consulte a especificação de xref:tutorials/writing-policies//metadata.adoc[metadados] para mais informações.
+====
+
+
+=== Validação
+
+Você vai escrever uma política que aceita uma solicitação no seguinte formato:
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "products"
+  }
+}
+----
+
+Ela valida que apenas o usuário `admin` pode excluir recursos.
+
+Comece criando uma política usando o https://github.com/kubewarden/opa-policy-template[modelo de política OPA].
+
+Primeiro, você precisa alterar o arquivo `policy.rego` para ficar assim:
+
+[,rego]
+----
+package validation
+
+deny[msg] {
+    input.request.action == "delete"
+    input.request.user != "admin"
+    msg := sprintf("user %v is not allowed to delete resources", [input.request.user])
+}
+----
+
+O módulo `utility/policy.rego` precisa ser modificado para remover o código específico do Kubernetes:
+
+[,rego]
+----
+package policy
+
+import data.validation
+
+main = {
+    "response": response,
+}
+
+# OPA policy responses need the uid field to be set.
+# If the request doesn't contain a uid, set it to an empty string.
+default uid = ""
+
+uid = input.request.uid
+
+response = {
+    "uid": uid,
+    "allowed": false,
+    "status": {"message": reason},
+} {
+    reason = concat(", ", validation.deny)
+    reason != ""
+} else = {
+    "uid": uid,
+    "allowed": true,
+} {
+    true
+}
+----

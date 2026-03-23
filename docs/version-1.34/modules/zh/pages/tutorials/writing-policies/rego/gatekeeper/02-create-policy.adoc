@@ -1,0 +1,108 @@
+include::partial$variables.adoc[]
+= 创建新的 Gatekeeper Rego 策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过创建和测试新策略，实施 Gatekeeper Rego 策略以拒绝针对默认名称空间的资源。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "create-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["Kubewarden", "kubernetes", "gatekeeper rego 策略"]
+:sidebar_label: 创建新策略
+:current-version: {page-origin-branch}
+
+在本教程中，您将实现与您在 xref:tutorials/writing-policies/rego/open-policy-agent/02-create-policy.adoc[Open Policy Agent] 中编写的相同策略。
+即，如果资源目标是 `default` 名称空间，则拒绝该资源的策略。
+
+[NOTE]
+====
+有一个 https://github.com/kubewarden/gatekeeper-policy-template[储存库模板]，您可以将其用作移植现有策略的基础。
+====
+
+
+== 要求
+
+您需要以下工具：
+
+* `opa`
+* `kwctl`
+
+== 该策略
+
+Gatekeeper 策略必须返回零个或多个违规对象。
+如果没有报告违规，则请求被接受。
+如果报告一个或多个违规，则请求被拒绝。
+
+创建一个名为 `rego-policy` 的新文件夹。
+在其中，创建一个 `policy.rego` 文件，内容为：
+
+[,rego]
+----
+package policy
+
+violation[{"msg": msg}] {
+        input.review.object.metadata.namespace == "default"
+        msg := "it is forbidden to use the default namespace"
+}
+----
+
+在这种情况下，入口点是 `policy/violation`，由于 Rego 的工作方式，策略可以有以下结果：
+
+* 返回 1 个违规：审核的对象目标是默认名称空间。
+* 返回 0 个违规：审核的对象符合该策略。
+
+花点时间将此策略与在 Open Policy Agent 部分编写的策略进行比较。
+那个策略需要构建整个 `AdmissionReview` 响应，输入略有不同。
+在 Gatekeeper 模式下，`AdmissionRequest` 对象具有 `input.review` 属性。
+`AdmissionRequest` 的所有属性和 `object` 都是可读的。
+
+现在，您可以创建请求以在下一部分进行评估。
+
+您首先在 `data` 目录中创建一个包含以下内容的 `default-ns.json` 文件：
+
+[subs="+attributes",json]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "nginx",
+        "namespace": "default",
+        "uid": "04dc7a5e-e1f1-4e34-8d65-2c9337a43e64"
+      }
+    }
+  }
+}
+----
+
+现在，创建另一个 `AdmissionReview` 对象，这次针对与 `default` 不同的名称空间。
+将此文件命名为 `other-ns.json`。
+它包含以下内容：
+
+[subs="+attributes",json]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "nginx",
+        "namespace": "other",
+        "uid": "04dc7a5e-e1f1-4e34-8d65-2c9337a43e64"
+      }
+    }
+  }
+}
+----
+
+您可以看到，这模拟了另一个 pod 创建请求，这次是在名为 `other` 的名称空间下。

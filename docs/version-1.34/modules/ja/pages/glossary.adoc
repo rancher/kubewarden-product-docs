@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= 用語集
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Kubernetes環境における{project-name}ポリシーに関連する主要なリソースと設定を探索して、詳細情報を得てください。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["glossary"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "glossary"]
+:sidebar_label: 用語集
+:sidebar_position: 90
+:current-version: {page-origin-branch}
+
+== A
+
+=== AdmissionPolicy
+
+ネームスペース全体のリソースです。ポリシーは、AdmissionPolicyが定義されているネームスペースをターゲットにしたリクエストのみを処理します。
+
+== C
+
+=== ClusterAdmissionPolicy
+
+クラスター全体のリソースをターゲットにした<<_admissionpolicy,AdmissionPolicy>>です。
+
+=== ClusterReport
+
+<<_report,Report>>とClusterReportは、ポリシースキャンの結果を保存します。どちらが使用されるかは、リソースのスコープによります。
+
+== K
+
+=== kwctl
+
+ポリシーデプロイメントのためのKubernetes YAMLファイルを生成およびテストするCLIツールです。
+
+== M
+
+=== MutatingWebhookConfiguration
+
+https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetesリソース]は、{short-project-name}コントローラーによって作成され、Kubernetesにどこに`AdmissionReview`を送信するかを知らせます。
+言い換えれば、これは{short-project-name}コントローラーがKubernetesにリソースの変更ポリシーを見つける場所を通知する方法です。
+
+== P
+
+=== レポート
+
+Reportと<<_clusterreport,ClusterReport>>は、ポリシースキャンの結果を保存します。どちらが使用されるかは、リソースのスコープによります。
+
+[#_policy_server]
+=== PolicyServer
+
+ポリシーサーバーは、リクエストに対して{short-project-name}ポリシーを実行することによって、受信リクエストを検証します。
+
+== V
+
+=== ValidatingWebhookConfiguration
+
+https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetesリソース]は、{short-project-name}コントローラーによって作成され、Kubernetesにどこに`AdmissionReview`を送信するかを知らせるためのものです。
+言い換えれば、これは{short-project-name}がKubernetesにリソース検証ポリシーを見つける場所を知らせる方法です。
+
+== W
+
+=== waPC
+
+WebAssembly手続き呼び出し。https://wapc.io.
+
+=== WASI
+
+WebAssemblyシステムインターフェース。https://wasi.dev.
+
+=== Wasm
+
+スタックベースの仮想マシン用のバイナリ命令形式です。ウェブデプロイメントのために設計されています。https://webassembly.org.
+
+=== Wasmtime
+
+WebAssembly用のランタイムです。https://wasmtime.dev.

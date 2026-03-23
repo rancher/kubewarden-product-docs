@@ -1,0 +1,74 @@
+include::partial$variables.adoc[]
+= GitHub Actionsとの統合
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 自動化タスク、ユニットテスト、エンドツーエンドテスト、CI/CDワークフローのためのGitHub Actionsの統合について学びます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "github-action-integration"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "github", "integration"]
+:sidebar_label: GitHub Actions
+:sidebar_position: 56
+:current-version: {page-origin-branch}
+
+== 自動化
+
+このセクションでは、GitHub Actionsを使用してタスクを自動化する方法について説明します。
+
+プロジェクトのスキャフォールディングには、必要なすべてのGitHubアクションがすでに含まれています。
+`.github/workflows/test.yml`および`.github/workflows/release.yml`ファイルにアクションがあります。
+
+これらの原則を使用して、別のCIシステムに適応することができます。
+
+== テスト
+
+ユニットテストとエンドツーエンドテストの自動化は、すぐに利用可能です。
+`.github/workflows/test.yml`で定義されたジョブを使用します。
+
+== リリース
+
+プロジェクトのスキャフォールディングには、`.github/workflows/release.yml`内に`release`ジョブが含まれています。
+
+このジョブは以下のステップを実行します：
+
+* コードのチェックアウト
+* WebAssemblyポリシーのビルド
+* ポリシーをOpen Container Initiative (OCI)レジストリにプッシュ
+* 新しいGitHubリリースを作成
+
+ジョブを有効にするには、`oci-target`ファイルで呼び出される (`reusable-release-policy-go.yml`) 再利用可能なワークフローの`release.yml`アクション入力を調整してください。
+
+ジョブは、その実行をトリガーしたコミットに基づいて異なる動作をします。
+
+定期的なコミットは、`<policy-name>:latest`というOCIアーティファクトの作成につながります。
+これらのコミットに対してGitHubリリースは作成されません。
+
+`v*`パターンに一致するタグを作成すると、次のことが起こります：
+
+* `<policy-name>:<tag>`というOCIアーティファクトの作成。
+* `Release <full tag name>`という名前のGitHubリリースの作成。
+リリースには、アセット、ポリシーのソースコード、およびWebAssemblyバイナリが含まれます。
+
+=== 例
+
+`safe-labels`という名前のポリシーがあり、それを`ghcr.io/kubewarden/policies/safe-labels`として公開する必要があると仮定します。
+
+`jobs.push-to-oci-registry.env`の`ci.yml`セクションの内容は次のようになります：
+
+[subs="+attributes",yaml]
+----
+jobs:
+  push-to-oci-registry:
+    runs-on: ubuntu-latest
+    env:
+      WASM_BINARY_NAME: policy.wasm
+      OCI_TARGET: ghcr.io/kubewarden/policies/safe-labels
+----
+
+`v0.1.0`という名前のタグをプッシュすると、`ghcr.io/kubewarden/policies/safe-labels:v0.1.0`というOCIアーティファクトの作成と公開が行われます。
+
+`Release v0.1.0`という名前のGitHubリリースが作成されます。
+リリースには、次のアセットが含まれます：
+
+* `zip`および`tar.gz`として圧縮されたソースコード
+* `policy.wasm`というファイル名のファイル。これは実際のWebAssemblyポリシーです。

@@ -1,0 +1,65 @@
+include::partial$variables.adoc[]
+= Notfall-Deaktivierung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Notfall-Deaktivierung
+:sidebar_position: 31
+:title: Notfall-Deaktivierung
+:description: Erfahren Sie, wie Sie {project-name} in Notfällen deaktivieren, verwandte Konfigurationen beenden und löschen und dann wiederherstellen.
+:keywords: ["{project-name}", Kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, Konfiguration]
+:doc-persona: kubewarden-operator
+:doc-type: howto
+:doc-topic: Betriebsanleitung
+
+In einem Notfall müssen die Betriebsteams möglicherweise Aktionen durchführen, die {project-name} blockieren würde.
+
+Dieses Dokument erklärt, wie man {short-project-name} deaktiviert, damit die Betriebsteams Clusterfehler beheben können. Nachdem die Situation gelöst ist, können die Betriebsteams {short-project-name} neu starten.
+
+== Deaktivieren Sie {short-project-name}
+
+Zuerst beenden Sie den {short-project-name}-Controller. Sie tun dies, indem Sie dessen Implementierung auf null skalieren:
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=0 \
+  -n kubewarden
+----
+
+[tip]
+====
+Stellen Sie sicher, dass Sie den Namen des Namespaces verwenden, in dem der {short-project-name}-Stack bereitgestellt ist.
+Hier ist der Stack im `kubewarden` Namespace bereitgestellt.
+====
+
+Als nächstes löschen Sie alle `ValidatingWebhookConfigurations` und `MutatingWebhookConfigurations`, die von {short-project-name} erstellt wurden:
+
+[source,console]
+----
+# Delete all the ValidatingWebhookConfiguration created by {short-project-name}
+kubectl delete validatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+
+# Delete all the MutatingWebhookConfiguration created by {short-project-name}
+kubectl delete mutatingwebhookconfigurations \
+  -l app.kubernetes.io/part-of=kubewarden
+----
+
+== Stellen Sie {short-project-name} wieder her
+
+Wenn der Notfall vorbei ist, stellen Sie den {short-project-name}-Stack wieder her, indem Sie den {short-project-name}-Controller zurückbringen:
+
+[source,console]
+----
+kubectl scale deployment kubewarden-controller \
+  --replicas=1 \
+  -n kubewarden
+----
+
+[tip]
+====
+- Stellen Sie sicher, dass Sie den Namen des Namespaces verwenden, in dem der {short-project-name}-Stack bereitgestellt ist.
+  Hier ist der Stack im `kubewarden` Namespace bereitgestellt.
+- Stellen Sie sicher, dass Sie den Controller auf seinen ursprünglichen Wert zurückskalieren. Dieses Beispiel geht davon aus, dass nur eine Replik des Controllers läuft.
+====
+Sobald der Controller läuft, reconciliert er die bereitgestellten Richtlinien. Die `ValidatingWebhookConfiguration`- und `MutatingWebhookConfiguration`-Ressourcen, die zuvor gelöscht wurden, werden neu erstellt, wodurch die Richtlinien durchgesetzt werden.

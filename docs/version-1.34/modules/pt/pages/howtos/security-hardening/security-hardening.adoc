@@ -1,0 +1,73 @@
+include::partial$variables.adoc[]
+= Proteção
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Proteção
+:sidebar_position: 50
+:description: Proteja {project-name} com dicas de proteção e melhores práticas para mitigar ameaças.
+:keywords: ["{project-name}", kubewarden, kubernetes, segurança]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manual-do-operador, segurança
+
+{project-name} se esforça para ser seguro com pouca configuração. Nesta seção e suas subpáginas, você pode encontrar dicas de proteção (com suas compensações) para proteger {short-project-name} em si.
+
+Por favor, consulte o xref:/reference/threat-model.adoc[modelo de ameaça] para mais informações.
+
+== `kubewarden-defaults` Gráfico Helm
+
+Os operadores podem obter uma implantação segura instalando todos os {short-project-name} gráficos Helm. É recomendado instalar o `kubewarden-defaults` gráfico Helm e habilitar suas políticas recomendadas com:
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=protect
+----
+
+Isso fornece um PolicyServer padrão e políticas padrão, em modo de proteção, para garantir que a pilha {short-project-name} esteja segura de outras cargas de trabalho.
+
+== Verificando {short-project-name} artefatos
+
+Consulte o tutorial xref:/tutorials/verifying-kubewarden.adoc[Verificando {short-project-name}].
+
+== RBAC
+
+{short-project-name} descreve configurações de RBAC em diferentes seções _Explicações_. Os usuários podem ajustar as permissões necessárias para o recurso xref:/explanations/audit-scanner/audit-scanner.adoc#_permissions_and_serviceaccounts[Scanner de Auditoria], bem como a Conta de Serviço xref:/explanations/context-aware-policies.adoc[por Policy Server] para o recurso sensível ao contexto.
+
+Para visualizar todos os Papéis:
+
+[source,console]
+----
+kubectl get clusterroles,roles -A | grep kubewarden
+----
+
+== Permissões por política
+
+Para políticas sensíveis ao contexto, os operadores especificam permissões detalhadas por política sob seu `spec.contextAwareResources`, e essas funcionam em conjunto com a Conta de Serviço configurada para o Policy Server onde a política é executada.
+
+== Cobertura de carga de trabalho
+
+Por padrão, {short-project-name} exclui namespaces específicos da cobertura de {short-project-name}. Isso é feito para simplificar o uso pela primeira vez e a interoperabilidade com outras cargas de trabalho.
+
+Operadores preocupados com segurança podem ajustar essa lista de namespaces através do valor de `.global.skipNamespaces` tanto para os gráficos Helm `kubewarden-controller` quanto `kubewarden-defaults`.
+
+== Pod Security Admission
+
+A partir da versão 1.23, a pilha do {short-project-name} é capaz de rodar em um namespace onde https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted[`restricted` Padrões de Segurança de Pod] estão em vigor, com as melhores práticas atuais de proteção de Pod.
+
+Para fazer isso, você precisa adicionar o rótulo `pod-security.kubernetes.io/enforce: restrito` ao namespace de implantação {short-project-name}.
+
+```console
+kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
+```
+
+Veja a https://kubernetes.io/docs/concepts/security/pod-security-admission/[documentação oficial] do Admission de Segurança de Pod do Kubernetes para mais detalhes.
+
+=== SecurityContexts
+
+`kubewarden-controller` O gráfico Helm configura os SecurityContexts e os expõe em sua `values.yaml`.
+
+`kubewarden-defaults` O gráfico Helm permite configurar o Policy Server padrão `.spec.securityContexts` sob `.Values.policyServer.securityContexts`.
+
+Para Policy Servers gerenciados por operadores, você pode configurá-los através de seu xref:/reference/CRDs.adoc#_policyserversecurity[`spec.securityContexts`].

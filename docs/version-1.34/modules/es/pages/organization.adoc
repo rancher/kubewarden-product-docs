@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= Organización de la documentación
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Organización
+:sidebar_position: 75
+:description: Accede a documentación completa organizada en tutoriales, explicaciones, instrucciones y materiales de referencia para el {project-name}.
+:keywords: ["gestor de políticas de admisión", "{project-name}", documentación, organización]
+:doc-persona: [kubewarden-all]
+:doc-type: [explicación]
+:doc-topic: [explicación]
+
+{project-name} organiza la documentación del proyecto de la siguiente manera:
+
+* xref:/introduction.adoc[Introducción]
+* xref:/quick-start.adoc[Inicio rápido]
+* _Tutoriales_—aprendiendo a través de ejemplos.
+* _Explicaciones_—conceptos subyacentes.
+* _Instrucciones_—para realizar las tareas {short-project-name}.
+* _Referencia_
+* Organización—esta página
+* xref:/personas.adoc[Personas]—¿para quién es {short-project-name}?
+* xref:/disclosure.adoc[Seguridad]
+* xref:/glossary.adoc[Glosario]
+
+La mayor parte del material se encuentra en las cuatro secciones, _Tutoriales_, _Explicaciones_, _Instrucciones_ y _Referencia_. Puede haber superposición ya que las secciones no son mutuamente excluyentes. El proyecto {short-project-name} intenta seguir el marco de documentación link:https://diataxis.fr/[Diátaxis].
+
+== Navegación
+
+El menú de contenidos de la izquierda siempre indica tu ubicación actual en el documento.
+El menú de secciones de la derecha muestra las secciones de la página actual. También hay una función de 'migas de pan' en la parte superior del panel de contenido principal en cada página.
+
+== Buscar
+
+Una caja de búsqueda está en el panel de encabezado de cada página.
+
+== Edición
+
+Un enlace a la fuente de la página en GitHub está al final de cada página.
+
+== Otros recursos
+
+También se mantienen:
+
+* link:https://github.com/kubewarden/rfc[RFCs] para el proyecto.
+* Una serie de link:https://www.kubewarden.io/blog/[publicaciones de blog] relacionadas con {community-name} lanzamientos.
+* Elementos relacionados con la gestión de la link:https://github.com/kubewarden/community[comunidad] de {community-name}.

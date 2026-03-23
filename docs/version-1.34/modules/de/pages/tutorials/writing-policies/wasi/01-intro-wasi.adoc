@@ -1,0 +1,139 @@
+include::partial$variables.adoc[]
+= WASI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Schreiben Sie WASI-Richtlinien, die mit Systemprimitiven interagieren, wenn eine Einschränkung im Go-Compiler die Verwendung des waPC-Kommunikationsmechanismus verhindert.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "wasi"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "wasi"]
+:sidebar_label: WASI
+:current-version: {page-origin-branch}
+
+Die https://wasi.dev/[WebAssembly Systemschnittstelle (WASI)] ist ein WebAssembly-Standard, der eine Reihe von Schnittstellen bereitstellt, die die Ausführung von WebAssembly außerhalb des Browsers ermöglichen.
+
+[CAUTION]
+====
+
+Autoren, die reguläre Richtlinien schreiben, sollten niemals einfache WASI-Systemschnittstellen verwenden, um Richtlinien zu schreiben.
+
+Diese Seite ist für {project-name} Maintainer oder Richtlinienautoren auf niedrigem Niveau, die mit den neuesten WASM-Plattformen experimentieren möchten.
+====
+
+
+Mit WASI können Sie ein WebAssembly-Modul haben, das mit Systemprimitiven wie STDOUT, STDERR, STDIN, Umgebungsvariablen und mehr interagiert.
+
+Viele der Compiler, die verwendet werden, um {short-project-name} Richtlinien zu kompilieren, erzeugen WebAssembly-Module, die auf WASI-Schnittstellen abzielen.
+Allerdings verwenden {short-project-name} Richtlinien das https://github.com/wapc[waPC] Projekt, um die bidirektionale Kommunikation zwischen der Richtlinie und der Richtlinienlaufzeit (`kwctl` oder `policy-server`) zu implementieren.
+{short-project-name} Die Verwendung des Kommunikationsprotokolls wird xref:reference/spec/01-intro-spec.adoc[hier] beschrieben.
+
+Es gibt spezielle Fälle, in denen das waPC-Projekt noch nicht verwendet werden kann.
+Unter diesen Umständen können Sie eine Richtlinie unter Verwendung der von WASI bereitgestellten Schnittstellen schreiben.
+
+[IMPORTANT]
+====
+
+{short-project-name} unterstützt WASI-Richtlinien ab der {short-project-name} Version 1.7.0.
+====
+
+
+== Nutzungsbeschränkungen
+
+Sie sollten unter normalen Umständen keine WASI-Richtlinien verwenden, da sie während der Evaluierungszeit eine schlechtere Leistung im Vergleich zu waPC/Rego-Richtlinien aufweisen.
+
+[NOTE]
+====
+
+Bidirektionale Kommunikation zwischen der Richtlinie und dem Host kann erreicht werden,
+erfordert jedoch Änderungen innerhalb des Sprach-SDKs. Dies ist erforderlich, um xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[Hostfähigkeiten] zu nutzen und um
+xref:/explanations/context-aware-policies.adoc[kontextbewusste] Richtlinien zu schreiben.
+
+Derzeit stellen nur die {short-project-name} Go- und JavaScript/TypeScript-SDKs diese für
+WASI-Richtlinien zur Verfügung.
+
+Wenn dies für Sie von Interesse ist, kontaktieren Sie uns bitte. Wir können dann den Aufwand priorisieren.
+
+====
+
+
+== Einsatzbereiche
+
+Der einzige Grund, eine "einfache WASI"-Richtlinie zu schreiben, ist, wenn Sie den waPC-Kommunikationsmechanismus nicht verwenden können.
+
+Derzeit (Stand Juni 2023) ist der einzige gute Grund, dies zu tun, wenn Sie den offiziellen Go-Compiler verwenden, um ein WebAssembly-Modul zu erstellen.
+
+Seit der Version 1.21 kann der offizielle Go-Compiler WebAssembly-Module erstellen, die auf die WASI-Schnittstelle abzielen.
+Diese Module können jedoch noch keine Funktionen an die WebAssembly-Laufzeit exportieren.
+Diese Einschränkung, die durch https://github.com/golang/go/issues/42372[diese dedizierte Issue] verfolgt wird, verhindert die Annahme des waPC-Protokolls.
+
+Das {short-project-name} Projektteam empfiehlt, dass Sie {short-project-name} Go-Richtlinien mit dem TinyGo-Compiler schreiben, wie xref:tutorials/writing-policies/go/01-intro-go.adoc[hier] beschrieben.
+
+Bestimmte komplexe Go-Codebasen können jedoch nicht mit dem TinyGo-Compiler kompiliert werden.
+Dazu gehören beispielsweise Codebasen wie https://github.com/google/cel-go[CEL-go] oder https://github.com/kyverno/kyverno/[Kyverno].
+In diesen Fällen kann die Verwendung des offiziellen Go-Compilers hilfreich sein.
+
+== Kommunikationsprotokoll
+
+Dieser Abschnitt beschreibt, wie man eine einfache WASI-Richtlinie schreibt.
+
+Sie müssen den Code als reguläres CLI-Programm schreiben.
+Das Programm muss die folgenden Unterbefehle annehmen:
+
+* `validate`: Dieser Befehl wird von der Richtlinien-Engine aufgerufen, um eine Zulassungsanfrage zu bewerten.
+* `validate-settings`: Dieser Befehl wird von der Richtlinien-Engine aufgerufen, um die Richtlinieneinstellungen zu validieren.
+
+In beiden Fällen werden die zu validierenden Daten über STDIN bereitgestellt.
+Die Richtlinie muss die Antwort über STDOUT bereitstellen.
+Sie können STDERR für Debug- oder Fehlermeldungen verwenden.
+
+=== Validation
+
+Die Validierung einer Anfrage erfolgt, wenn das Richtlinien-CLI-Programm mit dem `validate` Unterbefehl aufgerufen wird.
+
+STDIN muss ein JSON-Dokument enthalten, das ein `ValidationRequest` Objekt beschreibt.
+Die Richtlinie muss ein JSON-Dokument über STDOUT bereitstellen, das ein `ValidationResponse` Objekt enthält.
+
+Sowohl die `ValidationRequest` als auch die `ValidationResponse` Objekte sind xref:reference/spec/03-validating-policies.adoc[hier] beschrieben.
+
+=== Mutation
+
+Mutierende Richtlinien funktionieren auf die gleiche Weise wie validierende.
+Das Richtlinien-CLI-Programm wird mit dem `validate` Unterbefehl aufgerufen.
+
+STDIN muss ein JSON-Dokument enthalten, das ein `ValidationRequest` Objekt beschreibt.
+Die Richtlinie muss ein JSON-Dokument über STDOUT bereitstellen, das ein `ValidationResponse` Objekt enthält.
+
+Sowohl die `ValidationRequest` als auch die `ValidationResponse` Objekte sind xref:reference/spec/03-validating-policies.adoc[hier] beschrieben.
+
+Wenn eine Mutation erforderlich ist, muss das `ValidationResponse` Objekt einen Schlüssel, `mutated_object`, enthalten, der das zu erstellende Objekt enthält.
+Dieser Prozess ist xref:reference/spec/04-mutating-policies.adoc[hier] beschrieben.
+
+== Context-aware
+
+Derzeit nur über das Go SDK unterstützt. Das Go SDK stellt die kontextbewussten Fähigkeiten wie gewohnt zur Verfügung, für weitere Informationen siehe xref:explanations/context-aware-policies.adoc[hier].
+
+Als Beispiel für eine WASI Go kontextbewusste Richtlinie siehe die https://github.com/kubewarden/go-wasi-context-aware-test-policy[go-wasi-context-aware-test-policy].
+
+=== Einstellungen validieren
+
+Die Richtlinie muss einen Unterbefehl mit dem Namen `validate-settings` bereitstellen.
+Dieser Befehl wird verwendet, um die vom Benutzer bereitgestellten Einstellungen zu validieren.
+
+Das Programm muss über STDIN ein JSON-Objekt empfangen, das die vom Benutzer bereitgestellten Einstellungen enthält.
+Es validiert sie dann und schreibt ein `SettingsValidationResponse` Objekt an STDOUT.
+
+Das Format des `SettingsValidationResponse` und der Prozess zur Validierung der Einstellungen ist xref:reference/spec/02-settings.adoc[hier] beschrieben.
+
+== Richtlinienmetadaten
+
+Jede {short-project-name} Richtlinie muss über den `kwctl annotate` Befehl annotiert werden.
+Die Metadaten der Richtlinie einer einfachen WASI-Richtlinie müssen diesen Wert haben:
+
+[subs="+attributes",yaml]
+----
+executionMode: wasi
+----
+
+== Vorlagenprojekt
+
+https://github.com/kubewarden/go-wasi-policy-template[Dieses GitHub-Repository] enthält eine Vorlage für eine auf Go basierende Richtlinie, die das WASI-Protokoll verwendet.

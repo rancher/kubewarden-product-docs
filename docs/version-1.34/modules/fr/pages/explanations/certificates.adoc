@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Rotation des certificats
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à faire tourner les certificats dans votre {project-name} sans provoquer de temps d'arrêt.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explanations", "certificates"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "certificate", "controller", "reconciliation"]
+:sidebar_label: Rotation des certificats
+:sidebar_position: 21
+
+{project-name} La version v1.17.0 a supprimé la dépendance au cert-manager. Le contrôleur est capable de gérer tous les certificats utilisés par tous les composants. Maintenant, le contrôleur a une nouvelle boucle de réconciliation qui garantit que les certificats sont toujours à jour et que la configuration du webhook est correcte.
+
+L'installation du chart Helm effectue la première génération de certificat. Elle génère la CA racine avec une durée de validité de dix ans. L'installation du chart Helm génère également le certificat du serveur web du webhook du contrôleur, signé par la CA racine. Le serveur API utilise cela pour communiquer avec le {short-project-name} contrôleur afin de valider les CRD. Il a une durée de validité d'un an.
+
+Une fois que le contrôleur démarre, son réconciliateur renouvelle automatiquement les certificats lorsqu'ils sont sur le point d'expirer. Il met également à jour tous les certificats et configurations de webhook utilisés par l'ensemble de la {short-project-name} pile.
+
+[NOTE]
+====
+Tous les certificats générés par le chart Helm et plus tard par le contrôleur utilisent des clés ECDSA P256.
+====
+
+La boucle de réconciliation renouvelle les certificats 60 jours avant leur expiration.
+Les certificats se renouvellent sans temps d'arrêt. La boucle de réconciliation s'occupe également de renouveler la CA racine.
+
+Le contrôleur génère une nouvelle CA racine 60 jours avant son expiration. Le contrôleur met à jour le bundle CA utilisé par tous les webhooks pour inclure à la fois la nouvelle CA racine et l'ancienne.
+
+Le changement de la CA racine amène le réconciliateur à recréer les certificats émis aux webhooks. La propagation des nouveaux certificats nécessite une période de temps. Cependant, pendant ce temps, le bundle CA mis à jour permet au serveur API de continuer à communiquer avec tous les webhooks sans aucun temps d'arrêt.
+
+Lorsqu'un nouveau certificat est prêt et que l'ancien est invalide, le contrôleur met à jour le bundle CA, utilisé par les webhooks, pour n'inclure que la dernière CA racine.
+
+Lorsqu'un certificat de serveur de stratégie ou de serveur web contrôleur est renouvelé, le contrôleur met à jour le secret avec le nouveau certificat signé par la CA racine. Grâce à cette fonctionnalité de rechargement, le contrôleur et le serveur de stratégie utilisent le nouveau certificat sans avoir besoin de redémarrer les processus, évitant ainsi tout temps d'arrêt.

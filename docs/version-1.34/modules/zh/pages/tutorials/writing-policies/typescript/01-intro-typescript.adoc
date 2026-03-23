@@ -1,0 +1,100 @@
+include::partial$variables.adoc[]
+= 在 TypeScript/JavaScript 中编写策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 学习如何使用 TypeScript/JavaScript 编写有效的 {project-name} 验证策略。
+:keywords: kubewarden，kubernetes，在 TypeScript 中编写策略，在 JavaScript 中编写策略
+:doc-type: 教程
+:doc-topic: kubewarden，编写策略，typescript，javascript，介绍
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+TypeScript/JavaScript 对 WebAssembly 的支持正在快速发展。
+此页面最后修订于 2025 年 11 月。
+====
+
+如 https://www.typescriptlang.org/[官方网站] 所述：
+
+[quote]
+TypeScript 通过添加类型扩展了 JavaScript。
+
+通过理解 JavaScript，TypeScript 可以节省您在运行代码之前捕获错误和提供修复的时间。
+
+{project-name} 使用 https://github.com/bytecodealliance/javy[Javy]（一个字节码联盟项目）从 JavaScript 和 TypeScript 构建 WebAssembly 二进制文件。
+
+[quote]
+Javy 将您的 JavaScript 代码在 WebAssembly 上下文中执行。
+
+它具有一个嵌入的 QuickJS 引擎，编译为 WebAssembly，可以执行 JavaScript。
+
+该项目提供 CLI 和一组 API，用于嵌入和自定义在 WebAssembly 中运行 JavaScript 时的行为。
+
+{short-project-name} 项目目前出于以下原因使用 Javy：
+
+* 成熟的 JavaScript 引擎（QuickJS）编译为 WebAssembly。
+* 通过自定义主机函数支持 xref:/tutorials/writing-policies/wasi/01-intro-wasi.adoc[WASI 接口]。
+* 与其他 JavaScript 到 WebAssembly 解决方案相比，二进制文件大小更小。
+* 由字节码联盟进行积极开发和维护。
+
+== Javy 的限制
+
+Javy 在一个沙盒的 WebAssembly 环境中运行 JavaScript，具有某些约束：
+
+* *仅限 WASI 环境*：访问仅限于 stdin/stdout/stderr 和明确提供的主机能力。
+* *没有 Node.js API*：标准 Node.js 模块如 `fs`、`http` 或 `crypto` 不可用。
+* *有限的标准库*：仅可访问 JavaScript 的内核特性以及明确启用的 API。
+* *单线程执行*：不支持 Web Workers 或多线程。
+
+尽管存在这些限制，Javy 通过主机能力系统提供了足够的功能来编写有效的 {short-project-name} 验证策略。
+
+[WARNING]
+====
+写入 STDOUT 会破坏策略 - 请改用 STDERR 进行日志记录。
+====
+
+== 工具
+
+编写 {short-project-name} 策略需要：
+
+* *Node.js*：JavaScript 运行时。
+* *npm*：用于依赖管理。
+* *TypeScript*：推荐用于类型安全（可选）。
+
+[WARNING]
+====
+确保您使用的是 Node.js 18 或更高版本。旧版本可能与编译工具链不兼容。
+====
+
+在编写 {short-project-name} 策略时，这些 TypeScript/JavaScript 库非常有用：
+
+* https://github.com/kubewarden/policy-sdk-js[{short-project-name} JavaScript SDK]：提供结构和函数，减少所需代码量。它还提供测试助手和对所有主机能力的访问。
+* https://github.com/silverlyra/kubernetes-types[Kubernetes TypeScript 类型]：为所有 Kubernetes 资源提供 TypeScript 定义，支持类型安全的策略开发。
+
+{short-project-name} 项目提供了一个 https://github.com/kubewarden/js-policy-template[模板 JavaScript/TypeScript 策略项目]，您可以用来创建 {short-project-name} 策略。
+
+== 获取工具链
+
+获取工具链的最简单方法是使用 {short-project-name} JavaScript SDK，其中包括 Javy 编译插件：
+
+[source,console]
+----
+npm install kubewarden-policy-sdk
+----
+
+Javy 插件二进制文件会自动包含，您可以在以下位置找到它：
+
+[source,console]
+----
+node_modules/kubewarden-policy-sdk/plugin/javy-plugin-kubewarden.wasm
+----
+
+== 教程先决条件
+
+在本教程中，您需要在开发机器上准备以下工具：
+
+* *Node.js*：版本 18 或更高版本，并带有 npm 进行依赖管理。
+* https://github.com/bats-core/bats-core[`bats`]：用于编写测试并自动执行它们。
+* https://github.com/kubewarden/kwctl/releases[`kwctl` ≥ v1.30]:由 {short-project-name} 提供的 CLI 工具，用于在 Kubernetes 外部运行其策略以及其他操作。在文档的 xref:/tutorials/testing-policies/index.adoc[测试策略部分] 中有相关内容。
+* https://github.com/bytecodealliance/javy[`javy` ≥ 6.0.0]:用于将 JavaScript 代码编译为 WebAssembly 模块的 CLI 工具。

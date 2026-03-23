@@ -1,0 +1,37 @@
+include::partial$variables.adoc[]
+= Autorités de certification personnalisées
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez des autorités de certification personnalisées pour une utilisation avec les installations {project-name} afin d'assurer une communication et une authentification sécurisées.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["stratégies de distribution", "autorités de certification personnalisées"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "autorités de certification personnalisées"]
+:sidebar_label: Autorités de certification personnalisées
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+Avec `kwctl` et `policy-server`, vous pouvez récupérer des stratégies à partir des registres de l'Open Container Initiative (OCI) et des serveurs HTTP.
+Vous ne pouvez pousser des stratégies que vers des registres OCI.
+Par défaut, HTTPS est utilisé avec la vérification TLS de l'hôte pour cela.
+
+Le magasin d'autorités de certification (CA) du système est utilisé pour valider la chaîne de certificats de confiance provenant du registre OCI.
+Dans une installation standard de {project-name}, le `policy-server` utilise le magasin CA fourni avec son Linux Container.
+Du côté client, `kwctl` utilise le magasin CA de votre système d'exploitation.
+
+Si vous utilisez le https://github.com/kubewarden/kubewarden-controller[Contrôleur], vous pouvez configurer le PolicyServer via ses xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`champs].
+
+[NOTE]
+====
+
+Le comportement par défaut de `kwctl` et `policy-server` impose HTTPS avec des certificats de confiance correspondant au magasin CA du système.
+Vous pouvez interagir avec des registres en utilisant des certificats non fiables ou même sans TLS, en utilisant le paramètre `insecure_sources`.
+Il est clair que ce n'est pas pour les environnements de production.
+====
+
+
+== Fichier `sources.yaml`
+
+Vous pouvez ajuster le comportement de push-pull de `kwctl` et `policy-server` en utilisant le fichier `sources.yaml`.
+
+Pour des détails de référence, consultez la référence xref:../reference/sources_yaml.adoc[`sources.yaml`].

@@ -1,0 +1,62 @@
+include::partial$variables.adoc[]
+= Vorschlag zur Verbesserung der Dokumentation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Initiieren Sie eine Verbesserung der Dokumentation, indem Sie ein GitHub-Issue mit klaren Details darüber eröffnen, was fehlt, veraltet, fehlerhaft ist oder einer Qualitätsprüfung bedarf.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution", "improvement"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "dokumentation", "verbesserung vorschlagen"]
+:sidebar_label: Vorschläge zur Verbesserung der Dokumentation
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+Wenn Sie ein Problem mit der {short-project-name}Dokumentation bemerken oder neuen Inhalt vorschlagen möchten, eröffnen Sie ein Issue. Sie benötigen lediglich Zugriff auf ein https://github.com/join[GitHub-Konto] und einen Browser.
+
+In der Regel beginnt jede neue Dokumentationsarbeit für {short-project-name} mit einem Issue in GitHub.
+ifeval::["{build-type}" == "community"]
+Das https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name} Dokumentationsteam] überprüft, kategorisiert und kennzeichnet sie.
+endif::[]
+ifeval::["{build-type}" == "product"]
+Das https://github.com/orgs/rancher/teams/docs[{short-project-name} Dokumentationsteam] überprüft, kategorisiert und kennzeichnet sie.
+endif::[]
+Jeder ist willkommen, an jedem Issue zu arbeiten, einschließlich des Melders, aber Sie sollten es sich selbst zuweisen, bevor Sie mit der Arbeit beginnen, um doppelte Arbeit zu vermeiden.
+
+== Ein Issue eröffnen
+
+Um Verbesserungen an bestehenden Dokumentationsinhalten vorzuschlagen oder einen Fehler zu melden, eröffnen Sie ein Issue.
+
+* Klicken Sie auf das GitHub Octocat-Symbol oben. Dies leitet Sie zu der
+ifeval::["{build-type}" == "community"]
+  https://github.com/kubewarden/docs[Dokumentations-Repository für {short-project-name}].
+endif::[]
+ifeval::["{build-type}" == "product"]
+  https://github.com/rancher/kubewarden-product-docs[Dokumentations-Repository für {short-project-name}].
+endif::[]
+* Navigieren Sie zur Registerkarte "Issues" und klicken Sie auf *Neues Issue*.
+* Beschreiben Sie das Issue oder den Verbesserungsvorschlag. Je mehr Details, desto besser.
+* Klicken Sie auf *Neues Issue einreichen*.
+* Nachdem Sie das Issue eingereicht haben, können Sie es entweder sich selbst zuweisen oder darauf warten, dass ein Mitglied der Community es übernimmt. Mitglieder des Dokumentationsteams und der Community könnten Klarstellungen anfordern, bevor sie auf Ihr Issue reagieren können. Sie sollten Ihr Issue aktiv überprüfen oder https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notifications[GitHub-Benachrichtigungen aktivieren].
+
+== Vorschläge für neue Inhalte
+
+Um neue Inhalte vorzuschlagen, reichen Sie bitte ein Issue ein, indem Sie einen dieser Mechanismen verwenden:
+
+* Wählen Sie eine vorhandene Seite in dem Abschnitt aus, in den der Inhalt gehört, und klicken Sie auf *Issue erstellen*. ALTERNATIV:
+ifeval::["{build-type}" == "community"]
+* Navigieren Sie zu https://github.com/kubewarden/docs/issues/new/choose[GitHub] und reichen Sie das Issue direkt ein.
+endif::[]
+ifeval::["{build-type}" == "product"]
+* Navigieren Sie zu https://github.com/rancher/kubewarden-product-docs/issues/new/choose[GitHub] und reichen Sie das Issue direkt ein.
+endif::[]
+
+== Wie Sie einen Beitrag zählen lassen können?
+
+Kein Beitrag ist zu groß oder zu klein. Damit die Community jedoch den maximalen Wert erhält, bitten wir Sie, Folgendes zu beachten, wenn Sie ein Issue melden:
+
+* Konzentrieren Sie sich darauf, eine klare Beschreibung des Issues bereitzustellen. Einige wichtige Punkte, die zu berücksichtigen wären, sind die Beschreibung dessen, was fehlt, veraltet, fehlerhaft oder qualitativ und technisch verbessert werden muss.
+* Beschreiben Sie die spezifischen Auswirkungen, die das Issue auf die Benutzer hat.
+* Begrenzen Sie den Umfang des Issues. Wenn der Umfang groß ist, unterteilen Sie ihn in kleinere Aufgaben innerhalb eines Issues. Zum Beispiel ist "Einen Beitragsleitfaden erstellen" weit gefasst, da es mehrere Aufgaben gibt, die mit dem Issue verbunden sind.
+  "Einen grammatikalischen Fehler auf der Schnellstartseite beheben" ist jedoch ein eng gefasstes Issue, das nur einen einzigen Pull-Request erfordern würde.
+* Überprüfen Sie bestehende Issues, um doppelte Arbeit zu vermeiden.
+* Überprüfen Sie, ob es einen bestehenden Pull-Request oder ein Issue gibt. Stellen Sie sicher, dass Sie in dem Issue, das Sie eröffnen, auf das bestehende Issue oder den Pull-Request verweisen, um den Mitwirkenden, die daran arbeiten möchten, Kontext zu geben.

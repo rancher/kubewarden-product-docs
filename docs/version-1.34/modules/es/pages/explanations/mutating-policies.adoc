@@ -1,0 +1,189 @@
+include::partial$variables.adoc[]
+= Directivas de mutación
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Reconstruir solicitudes configurando y gestionando directivas de mutación dentro de ClusterAdmissionPolicy según los ajustes predefinidos.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["mutating-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "policy mutating", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
+:sidebar_label: Directivas de mutación
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+Las directivas de mutación reciben una solicitud de objeto y la reconstruyen (la mutan) en una nueva solicitud. Esto es de acuerdo con los valores definidos en los ajustes de la directiva. La solicitud avanza a través de la API de Kubernetes, siendo potencialmente evaluada por otras directivas.
+
+Para permitir el comportamiento de solicitud de mutación, establece el campo `ClusterAdmissionPolicy.mutating` en `true`.
+
+Sin embargo, si estableces el campo `ClusterAdmissionPolicy.mutating` en `false`, las solicitudes de mutación serán rechazadas.
+
+== Por qué las directivas de mutación pueden ser peligrosas
+
+=== Las directivas de mutación no revisadas pueden introducir vulnerabilidades
+
+[WARNING]
+====
+
+Para prevenir el abuso del sistema, {project-name} los administradores deben revisar las directivas de mutación. Las directivas de mutación podrían, por ejemplo, modificar una carga de trabajo, de tal manera que permita la creación de contenedores privilegiados.
+
+====
+
+
+==== Solución
+
+Si tienes dudas, separa las directivas en directivas de mutación y directivas de validación, en lugar de escribir o desplegar directivas que validen y muten a la vez. Esto es particularmente importante al usar un DSL (como Rego) para construir directivas complejas.
+
+=== Las directivas de mutación mal configuradas junto con controladores de Kubernetes de terceros pueden quedar atrapadas en un bucle infinito
+
+[WARNING]
+====
+
+Las directivas de mutación devuelven solicitudes que avanzan a través de la API de Kubernetes. Si hay otros controladores de Kubernetes que escuchan esos mismos recursos, pueden mutarlos de nuevo en una solicitud de seguimiento. Esto podría llevar a un bucle de retroalimentación infinito de mutación.
+
+====
+
+
+==== Solución
+
+Realiza la mutación contra:
+
+. El tipo inferior de recurso (p. ej: Pod).
+. El tipo superior de recurso (p. ej: Ampliación). Nota: esto aún podría llevar a bucles si un controlador está gestionando esos recursos. Por ejemplo, controladores de soluciones GitOps (como fleet, flux, argo, ...) u otros controladores de terceros que traducen sus propios CRDs en objetos de ampliación.
+
+== Ejemplos
+
+Puedes ver una directiva de mutación en acción. Crea el siguiente
+`ClusterAdmissionPolicy` con el campo `mutating` establecido en `true`:
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-user-group
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/user-group-psp:v0.1.5"
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    run_as_user:
+      rule: "MustRunAs"
+      ranges:
+        - min: 1000
+          max: 2000
+        - min: 3000
+          max: 4000
+    run_as_group:
+      rule: "RunAsAny"
+    supplemental_groups:
+      rule: "RunAsAny"
+EOF
+
+# Output
+clusteradmissionpolicy.policies.kubewarden.io/psp-user-group created
+----
+
+Usas la
+https://github.com/kubewarden/user-group-psp-policy[`psp-user-group`] directiva para
+controlar usuarios y grupos en contenedores y puedes mutar las solicitudes. En el
+ejemplo anterior, estableces el campo `runAsUser` y se añade a la
+sección del contenedor `securityContext`.
+
+Como el campo `mutating` es `true`, la siguiente solicitud tiene éxito:
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause-user-group
+spec:
+  containers:
+    - name: pause
+      image: registry.k8s.io/pause
+EOF
+
+# Output
+pod/pause-user-group created
+----
+
+Puedes ver los resultados del `securityContext` del contenedor:
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl get pods pause-user-group -o jsonpath='{ .spec.containers[].securityContext }'
+
+# Output
+{"runAsUser":1000}
+----
+
+Ahora, modifica la `ClusterAdmissionPolicy` estableciendo el campo `mutating` en `false`:
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-user-group
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/user-group-psp:v0.1.5"
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+  settings:
+    run_as_user:
+      rule: "MustRunAs"
+      ranges:
+        - min: 1000
+          max: 2000
+        - min: 3000
+          max: 4000
+    run_as_group:
+      rule: "RunAsAny"
+    supplemental_groups:
+      rule: "RunAsAny"
+EOF
+
+# Output
+clusteradmissionpolicy.policies.kubewarden.io/psp-user-group configured
+----
+
+Como el campo `mutating` es `false`, la siguiente solicitud falla:
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause-user-group
+spec:
+  containers:
+    - name: pause
+      image: registry.k8s.io/pause
+EOF
+
+# Output
+Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
+----
+
+En conclusión, puedes ver que {short-project-name} replica el mismo comportamiento que las directivas de seguridad de pods de Kubernetes (PSP) que han quedado obsoletas.

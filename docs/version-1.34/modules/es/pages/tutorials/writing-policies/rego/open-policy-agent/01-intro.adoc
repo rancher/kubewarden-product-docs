@@ -1,0 +1,38 @@
+include::partial$variables.adoc[]
+= Introducción al Open Policy Agent
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende cómo el Open Policy Agent utiliza el lenguaje Rego para escribir directivas que evalúan y producen resultados para una toma de decisiones segura.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "open policy agent", "opa", "rego"]
+:sidebar_label: Introducción
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+El soporte para Open Policy Agent se ha introducido a partir de estas versiones:
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+====
+
+
+Open Policy Agent (OPA) es un marco de directivas de propósito general que utiliza el lenguaje Rego para escribir directivas.
+
+== Introducción
+
+Las directivas Rego funcionan recibiendo una entrada para evaluar y producen una salida como respuesta.
+En este sentido, OPA no tiene herramientas específicas para escribir directivas dirigidas a Kubernetes.
+
+Específicamente, las directivas en OPA reciben una entrada JSON y producen una salida JSON.
+El servidor OPA está configurado para recibir solicitudes de revisión de admisión de Kubernetes.
+Las directivas reciben un objeto Kubernetes `AdmissionReview` en formato JSON.
+Deben devolver un objeto `AdmissionReview` válido como resultados de la evaluación.
+
+== Compatibilidad con directivas existentes
+
+Todas las directivas se pueden compilar al objetivo `wasm` (WebAssembly) con la herramienta CLI oficial `opa`.
+
+En términos de ejecución de directivas, puedes leer más sobre el xref:tutorials/writing-policies/rego/02-builtin-support.adoc[soporte integrado de OPA] implementado en {short-project-name}.

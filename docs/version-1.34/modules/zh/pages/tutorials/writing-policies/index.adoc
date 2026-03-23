@@ -1,0 +1,48 @@
+include::partial$variables.adoc[]
+= 编写{project-name}策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用任何受支持的编程语言，通过特定 API 暴露明确定义的功能来开发准入控制器策略。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies"]
+:sidebar_label: 编写策略
+:current-version: {page-origin-branch}
+
+本节使用传统计算类比介绍{project-name}策略。
+
+{short-project-name}策略就像一个只做一件事的程序。
+它接收输入数据，对这些数据进行计算并返回结果。
+
+输入数据是Kubernetes的准入请求。
+计算的结果是一个验证响应，告诉Kubernetes是否接受、拒绝或修改输入数据，即准入请求。
+
+https://github.com/kubewarden/policy-server[policy-server]组件执行这些操作。
+
+策略服务器不包括任何数据处理能力。
+您可以通过附加组件在运行时添加处理能力。
+这些附加组件就是{short-project-name}策略。
+
+因此，{short-project-name}策略就像是"策略服务器"程序的https://en.wikipedia.org/wiki/Plug-in_%28computing%29[传统插件]。
+
+总结：
+
+* {short-project-name}策略是插件，使用明确定义的API暴露一组明确定义的功能（验证Kubernetes请求对象、验证用户提供的策略设置及其他功能）。
+* 策略服务器是加载插件（即策略）的"主"程序，并使用其暴露的功能来接受、拒绝或修改Kubernetes请求。
+
+编写{short-project-name}策略包括编写验证业务逻辑，然后通过明确定义的API将其暴露。
+
+== 编程语言要求
+
+您提供{short-project-name}策略作为https://webassembly.org/[WebAssembly]二进制文件。
+
+策略作者可以使用任何支持 WebAssembly 作为编译目标的编程语言编写策略。
+支持的语言列表不断发展，https://github.com/appcypher/awesome-wasm-langs[此页面] 提供了 WebAssembly 生态系统的良好概述。
+
+目前，WebAssembly 没有官方的方法在主机和 WebAssembly 客户端之间共享复杂数据类型。
+为了克服这一限制，{short-project-name}策略使用https://github.com/wapc[waPC]项目，该项目提供了双向通信通道。
+
+因此，您选择的编程语言必须有可用的 waPC 客户端 SDK。
+如果不是这种情况，请随时与我们联系。
+项目团队可以帮助您克服这一限制。

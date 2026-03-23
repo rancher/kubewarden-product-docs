@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= Suivi
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Activez le traçage pour obtenir des détails précis sur les évaluations de stratégies et déboguer les problèmes liés au déploiement de {project-name}.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["opérateur-manuel", "extension UI", "traçage"]
+:doc-type: ["hosto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:current-version: {page-origin-branch}
+
+Le traçage permet de collecter des détails précis sur les évaluations de stratégies.
+C'est un outil utile pour déboguer les problèmes dans votre déploiement de {project-name} et dans vos stratégies.
+
+{short-project-name} utilise https://www.jaegertracing.io/[Jaeger] pour recevoir, stocker et visualiser les événements de traçage.
+
+*_Journaux de traçage de stratégie_* image:ui_policy_tracing.png[Journaux de traçage de stratégie UI]
+
+== Conditions préalables
+
+Vous avez besoin de Cert-Manager et d'OpenTelemetry. Suivez xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[ces instructions] pour installer Cert Manager et l'Opérateur OpenTelemetry.
+
+== Installez Jaeger
+
+Appliquez les étapes d'installation du xref:howtos/telemetry/20-tracing-qs.adoc#_install_jaeger[guide de démarrage rapide de traçage].
+
+Une fois que l'opérateur Jaeger crée toutes les ressources, il y a un Service sous `my-open-telemetry-collector.jaeger.svc.cluster.local`.
+
+L'interface utilisateur de requête Jaeger est accessible à l'adresse suivante :
+
+[subs="+attributes",console]
+----
+https://<CLUSTER_IP>/api/v1/namespaces/jaeger/services/http:my-open-telemetry-query:16686/proxy/search
+----
+
+Ce point de terminaison peut être unique en fonction de votre configuration. Vous pouvez trouver le point de terminaison répertorié pour votre ressource Jaeger sous la page des Services.
+
+=== Mettez à jour `rancher-kubewarden-controller` avec le point de terminaison Jaeger
+
+Vous devrez modifier la ressource `rancher-kubewarden-controller` pour ajouter le point de terminaison Jaeger "my-open-telemetry-collector.jaeger.svc.cluster.local:4317".
+
+Par exemple :
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  tracing: true
+  mode: sidecar
+  sidecar:
+    tracing:
+      jaeger:
+        endpoint: my-open-telemetry-collector.jaeger.svc.cluster.local:4317
+        tls:
+          insecure: true
+----
+
+L'installation du service, `my-open-telemetry-collector`, est sous l'espace de noms `jaeger`.
+
+[CAUTION]
+====
+
+Pour des raisons de simplicité, nous ne chiffrons pas la communication entre le collecteur OpenTelemetry et le point de terminaison Jaeger.
+
+Ceci est *inapproprié pour un déploiement en production*. Vous devriez lire la https://www.jaegertracing.io/docs/latest/kubernetes/[documentation] de Jaeger.
+
+====
+
+
+Vous devriez maintenant être en mesure de voir toutes les demandes échouées pour les stratégies liées à un serveur de stratégies spécifique. Vous pouvez également voir la vue détaillée pour toute stratégie donnée.
+Vous pouvez obtenir une vue plus approfondie des traces en utilisant l'interface utilisateur de Jaeger.

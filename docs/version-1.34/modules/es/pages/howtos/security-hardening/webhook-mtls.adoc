@@ -1,0 +1,183 @@
+include::partial$variables.adoc[]
+= Asegurar webhooks con TLS mutuo con K3s
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Habilitar mTLS con K3s
+:description: Implementa protocolos de TLS mutuo (mTLS) para webhooks seguros con K3s en tu distribución de SUSE Kubernetes.
+:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manual-del-operador, seguridad
+
+Esta guía te muestra cómo habilitar TLS mutuo (mTLS) para webhooks de la pila {project-name} al usar https://k3s.io/[K3s] como tu distribución de Kubernetes.
+
+Para más información sobre cómo endurecer los webhooks, consulta la xref:/reference/security-hardening/webhooks-hardening.adoc[página de referencia].
+
+== Requisitos previos
+
+Antes de instalar K3s, necesitas crear una autoridad certificadora (CA) y un certificado de cliente. Se utiliza para asegurar la comunicación entre los webhooks de {short-project-name} y el servidor API de Kubernetes.
+
+Como primer paso, crea el directorio `/etc/rancher/k3s/admission/certs`:
+
+[source,console]
+----
+sudo mkdir -p /etc/rancher/k3s/admission/certs
+----
+
+=== Crea una CA raíz y el certificado de cliente
+
+Como usuario `root`, cambia al directorio `/etc/rancher/k3s/admission/certs` y crea todos los certificados necesarios:
+
+[source,console]
+----
+export FQDN=mtls.kubewarden.io
+
+# Create openssl config file
+cat > openssl.cnf <<EOL
+[ req ]
+default_keyfile     = rootCA.key
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_ca
+string_mask         = utf8only
+
+[ req_distinguished_name ]
+countryName         = Country Name (2 letter code)
+countryName_default = US
+stateOrProvinceName = State or Province Name (full name)
+localityName        = Locality Name (eg, city)
+organizationName    = Organization Name (eg, company)
+commonName          = Common Name (eg, your domain or your CA name)
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:1
+keyUsage = critical, keyCertSign, cRLSign
+EOL
+
+# Create CA
+openssl req -nodes -batch -x509 -sha256 -days 3650 -newkey rsa:4096 -keyout rootCA.key -out rootCA.crt \
+  -config openssl.cnf
+
+# Create CSR
+openssl req -nodes -batch -newkey rsa:4096 -keyout client.key -out client.csr \
+    -addext "subjectAltName = DNS:$FQDN"  -config openssl.cnf
+
+# Create CRT
+openssl x509 -req -CA rootCA.crt -CAkey rootCA.key -in client.csr -out client.crt -days 3650 -CAcreateserial \
+    -extfile <(echo "subjectAltName=DNS:$FQDN")
+
+# Print CRT
+
+openssl x509 -text -noout -in client.crt
+----
+
+Esto crea los siguientes archivos:
+
+* `client.crt`
+* `client.csr`
+* `client.key`
+* `rootCA.crt`
+* `rootCA.key`
+* `rootCA.srl`
+
+=== Crea el archivo de configuración de Kubernetes
+
+Crea el archivo `/etc/rancher/k3s/admission/admission.yaml` con el siguiente contenido:
+
+[source,yaml]
+----
+# /etc/rancher/k3s/admission/admission.yaml
+apiVersion: apiserver.config.k8s.io/v1
+kind: AdmissionConfiguration
+plugins:
+- name: ValidatingAdmissionWebhook
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: WebhookAdmissionConfiguration
+    kubeConfigFile: "/etc/rancher/k3s/admission/kubeconfig"
+- name: MutatingAdmissionWebhook
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: WebhookAdmissionConfiguration
+    kubeConfigFile: "/etc/rancher/k3s/admission/kubeconfig"
+----
+
+Finalmente, crea un archivo `kubeconfig` en `/etc/rancher/k3s/admission/kubeconfig`:
+
+[source,yaml]
+----
+# /etc/rancher/admission/kubeconfig
+apiVersion: v1
+kind: Config
+users:
+- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+  user:
+    client-certificate: /etc/rancher/k3s/admission/certs/client.crt
+    client-key: /etc/rancher/k3s/admission/certs/client.key
+----
+
+=== Crea un archivo de configuración de K3s
+
+Crea un archivo de configuración de K3s en `/etc/rancher/k3s/config.yaml`:
+
+[source,yaml]
+----
+# /etc/rancher/k3s/config.yaml
+kube-apiserver-arg:
+- admission-control-config-file=/etc/rancher/k3s/admission/admission.yaml
+----
+
+== Instala K3s
+
+Instala K3s utilizando el siguiente comando:
+
+[source,console]
+----
+curl -sfL https://get.k3s.io | sh -
+----
+
+Espera a que finalice la instalación.
+
+== Instala el {short-project-name} stack
+
+=== Requisitos previos
+
+El certificado de la CA raíz, que emitió el certificado del cliente de Kubernetes, debe estar disponible para el {short-project-name} stack.
+
+La CA raíz está disponible en `/etc/rancher/k3s/admission/certs/rootCA.crt` en el nodo de Kubernetes. Necesitas su contenido en un `ConfigMap` bajo el espacio de nombres `kubewarden`. Almacenas el contenido del archivo `rootCA.crt` en la clave llamada `client-ca.crt`.
+
+Primero, crea el espacio de nombres `kubewarden`:
+
+[source,console]
+----
+kubectl create namespace kubewarden
+----
+
+Luego crea el `ConfigMap` en él. El siguiente comando, ejecutado en el nodo de Kubernetes, hace eso:
+
+[source,console]
+----
+kubectl create configmap -n kubewarden api-server-mtls \
+    --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
+----
+
+El nombre del `ConfigMap` resultante es `api-server-mtls`.
+
+=== Instala el {short-project-name} stack
+
+Instala el {short-project-name} stack como se describe en la guía xref:/quick-start.adoc[quickstart]. Sigue todos los pasos, pero al instalar el gráfico Helm `kubewarden-controller`, asegúrate de habilitar los siguientes valores:
+
+* `mTLS.enable`: debe ser `true`.
+* `mTLS.configMapName`: debe ser el nombre del `ConfigMap` creado previamente.
+
+El nombre del `ConfigMap` es `api-server-mtls`. El comando de Helm para instalar el `kubewarden-controller` es:
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+    --set mTLS.enable=true \
+    --set mTLS.configMapName=api-server-mtls
+----
+
+Una vez que este comando finalice, mTLS asegura la instalación del {short-project-name} stack y sus webhooks.

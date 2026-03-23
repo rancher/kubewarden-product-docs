@@ -1,0 +1,126 @@
+include::partial$variables.adoc[]
+
+= Copia de seguridad y restauración con el operador de copia de seguridad de Rancher
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura y gestiona copias de seguridad y restauraciones utilizando el operador de copia de seguridad de Rancher en cualquier clúster de Kubernetes.
+:keywords: "{project-name}", kubernetes, kubewarden, operador de copia de seguridad de Rancher, copia de seguridad, restauración
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manual del operador, operador de copia de seguridad de Rancher
+:current-version: {page-origin-branch}
+
+El operador `rancher-backup` se puede utilizar para hacer copias de seguridad y restaurar Rancher en cualquier clúster de Kubernetes.
+
+Desde la versión `v9.0.0`, `rancher-backup` tiene soporte para {project-name}. Esto incluye:
+
+- El espacio de nombres predeterminado de Rancher `cattle-kubewarden-system` (o `cattle-kubewarden-*`), y el espacio de nombres predeterminado {short-project-name} `kubewarden`.
+- Los recursos necesarios de {short-project-name} se instalan a través de los charts de Helm.
+- Los CRD de {short-project-name}, que se reconciliarán después de la restauración por el controlador {short-project-name}.
+- El subchart `policy-reporter` del chart `kubewarden-controller`, para sus valores predeterminados. Esto no incluye la integración de Grafana ni otros complementos.
+
+== Secretos de usuario
+
+El proceso de copia de seguridad no incluye secretos creados por el usuario, como los utilizados para xref:/howtos/policy-servers/02-private-registry.adoc#_creating_the_secret[configurar PolicyServers para registros privados], a menos que estén correctamente etiquetados. Para eso, etiqueta los secretos de una de las siguientes maneras. O bien:
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker app.kubernetes.io/part-of=kubewarden
+----
+
+O bien:
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
+----
+
+== Instalando el operador de copia de seguridad de Rancher
+
+Sigue el enlace: \https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html[documentación de Rancher Manager]. Para una instalación de Minikube utilizando los PersistentVolumes de tipo `hostPath` llamados `standard` que Minikube admite de forma predeterminada.
+
+Es necesario instruir al Operador de copia de seguridad de Rancher para que también realice copias de seguridad de los CRs {short-project-name} definidos por el usuario estableciendo el valor `optionalResources.kubewarden.enabled` en `true`.
+
+La instalación sería la siguiente:
+
+[source,console]
+----
+helm repo add rancher-charts https://charts.rancher.io
+helm repo update
+helm install --wait --create-namespace -n cattle-resources-system \
+    rancher-backup-crd rancher-charts/rancher-backup-crd
+helm install --wait -n cattle-resources-system \
+    rancher-backup rancher-charts/rancher-backup \
+    --set persistence.enabled=true --set persistence.storageClass=standard \
+    --set optionalResources.kubewarden.enabled=true
+----
+
+== Copia de seguridad
+
+Utiliza el `rancher-resource-set-full` para hacer copia de seguridad de los Secretos {short-project-name}.
+Estos incluyen los Secretos TLS que se crean durante la instalación de Helm.
+
+Si prefieres usar `rancher-resource-basic`, recuerda hacer una copia de seguridad o crear manualmente los Secretos TLS necesarios.
+
+Aquí tienes un ejemplo de cómo realizar una copia de seguridad sin cifrar en la ubicación predeterminada con el `rancher-resource-set-full`:
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Backup
+metadata:
+  name: default-location-backup
+spec:
+  resourceSetName: rancher-resource-set-full
+EOF
+backup.resources.cattle.io/default-location-backup created
+----
+
+Los registros del `rancher-backup` o la copia de seguridad muestran la creación del archivo de copia de seguridad:
+
+[source,shell]
+----
+kubectl logs -n cattle-resources-system -l app.kubernetes.io/name=rancher-backup -f
+...
+INFO[2025/06/26 10:07:48] Processing backup default-location-backup
+INFO[2025/06/26 10:07:48] For backup CR default-location-backup, filename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z
+...
+INFO[2025/06/26 10:07:49] Done with backup
+----
+
+También puedes ver su estado describiendo el recurso:
+
+[source,shell]
+----
+kubectl get backups
+NAME                      LOCATION   TYPE       LATEST-BACKUP                                                                              RESOURCESET                 AGE    STATUS
+default-location-backup   PV         One-time   default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   rancher-resource-set-full   111s   Completed
+----
+
+Consulta la documentación de Rancher para más link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_backup[ejemplos de copia de seguridad].
+
+== Restaurar
+
+Para restaurar la copia de seguridad sin cifrar desde la ubicación predeterminada, toma el nombre del archivo de la columna LATEST-BACKUP al mostrar el recurso de copia de seguridad para crear un recurso de restauración:
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Restore
+metadata:
+  name: restore-default
+spec:
+  backupFilename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z.tar.gz
+EOF
+restore.resources.cattle.io/restore-default created
+
+kubectl get restores
+NAME              BACKUP-SOURCE   BACKUP-FILE                                                                                AGE   STATUS
+restore-default   PV              default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   6s    Completed
+----
+
+Consulta la documentación de Rancher para más link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_restore[ejemplos de restauración].
+
+

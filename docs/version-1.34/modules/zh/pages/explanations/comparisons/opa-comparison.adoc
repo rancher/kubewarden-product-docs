@@ -1,0 +1,194 @@
+include::partial$variables.adoc[]
+
+= {project-name} 与 OPA Gatekeeper
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:page-aliases: explanations/opa-comparison.adoc
+:description: 比较 OPA Gatekeeper 和 {project-name} 在 Kubernetes 环境中的策略管理，以确定最适合您用例的方法。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["explanations", "kubewarden-vs-opa_gatekeeper"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "opa gatekeeper", "比较"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+此页面来自 2023 年 8 月。自那时以来，这两个项目可能已经发展。
+
+如果您发现有缺失或不准确的内容，请https://github.com/kubewarden/docs/[提交问题]或使用页面底部的链接打开 PR。
+
+====
+
+OPA Gatekeeper 和 Kubewarden（{project-name} 的来源）都是开源项目，属于 CNCF。
+
+此表提供 OPA Gatekeeper 和 {short-project-name} 之间的比较。需要更多信息的主题有进一步解释的链接。
+
+|===
+| 功能 | OPA Gatekeeper | {short-project-name}
+
+| Validation
+| ✅
+| ✅
+
+| 变更
+| ✅
+| ✅
+
+| 策略语言 <<_writing_policies,[1]>>
+| Rego
+| Rego、CEL、Go、Rust，...
+
+| 上下文感知 <<_context_aware,[2]>>
+| ✅
+| ✅
+
+| Kubernetes 集成 <<_kubernetes_integration,[3]>>
+| 集群范围的 CRD
+| 集群范围和命名空间的 CRD
+
+| 策略分发 <<_policy_distribution,[4]>>
+| 嵌入到 Kubernetes CR 中
+| 容器注册表，或嵌入到 Kubernetes CR 中（CEL）
+
+| CI/CD 集成 <<_cicd_integration,[5]>>
+| ✅
+| ✅
+
+| 策略强制模式
+| 拒绝，警告
+| 拒绝，警告
+
+| 部署模式 <<_deployment_mode,[6]>>
+| 单个评估服务器
+| 多个评估服务器
+
+| 背景检查 <<_background_checks,[7]>>
+| ✅
+| ✅
+|===
+
+== 策略类型
+
+OPA Gatekeeper 和 Kubernetes 都可以编写验证和变更策略。
+
+这些策略可以针对任何类型的 Kubernetes 资源，包括自定义资源。
+
+== 编写策略
+
+您可以使用 https://www.openpolicyagent.org/docs/latest/#rego[Rego] 编写 OPA Gatekeeper 策略。Rego 是由 Open Policy Agent 项目创建的查询语言。
+
+[IMPORTANT]
+====
+
+您只能使用 Rego 编写验证策略。变更策略不使用 Rego，而是使用在 YAML 中定义的临时规则（见 https://open-policy-agent.github.io/gatekeeper/website/docs/mutation[这里]）。
+
+====
+
+
+您可以使用不同的范式编写 {short-project-name} 策略。策略作者可以使用传统编程语言（如 Go、Rust 等）或 https://en.wikipedia.org/wiki/Domain-specific_language[领域特定语言]，如 Rego 和 CEL。在 {short-project-name} 中，您以相同的方式编写验证和变更策略。
+
+[CAUTION]
+====
+
+https://github.com/open-policy-agent/kube-mgmt[kube-mgmt]开源项目是开放政策代理项目的一部分，使用Rego。
+
+尽管使用相同的语言，但为kube-mgmt编写的策略与OPA Gatekeeper不兼容，反之亦然。
+
+{short-project-name}可以使用为开放政策代理和OPA Gatekeeper编写的Rego策略。更多信息在xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[这里]。
+
+====
+
+
+== 上下文感知
+
+有时，策略需要关于集群当前状态的数据，以做出验证或变更决策。例如，验证Ingress资源的策略可能需要知道集群中已定义的其他Ingress资源，以确保不会发生冲突。{short-project-name}称这些策略为“上下文感知”。
+
+OPA Gatekeeper 和 {short-project-name} 都支持这些类型的策略。
+
+在部署 OPA Gatekeeper 时，Kubernetes 管理员决定在评估时向策略提供哪种类型的集群数据。
+
+重要的是要强调这些数据如何被所有已部署的策略访问。
+
+例如，如果 OPA Gatekeeper 策略需要访问 Kubernetes Secrets，则所有其他已部署的策略也能够读取这些数据。
+
+相反，{short-project-name} 提供对集群资源的细粒度访问。
+每个策略仅能访问 Kubernetes 管理员指定的资源。尝试读取未经授权的数据会立即被阻止，并报告给集群管理员。
+
+== Kubernetes 集成
+
+OPA Gatekeeper 具有集群范围的自定义资源，允许策略定义以及如何和在哪里强制执行它们。
+
+{short-project-name} 有两种不同类型的自定义资源用于声明策略。一种在集群级别工作，另一种是名称空间级别的。名称空间自定义资源的名称是 `AdmissionPolicy`。
+
+通过 `AdmissionPolicy` 资源部署的策略仅影响其所属名称空间内创建的资源。因此，您可以允许非管理员的 Kubernetes 用户拥有管理 `AdmissionPolicy` 资源所需的 RBAC 权限，前提是他们可以访问的名称空间。
+
+这使得 Kubernetes 管理员能够委派与策略相关的工作。
+
+== 策略分发
+
+OPA Gatekeeper 和 {short-project-name} 策略在定义 Kubernetes 中策略的自定义资源中具有策略源代码（OPA Gatekeeper 的 Rego，{short-project-name} 的 CEL）。
+
+此外，{short-project-name} 策略可以像容器镜像一样管理策略的源代码（对于 Rego、Go、Rust、...）。一旦构建完成，它们会作为 OCI 工件推送到容器注册表中。
+
+您可以使用像 {short-project-name} 这样的容器镜像工具对 `cosign` 策略进行签名和验证，来自 https://sigstore.dev[Sigstore 项目]。
+
+您可以使用传统的工具和流程在地理分布的容器注册表之间分发 {short-project-name} 策略，这些工具和流程是为容器镜像采用的。
+
+== CI/CD 集成
+
+OPA Gatekeeper 和 {short-project-name} 都是使用 GitOps 方法进行管理的。
+
+然而，对于 OPA Gatekeeper，策略的 Rego 代码与用于在 Kubernetes 中部署它的自定义资源之间存在耦合。
+这在 CI/CD 管道中引入了额外的步骤。
+
+Rego 具有 https://www.openpolicyagent.org/docs/latest/policy-testing/[测试工具]，允许创建单元测试套件。编写测试并在 CI/CD 管道中执行它们对于确保策略按预期行为至关重要。
+
+要使用这些测试工具，策略的源代码必须以专用文本文件的形式提供。无法从用于声明 OPA Gatekeeper 策略的 YAML 文件中读取源代码。CI/CD 管道必须将 Rego 源代码与在 OPA Gatekeeper 自定义资源中定义的代码进行同步以进行测试。您可以使用第三方工具来实现这一点。
+
+{short-project-name} 策略具有像传统微服务一样的 CI/CD 管道。
+通常，它们的源代码存储在 Git 仓库中，然后使用传统的 CI/CD 系统对其进行单元测试。您使用编写策略所用语言的测试框架编写单元测试。一旦所有测试通过，您将策略编译为 WebAssembly 并推送到容器注册表。这种管道通常由策略作者维护。
+
+Kubernetes 管理员通常维护其他自动化管道，以响应策略的新版本（使用自动化工具如 https://docs.github.com/en/code-security/dependabot/working-with-dependabot[Dependabot]、https://www.mend.io/renovate/[Renovate bot]、https://www.updatecli.io/[updatecli] 等），或响应策略配置的更改。
+
+该管道对不同类型的请求进行策略测试。您可以使用 https://github.com/kubewarden/kwctl[`kwctl`] CLI 工具进行测试，而无需运行 Kubernetes 集群。`kwctl` CLI 工具使用与在 Kubernetes 集群中部署的 {short-project-name} 堆栈相同的评估引擎。
+
+== 策略强制模式
+
+OPA Gatekeeper 和 {short-project-name} 都可以使用两种不同的操作模式部署策略：
+
+* `deny`：违反策略会拒绝请求
+* `warn`：违反策略不会导致拒绝，并被记录
+
+== 部署模式
+
+同一服务器评估所有 OPA Gatekeeper 策略。相反，{short-project-name} 允许定义多个评估服务器。您通过名为 `PolicyServer` 的自定义资源定义这些服务器。
+
+在声明 {short-project-name} 策略时，Kubernetes 管理员决定哪个 `PolicyServer` 托管它。
+
+[NOTE]
+====
+
+`PolicyServer` 对象是 {short-project-name} 引入的高级抽象。
+在后台，会创建一个具有特定副本大小的 `Deployment`。
+
+每个 `PolicyServer` 的副本大小可以与其他不同。
+
+====
+
+这允许出现以下有趣的场景：
+
+* 将关键策略部署到专用的策略服务器池。
+* 将嘈杂租户的策略部署到专用的策略服务器池中。
+
+== 背景检查
+
+随着策略的添加、删除和重新配置，集群中已经存在的资源可能会变得不合规。
+
+OPA Gatekeeper 和 {short-project-name} 都有一个在后台运行的扫描器。该扫描器评估集群中已定义的资源，并标记不合规的资源。
+
+OPA Gatekeeper 和 {short-project-name} 之间唯一的区别在于扫描器结果的保存方式。
+
+OPA Gatekeeper 将违规细节添加到给定 `Constraint` 自定义资源的 `status` 字段中（请参见 https://open-policy-agent.github.io/gatekeeper/website/docs/audit#constraint-status[这里]）。
+
+{short-project-name} 则将结果存储在由 https://openreports.io[openreports.io] 定义的一组 Reports 自定义资源中。

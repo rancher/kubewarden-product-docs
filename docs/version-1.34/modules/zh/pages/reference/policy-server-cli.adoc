@@ -1,0 +1,96 @@
+:sidebar_label: 策略服务器 CLI 参考
+:sidebar_position: 121
+:title: 策略服务器 CLI
+:description: 探索 policy-server 命令行帮助和选项，以自定义和运行 \`policy-server` 程序。
+:keywords: [cli, 参考, policy-server]
+:doc-persona: [kubewarden-operator]
+:doc-type: [参考]
+:doc-topic: [操作手册]
+include::partial$variables.adoc[]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+= {title}
+
+== `policy-server` 的命令行帮助
+
+本文件包含 `policy-server` 命令行程序的帮助内容。
+
+*命令概述：*
+
+* link:#policy-server[`policy-server`]
+* link:#policy-server-docs[`policy-server docs`]
+
+=== `policy-server`
+
+*用法：* `policy-server ++[+OPTIONS+]++ ++[+COMMAND+]++`
+
+==== *子命令：*
+
+* `docs` — 生成 policy-server 命令的 markdown 文档
+
+==== *选项：*
+
+* `--addr ++<+BIND_ADDRESS+>++` — 绑定到地址
++
+默认值: `0.0.0.0`
+* `--always-accept-admission-reviews-on-namespace ++<+NAMESPACE+>++` — 始终接受针对给定名称空间的 AdmissionReviews
+* `--cert-file ++<+CERT_FILE+>++` — HTTPS 的 X.509 证书文件路径
+* `--client-ca-file ++<+CLIENT_CA_FILE+>++` — 颁发客户端证书的 CA 证书文件路径。启用 mTLS 所需
+* `--daemon` — 如果设置，将以守护程序模式运行 policy-server
+* `--daemon-pid-file ++<+DAEMON-PID-FILE+>++` — PID 文件的路径，仅在以守护程序模式运行时使用
++
+默认值: `policy-server.pid`
+* `--daemon-stderr-file ++<+DAEMON-STDERR-FILE+>++` — 存放 stderr 的文件路径，仅在以守护程序模式运行时使用
+* `--daemon-stdout-file ++<+DAEMON-STDOUT-FILE+>++` — 存放 stdout 的文件路径，仅在以守护程序模式运行时使用
+* `--disable-timeout-protection` — 禁用策略超时保护
+* `--docker-config-json-path ++<+DOCKER_CONFIG+>++` — 类似 Docker config.json 的路径可用于指示注册表身份验证详细信息
+* `--enable-metrics` — 启用指标
+* `--enable-pprof` — 启用 pprof 性能分析
+* `--ignore-kubernetes-connection-failure` — 如果 Kubernetes 连接失败，则不以错误退出。这将导致上下文感知策略在与 Kubernetes 失去连接时中断。
+* `--key-file ++<+KEY_FILE+>++` — 用于 HTTPS 的 X.509 私钥文件的路径
+* `--log-fmt ++<+LOG_FMT+>++` — 日志输出格式
++
+默认值: `text`
++
+可能值：`text`、`json`、`otlp`
+* `--log-level ++<+LOG_LEVEL+>++` — 日志级别
++
+默认值: `info`
++
+可能值：`trace`、`debug`、`info`、`warn`、`error`
+* `--log-no-color` — 禁用日志的彩色输出
+* `--policies ++<+POLICIES_FILE+>++` — 存放要加载的策略及其设置的 YAML 文件
++
+默认值: `policies.yml`
+* `--policies-download-dir ++<+POLICIES_DOWNLOAD_DIR+>++` — 策略的下载路径
++
+默认值: `.`
+* `--policy-timeout ++<+MAXIMUM_EXECUTION_TIME_SECONDS+>++` — 在给定时间后中断策略评估
++
+默认值: `2`
+* `--port ++<+PORT+>++` — 侦听端口
++
+默认值: `3000`
+* `--readiness-probe-port ++<+READINESS_PROBE_PORT+>++` —
+Expose readiness endpoint on READINESS+_PROBE_+PORT
++
+默认值: `8081`
+* `--sigstore-cache-dir ++<+SIGSTORE_CACHE_DIR+>++` — 用于缓存 sigstore 数据的目录
++
+默认值: `sigstore-data`
+* `--sources-path ++<+SOURCES_PATH+>++` — 存放源信息的 YAML 文件（https、不安全的注册表主机、自定义 CA 等…）
+* `--verification-path ++<+VERIFICATION_CONFIG_PATH+>++` — 存放验证信息的 YAML 文件（URI、密钥、注释等…）
+* `--workers ++<+WORKERS_NUMBER+>++` — 要创建的工作线程数量
+
+=== `policy-server docs`
+
+生成 policy-server 命令的 markdown 文档
+
+*用法:* `policy-server docs --output ++<+FILE+>++`
+
+==== *选项：*
+
+* `-o`, `--output ++<+FILE+>++` — 文档文件将被存储的路径
+
+此文档由 clap-markdown 自动生成。

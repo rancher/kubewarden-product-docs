@@ -1,0 +1,246 @@
+include::partial$variables.adoc[]
+= 原始策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解评估任意 JSON 文档的原始策略，以及查看 Rust 中策略实现的示例。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["writing-policies", "rust", "raw-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "raw policies", "rust"]
+:sidebar_label: 原始策略
+:current-version: {page-origin-branch}
+
+原始策略是可以评估任意 JSON 文档的策略。
+有关原始策略的更多信息，请参阅 xref:howtos/raw-policies.adoc[raw policies] 页面。
+
+== 示例
+
+如果您完成了本教程的 xref:tutorials/writing-policies/rust/05-mutation-policy.adoc[validation] 页面，以下示例应该很熟悉。
+
+[NOTE]
+====
+请记得在 `metadata.yml` 配置中使用 `policyType` 字段，将策略标记为 `raw`。
+有关更多信息，请参阅 xref:tutorials/writing-policies/metadata.adoc[metadata] 规范。
+====
+
+
+=== Validation
+
+让我们编写一个接受以下格式请求的策略：
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "delete",
+    "resource": "products"
+  }
+}
+----
+
+并验证：
+
+* `user` 在有效用户列表中
+* `action` 在有效操作列表中
+* `resource` 在有效资源列表中
+
+首先使用 https://github.com/kubewarden/rust-policy-template[rust policy template] 来搭建策略。
+
+首先，我们定义表示请求有效负载的类型。
+我们将声明一个自定义 `RawValidationRequest` 类型，该类型包含 `Request` 和 `Settings`，而不是使用 SDK 提供的 `ValidationRequest` 类型：
+
+[subs="+attributes",rust]
+----
+/// RawValidationRequest represents the request that is sent to the validate function by the Policy Server.
+#[derive(Deserialize)]
+pub(crate) struct RawValidationRequest {
+    pub(crate) request: Request,
+    pub(crate) settings: Settings,
+}
+
+#[derive(Serialize, Deserialize)]
+/// Request represents the payload of the request.
+pub(crate) struct Request {
+    pub(crate) user: String,
+    pub(crate) resource: String,
+    pub(crate) action: String,
+}
+----
+
+然后我们需要定义 `Settings` 类型并实现 `Validatable` 特性：
+
+[subs="+attributes",rust]
+----
+/// Settings represents the settings of the policy.
+#[derive(Serialize, Deserialize, Default, Debug)]
+#[serde(default, rename_all = "camelCase")]
+pub(crate) struct Settings {
+    pub(crate) valid_users: Vec<String>,
+    pub(crate) valid_actions: Vec<String>,
+    pub(crate) valid_resources: Vec<String>,
+}
+
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        info!(LOG_DRAIN, "starting settings validation");
+
+        if self.valid_users.is_empty() {
+            return Err("validUsers cannot be empty".to_string());
+        }
+
+        if self.valid_actions.is_empty() {
+            return Err("validActions cannot be empty".to_string());
+        }
+
+        if self.valid_resources.is_empty() {
+            return Err("validResources cannot be empty".to_string());
+        }
+
+        Ok(())
+    }
+}
+----
+
+最后，我们定义 `validate` 函数：
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: RawValidationRequest =
+        if let Ok(validation_request) = serde_json::from_slice(payload) {
+            validation_request
+        } else {
+            return kubewarden::reject_request(
+                Some("cannot unmarshal request".to_string()),
+                None,
+                None,
+                None,
+            );
+        };
+
+    info!(LOG_DRAIN, "starting validation");
+
+    let request = validation_request.request;
+    let settings = validation_request.settings;
+
+    if settings.valid_users.contains(&request.user)
+        && settings.valid_actions.contains(&request.action)
+        && settings.valid_resources.contains(&request.resource)
+    {
+        info!(LOG_DRAIN, "accepting resource");
+        kubewarden::accept_request()
+    } else {
+        kubewarden::reject_request(
+            Some("this request is not accepted".to_string()),
+            None,
+            None,
+            None,
+        )
+    }
+}
+----
+
+=== 变更
+
+让我们修改之前的示例，以便变更请求而不是拒绝它。
+在这种情况下，设置将包含`defaultUser`、`defaultAction`和`defaultRequest`，如果用户、操作或资源无效，将用于变更请求。
+
+我们需要用新字段更新`Settings`类型：
+
+[subs="+attributes",rust]
+----
+/// Settings represents the settings of the policy.
+#[derive(Serialize, Deserialize, Default, Debug)]
+#[serde(default, rename_all = "camelCase")]
+pub(crate) struct Settings {
+    pub(crate) valid_users: Vec<String>,
+    pub(crate) valid_actions: Vec<String>,
+    pub(crate) valid_resources: Vec<String>,
+    pub(crate) default_user: String,
+    pub(crate) default_action: String,
+    pub(crate) default_resource: String,
+}
+
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        info!(LOG_DRAIN, "starting settings validation");
+
+        if self.valid_users.is_empty() {
+            return Err("validUsers cannot be empty".to_string());
+        }
+
+        if self.valid_actions.is_empty() {
+            return Err("validActions cannot be empty".to_string());
+        }
+
+        if self.valid_resources.is_empty() {
+            return Err("validResources cannot be empty".to_string());
+        }
+
+        if self.default_user.is_empty() {
+            return Err("defaultUser cannot be empty".to_string());
+        }
+
+        if self.default_action.is_empty() {
+            return Err("defaultAction cannot be empty".to_string());
+        }
+
+        if self.default_resource.is_empty() {
+            return Err("defaultResource cannot be empty".to_string());
+        }
+
+        Ok(())
+    }
+}
+----
+
+以及 `validate` 函数以引入变更：
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: RawValidationRequest =
+        if let Ok(validation_request) = serde_json::from_slice(payload) {
+            validation_request
+        } else {
+            return kubewarden::reject_request(
+                Some("cannot unmarshal request".to_string()),
+                None,
+                None,
+                None,
+            );
+        };
+
+    info!(LOG_DRAIN, "starting validation");
+
+    let request = validation_request.request;
+    let settings = validation_request.settings;
+
+    if settings.valid_users.contains(&request.user)
+        && settings.valid_actions.contains(&request.action)
+        && settings.valid_resources.contains(&request.resource)
+    {
+        info!(LOG_DRAIN, "accepting request");
+        return kubewarden::accept_request();
+    }
+
+    info!(LOG_DRAIN, "mutating request");
+    let mut request = request;
+
+    if !settings.valid_users.contains(&request.user) {
+        request.user = settings.default_user;
+    }
+
+    if !settings.valid_actions.contains(&request.action) {
+        request.action = settings.default_action;
+    }
+
+    if !settings.valid_resources.contains(&request.resource) {
+        request.resource = settings.default_resource;
+    }
+
+    let mutated_request = serde_json::to_value(request)?;
+    kubewarden::mutate_request(mutated_request)
+}
+----

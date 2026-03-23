@@ -1,0 +1,41 @@
+include::partial$variables.adoc[]
+= C#
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explora y escribe la validación y mutación de directivas de control de admisión utilizando el SDK de .NET Core con soporte WASI en plataformas WebAssembly como Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "c#"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "c#", ".net"]
+:sidebar_label: C#
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+Actualmente, .NET Core tiene soporte experimental para la plataforma WebAssembly WASI.
+Esto es del proyecto https://github.com/SteveSandersonMS/dotnet-wasi-sdk[`dotnet-wasi-sdk`].
+
+[NOTE]
+====
+
+No necesitas una instalación de Windows para escribir o ejecutar código de .NET Core.
+Todo se puede hacer también en una máquina Linux o en una máquina macOS.
+====
+
+
+== Estado actual
+
+Los autores de directivas pueden utilizar los siguientes recursos:
+
+* https://github.com/kubewarden/policy-sdk-dotnet[{project-name} SDK de .NET Core]: esto proporciona un conjunto de objetos y funciones que simplifican el proceso de escritura de directivas.
+* https://github.com/kubewarden/policy-sdk-dotnet/tree/main/example[{short-project-name} ejemplo de directiva]: este es un ejemplo de una directiva funcional.
+
+No se conocen limitaciones.
+El SDK permite escribir tanto directivas de validación como de mutación.
+
+Es posible utilizar la biblioteca https://www.nuget.org/packages/KubernetesClient.Models[`KubernetesClient.Models`] para tratar con los objetos de Kubernetes.
+
+== Plantilla de proyecto
+
+Actualmente, no tenemos una plantilla de proyecto que pueda generar una directiva en C#.
+
+Por favor, https://github.com/kubewarden/policy-sdk-dotnet/issues[abre un issue] si estás interesado.

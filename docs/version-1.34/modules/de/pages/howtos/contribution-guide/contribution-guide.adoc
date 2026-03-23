@@ -1,0 +1,18 @@
+include::partial$variables.adoc[]
+= Beitragsleitfaden
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über die Mitwirkung an SUSE-Projekten mit unserem umfassenden Beitragsleitfaden, der die Schritte und bewährten Praktiken umreißt.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "contributing"]
+:sidebar_label: Beitragsleitfaden
+:sidebar_position: 1
+:current-version: {page-origin-branch}
+
+_{project-name} heißt alle Mitwirkenden willkommen, ob neu oder erfahren._
+
+ifeval::["{build-type}" == "community"]
+Bitte überprüfen Sie den Beitragsleitfaden https://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[hier].
+endif::[]

@@ -1,0 +1,493 @@
+// This file was converted from Markdown to AsciiDoc.
+
+include::partial$variables.adoc[]
+= kwctl CLI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: kwctl CLI
+:description: Explora la herramienta de línea de comandos \`kwctl` para gestionar directivas de {project-name} y realizar tareas como cargar directivas.
+:keywords: cli, referencia, kwctl
+:doc-persona: kubewarden-operator
+:doc-type: referencia
+:doc-topic: manual-del-operador
+
+== Ayuda de línea de comandos para `kwctl`
+
+Este documento contiene el contenido de ayuda para el programa de línea de comandos `kwctl`.
+
+*Descripción del comando:*
+
+* <<kwctl,`kwctl`>>
+* <<kwctl-annotate,`kwctl annotate`>>
+* <<kwctl-bench,`kwctl bench`>>
+* <<kwctl-completions,`kwctl completions`>>
+* <<kwctl-digest,`kwctl digest`>>
+* <<kwctl-docs,`kwctl docs`>>
+* <<kwctl-info,`kwctl info`>>
+* <<kwctl-inspect,`kwctl inspect`>>
+* <<kwctl-load,`kwctl load`>>
+* <<kwctl-policies,`kwctl policies`>>
+* <<kwctl-pull,`kwctl pull`>>
+* <<kwctl-push,`kwctl push`>>
+* <<kwctl-rm,`kwctl rm`>>
+* <<kwctl-run,`kwctl run`>>
+* <<kwctl-save,`kwctl save`>>
+* <<kwctl-scaffold,`kwctl scaffold`>>
+* <<kwctl-scaffold-admission-request,`kwctl scaffold admission-request`>>
+* <<kwctl-scaffold-artifacthub,`kwctl scaffold artifacthub`>>
+* <<kwctl-scaffold-manifest,`kwctl scaffold manifest`>>
+* <<kwctl-scaffold-vap,`kwctl scaffold vap`>>
+* <<kwctl-scaffold-verification-config,`kwctl scaffold verification-config`>>
+* <<kwctl-verify,`kwctl verify`>>
+
+[[kwctl]]
+=== `kwctl`
+
+Herramienta para gestionar directivas de {project-name}
+
+*Uso:* `kwctl [OPTIONS] <COMMAND>`
+
+==== Subcomandos
+
+* `annotate` — Añadir metadatos de {short-project-name} a un módulo WebAssembly
+* `bench` — Realiza pruebas de rendimiento de una directiva de {short-project-name}
+* `completions` — Genera completaciones de shell
+* `digest` — Obtiene el resumen del manifiesto OCI de una directiva
+* `docs` — Genera la documentación en markdown para los comandos de kwctl
+* `info` — Muestra información del sistema
+* `inspect` — Inspecciona la directiva de {short-project-name}
+* `load` — Carga políticas desde un archivo tar.gz
+* `policies` — Lista todas las políticas descargadas
+* `pull` — Extrae una directiva de {short-project-name} desde una URI dada
+* `push` — Envía una directiva {short-project-name} a un registro OCI
+* `rm` — Elimina una directiva {short-project-name} de la tienda
+* `run` — Ejecuta una directiva {short-project-name} desde una URI dada
+* `save` — Guarda directivas en un archivo tar.gz
+* `scaffold` — Crea un recurso o archivo de configuración de Kubernetes
+* `verify` — Verifica una directiva {short-project-name} desde una URI dada usando Sigstore
+
+==== Opciones
+
+* `-v`, `--verbose <VERBOSE>` — Aumenta la verbosidad
+* `--no-color <NO-COLOR>` — Desactiva la salida colorida
+
+[[kwctl-annotate]]
+=== `kwctl annotate`
+
+Añadir {short-project-name} metadatos a un módulo WebAssembly
+
+*Uso:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
+
+==== Argumentos
+
+* `<WASM-PATH>` — Ruta al módulo WebAssembly que se va a anotar
+
+==== Opciones
+
+* `-m`, `--metadata-path <PATH>` — Archivo que contiene los metadatos
+* `-o`, `--output-path <PATH>` — Archivo de salida
+* `-u`, `--usage-path <PATH>` — Archivo que contiene la información de uso de la directiva
+
+[[kwctl-bench]]
+=== `kwctl bench`
+
+Evalúa una directiva {short-project-name}.
+
+La directiva se puede especificar de las siguientes maneras:
+- URI: p. ej., `registry://ghcr.io/kubewarden/policies/psp-policy:latest` o `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
+- Prefijo SHA: p. ej., `c3b80a10f9c3` (requiere que la directiva ya esté descargada)
+- Archivo WASM local: p. ej., `file://home/tux/new-policy/psp-policy.wasm`
+- Archivo YAML local: p. ej., `file://home/tux/cluster-admission-policy.yaml` (contiene declaraciones de Recursos Personalizados {short-project-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+
+Comportamiento por defecto:
+Si se omite el esquema, se asume `file://`, enraizado en el directorio actual.
+
+Notas sobre Recursos Personalizados {short-project-name}:
+- Las banderas `--request-path`, `--settings-path` y `--settings-json` son ignoradas; los ajustes se leen de la definición del Recurso Personalizado.
+- La bandera `--execution-mode` se aplica a todas las directivas en el archivo YAML.
+- La bandera `--raw` no se puede usar, ya que los Recursos Personalizados de {short-project-name} no soportan directivas `raw`.
+
+Solo se evalúan los siguientes atributos de la Definición de Recurso Personalizado (CRD):
+- Módulo de directiva
+- Ajustes de directiva
+- Recursos contextuales a los que la directiva puede acceder
+
+Otros campos, como `rules`, `matchConditions`, `objectSelector` y `namespaceSelector`, son ignorados.
+
+Un archivo YAML puede contener múltiples declaraciones de Recursos Personalizados. En este caso, `kwctl` evalúa cada directiva en el archivo utilizando la misma solicitud durante cada evaluación.
+
+*Uso:* `kwctl bench [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== Argumentos
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la directiva, prefijo SHA o archivo YAML que contiene recursos de directiva {short-project-name}. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
+
+==== Opciones
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Concede acceso a los recursos de Kubernetes definidos dentro de la sección `contextAwareResources` de la directiva. Advertencia: revisa la lista de recursos cuidadosamente para evitar abusos. Deshabilitada por defecto
+* `--cert-email <VALUE>` — Correo electrónico esperado en el certificado Fulcio
+* `--cert-oidc-issuer <VALUE>` — Emisor OIDC esperado en los certificados Fulcio
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — Desactiva el uso de la caché de wasmtime
+* `--docker-config-json-path <PATH>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `--dump-results-to-disk <DUMP_RESULTS_TO_DISK>` — Coloca los resultados en target/tiny-bench/label/.. si se puede encontrar target. utilizado para comparar ejecuciones anteriores
+* `-e`, `--execution-mode <MODE>` — El tiempo de ejecución a utilizar para ejecutar esta directiva +
+  Valores posibles: `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — Propietario de GitHub esperado en los certificados generados en las canalizaciones de CD
+* `--github-repo <VALUE>` — Repositorio de GitHub esperado en los certificados generados en las canalizaciones de CD
+* `--measurement-time <SECONDS>` — Cuánto tiempo 'debería' ejecutarse el banco, num_samples tiene prioridad, por lo que la evaluación tomará más tiempo para poder recoger num_samples si el código a evaluar es más lento que este límite de tiempo permitido
+* `--num-resamples <NUM>` — Cuántas re-muestras deberían hacerse
+* `--num-samples <NUM>` — Cuántas re-muestras deberían hacerse. Se recomienda al menos 50, más de 100 no parece dar un resultado significativamente diferente
+* `--raw <RAW>` — Valida una solicitud en bruto +
+  Valor por defecto: `false`
+* `--record-host-capabilities-interactions <FILE>` — Registra todas las comunicaciones de capacidades de directivas y hosts en el archivo dado. Útil para combinar más tarde con la bandera '--replay-host-capabilities-interactions'
+* `--replay-host-capabilities-interactions <FILE>` — Durante los intercambios de directivas y capacidades de hosts, el host devuelve las respuestas encontradas dentro del archivo proporcionado. Esto es útil para probar directivas de manera reproducible, dado que no se realizan interacciones externas con registros OCI, DNS, Kubernetes.
+* `-r`, `--request-path <PATH>` — Archivo que contiene el objeto de solicitud de admisión de Kubernetes en formato JSON
+* `--settings-json <VALUE>` — Cadena JSON que contiene la configuración para esta directiva
+* `-s`, `--settings-path <PATH>` — Archivo que contiene la configuración para esta directiva
+* `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
+* `--verification-config-path <PATH>` — Archivo YAML que contiene información de configuración de verificación (firmas, claves públicas...)
+* `-k`, `--verification-key <PATH>` — Ruta a la clave utilizada para verificar la directiva. Puede repetirse múltiples veces
+* `--warm-up-time <SECONDS>` — Cuánto tiempo debe calentarse el benchmark
+
+[[kwctl-completions]]
+=== `kwctl completions`
+
+Generar completaciones de shell
+
+*Uso:* `kwctl completions --shell <VALUE>`
+
+==== Opciones
+
+* `-s`, `--shell <VALUE>` — Tipo de shell +
+  Valores posibles: `bash`, `elvish`, `fish`, `powershell`, `zsh`
+
+[[kwctl-digest]]
+=== `kwctl digest`
+
+Obtener el resumen del manifiesto OCI de una directiva
+
+*Uso:* `kwctl digest [OPTIONS] <uri>`
+
+==== Argumentos
+
+* `<URI>` — URI de la directiva
+
+==== Opciones
+
+* `--docker-config-json-path <PATH>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+
+[[kwctl-docs]]
+=== `kwctl docs`
+
+Genera la documentación en markdown para los comandos de kwctl
+
+*Uso:* `kwctl docs --output <FILE>`
+
+==== Opciones
+
+* `-o`, `--output <FILE>` — ruta donde se almacenará el archivo de documentación
+
+[[kwctl-info]]
+=== `kwctl info`
+
+Mostrar información del sistema
+
+*Uso:* `kwctl info`
+
+[[kwctl-inspect]]
+=== `kwctl inspect`
+
+Inspeccionar la directiva {short-project-name}
+
+*Uso:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
+
+==== Argumentos
+
+* `<URI_OR_SHA_PREFIX>` — URI de la directiva o prefijo SHA. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
+
+==== Opciones
+
+* `--docker-config-json-path <PATH>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `-o`, `--output <FORMAT>` — Formato de salida +
+  Valores posibles: `yaml`
+* `--show-signatures <SHOW-SIGNATURES>` — Mostrar firmas de sigstore
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+
+[[kwctl-load]]
+=== `kwctl load`
+
+cargar directivas desde un archivo tar.gz
+
+*Uso:* `kwctl load --input <input>`
+
+==== Opciones
+
+* `--input <INPUT>` — cargar directivas desde el tarball
+
+[[kwctl-policies]]
+=== `kwctl policies`
+
+Lista todas las directivas descargadas
+
+*Uso:* `kwctl policies`
+
+[[kwctl-pull]]
+=== `kwctl pull`
+
+Extrae una directiva {short-project-name} desde una URI dada
+
+*Uso:* `kwctl pull [OPTIONS] <uri>`
+
+==== Argumentos
+
+* `<URI>` — URI de la directiva. Esquemas soportados: registry://, https://, file://
+
+==== Opciones
+
+* `--cert-email <VALUE>` — Correo electrónico esperado en el certificado Fulcio
+* `--cert-oidc-issuer <VALUE>` — Emisor OIDC esperado en los certificados Fulcio
+* `--docker-config-json-path <DOCKER_CONFIG>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `--github-owner <VALUE>` — Propietario de GitHub esperado en los certificados generados en las canalizaciones de CD
+* `--github-repo <VALUE>` — Repositorio de GitHub esperado en los certificados generados en las canalizaciones de CD
+* `-o`, `--output-path <PATH>` — Archivo de salida. Si no se proporciona, se descargará en la tienda {short-project-name}
+* `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
+* `--verification-config-path <PATH>` — Archivo YAML que contiene información de configuración de verificación (firmas, claves públicas...)
+* `-k`, `--verification-key <PATH>` — Ruta a la clave utilizada para verificar la directiva. Puede repetirse múltiples veces
+
+[[kwctl-push]]
+=== `kwctl push`
+
+Envía una directiva {short-project-name} a un registro OCI
+
+*Uso:* `kwctl push [OPTIONS] <policy> <uri>`
+
+Las anotaciones encontradas dentro de los metadatos de la política formarán parte del manifiesto OCI.
+Las anotaciones de varias líneas se omiten porque no son compatibles con la especificación OCI.
+La anotación 'io.kubewarden.policy.source' se propaga como 'org.opencontainers.image.source' para permitir que herramientas como renovatebot detecten actualizaciones de directivas.
+
+==== Argumentos
+
+* `<POLICY>` — Directiva a enviar. Puede ser la ruta a un archivo local, una URI de directiva o el prefijo SHA de una directiva en el almacén.
+* `<URI>` — URI de la directiva. Esquemas soportados: registry://
+
+==== Opciones
+
+* `--docker-config-json-path <PATH>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `-f`, `--force <FORCE>` — También envía una directiva que no está anotada
+* `-o`, `--output <PATH>` — Formato de salida +
+  Valor por defecto: `text` +
+  Valores posibles: `text`, `json`
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+
+[[kwctl-rm]]
+=== `kwctl rm`
+
+Elimina una directiva {short-project-name} del almacén
+
+*Uso:* `kwctl rm <uri_or_sha_prefix>`
+
+==== Argumentos
+
+* `<URI_OR_SHA_PREFIX>` — URI de la directiva o prefijo SHA
+
+[[kwctl-run]]
+=== `kwctl run`
+
+Ejecuta una o más {short-project-name} directivas localmente.
+
+La directiva se puede especificar de las siguientes maneras:
+- URI: p. ej., `registry://ghcr.io/kubewarden/policies/psp-policy:latest` o `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
+- Prefijo SHA: p. ej., `c3b80a10f9c3` (requiere que la directiva ya esté descargada)
+- Archivo WASM local: p. ej., `file://home/tux/new-policy/psp-policy.wasm`
+- Archivo YAML local: p. ej., `file://home/tux/cluster-admission-policy.yaml` (contiene declaraciones de {short-project-name} Recursos Personalizados como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+
+Comportamiento por defecto:
+Si se omite el esquema, se asume `file://`, enraizado en el directorio actual.
+
+Notas sobre Recursos Personalizados {short-project-name}:
+- Las banderas `--request-path`, `--settings-path` y `--settings-json` son ignoradas; los ajustes se leen de la definición del Recurso Personalizado.
+- La bandera `--execution-mode` se aplica a todas las directivas en el archivo YAML.
+- La bandera `--raw` no se puede usar, ya que los Recursos Personalizados de {short-project-name} no soportan directivas `raw`.
+
+Solo se evalúan los siguientes atributos de la Definición de Recurso Personalizado (CRD):
+- Módulo de directiva
+- Ajustes de directiva
+- Recursos contextuales a los que la directiva puede acceder
+
+Otros campos, como `rules`, `matchConditions`, `objectSelector` y `namespaceSelector`, son ignorados.
+
+Un archivo YAML puede contener múltiples declaraciones de Recursos Personalizados. En este caso, `kwctl` evalúa cada directiva en el archivo utilizando la misma solicitud durante cada evaluación.
+
+*Uso:* `kwctl run [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== Argumentos
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la directiva, prefijo SHA o archivo YAML que contiene recursos de directiva {short-project-name}. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
+
+==== Opciones
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Concede acceso a los recursos de Kubernetes definidos dentro de la sección `contextAwareResources` de la directiva. Advertencia: revisa la lista de recursos cuidadosamente para evitar abusos. Deshabilitada por defecto
+* `--cert-email <VALUE>` — Correo electrónico esperado en el certificado Fulcio
+* `--cert-oidc-issuer <VALUE>` — Emisor OIDC esperado en los certificados Fulcio
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — Desactiva el uso de la caché de wasmtime
+* `--docker-config-json-path <PATH>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `-e`, `--execution-mode <MODE>` — El tiempo de ejecución a utilizar para ejecutar esta directiva +
+  Valores posibles: `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — Propietario de GitHub esperado en los certificados generados en las canalizaciones de implementación continua
+* `--github-repo <VALUE>` — Repositorio de GitHub esperado en los certificados generados en las canalizaciones de implementación continua
+* `--raw <RAW>` — Valida una solicitud en bruto +
+  Valor por defecto: `false`
+* `--record-host-capabilities-interactions <FILE>` — Registra todas las comunicaciones de capacidades de directivas y hosts en el archivo dado. Útil para combinar más tarde con la bandera '--replay-host-capabilities-interactions'
+* `--replay-host-capabilities-interactions <FILE>` — Durante los intercambios de directivas y capacidades de hosts, el host devuelve las respuestas encontradas dentro del archivo proporcionado. Esto es útil para probar directivas de manera reproducible, dado que no se realizan interacciones externas con registros OCI, DNS, Kubernetes.
+* `-r`, `--request-path <PATH>` — Archivo que contiene el objeto de solicitud de admisión de Kubernetes en formato JSON
+* `--settings-json <VALUE>` — Cadena JSON que contiene la configuración para esta directiva
+* `-s`, `--settings-path <PATH>` — Archivo que contiene la configuración para esta directiva
+* `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
+* `--verification-config-path <PATH>` — Archivo YAML que contiene información de configuración de verificación (firmas, claves públicas...)
+* `-k`, `--verification-key <PATH>` — Ruta a la clave utilizada para verificar la directiva. Puede repetirse múltiples veces
+
+[[kwctl-save]]
+=== `kwctl save`
+
+guarda directivas en un archivo tar.gz
+
+*Uso:* `kwctl save --output <FILE> <policies>...`
+
+==== Argumentos
+
+* `<POLICIES>` — lista de directivas a guardar
+
+==== Opciones
+
+* `-o`, `--output <FILE>` — ruta donde se almacenará el archivo
+
+[[kwctl-scaffold]]
+=== `kwctl scaffold`
+
+Genera un recurso de Kubernetes o un archivo de configuración
+
+*Uso:* `kwctl scaffold <COMMAND>`
+
+==== Subcomandos
+
+* `admission-request` — Crea un objeto AdmissionRequest
+* `artifacthub` — Genera un archivo artifacthub-pkg.yml a partir de un archivo metadata.yml
+* `manifest` — Genera un manifiesto de recurso de Kubernetes
+* `vap` — Convierte un `ValidatingAdmissionPolicy` de Kubernetes en un {short-project-name} `ClusterAdmissionPolicy`
+* `verification-config` — Generar un archivo de configuración de verificación de Sigstore por defecto
+
+[[kwctl-scaffold-admission-request]]
+=== `kwctl scaffold admission-request`
+
+Crear un objeto AdmissionRequest
+
+*Uso:* `kwctl scaffold admission-request [OPTIONS] --operation <TYPE>`
+
+==== Opciones
+
+* `--object <PATH>` — El archivo que contiene el nuevo objeto que se admite
+* `--old-object <PATH>` — El archivo que contiene el objeto existente
+* `-o`, `--operation <TYPE>` — {short-project-name} Tipo de Recurso Personalizado +
+  Valores posibles: `CREATE`
+
+[[kwctl-scaffold-artifacthub]]
+=== `kwctl scaffold artifacthub`
+
+Generar un archivo artifacthub-pkg.yml a partir de un archivo metadata.yml
+
+*Uso:* `kwctl scaffold artifacthub [OPTIONS]`
+
+==== Opciones
+
+* `-m`, `--metadata-path <PATH>` — Archivo que contiene los metadatos de la directiva
+* `-o`, `--output <FILE>` — ruta donde se almacenará el archivo artifacthub-pkg.yml
+* `-q`, `--questions-path <PATH>` — Archivo que contiene el contenido de la interfaz de usuario de preguntas de la directiva
+* `-v`, `--version <VALUE>` — Versión semver de la directiva
+
+[[kwctl-scaffold-manifest]]
+=== `kwctl scaffold manifest`
+
+Generar un manifiesto de recurso de Kubernetes
+
+*Uso:* `kwctl scaffold manifest [OPTIONS] --type <VALUE> <uri_or_sha_prefix>`
+
+==== Argumentos
+
+* `<URI_OR_SHA_PREFIX>` — URI de la directiva o prefijo SHA. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
+
+==== Opciones
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Utiliza los metadatos de la directiva para definir qué recursos de Kubernetes pueden ser accedidos por la directiva. Advertencia: revisa la lista de recursos cuidadosamente para evitar abusos. Deshabilitada por defecto
+* `--cert-email <VALUE>` — Correo electrónico esperado en el certificado Fulcio
+* `--cert-oidc-issuer <VALUE>` — Emisor OIDC esperado en los certificados Fulcio
+* `--docker-config-json-path <DOCKER_CONFIG>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `--fulcio-cert-path <PATH>` — Ruta al certificado Fulcio. Puede repetirse múltiples veces
+* `--github-owner <VALUE>` — GitHub owner expected in the certificates generated in the pipelines of implementación continua
+* `--github-repo <VALUE>` — Repositorio de GitHub esperado en los certificados generados en las canalizaciones de implementación continua
+* `--rekor-public-key-path <PATH>` — Ruta a la clave pública de Rekor. Puede repetirse múltiples veces
+* `--settings-json <VALUE>` — Cadena JSON que contiene la configuración para esta política
+* `-s`, `--settings-path <PATH>` — Archivo que contiene la configuración para esta política
+* `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+* `--title <VALUE>` — Título de la directiva
+* `-t`, `--type <VALUE>` — {short-project-name} Tipo de Recurso Personalizado +
+  Valores posibles: `ClusterAdmissionPolicy`, `AdmissionPolicy`
+* `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
+* `--verification-config-path <PATH>` — Archivo YAML que contiene información de configuración de verificación (firmas, claves públicas...)
+* `-k`, `--verification-key <PATH>` — Vía a la clave utilizada para verificar la directiva. Puede repetirse múltiples veces
+
+[[kwctl-scaffold-vap]]
+=== `kwctl scaffold vap`
+
+Convertir un `ValidatingAdmissionPolicy` de Kubernetes en un {short-project-name} `ClusterAdmissionPolicy`
+
+*Uso:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
+
+==== Opciones
+
+* `-b`, `--binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml>` — El archivo que contiene la definición de ValidatingAdmissionPolicyBinding
+* `--cel-policy <URI>` — El módulo de política CEL a utilizar +
+  Valor por defecto: `ghcr.io/kubewarden/policies/cel-policy:latest`
+* `-p`, `--policy <VALIDATING-ADMISSION-POLICY.yaml>` — El archivo que contiene la definición de ValidatingAdmissionPolicy
+
+[[kwctl-scaffold-verification-config]]
+=== `kwctl scaffold verification-config`
+
+Genera un archivo de configuración de verificación de Sigstore por defecto
+
+*Uso:* `kwctl scaffold verification-config`
+
+[[kwctl-verify]]
+=== `kwctl verify`
+
+Verifica una directiva de {short-project-name} desde una URI dada utilizando Sigstore
+
+*Uso:* `kwctl verify [OPTIONS] <uri>`
+
+==== Argumentos
+
+* `<URI>` — URI de la directiva. Esquemas soportados: registry://
+
+==== Opciones
+
+* `--cert-email <VALUE>` — Correo electrónico esperado en el certificado Fulcio
+* `--cert-oidc-issuer <VALUE>` — Emisor OIDC esperado en los certificados Fulcio
+* `--docker-config-json-path <PATH>` — Vía a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
+* `--github-owner <VALUE>` — Propietario de GitHub esperado en los certificados generados en las canalizaciones de implementación continua
+* `--github-repo <VALUE>` — Repositorio de GitHub esperado en los certificados generados en las canalizaciones de implementación continua
+* `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
+* `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
+* `--verification-config-path <PATH>` — Archivo YAML que contiene información de configuración de verificación (firmas, claves públicas...)
+* `-k`, `--verification-key <PATH>` — Vía a la clave utilizada para verificar la directiva. Puede repetirse múltiples veces
+
+'''
+
+Este documento fue generado automáticamente por https://crates.io/crates/clap-markdown[`clap-markdown`].

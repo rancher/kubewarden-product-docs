@@ -1,0 +1,183 @@
+include::partial$variables.adoc[]
+= K3sで相互トランスポート層セキュリティ（mTLS）を使用してWebhookを保護する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: K3sで相互トランスポート層セキュリティ（mTLS）を有効にする
+:description: SUSE KubernetesディストリビューションのK3sを使用して、Webhookを保護するために相互トランスポート層セキュリティ（mTLS）プロトコルを実装します。
+:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: HOWTO(操作方法)
+:doc-topic: operator-manual, security
+
+このガイドでは、https://k3s.io/[K3s]をKubernetesディストリビューションとして使用する際に、{project-name}スタックWebhookのために相互トランスポート層セキュリティ（mTLS）を有効にする方法を示します。
+
+Webhookを強化する方法についての詳細は、xref:/reference/security-hardening/webhooks-hardening.adoc[リファレンスページ]を参照してください。
+
+== 前提条件
+
+K3sをインストールする前に、証明書機関（CA）とクライアント証明書を作成する必要があります。これは、{short-project-name} WebhookとKubernetes APIサーバー間の通信を保護するために使用します。
+
+最初のステップとして、`/etc/rancher/k3s/admission/certs`ディレクトリを作成します：
+
+[source,console]
+----
+sudo mkdir -p /etc/rancher/k3s/admission/certs
+----
+
+=== ルートCAとクライアント証明書を作成する
+
+`root`ユーザーとして、`/etc/rancher/k3s/admission/certs`ディレクトリに移動し、必要なすべての証明書を作成します：
+
+[source,console]
+----
+export FQDN=mtls.kubewarden.io
+
+# Create openssl config file
+cat > openssl.cnf <<EOL
+[ req ]
+default_keyfile     = rootCA.key
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_ca
+string_mask         = utf8only
+
+[ req_distinguished_name ]
+countryName         = Country Name (2 letter code)
+countryName_default = US
+stateOrProvinceName = State or Province Name (full name)
+localityName        = Locality Name (eg, city)
+organizationName    = Organization Name (eg, company)
+commonName          = Common Name (eg, your domain or your CA name)
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:1
+keyUsage = critical, keyCertSign, cRLSign
+EOL
+
+# Create CA
+openssl req -nodes -batch -x509 -sha256 -days 3650 -newkey rsa:4096 -keyout rootCA.key -out rootCA.crt \
+  -config openssl.cnf
+
+# Create CSR
+openssl req -nodes -batch -newkey rsa:4096 -keyout client.key -out client.csr \
+    -addext "subjectAltName = DNS:$FQDN"  -config openssl.cnf
+
+# Create CRT
+openssl x509 -req -CA rootCA.crt -CAkey rootCA.key -in client.csr -out client.crt -days 3650 -CAcreateserial \
+    -extfile <(echo "subjectAltName=DNS:$FQDN")
+
+# Print CRT
+
+openssl x509 -text -noout -in client.crt
+----
+
+これにより、次のファイルが作成されます：
+
+* `client.crt`
+* `client.csr`
+* `client.key`
+* `rootCA.crt`
+* `rootCA.key`
+* `rootCA.srl`
+
+=== Kubernetes設定ファイルを作成する
+
+次の内容で`/etc/rancher/k3s/admission/admission.yaml`ファイルを作成します：
+
+[source,yaml]
+----
+# /etc/rancher/k3s/admission/admission.yaml
+apiVersion: apiserver.config.k8s.io/v1
+kind: AdmissionConfiguration
+plugins:
+- name: ValidatingAdmissionWebhook
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: WebhookAdmissionConfiguration
+    kubeConfigFile: "/etc/rancher/k3s/admission/kubeconfig"
+- name: MutatingAdmissionWebhook
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: WebhookAdmissionConfiguration
+    kubeConfigFile: "/etc/rancher/k3s/admission/kubeconfig"
+----
+
+最後に、`/etc/rancher/k3s/admission/kubeconfig`に`kubeconfig`ファイルを作成します：
+
+[source,yaml]
+----
+# /etc/rancher/admission/kubeconfig
+apiVersion: v1
+kind: Config
+users:
+- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+  user:
+    client-certificate: /etc/rancher/k3s/admission/certs/client.crt
+    client-key: /etc/rancher/k3s/admission/certs/client.key
+----
+
+=== K3s設定ファイルを作成する
+
+`/etc/rancher/k3s/config.yaml`にK3s設定ファイルを作成する：
+
+[source,yaml]
+----
+# /etc/rancher/k3s/config.yaml
+kube-apiserver-arg:
+- admission-control-config-file=/etc/rancher/k3s/admission/admission.yaml
+----
+
+== K3sをインストールする
+
+次のコマンドを使用してK3sをインストールします：
+
+[source,console]
+----
+curl -sfL https://get.k3s.io | sh -
+----
+
+インストールが完了するまで待ちます。
+
+== {short-project-name}スタックをインストールします。
+
+=== 前提条件
+
+Kubernetesクライアント証明書を発行したルートCAの証明書は、{short-project-name}スタックで利用可能である必要があります。
+
+ルートCAはKubernetesノードの`/etc/rancher/k3s/admission/certs/rootCA.crt`にあります。`ConfigMap`名前空間の`kubewarden`にその内容を格納する必要があります。`client-ca.crt`という名前のキーに`rootCA.crt`ファイルの内容を格納します。
+
+まず、`kubewarden`名前空間を作成します：
+
+[source,console]
+----
+kubectl create namespace kubewarden
+----
+
+次に、その中に`ConfigMap`を作成します。Kubernetesノードで実行される以下のコマンドがそれを行います：
+
+[source,console]
+----
+kubectl create configmap -n kubewarden api-server-mtls \
+    --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
+----
+
+生成された`ConfigMap`の名前は`api-server-mtls`です。
+
+=== {short-project-name}スタックをインストールします。
+
+xref:/quick-start.adoc[クイックスタートガイド]に記載されているように{short-project-name}スタックをインストールします。すべての手順に従ってください。ただし、`kubewarden-controller` Helmチャートをインストールする際には、以下の値を有効にすることを確認してください：
+
+* `mTLS.enable`: `true`である必要があります。
+* `mTLS.configMapName`: 以前に作成した`ConfigMap`の名前である必要があります。
+
+`ConfigMap`の名前は`api-server-mtls`です。`kubewarden-controller`をインストールするためのHelmコマンドは次のとおりです:
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+    --set mTLS.enable=true \
+    --set mTLS.configMapName=api-server-mtls
+----
+
+このコマンドが完了すると、mTLSによって{short-project-name}スタックおよびそのWebhookのインストールが保護されます。

@@ -1,0 +1,29 @@
+include::partial$variables.adoc[]
+= Problema de rotação de certificado do Policy Server para versão ≤ v1.16.0
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Resolver problemas de rotação de certificados do Policy Server em {project-name}, começando com a versão 1.16.
+:doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["como fazer", "soluções alternativas", "certificados do Policy Server"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "certificados do Policy Server"]
+:sidebar_label: Rotação de Certificado
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+.Solução alternativa para {project-name} v1.16.0 e anteriores
+====
+
+Esta solução alternativa é necessária apenas para {short-project-name} v1.16.0 e anteriores.
+A partir da v1.17.0, o controlador renova automaticamente os certificados do Policy Server.
+
+====
+
+Durante o processo de lançamento da v1.14, o {short-project-name} descobriu um bug relacionado à rotação de certificado do Policy Server. A configuração da CA Raiz é para expiração de 10 anos, mas cada segredo de certificado do Policy Server tem uma expiração de um ano. No entanto, o controlador atualmente não consegue renová-los automaticamente.
+
+Na versão v1.14, o {short-project-name} garantiu que os segredos do Policy Server sejam criados com uma expiração de 10 anos.
+
+Um processo de renovação automatizado está em vigor para versão ≥ v1.16.0.
+
+Até lá, os usuários podem excluir manualmente o segredo de certificado expirado (policy-server-default) e acionar uma reconciliação do controlador. Você faz isso adicionando, removendo ou atualizando uma política ou ajustando o número de réplicas de um PolicyServer.

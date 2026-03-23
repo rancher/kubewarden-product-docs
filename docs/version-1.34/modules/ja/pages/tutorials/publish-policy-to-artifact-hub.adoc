@@ -1,0 +1,98 @@
+include::partial$variables.adoc[]
+= Artifact Hubにポリシーを公開する
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 整然としたGitリポジトリのレイアウトを作成し、GitHub Actionsを設定して自動パッケージ化を行い、継続的インテグレーションを促進することで、{project-name}ポリシーをArtifact Hubに公開します。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "publishing policies", "artifact hub"]
+:sidebar_label: Artifact Hubに公開する
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+https://artifacthub.io/[Artifact Hub]は、ユーザーがhttps://cncf.io[CNCF]プロジェクトのパッケージや設定を見つけ、インストールし、公開できるウェブサイトです。
+
+{project-name}ポリシーはArtifact Hubに公開され、CNCFユーザーの広範なオーディエンスに発見可能になります。
+
+[NOTE]
+====
+Artifact Hubはコンテンツ集約プラットフォームであり、実際には公開されたアーティファクトをホストしていません。
+
+Artifact Hubでは、コンテナイメージリポジトリをコンテナレジストリまたはウェブサーバーに物理的にホストする必要があります。
+ポリシーをホストする方法についての詳細は、xref:explanations/distributing-policies.adoc[distributing policies]セクションを参照してください。
+====
+
+
+この文書は、Artifact Hubで{short-project-name}ポリシーを発見可能にするために必要な手順に焦点を当てています。
+
+== Gitリポジトリを準備する
+
+Artifact Hubは、特別なメタデータファイルを探してGitリポジトリをクロールします。
+
+Gitリポジトリには異なる種類のレイアウトがあります。それらはすべて、https://artifacthub.io/docs/topics/repositories/#kubewarden-policies-repositories[公式Artifact Hubドキュメント]に詳細に文書化されています。
+
+Artifact Hubは柔軟で、次のようにコードを整理することができます：
+
+* Artifact Hub専用のGitリポジトリを持つ：このリポジトリにはポリシーのソースコードは含まれません。それはArtifact Hubに必要なYAMLファイルのコレクションになります。
+
+* ポリシーのソースを保持するGitリポジトリにArtifact Hubディレクトリを追加してください。これは、Gitリポジトリで定義された1つのポリシーに焦点を当てた前のアプローチの反復です。このアプローチでは、Artifact Hubに公開されたポリシーの複数のバージョンを保持することができます。
+
+* ポリシーのソースコードを保持するGitリポジトリのルートディレクトリに`artifacthub-pkg.yml`と`artifacthub-repo.yml`ファイルを追加してください。このアプローチは最も簡単なものです。唯一の制限は、最新のポリシーのバージョンのみがArtifact Hubに表示されることです。
+
+最後のアプローチは、私たちの公式ポリシーテンプレートで使用されています。スキャフォールドされたGitリポジトリには`artifacthub-repo.yml`ファイルが含まれており、私たちのGitHub Actionsは`artifacthub-pkg.yml`を生成して`artifacthub`ブランチにプッシュします。
+
+== 公開手順
+
+ポリシーをArtifact Hubに公開する前に、https://artifacthub.io/[そこ]にアカウントを作成する必要があります。
+
+ポリシーを公開する前に、Gitリポジトリが適切なレイアウトを持っていることを確認してください。必須の注釈が付いた適切にフォーマットされた`metadata.yml`を含めてください。
+
+これを手動で行いたい場合、`kwctl scaffold artifacthub`（バージョン`>= 1.23`）を実行して、`artifacthub-pkg.yml`ファイルを作成できます。このコマンドは、現在のパスにある`metadata.yml`を取得し、`artifacthub-pkg.yml`を出力します。`artifacthub-pkg.yml`には、特定のフォーマットに一致し、最新である必要がある`version:`、`createdAt:`などのフィールドが含まれています。`artifacthub-pkg.yml`のフォーマットはhttps://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml[ここ]に記載されています。
+
+私たちのGitHub Actions >= `v4.0.0`を使用する場合、リリースワークフローは入力`artifacthub: true`で構成できます。そのように構成されている場合、成功したリリースの後（ポリシーが正常にビルド、署名、プッシュされた後）、私たちのGitHub Actionsは、`artifacthub-pkg.yml`を生成し、変更を`artifacthub`ブランチにコミットしてプッシュする最後のジョブを持っています。標準ファイルは常に`main`ブランチのものです。私たちのGitHub Actionsの以前のリリースの動作については、1.23以前のドキュメントバージョンを参照してください。
+
+最後に、ポリシーがコンテナレジストリ内またはウェブサーバー上に公開されていることを確認してください。
+
+[NOTE]
+====
+現時点では、`artifacthub-repo.yml`ファイルの内容は重要ではありません。
+====
+
+
+すべてが整ったら、Artifact Hubにログインし、あなたのhttps://artifacthub.io/control-panel/repositories?page=1[コントロールプレーン]に移動します。
+
+ポリシーをユーザーとして公開するか、所属するArtifact Hubの組織の下で公開するかを決定します。これは、正しい_"コントロールパネルコンテキスト"_を選択することで行います。
+
+次に、_"追加"_ボタンを押して、フォームに記入します：
+
+* 種類として_"{short-project-name}ポリシー"_を選択します。
+* お好きな_"名前"_と_"表示名"_を入力してください。
+* あなたのGitリポジトリのURLを入力してください。
+* 追跡するブランチとして`artifacthub`を入力してください。
+
+最後に、_"追加"_ボタンを押します。これにより、_"リポジトリ"_ページに戻り、作成したばかりのリポジトリが表示されます。
+
+各リポジトリにはいくつかの情報フィールドがあります。作成したリポジトリの_"ID"_プロパティを見つけてコピーします。
+
+あなたのGitリポジトリに戻り、`artifacthub-repo.yml`を編集します。ドキュメント内に見つかった`repositoryID`キーが、Artifact Hubのウェブページからコピーした値を持っていることを確認してください。
+
+[TIP]
+====
+`artifacthub-repo.yml`ファイルのフォーマットはhttps://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml[こちら]で定義されています。
+
+今はこのファイルにさらなるカスタマイズを行う良い時期です。
+====
+
+
+変更が完了したら、更新された`artifacthub-repo.yml`ファイルをコミットしてプッシュします。次のスキャン中に、Artifact Hubはこのファイルを見つけ、あなたのArtifact Hubリポジトリにhttps://artifacthub.io/docs/topics/repositories/#verified-publisher[_"確認済みの発行者"_バッジ]を追加します。
+
+== Artifact Hubをsync状態に保つ
+
+ポリシーの新しいバージョンをリリースするたびに、`artifacthub-pkg.yml`ファイルの内容を更新することを忘れないでください。例えば、ポリシーOCIタグに通常一致する`io.kubewarden.policy.version`フィールドや、変更したいその他の注釈を更新する必要があります。
+
+[NOTE]
+====
+`artifacthub-repo.yml`ファイルの内容は変更する必要はありません。
+====
+

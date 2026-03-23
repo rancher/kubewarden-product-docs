@@ -1,0 +1,221 @@
+include::partial$variables.adoc[]
+= Erstellen einer neuen Mutationsrichtlinie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie eine neue {project-name} Mutationsrichtlinie, um eingehende Objekte mit benutzerdefinierten Annotationen zu mutieren, und testen Sie sie anschließend.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "creating a new mutation policy", "mutation policy", "rust"]
+:sidebar_label: Erstellen einer neuen Mutationsrichtlinie
+:current-version: {page-origin-branch}
+
+Mutationsrichtlinien sind ähnlich wie Validierungsrichtlinien, haben jedoch auch die Fähigkeit, ein eingehendes Objekt zu mutieren.
+
+Sie können:
+
+* Eine Anfrage ablehnen
+* Eine Anfrage akzeptieren, ohne das eingehende Objekt zu ändern
+* Das eingehende Objekt nach Bedarf mutieren und die Anfrage akzeptieren
+
+Das Schreiben einer {project-name} Mutationsrichtlinie ist unkompliziert.
+Sie verwenden die in den vorherigen Abschnitten erstellte Validierungsrichtlinie und verwandeln sie mit einigen Änderungen in eine Mutationsrichtlinie.
+
+Ihre Richtlinie verwendet die gleiche Validierungslogik, die zuvor definiert wurde, fügt jedoch allen Pods, die einen gültigen Namen haben, eine Annotation hinzu.
+
+Der Versuch, einen Pod wie diesen zu erstellen:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+führt zur Erstellung dieses Pods:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  annotations:
+    kubewarden.policy.demo/inspected: true
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== Schreiben Sie den Mutationscode
+
+Der Mutationscode befindet sich in der `validate` Funktion.
+Sie sollten diese Funktion ändern, um die Anfrage mit https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.mutate_request.html[`mutate_request`] anstelle von https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.accept_request.html[`accept_request`] zu genehmigen.
+
+So sollte die `validate` Funktion in `lib.rs` aussehen:
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?;
+
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        // NOTE 1
+        Ok(mut pod) => {
+            let pod_name = pod.metadata.name.clone().unwrap_or_default();
+            if validation_request
+                .settings
+                .invalid_names
+                .contains(&pod_name)
+            {
+                kubewarden::reject_request(
+                    Some(format!("pod name {:?} is not accepted", pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                // NOTE 2
+                let mut new_annotations = pod.metadata.annotations.clone().unwrap_or_default();
+                new_annotations.insert(
+                    String::from("kubewarden.policy.demo/inspected"),
+                    String::from("true"),
+                );
+                pod.metadata.annotations = Some(new_annotations);
+
+                // NOTE 3
+                let mutated_object = serde_json::to_value(pod)?;
+                kubewarden::mutate_request(mutated_object)
+            }
+        }
+        Err(_) => {
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            kubewarden::accept_request()
+        }
+    }
+}
+----
+
+Im Vergleich zum vorherigen Code haben Sie drei Änderungen vorgenommen:
+
+. Wir haben das `pod` Objekt als veränderbar definiert, siehe das `mut` Schlüsselwort. Dies ist notwendig, da wir das `metadata.annotations`-Attribut erweitern werden.
+// TODO: How best to describe the use of clone().
+. Dies ist der Code, der das vorhandene `annotations` nimmt, das neue hinzufügt und schließlich das aktualisierte `annotations`-Objekt wieder in die ursprüngliche `pod`-Instanz einfügt.
+. Serialisieren Sie das `pod`-Objekt in ein generisches `serde_json::Value` und geben Sie dann eine Mutationsantwort zurück.
+
+Nachdem diese Änderungen vorgenommen wurden, ist es Zeit, die Unit-Tests erneut auszuführen:
+
+[subs="+attributes",console]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.95s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... FAILED
+
+failures:
+
+---- tests::accept_pod_with_valid_name stdout ----
+{"column":5,"file":"src/lib.rs","level":"info","line":34,"message":"starting validation","policy":"sample-policy"}
+thread 'tests::accept_pod_with_valid_name' panicked at src/lib.rs:98:9:
+Something mutated with test case: Pod creation with valid name
+note: run with `+RUST_BACKTRACE=1+` environment variable to display a backtrace
+
+
+failures:
+    tests::accept_pod_with_valid_name
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+Wie Sie sehen können, schlägt das `accept_pod_with_valid_name` fehl, da die Antwort ein mutiertes Objekt enthält.
+Es sieht so aus, als ob unser Code funktioniert.
+
+== Aktualisieren Sie die Unit-Tests
+
+Sie können das `accept_pod_with_valid_name` in `lib.rs` so aktualisieren:
+
+[subs="+attributes",rust]
+----
+#[test]
+fn accept_pod_with_valid_name() -> Result<(), ()> {
+    let mut invalid_names = HashSet::new();
+    invalid_names.insert(String::from("bad_name1"));
+    let settings = Settings { invalid_names };
+
+    let request_file = "test_data/pod_creation.json";
+    let tc = Testcase {
+        name: String::from("Pod creation with valid name"),
+        fixture_file: String::from(request_file),
+        expected_validation_result: true,
+        settings,
+    };
+
+    let res = tc.eval(validate).unwrap();
+    // NOTE 1
+    assert!(
+        res.mutated_object.is_some(),
+        "Expected accepted object to be mutated",
+    );
+
+    // NOTE 2
+    let final_pod =
+        serde_json::from_value::<apicore::Pod>(res.mutated_object.unwrap()).unwrap();
+    let final_annotations = final_pod.metadata.annotations.unwrap();
+    assert_eq!(
+        final_annotations.get_key_value("kubewarden.policy.demo/inspected"),
+        Some((
+            &String::from("kubewarden.policy.demo/inspected"),
+            &String::from("true")
+        )),
+    );
+
+    Ok(())
+}
+----
+
+Im Vergleich zum ersten Test gibt es zwei Änderungen:
+
+. Ändern Sie die `assert!`-Anweisung so, dass die Anfrage weiterhin akzeptiert wird, aber auch ein mutiertes Objekt enthält.
+. Erstellte eine `Pod`-Instanz, die vom mutierten Objekt ausgeht, das Teil der Antwort ist.
+Stellen Sie sicher, dass das mutierte Pod-Objekt das richtige `metadata.annotations` hat.
+
+Führen Sie die Tests erneut aus, diesmal sollen alle bestehen:
+
+[subs="+attributes",shell]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 1.25s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+Wie Sie sehen können, ist die Erstellung einer Mutationsrichtlinie unkompliziert.

@@ -1,0 +1,103 @@
+include::partial$variables.adoc[]
+= 上下文感知策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 开发者可以创建上下文感知策略，在运行时获取Kubernetes集群信息，以确定AdmissionRequest的接受标准。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "context-aware-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "上下文感知策略", "集群入场策略", "入场策略", "入场请求", "集群管理员"]
+:sidebar_label: 上下文感知策略
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+开发者可以创建在运行时从Kubernetes集群获取信息的策略。这些是上下文感知策略。上下文感知策略可以使用集群中部署的资源信息来确定一个`AdmissionRequest`是否可接受。
+
+[NOTE]
+====
+上下文感知策略仅在{project-name}版本≥v1.6.0中可用。
+====
+
+在集群中，策略所能访问的资源，由策略服务器的https://kubernetes.io/docs/concepts/security/service-accounts/[服务账户]决定。集群管理员通过Kubernetes RBAC规则控制策略可以访问的资源。上下文感知策略仅对请求的资源具有*读取*权限。
+
+出于安全原因，只有`ClusterAdmissionPolicy`策略可以从Kubernetes集群获取信息。这是因为非特权用户可以部署`AdmissionPolicy`资源。
+
+如果非特权用户以`AdmissionPolicy`身份部署上下文感知策略，系统：
+
+- 阻止所有访问Kubernetes资源的尝试。
+- 将其报告给集群管理员。
+
+默认情况下，{short-project-name}阻止对所有集群资源的访问。{project-name}管理员定义每个上下文感知策略可以读取的Kubernetes资源，并通过`contextAwareResources`实现此目的。
+
+以下示例部署一个需要访问`Deployment`和`Pod`资源的策略：
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: context-aware-policy
+  namespace: default
+spec:
+  policyServer: default
+  module: "registry://ghcr.io/kubewarden/policies/context-aware-policy:v1.0.0"
+  settings: {}
+  contextAwareResources:
+    - apiVersion: "apps/v1"
+      kind: "deployment"
+    - apiVersion: "v1"
+      kind: "pod"
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployment"]
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+----
+
+一旦部署，该策略可以读取`deployment`和`pod`资源的数据。
+
+策略作者为其上下文感知策略提供Kubernetes资源列表。策略作者通过注释策略来实现这一点。{project-name}管理员使用`kwctl inspect`命令查看策略元数据。他们可以获取策略需要访问的资源列表。管理员使用此列表来填充`ClusterAdmissionPolicy`定义。
+
+[WARNING]
+====
+
+为了防止系统滥用，{project-name}管理员必须审查策略访问的资源。
+
+例如，评估入口对象的策略有充分理由读取集群中定义的`Ingress`资源。同一策略无法证明有权访问`Secret`资源。
+
+策略应具有正常运行所需的最小访问权限。
+
+====
+
+
+[NOTE]
+====
+
+Kubernetes资源识别使用`apiVersion`和`kind`。
+
+通常，`apiVersion`是格式为`<api>/<version>`的字符串。来自`core`API组（Pod、Service等）的资源不应定义组名`<api>`。它们应仅定义`<version>`（例如，`v1`）。
+
+对于内核资源，第一个将不起作用，第二个将起作用。
+
+[subs="+attributes",console]
+----
+- apiVersion: "core/v1"
+  kind: "pod"
+----
+
+[subs="+attributes",console]
+----
+- apiVersion: "v1"
+  kind: "pod"
+----
+
+所有其他Kubernetes资源需要完整的定义：`<api>/<version>`。
+====
+
+
+== 进一步阅读
+
+您可以在参考文档的xref:../reference/spec/05-context-aware-policies.adoc[本节]中找到有关上下文感知策略的更详细信息。

@@ -1,0 +1,41 @@
+include::partial$variables.adoc[]
+= C#
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 探索并编写使用 .NET 内核 SDK 和 WASI 支持的 admission control 策略的验证和变更，适用于 Kubernetes 等 WebAssembly 平台。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "c#"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "c#", ".net"]
+:sidebar_label: C#
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+.NET 内核目前对 WebAssembly WASI 平台提供实验性支持。
+这来自于 https://github.com/SteveSandersonMS/dotnet-wasi-sdk[`dotnet-wasi-sdk`] 项目。
+
+[NOTE]
+====
+
+您无需安装 Windows 即可编写或运行 .NET 内核代码。
+所有操作也可以在 Linux 或 macOS 机器上完成。
+====
+
+
+== 当前状态
+
+策略作者可以使用以下资源：
+
+* https://github.com/kubewarden/policy-sdk-dotnet[{project-name} .NET 内核 SDK]：这提供了一组对象和函数，简化了编写策略的过程。
+* https://github.com/kubewarden/policy-sdk-dotnet/tree/main/example[{short-project-name} 策略示例]：这是一个有效策略的示例。
+
+已知没有限制。
+SDK 使得编写验证和变更策略成为可能。
+
+可以使用 https://www.nuget.org/packages/KubernetesClient.Models[`KubernetesClient.Models`] 库来处理 Kubernetes 对象。
+
+== 项目模板
+
+目前，我们没有可以生成 C# 策略的项目模板。
+
+如果感兴趣，请 https://github.com/kubewarden/policy-sdk-dotnet/issues[打开一个问题]。

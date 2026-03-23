@@ -1,0 +1,61 @@
+include::partial$variables.adoc[]
+= Registro
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configure as capacidades de logging para sua política usando a integração do {project-name} com a biblioteca SLOG e inicializando.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
+:doc-type: ["tutorial"]
+:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
+:sidebar_label: Registro
+:current-version: {page-origin-branch}
+
+Você pode fazer sua política registrar logs.
+O `policy-server` ou `kwctl` encaminha esses logs com as informações apropriadas.
+
+A biblioteca de logging escolhida para o SDK Rust é https://github.com/slog-rs/slog[`slog`].
+É uma crate popular, bem conhecida e se integra de forma limpa com {project-name}.
+
+== Inicialize o logger
+
+O projeto recomenda que você crie um sink global para o qual você possa registrar logs, de qualquer lugar da sua política.
+Para isso, use a crate `lazy_static`:
+
+[subs="+attributes",rust]
+----
+use slog::{o, Logger};
+
+lazy_static! {
+    static ref LOG_DRAIN: Logger = Logger::root(
+        logging::KubewardenDrain::new(),
+        o!("policy" => "sample-policy")
+    );
+}
+----
+
+== Consumindo o logger
+
+Agora, de dentro das funções `validate` ou `validate_settings`, você pode registrar logs usando os macros exportados por `slog` que correspondem a cada nível de logging suportado:
+
+[subs="+attributes",rust]
+----
+use slog::{info, o, warn, Logger};
+
+fn validate(payload: &[u8]) -> CallResult {
+    // ...
+    info!(LOG_DRAIN, "starting validation");
+    // ...
+    warn!(
+        LOG_DRAIN, "structured log";
+        "some_resource_name" => &some_resource_name
+    );
+    // ...
+}
+----
+
+A biblioteca `slog` envia todos os logs para o drain inicializado na variável global.
+Isso sincroniza com o avaliador de política que executa a política.
+Isso é `kwctl` ou o `policy-server`.
+Então, o avaliador de política registra essas informações, acrescentando informações contextuais adicionais, como a solicitação do Kubernetes `uid`.
+
+Mais informações sobre os https://docs.rs/slog/2.7.0/slog/macro.log.html[macros de logging] oferecidos pelo slog estão em sua https://docs.rs/slog/2.7.0/slog/index.html[documentação].

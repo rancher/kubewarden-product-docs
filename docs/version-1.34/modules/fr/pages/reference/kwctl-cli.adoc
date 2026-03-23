@@ -1,0 +1,493 @@
+// This file was converted from Markdown to AsciiDoc.
+
+include::partial$variables.adoc[]
+= kwctl CLI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: kwctl CLI
+:description: Explorez l'outil de ligne de commande \`kwctl` pour gérer les stratégies {project-name} et effectuer des tâches telles que le chargement de stratégies.
+:keywords: cli, référence, kwctl
+:doc-persona: kubewarden-operator
+:doc-type: Référence
+:doc-topic: manuel-de-l'opérateur
+
+== Aide en ligne de commande pour `kwctl`
+
+Ce document contient le contenu d'aide pour le programme en ligne de commande `kwctl`.
+
+*Présentation de la commande:*
+
+* <<kwctl,`kwctl`>>
+* <<kwctl-annotate,`kwctl annotate`>>
+* <<kwctl-bench,`kwctl bench`>>
+* <<kwctl-completions,`kwctl completions`>>
+* <<kwctl-digest,`kwctl digest`>>
+* <<kwctl-docs,`kwctl docs`>>
+* <<kwctl-info,`kwctl info`>>
+* <<kwctl-inspect,`kwctl inspect`>>
+* <<kwctl-load,`kwctl load`>>
+* <<kwctl-policies,`kwctl policies`>>
+* <<kwctl-pull,`kwctl pull`>>
+* <<kwctl-push,`kwctl push`>>
+* <<kwctl-rm,`kwctl rm`>>
+* <<kwctl-run,`kwctl run`>>
+* <<kwctl-save,`kwctl save`>>
+* <<kwctl-scaffold,`kwctl scaffold`>>
+* <<kwctl-scaffold-admission-request,`kwctl scaffold admission-request`>>
+* <<kwctl-scaffold-artifacthub,`kwctl scaffold artifacthub`>>
+* <<kwctl-scaffold-manifest,`kwctl scaffold manifest`>>
+* <<kwctl-scaffold-vap,`kwctl scaffold vap`>>
+* <<kwctl-scaffold-verification-config,`kwctl scaffold verification-config`>>
+* <<kwctl-verify,`kwctl verify`>>
+
+[[kwctl]]
+=== `kwctl`
+
+Outil pour gérer les stratégies {project-name}
+
+*Utilisation:* `kwctl [OPTIONS] <COMMAND>`
+
+==== Sous-commandes
+
+* `annotate` — Ajoute des métadonnées {short-project-name} à un module WebAssembly
+* `bench` — Évalue une stratégie {short-project-name}
+* `completions` — Génère des complétions de shell
+* `digest` — Récupère le digest à partir du manifeste OCI d'une stratégie
+* `docs` — Génère la documentation markdown pour les commandes kwctl
+* `info` — Affiche les informations système
+* `inspect` — Inspecte la stratégie {short-project-name}
+* `load` — Charge des stratégies à partir d'un fichier tar.gz
+* `policies` — Liste toutes les stratégies téléchargées
+* `pull` — Récupère une stratégie {short-project-name} à partir d'une URI donnée
+* `push` — Pousse une stratégie {short-project-name} vers un registre OCI
+* `rm` — Supprime une stratégie {short-project-name} du magasin
+* `run` — Exécute une stratégie {short-project-name} à partir d'une URI donnée
+* `save` — Enregistre les stratégies dans un fichier tar.gz
+* `scaffold` — Génère une ressource Kubernetes ou un fichier de configuration
+* `verify` — Vérifie une stratégie {short-project-name} à partir d'une URI donnée en utilisant Sigstore
+
+==== Options
+
+* `-v`, `--verbose <VERBOSE>` — Augmente la verbosité
+* `--no-color <NO-COLOR>` — Désactive la sortie colorée
+
+[[kwctl-annotate]]
+=== `kwctl annotate`
+
+Ajoute des métadonnées {short-project-name} à un module WebAssembly
+
+*Utilisation:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
+
+==== Arguments
+
+* `<WASM-PATH>` — Chemin vers le module WebAssembly à annoter
+
+==== Options
+
+* `-m`, `--metadata-path <PATH>` — Fichier contenant les métadonnées
+* `-o`, `--output-path <PATH>` — Fichier de sortie
+* `-u`, `--usage-path <PATH>` — Fichier contenant les informations d'utilisation de la stratégie
+
+[[kwctl-bench]]
+=== `kwctl bench`
+
+Évalue une stratégie {short-project-name}.
+
+La stratégie peut être spécifiée de plusieurs manières : +
+- URI : par exemple, `registry://ghcr.io/kubewarden/policies/psp-policy:latest` ou `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
+- Préfixe SHA : par exemple, `c3b80a10f9c3` (nécessite que la stratégie soit déjà récupérée) +
+- Fichier WASM local : par exemple, `file://home/tux/new-policy/psp-policy.wasm` +
+- Fichier YAML local : par exemple, `file://home/tux/cluster-admission-policy.yaml` (contient des déclarations de {short-project-name} Ressources Personnalisées comme `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+
+Comportement par défaut :
+Si le schéma est omis, `file://` est supposé, enraciné dans le répertoire courant.
+
+Remarques sur les Ressources Personnalisées {short-project-name} : +
+- Les indicateurs `--request-path`, `--settings-path` et `--settings-json` sont ignorés ; les paramètres sont lus à partir de la définition de la Ressource Personnalisée. +
+- L'indicateur `--execution-mode` s'applique à toutes les stratégies dans le fichier YAML. +
+- L'indicateur `--raw` ne peut pas être utilisé, car les Ressources Personnalisées de {short-project-name} ne prennent pas en charge les stratégies `raw`.
+
+Seuls les attributs suivants de la Définition de Ressource Personnalisée (CRD) sont évalués : +
+- Module de stratégie +
+- Paramètres de stratégie +
+- Ressources contextuelles auxquelles la stratégie peut accéder
+
+D'autres champs, tels que `rules`, `matchConditions`, `objectSelector` et `namespaceSelector`, sont ignorés.
+
+Un fichier YAML peut contenir plusieurs déclarations de Ressources Personnalisées. Dans ce cas, `kwctl` évalue chaque stratégie dans le fichier en utilisant la même requête lors de chaque évaluation.
+
+*Utilisation:* `kwctl bench [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== Arguments
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la stratégie, préfixe SHA ou fichier YAML contenant les ressources de stratégie {short-project-name}. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, enraciné dans le répertoire courant.
+
+==== Options
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Accorde l'accès aux ressources Kubernetes définies dans la section `contextAwareResources` de la stratégie. Avertissement : examinez attentivement la liste des ressources pour éviter les abus. Désactivée par défaut
+* `--cert-email <VALUE>` — Email attendu dans le certificat Fulcio
+* `--cert-oidc-issuer <VALUE>` — Émetteur OIDC attendu dans les certificats Fulcio
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — Désactiver l'utilisation du cache wasmtime
+* `--docker-config-json-path <PATH>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `--dump-results-to-disk <DUMP_RESULTS_TO_DISK>` — Place les résultats dans target/tiny-bench/label/.. si la cible peut être trouvée. utilisé pour comparer les exécutions précédentes
+* `-e`, `--execution-mode <MODE>` — Le composant d'exécution à utiliser pour exécuter cette stratégie +
+  Valeurs possibles : `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — Propriétaire GitHub attendu dans les certificats générés dans les pipelines CD
+* `--github-repo <VALUE>` — Dépôt GitHub attendu dans les certificats générés dans les pipelines CD
+* `--measurement-time <SECONDS>` — Combien de temps le banc d'essai 'devrait' fonctionner, num_samples est priorisé donc le banc d'essai prendra plus de temps pour pouvoir collecter num_samples si le code à tester est plus lent que cette limite de temps autorisée
+* `--num-resamples <NUM>` — Combien de rééchantillonnages doivent être effectués
+* `--num-samples <NUM>` — Combien de rééchantillonnages doivent être effectués. Recommandé au moins 50, au-dessus de 100 ne semble pas donner un résultat significativement différent.
+* `--raw <RAW>` — Valider une requête brute +
+  Valeur par défaut : `false`
+* `--record-host-capabilities-interactions <FILE>` — Enregistrer toutes les communications de stratégie et de capacités d'hôte dans le fichier donné. Utile à combiner plus tard avec le drapeau '--replay-host-capabilities-interactions'
+* `--replay-host-capabilities-interactions <FILE>` — Pendant les échanges de stratégie et de capacités d'hôte, l'hôte renvoie les réponses trouvées dans le fichier fourni. Ceci est utile pour tester des stratégies de manière reproductible, étant donné qu'aucune interaction externe avec les registres OCI, DNS, Kubernetes n'est effectuée.
+* `-r`, `--request-path <PATH>` — Fichier contenant l'objet de demande d'admission Kubernetes au format JSON
+* `--settings-json <VALUE>` — Chaîne JSON contenant les paramètres pour cette stratégie
+* `-s`, `--settings-path <PATH>` — Fichier contenant les paramètres pour cette stratégie
+* `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
+* `--verification-config-path <PATH>` — Fichier YAML contenant des informations de configuration de vérification (signatures, clés publiques...)
+* `-k`, `--verification-key <PATH>` — Chemin vers la clé utilisée pour vérifier la stratégie. Peut être répété plusieurs fois
+* `--warm-up-time <SECONDS>` — Combien de temps le banc doit se réchauffer
+
+[[kwctl-completions]]
+=== `kwctl completions`
+
+Générer des complétions de shell
+
+*Utilisation:* `kwctl completions --shell <VALUE>`
+
+==== Options
+
+* `-s`, `--shell <VALUE>` — Type de shell +
+  Valeurs possibles : `bash`, `elvish`, `fish`, `powershell`, `zsh`
+
+[[kwctl-digest]]
+=== `kwctl digest`
+
+Récupérer le digest à partir du manifeste OCI d'une stratégie
+
+*Utilisation:* `kwctl digest [OPTIONS] <uri>`
+
+==== Arguments
+
+* `<URI>` — URI de la stratégie
+
+==== Options
+
+* `--docker-config-json-path <PATH>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+
+[[kwctl-docs]]
+=== `kwctl docs`
+
+Génère la documentation markdown pour les commandes kwctl
+
+*Utilisation:* `kwctl docs --output <FILE>`
+
+==== Options
+
+* `-o`, `--output <FILE>` — chemin où le fichier de documentation sera stocké
+
+[[kwctl-info]]
+=== `kwctl info`
+
+Afficher les informations système
+
+*Utilisation:* `kwctl info`
+
+[[kwctl-inspect]]
+=== `kwctl inspect`
+
+Inspecter la stratégie {short-project-name}
+
+*Utilisation:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
+
+==== Arguments
+
+* `<URI_OR_SHA_PREFIX>` — URI de la stratégie ou préfixe SHA. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, enraciné dans le répertoire courant.
+
+==== Options
+
+* `--docker-config-json-path <PATH>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `-o`, `--output <FORMAT>` — Format de sortie +
+  Valeurs possibles : `yaml`
+* `--show-signatures <SHOW-SIGNATURES>` — Afficher les signatures sigstore
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+
+[[kwctl-load]]
+=== `kwctl load`
+
+charger des stratégies à partir d'un fichier tar.gz
+
+*Utilisation:* `kwctl load --input <input>`
+
+==== Options
+
+* `--input <INPUT>` — charger des stratégies à partir d'une archive tarball
+
+[[kwctl-policies]]
+=== `kwctl policies`
+
+Liste toutes les stratégies téléchargées
+
+*Utilisation:* `kwctl policies`
+
+[[kwctl-pull]]
+=== `kwctl pull`
+
+Récupère une stratégie {short-project-name} d'une URI donnée
+
+*Utilisation:* `kwctl pull [OPTIONS] <uri>`
+
+==== Arguments
+
+* `<URI>` — URI de la stratégie. Schémas pris en charge : registry://, https://, file://
+
+==== Options
+
+* `--cert-email <VALUE>` — Email attendu dans le certificat Fulcio
+* `--cert-oidc-issuer <VALUE>` — Émetteur OIDC attendu dans les certificats Fulcio
+* `--docker-config-json-path <DOCKER_CONFIG>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `--github-owner <VALUE>` — Propriétaire GitHub attendu dans les certificats générés dans les pipelines CD
+* `--github-repo <VALUE>` — Dépôt GitHub attendu dans les certificats générés dans les pipelines CD
+* `-o`, `--output-path <PATH>` — Fichier de sortie. Si non fourni, sera téléchargé dans le magasin {short-project-name}
+* `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
+* `--verification-config-path <PATH>` — Fichier YAML contenant des informations de configuration de vérification (signatures, clés publiques...)
+* `-k`, `--verification-key <PATH>` — Chemin vers la clé utilisée pour vérifier la stratégie. Peut être répété plusieurs fois
+
+[[kwctl-push]]
+=== `kwctl push`
+
+Pousse une stratégie {short-project-name} vers un registre OCI
+
+*Utilisation:* `kwctl push [OPTIONS] <policy> <uri>`
+
+Les annotations trouvées dans les métadonnées de la stratégie feront partie du manifeste OCI.
+Les annotations multi-lignes sont ignorées car elles ne sont pas compatibles avec la spécification OCI.
+L'annotation 'io.kubewarden.policy.source' est propagée en tant que 'org.opencontainers.image.source' pour permettre à des outils comme renovatebot de détecter les mises à jour de la stratégie.
+
+==== Arguments
+
+* `<POLICY>` — Stratégie à pousser. Peut être le chemin vers un fichier local, une URI de stratégie ou le préfixe SHA d'une stratégie dans le magasin.
+* `<URI>` — URI de la stratégie. Schémas pris en charge : registry://
+
+==== Options
+
+* `--docker-config-json-path <PATH>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `-f`, `--force <FORCE>` — Pousser également une stratégie qui n'est pas annotée
+* `-o`, `--output <PATH>` — Format de sortie +
+  Valeur par défaut : `text` +
+  Valeurs possibles : `text`, `json`
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+
+[[kwctl-rm]]
+=== `kwctl rm`
+
+Supprime une stratégie {short-project-name} du magasin
+
+*Utilisation:* `kwctl rm <uri_or_sha_prefix>`
+
+==== Arguments
+
+* `<URI_OR_SHA_PREFIX>` — URI de stratégie ou préfixe SHA
+
+[[kwctl-run]]
+=== `kwctl run`
+
+Exécute une ou plusieurs stratégies {short-project-name} localement.
+
+La stratégie peut être spécifiée de plusieurs manières : +
+- URI : par exemple, `registry://ghcr.io/kubewarden/policies/psp-policy:latest` ou `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
+- Préfixe SHA : par exemple, `c3b80a10f9c3` (nécessite que la stratégie soit déjà téléchargée) +
+- Fichier WASM local : par exemple, `file://home/tux/new-policy/psp-policy.wasm` +
+- Fichier YAML local : par exemple, `file://home/tux/cluster-admission-policy.yaml` (contient des déclarations de {short-project-name} ressources personnalisées comme `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+
+Comportement par défaut :
+Si le schéma est omis, `file://` est supposé, ancré dans le répertoire courant.
+
+Remarques sur les ressources personnalisées {short-project-name} : +
+- Les indicateurs `--request-path`, `--settings-path` et `--settings-json` sont ignorés ; les paramètres sont lus à partir de la définition de la ressource personnalisée. +
+- L'indicateur `--execution-mode` s'applique à toutes les stratégies dans le fichier YAML. +
+- L'indicateur `--raw` ne peut pas être utilisé, car les ressources personnalisées de {short-project-name} ne prennent pas en charge les stratégies `raw`.
+
+Seuls les attributs suivants de la Définition de Ressource Personnalisée (CRD) sont évalués : +
+- Module de stratégie +
+- Paramètres de stratégie +
+- Ressources contextuelles auxquelles la stratégie peut accéder
+
+D'autres champs, tels que `rules`, `matchConditions`, `objectSelector` et `namespaceSelector`, sont ignorés.
+
+Un fichier YAML peut contenir plusieurs déclarations de Ressources Personnalisées. Dans ce cas, `kwctl` évalue chaque stratégie dans le fichier en utilisant la même requête lors de chaque évaluation.
+
+*Utilisation:* `kwctl run [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== Arguments
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la stratégie, préfixe SHA ou fichier YAML contenant les ressources de stratégie {short-project-name}. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, ancré dans le répertoire courant.
+
+==== Options
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Accorde l'accès aux ressources Kubernetes définies dans la section `contextAwareResources` de la stratégie. Avertissement : examinez attentivement la liste des ressources pour éviter les abus. Désactivée par défaut
+* `--cert-email <VALUE>` — Email attendu dans le certificat Fulcio
+* `--cert-oidc-issuer <VALUE>` — Émetteur OIDC attendu dans les certificats Fulcio
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — Désactiver l'utilisation du cache wasmtime
+* `--docker-config-json-path <PATH>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `-e`, `--execution-mode <MODE>` — Le composant d'exécution à utiliser pour exécuter cette stratégie +
+  Valeurs possibles : `opa`, `gatekeeper`, `kubewarden`, `wasi`
+* `--github-owner <VALUE>` — Propriétaire GitHub attendu dans les certificats générés dans les pipelines CD
+* `--github-repo <VALUE>` — Dépôt GitHub attendu dans les certificats générés dans les pipelines CD
+* `--raw <RAW>` — Valider une requête brute +
+  Valeur par défaut : `false`
+* `--record-host-capabilities-interactions <FILE>` — Enregistrer toutes les communications de stratégie et de capacités d'hôte dans le fichier donné. Utile à combiner plus tard avec le drapeau '--replay-host-capabilities-interactions'
+* `--replay-host-capabilities-interactions <FILE>` — Pendant les échanges de stratégie et de capacités d'hôte, l'hôte renvoie les réponses trouvées dans le fichier fourni. Ceci est utile pour tester des stratégies de manière reproductible, étant donné qu'aucune interaction externe avec les registres OCI, DNS, Kubernetes n'est effectuée.
+* `-r`, `--request-path <PATH>` — Fichier contenant l'objet de demande d'admission Kubernetes au format JSON
+* `--settings-json <VALUE>` — Chaîne JSON contenant les paramètres pour cette stratégie
+* `-s`, `--settings-path <PATH>` — Fichier contenant les paramètres pour cette stratégie
+* `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
+* `--verification-config-path <PATH>` — Fichier YAML contenant des informations de configuration de vérification (signatures, clés publiques...)
+* `-k`, `--verification-key <PATH>` — Chemin vers la clé utilisée pour vérifier la stratégie. Peut être répété plusieurs fois
+
+[[kwctl-save]]
+=== `kwctl save`
+
+sauvegarder les stratégies dans un fichier tar.gz
+
+*Utilisation:* `kwctl save --output <FILE> <policies>...`
+
+==== Arguments
+
+* `<POLICIES>` — liste des stratégies à sauvegarder
+
+==== Options
+
+* `-o`, `--output <FILE>` — chemin où le fichier sera stocké
+
+[[kwctl-scaffold]]
+=== `kwctl scaffold`
+
+Créer une ressource Kubernetes ou un fichier de configuration
+
+*Utilisation:* `kwctl scaffold <COMMAND>`
+
+==== Sous-commandes
+
+* `admission-request` — Créer un objet AdmissionRequest
+* `artifacthub` — Générer un fichier artifacthub-pkg.yml à partir d'un fichier metadata.yml
+* `manifest` — Générer un manifeste de ressource Kubernetes
+* `vap` — Convertir un `ValidatingAdmissionPolicy` Kubernetes en un {short-project-name} `ClusterAdmissionPolicy`
+* `verification-config` — Générer un fichier de configuration de vérification Sigstore par défaut
+
+[[kwctl-scaffold-admission-request]]
+=== `kwctl scaffold admission-request`
+
+Créer un objet AdmissionRequest
+
+*Utilisation:* `kwctl scaffold admission-request [OPTIONS] --operation <TYPE>`
+
+==== Options
+
+* `--object <PATH>` — Le fichier contenant le nouvel objet à admettre
+* `--old-object <PATH>` — Le fichier contenant l'objet existant
+* `-o`, `--operation <TYPE>` — Type de ressource personnalisée {short-project-name} +
+  Valeurs possibles : `CREATE`
+
+[[kwctl-scaffold-artifacthub]]
+=== `kwctl scaffold artifacthub`
+
+Générer un fichier artifacthub-pkg.yml à partir d'un fichier metadata.yml
+
+*Utilisation:* `kwctl scaffold artifacthub [OPTIONS]`
+
+==== Options
+
+* `-m`, `--metadata-path <PATH>` — Fichier contenant les métadonnées de la stratégie
+* `-o`, `--output <FILE>` — Chemin où le fichier artifact-pkg.yml sera stocké
+* `-q`, `--questions-path <PATH>` — Fichier contenant le contenu de questions-ui de la stratégie
+* `-v`, `--version <VALUE>` — Version Semver de la stratégie
+
+[[kwctl-scaffold-manifest]]
+=== `kwctl scaffold manifest`
+
+Générer un manifeste de ressource Kubernetes
+
+*Utilisation:* `kwctl scaffold manifest [OPTIONS] --type <VALUE> <uri_or_sha_prefix>`
+
+==== Arguments
+
+* `<URI_OR_SHA_PREFIX>` — URI de la stratégie ou préfixe SHA. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, ancré dans le répertoire courant.
+
+==== Options
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — Utilise les métadonnées de la stratégie pour définir quelles ressources Kubernetes peuvent être accessibles par la stratégie. Avertissement : examinez attentivement la liste des ressources pour éviter les abus. Désactivée par défaut
+* `--cert-email <VALUE>` — Email attendu dans le certificat Fulcio
+* `--cert-oidc-issuer <VALUE>` — Émetteur OIDC attendu dans les certificats Fulcio
+* `--docker-config-json-path <DOCKER_CONFIG>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `--fulcio-cert-path <PATH>` — Chemin vers le certificat Fulcio. Peut être répété plusieurs fois
+* `--github-owner <VALUE>` — Propriétaire GitHub attendu dans les certificats générés dans les pipelines CD
+* `--github-repo <VALUE>` — Dépôt GitHub attendu dans les certificats générés dans les pipelines CD
+* `--rekor-public-key-path <PATH>` — Chemin vers la clé publique Rekor. Peut être répété plusieurs fois
+* `--settings-json <VALUE>` — Chaîne JSON contenant les paramètres pour cette stratégie
+* `-s`, `--settings-path <PATH>` — Fichier contenant les paramètres pour cette stratégie
+* `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+* `--title <VALUE>` — Titre de la stratégie
+* `-t`, `--type <VALUE>` — {short-project-name} type de ressource personnalisée +
+  Valeurs possibles : `ClusterAdmissionPolicy`, `AdmissionPolicy`
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
+* `--verification-config-path <PATH>` — Fichier YAML contenant des informations de configuration de vérification (signatures, clés publiques...)
+* `-k`, `--verification-key <PATH>` — Chemin vers la clé utilisée pour vérifier la stratégie. Peut être répété plusieurs fois
+
+[[kwctl-scaffold-vap]]
+=== `kwctl scaffold vap`
+
+Convertir Kubernetes `ValidatingAdmissionPolicy` en un {short-project-name} `ClusterAdmissionPolicy`
+
+*Utilisation:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
+
+==== Options
+
+* `-b`, `--binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml>` — Le fichier contenant la définition de ValidatingAdmissionPolicyBinding
+* `--cel-policy <URI>` — Le module de stratégie CEL à utiliser +
+  Valeur par défaut : `ghcr.io/kubewarden/policies/cel-policy:latest`
+* `-p`, `--policy <VALIDATING-ADMISSION-POLICY.yaml>` — Le fichier contenant la définition de ValidatingAdmissionPolicy
+
+[[kwctl-scaffold-verification-config]]
+=== `kwctl scaffold verification-config`
+
+Générer un fichier de configuration de vérification Sigstore par défaut
+
+*Utilisation:* `kwctl scaffold verification-config`
+
+[[kwctl-verify]]
+=== `kwctl verify`
+
+Vérifiez une stratégie {short-project-name} à partir d'une URI donnée en utilisant Sigstore
+
+*Utilisation:* `kwctl verify [OPTIONS] <uri>`
+
+==== Arguments
+
+* `<URI>` — URI de la stratégie. Schémas pris en charge : registry://
+
+==== Options
+
+* `--cert-email <VALUE>` — Email attendu dans le certificat Fulcio
+* `--cert-oidc-issuer <VALUE>` — Émetteur OIDC attendu dans les certificats Fulcio
+* `--docker-config-json-path <PATH>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `--github-owner <VALUE>` — Propriétaire GitHub attendu dans les certificats générés dans les pipelines CD
+* `--github-repo <VALUE>` — Dépôt GitHub attendu dans les certificats générés dans les pipelines CD
+* `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
+* `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
+* `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
+* `--verification-config-path <PATH>` — Fichier YAML contenant des informations de configuration de vérification (signatures, clés publiques...)
+* `-k`, `--verification-key <PATH>` — Chemin vers la clé utilisée pour vérifier la stratégie. Peut être répété plusieurs fois
+
+'''
+
+Ce document a été généré automatiquement par https://crates.io/crates/clap-markdown[`clap-markdown`].

@@ -1,0 +1,54 @@
+include::partial$variables.adoc[]
+= ネットワーク機能
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: ネットワーク機能と、ホスト機能を使用してDNSルックアップを行う方法、さらに通信プロトコルについて学びます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "network-capabilities"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "policy specification", "network capabilities"]
+:sidebar_label: ネットワーク機能
+:current-version: {page-origin-branch}
+
+{project-name} ポリシーは、WebAssembly実行コンテキスト内からネットワークリクエストを行うことはできません。
+
+ネットワーク操作は、ホストによって公開された一連の機能を活用することで行うことができます。
+
+== DNS ホストルックアップ
+
+この関数は、ポリシーによって与えられたFQDNからDNSルックアップを実行します。
+
+=== キャッシング
+
+ルックアップ結果は1分間キャッシュされます。
+
+=== 通信プロトコル
+
+これは、この機能を公開するために使用されるwaPC プロトコルの説明です：
+
+==== waPC関数 - `v1/dns_lookup_host` 入力
+
+[,hcl]
+----
+# hostname - JSON encoded string
+string
+----
+
+==== waPC関数 - `v1/dns_lookup_host` 出力
+
+[,hcl]
+----
+
+{
+  # list of IPs
+  "ips": [string]
+}
+----
+
+与えられたFQDNに関連付けられたすべてのIPアドレスは、レスポンス内で文字列として返されます。
+IPv4およびIPv6のエントリは、同じレスポンスの一部として返されます。
+
+例えば、`busybox:latest` イメージのマニフェストダイジェストを要求する際、ペイロードは次のようになります：
+
+* 入力ペイロード：`"google.com"`
+* 出力ペイロード：`{ "ips": ["127.0.0.1"]}`

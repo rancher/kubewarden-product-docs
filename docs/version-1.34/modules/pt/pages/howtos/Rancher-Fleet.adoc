@@ -1,0 +1,67 @@
+include::partial$variables.adoc[]
+= Gerenciando {project-name} com Rancher Fleet
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Gerencie gráficos Helm {project-name} usando Rancher Fleet e Definições de Recursos Personalizados (CRDs) do Kubernetes para implementar uma abordagem GitOps.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "rancher-fleet"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}","kubernetes", "kubewarden", "rancher fleet"]
+:sidebar_label: Rancher Fleet
+:sidebar_position: 130
+:current-version: {page-origin-branch}
+
+Você pode gerenciar gráficos Helm {project-name}, como outros gráficos Helm, com https://fleet.rancher.io/[Rancher Fleet].
+Rancher Fleet usa CRDs do Kubernetes para definir uma abordagem GitOps para gerenciar clusters Kubernetes.
+Isso é feito definindo https://fleet.rancher.io/concepts[Fleet Bundles].
+
+== Instalando
+
+Os gráficos {short-project-name} são gráficos padrão, eles dependem transitivamente uns dos outros:
+
+`kubewarden-crds` ← `kubewarden-controller` ← `kubewarden-defaults`
+
+Veja a xref:/quick-start.adoc[documentação de início rápido] para mais informações.
+
+Usando Rancher Fleet, você pode codificar as dependências do gráfico usando `dependsOn` no arquivo https://fleet.rancher.io/ref-fleet-yaml[`fleet.yaml`].
+
+Você pode ver erros transitórios até que os gráficos estejam prontos, como:
+
+[subs="+attributes",console]
+----
+ErrApplied(1) [Cluster fleet-local/local: dependent bundle(s) are not ready:
+[kubewarden-example-helm-kubewarden-controller]]
+----
+
+Esses erros não significam um problema, e uma vez que os gráficos tenham terminado a implantação, eles não aparecem mais.
+
+== Removendo
+
+[CAUTION]
+====
+
+Ao remover o GitRepo, todos os 3 gráficos {short-project-name} são removidos de uma vez.
+Isso significa que o gráfico `kubewarden-crds` é removido.
+
+{short-project-name} usa um job de hook Helm pre-delete no gráfico `kubewarden-controller` que exclui o policy-server padrão.
+Esse gancho pre-delete é necessário para liberar os webhooks das políticas antes de excluir o PolicyServer.
+Isso é verdade para qualquer mecanismo de políticas.
+Caso contrário, o cluster pode ter webhooks para políticas que não existem mais, rejeitando tudo e ficando em um estado de falha.
+
+Remover o GitRepo, e portanto o gráfico `kubewarden-crds`, ao mesmo tempo que o gráfico `kubewarden-controller` faz com que o job de hook pre-delete falhe.
+Isso significa que a remoção está incompleta, deixando 'detritos' no cluster.
+====
+
+
+Desinstalar CRDs automaticamente normalmente não é suportado por nenhuma ferramenta, e o Rancher Fleet não é exceção.
+
+Para realizar uma remoção correta, certifique-se de primeiro remover o Bundle para `kubewarden-defaults` do cluster.
+Faça isso comprometendo essas alterações no repositório que contém a configuração do Fleet e, em seguida, aguarde até que seja aplicado.
+Depois, remova `kubewarden-controller` da mesma forma, e por último, remova `kubewarden-crds`.
+
+Outra opção é adicionar 2 GitRepos, um apenas para os CRDs e outro para o restante dos gráficos {short-project-name}.
+Isso permite que você remova os gráficos {short-project-name} primeiro e os CRDs {short-project-name} por último.
+
+== Exemplo
+
+Para um exemplo de definições de Bundle do Fleet, veja https://github.com/kubewarden/fleet-example[github.com/kubewarden/fleet-example].

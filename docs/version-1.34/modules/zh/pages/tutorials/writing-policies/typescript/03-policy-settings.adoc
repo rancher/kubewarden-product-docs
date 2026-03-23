@@ -1,0 +1,109 @@
+include::partial$variables.adoc[]
+= 定义策略设置
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过 {project-name} 策略在 src/types.ts 和 src/index.ts 文件中定义和实现有效的策略设置结构。
+:keywords: "{project-name}", kubewarden, kubernetes, 定义策略设置, TypeScript
+:doc-type: 教程
+:doc-topic: {project-name}, kubewarden, 编写策略, typescript, 定义策略设置
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+[WARNING]
+====
+重要：不要将日志信息写入 STDOUT。
+
+写入 STDOUT 会破坏策略。相反，使用 STDERR 进行日志记录或使用 {project-name} SDK 提供的日志记录功能。策略输出到 STDOUT 只能包含验证响应。
+====
+
+首先，在 `src/types.ts` 中定义保存策略设置的结构：
+
+[source,javascript]
+----
+import type { PodSpec } from 'kubernetes-types/core/v1';
+import type { ObjectMeta } from 'kubernetes-types/meta/v1';
+
+/**
+ * Interface representing policy settings structure.
+ */
+export interface PolicySettings {
+  // List of hostnames that are denied by the policy.
+  denied_hostnames?: string[];
+}
+
+/**
+ * Generic Kubernetes resource interface
+ */
+export interface KubernetesResource {
+  apiVersion: string;
+  kind: string;
+  metadata: ObjectMeta;
+  spec?: PodSpec | any;
+}
+----
+
+== 构建 Settings 实例
+
+{short-project-name} 策略使用两个处理设置的函数：
+
+* `validate`：在对象验证期间调用。
+* `validateSettings`：在策略加载时调用。
+
+在 `src/index.ts` 中，`validate` 函数看起来像：
+
+[source,javascript]
+----
+function validate(): void {
+  try {
+    const validationRequest = Validation.Validation.readValidationRequest();
+    const settings: PolicySettings = validationRequest.settings || {};
+
+    // Policy logic...
+  } catch (err) {
+    console.error('Validation error:', err);
+    writeOutput(Validation.Validation.rejectRequest(`+Validation failed: ${err}+`));
+  }
+}
+----
+
+== 实现 Settings 验证
+
+[source,javascript]
+----
+function validateSettings(): void {
+  try {
+    const settingsInput = Validation.Validation.readValidationRequest();
+    const settings: PolicySettings = settingsInput as PolicySettings;
+
+    if (settings.denied_hostnames && !Array.isArray(settings.denied_hostnames)) {
+      const errorResponse = new Validation.Validation.SettingsValidationResponse(
+        false,
+        'denied_hostnames must be an array of strings',
+      );
+      writeOutput(errorResponse);
+      return;
+    }
+
+    for (const hostname of settings.denied_hostnames || []) {
+      if (typeof hostname !== 'string') {
+        const errorResponse = new Validation.Validation.SettingsValidationResponse(
+          false,
+          'All hostnames in denied_hostnames must be strings',
+        );
+        writeOutput(errorResponse);
+        return;
+      }
+    }
+
+    const response = new Validation.Validation.SettingsValidationResponse(true);
+    writeOutput(response);
+  } catch (err) {
+    console.error('Settings validation error:', err);
+    const errorResponse = new Validation.Validation.SettingsValidationResponse(
+      false,
+      `+Settings validation failed: ${err}+`,
+    );
+    writeOutput(errorResponse);
+  }
+}
+----

@@ -1,0 +1,101 @@
+include::partial$variables.adoc[]
+= Pruebas para autores de directivas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a probar autores de directivas con kwctl, ya sea utilizando bats o pruebas estándar, específicamente para directivas de {project-name} en Wasm.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "policy-authors"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "pruebas de directivas", "autor de directivas", "rust", "go", "assemblyscript", "entorno de desarrollo"]
+:current-version: {page-origin-branch}
+
+Las directivas de {project-name} son programas regulares compilados como WebAssembly (Wasm).
+Al igual que con cualquier tipo de programa, una buena cobertura de pruebas es importante.
+
+Los autores de directivas pueden utilizar sus entornos de desarrollo favoritos.
+Puedes utilizar herramientas familiares y marcos de pruebas para verificar el desarrollo.
+
+Estas directivas de {short-project-name} son ejemplos escritos en xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] y xref:tutorials/writing-policies/go/01-intro-go.adoc[Go]:
+
+* https://github.com/kubewarden/psp-apparmor[psp-apparmor]
+* https://github.com/kubewarden/ingress-policy[ingress-policy]
+
+Tienen suites de pruebas utilizando pruebas estándar para sus entornos de desarrollo.
+
+Las directivas utilizan GitHub Actions para sus pipelines de CI.
+
+== Pruebas de extremo a extremo
+
+También puedes escribir pruebas que se ejecuten contra el binario de Wasm que contiene tu directiva.
+Para hacer esto sin tener que desplegar un clúster de Kubernetes, puedes utilizar estas herramientas:
+
+* https://github.com/bats-core/bats-core[bats]: es para escribir pruebas y automatizar su ejecución.
+* https://github.com/kubewarden/kwctl[`kwctl`]: La herramienta CLI predeterminada de {short-project-name} que te ayuda con operaciones relacionadas con directivas; extraer, inspeccionar, anotar, enviar y ejecutar.
+
+Para usar `kwctl run` necesitas lo siguiente:
+
+. La referencia del archivo binario Wasm de la directiva a ejecutar.
+La directiva {short-project-name} se puede cargar desde:
+ ** el sistema de archivos local (`file://`)
+ ** un servidor HTTP(s) (`https://`)
+ ** un registro OCI (`registry://`).
+. El objeto de solicitud de admisión a probar.
+Se lo das a través del argumento `--request-path`, o en `stdin` configurando `--request-path` a `-`.
+. La configuración de la directiva para el tiempo de ejecución como un JSON en línea a través de la bandera `--settings-json`.
+O un JSON, o un archivo YAML, cargado desde el sistema de archivos a través de `--settings-path`.
+
+Después de la prueba `kwctl`, imprime el objeto `ValidationResponse` en la salida estándar.
+
+Así es como usas `kwctl` para probar el binario Wasm de la https://github.com/kubewarden/ingress-policy[`ingress-policy`] mencionada anteriormente:
+
+[subs="+attributes",console]
+----
+$ curl https://raw.githubusercontent.com/kubewarden/ingress-policy/v0.1.8/test_data/ingress-wildcard.json 2> /dev/null | \
+    kwctl run \
+        --settings-json '{"allowPorts": [80], "denyPorts": [3000]}' \
+        --request-path - \
+        registry://ghcr.io/kubewarden/policies/ingress:v0.1.8 | jq
+----
+
+Puedes descargar binarios precompilados de `kwctl`
+https://github.com/kubewarden/kwctl/releases[aquí].
+
+Usando `bats` puedes escribir una prueba que ejecute este comando y busque las salidas esperadas:
+
+.Una prueba de bats
+[%collapsible]
+======
+
+[,bash]
+----
+@test "all is good" {
+  run kwctl run \
+    --request-path test_data/ingress-wildcard.json \
+    --settings-json '{"allowPorts": [80], "denyPorts": [3000]}' \
+    ingress-policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # settings validation passed
+  [[ "$output" == *"valid: true"* ]]
+
+  # request accepted
+  [[ "$output" == *"allowed: true"* ]]
+}
+----
+
+======
+
+Puedes poner el código en un archivo, `e2e.bats`, por ejemplo, y luego invocar `bats` así:
+
+[subs="+attributes",console]
+----
+$ bats e2e.bats
+ ✓ all is good
+
+1 tests, 0 failures
+----
+
+xref:tutorials/writing-policies/go/05-e2e-tests.adoc[Esta]
+sección de la documentación tiene más sobre cómo escribir pruebas de extremo a extremo de tus directivas.

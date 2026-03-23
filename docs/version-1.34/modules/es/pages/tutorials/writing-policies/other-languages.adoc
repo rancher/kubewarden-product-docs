@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+= Otros idiomas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a escribir las políticas {project-name} utilizando varios lenguajes de programación que se dirigen a módulos WebAssembly y a la interfaz WASI.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "other-languages"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escribiendo políticas", "otros idiomas"]
+:sidebar_label: Otros idiomas
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+{project-name} Las políticas se pueden escribir con cualquier lenguaje de programación que pueda producir módulos WebAssembly dirigidos a la interfaz WASI.
+
+Por favor, abre una Pull Request o un GitHub Issue https://github.com/kubewarden/docs[aquí] si conoces un lenguaje de programación que se pueda utilizar para escribir políticas {short-project-name}.

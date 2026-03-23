@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= ポリシーの構築と配布
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: の{project-name}セットアップにおいて、ポリシーを効果的に構築および配布するための重要な手順に従ってください。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "ポリシーの作成", "rust", "構築と配布"]
+:sidebar_label: ポリシーの構築と配布
+:current-version: {page-origin-branch}
+
+== ポリシーの構築
+
+これまでのところ、開発マシンと同じオペレーティングシステムおよびアーキテクチャのコンパイルターゲットでポリシーを構築しました。
+
+次は、ポリシーをWebAssemblyバイナリ、すなわち`.wasm`ファイルとして構築します。
+
+次のコマンドを使用します：
+
+[subs="+attributes",console]
+----
+make policy.wasm
+----
+
+このコマンドは、WebAssemblyコンパイルターゲットでリリースモードでコードを構築します。
+
+ビルドは`policy.wasm`ファイルを生成します：
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+== ポリシーの配布
+
+{project-name}は、ポリシー配布に関する情報をxref:../../../explanations/distributing-policies.adoc[ポリシーの配布]セクションに記載しています。
+
+== その他の例
+
+より多くのRust製{short-project-name}ポリシーは、{short-project-name}のGitHubスペースで見つけることができます。https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[このクエリ]を使用すると、見つけるのに役立ちます。
+
+そのクエリで示された{short-project-name}ポリシーリポジトリには、次のタスクを自動化するGitHub Actionsがあります：
+
+* プルリクエストおよびメインブランチへのコードマージ後にユニットテストとコードリンティングを実行します。
+* `release`モードでポリシーを構築し、アーティファクトとしてOCIレジストリにプッシュします。

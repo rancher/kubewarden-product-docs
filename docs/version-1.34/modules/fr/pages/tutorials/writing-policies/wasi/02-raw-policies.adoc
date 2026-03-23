@@ -1,0 +1,267 @@
+include::partial$variables.adoc[]
+= Rédaction de stratégies brutes
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Rédigez des stratégies brutes qui évaluent des documents JSON arbitraires en définissant une logique de validation et de mutation personnalisée.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "rédaction de stratégies", "stratégies brutes"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "stratégies brutes"]
+:sidebar_label: Stratégies brutes
+:current-version: {page-origin-branch}
+
+Les stratégies brutes sont des stratégies qui peuvent évaluer des documents JSON arbitraires.
+Pour plus d'informations sur les stratégies brutes, veuillez vous référer à la page xref:howtos/raw-policies.adoc[stratégies brutes].
+
+== Exemples
+
+Veuillez vous référer à xref:tutorials/writing-policies/wasi/01-intro-wasi.adoc[Introduction à WASI] pour un aperçu du mode d'exécution WASI.
+
+[NOTE]
+====
+
+Vous marquez la stratégie comme `raw` en utilisant le champ `policyType` dans la configuration `metadata.yml`.
+Veuillez vous référer à la spécification xref:tutorials/writing-policies/metadata.adoc[métadonnées] pour plus d'informations.
+====
+
+
+=== Validation
+
+Par exemple, vous pouvez rédiger une stratégie qui accepte une demande dans le format suivant :
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "delete",
+    "resource": "products"
+  }
+}
+----
+
+et valide que :
+
+* `user` est dans la liste des utilisateurs valides
+* `action` est dans la liste des actions valides
+* `resource` est dans la liste des ressources valides
+
+Commencez par créer la stratégie en utilisant le https://github.com/kubewarden/go-wasi-policy-template[go WASI policy template].
+
+Tout d'abord, vous devez définir les types qui représentent la charge utile de la demande.
+
+Vous devez déclarer un type `RawValidationRequest` personnalisé contenant le `Request` et le `Settings`, au lieu d'utiliser le type `ValidationRequest` fourni par le `kw_sdk.go` :
+
+[,go]
+----
+// RawValidationRequest represents the request that is sent to the validate function by the Policy Server.
+type RawValidationRequest struct {
+    Request Request `+json:"request"+`
+    // Raw policies can have settings.
+    Settings Settings `+json:"settings"+`
+}
+
+// Request represents the payload of the request.
+type Request struct {
+    User     string `+json:"user"+`
+    Action   string `+json:"action"+`
+    Resource string `+json:"resource"+`
+}
+----
+
+Ensuite, vous définissez le type `Settings` et la fonction `validateSettings` dans le fichier `settings.go` :
+
+[,go]
+----
+// Settings represents the settings of the policy.
+type Settings struct {
+    ValidUsers     []string `+json:"validUsers"+`
+    ValidActions   []string `+json:"validActions"+`
+    ValidResources []string `+json:"validResources"+`
+}
+
+func validateSettings(input []byte) []byte {
+    var response SettingsValidationResponse
+
+    settings := &Settings{}
+    if err := json.Unmarshal(input, &settings); err != nil {
+        response = RejectSettings(Message(fmt.Sprintf("cannot unmarshal settings: %v", err)))
+    } else {
+        response = validateCliSettings(settings)
+    }
+
+    responseBytes, err := json.Marshal(&response)
+    if err != nil {
+        log.Fatalf("can not marshal validation response: %v", err)
+    }
+    return responseBytes
+}
+
+func validateCliSettings(settings *Settings) SettingsValidationResponse {
+    if len(settings.ValidUsers) == 0 {
+        return RejectSettings(Message(
+            "At least one valid user must be specified"))
+    }
+
+    if len(settings.ValidActions) == 0 {
+        return RejectSettings(Message(
+            "At least one valid action must be specified"))
+    }
+
+    if len(settings.ValidResources) == 0 {
+        return RejectSettings(Message(
+            "At least one valid resource must be specified"))
+    }
+
+    return AcceptSettings()
+}
+----
+
+Enfin, vous mettez à jour la logique de validation dans `validate.go` :
+
+[,go]
+----
+func validate(input []byte) []byte {
+    var validationRequest RawValidationRequest
+    validationRequest.Settings = Settings{}
+    decoder := json.NewDecoder(strings.NewReader(string(input)))
+    decoder.DisallowUnknownFields()
+    err := decoder.Decode(&validationRequest)
+    if err != nil {
+        return marshalValidationResponseOrFail(
+            RejectRequest(
+                Message(fmt.Sprintf("Error deserializing validation request: %v", err)),
+                Code(400)))
+    }
+
+    return marshalValidationResponseOrFail(
+        validateRequest(validationRequest.Settings, validationRequest.Request))
+}
+
+func marshalValidationResponseOrFail(response ValidationResponse) []byte {
+    responseBytes, err := json.Marshal(&response)
+    if err != nil {
+        log.Fatalf("cannot marshal validation response: %v", err)
+    }
+    return responseBytes
+}
+
+func validateRequest(settings Settings, request Request) ValidationResponse {
+    if slices.Contains(settings.ValidUsers, request.User) &&
+        slices.Contains(settings.ValidActions, request.Action) &&
+        slices.Contains(settings.ValidResources, request.Resource) {
+        return AcceptRequest()
+    }
+
+    return RejectRequest(
+        Message("The request cannot be accepted."),
+        Code(403))
+}
+----
+
+=== Mutation
+
+Vous pouvez modifier l'exemple précédent pour transformer la demande au lieu de la rejeter.
+
+Dans ce cas, les paramètres doivent contenir le `defaultUser`, `defaultAction` et `defaultRequest` à utiliser pour transformer la demande si l'utilisateur, l'action ou la ressource n'est pas valide.
+
+Vous devez mettre à jour le type `Settings` avec les nouveaux champs :
+
+[,go]
+----
+// Settings represents the settings of the policy.
+type Settings struct {
+    ValidUsers []string `+json:"validUsers"+`
+    ValidActions []string `+json:"validActions"+`
+    ValidResources []string `+json:"validResources"+`
+    DefaultUser string `+json:"defaultUser"+`
+    DefaultAction string `+json:"defaultAction"+`
+    DefaultResource string `+json:"defaultResource"+`
+}
+
+func validateCliSettings(settings *Settings) SettingsValidationResponse {
+    if len(settings.ValidUsers) == 0 {
+        return RejectSettings(Message(
+            "At least one valid user must be specified"))
+    }
+
+    if len(settings.ValidActions) == 0 {
+        return RejectSettings(Message(
+            "At least one valid action must be specified"))
+    }
+
+    if len(settings.ValidResources) == 0 {
+        return RejectSettings(Message(
+            "At least one valid resource must be specified"))
+    }
+
+    if settings.DefaultUser == "" {
+        return RejectSettings(Message(
+            "Default user must be specified"))
+    }
+
+    if settings.DefaultAction == "" {
+        return RejectSettings(Message(
+            "Default action must be specified"))
+    }
+
+    if settings.DefaultResource == "" {
+        return RejectSettings(Message(
+            "Default resource must be specified"))
+    }
+
+    return AcceptSettings()
+}
+----
+
+Vous devez également mettre à jour la structure `ValidationResponse` et la fonction `MutateRequest` dans `kw_sdk.go` pour supprimer les types spécifiques à Kubernetes et utiliser les types {short-project-name} à la place :
+
+[,go]
+----
+// ValidationResponse defines the response given when validating a request
+type ValidationResponse struct {
+    Accepted bool `+json:"accepted"+`
+    // Optional - ignored if accepted
+    Message *string `+json:"message,omitempty"+`
+    // Optional - ignored if accepted
+    Code *uint16 `+json:"code,omitempty"+`
+    // Optional - used only by mutating policies
+    MutatedObject *Request `+json:"mutated_object,omitempty"+`
+}
+
+// MutateRequest accepts the request. The given `+mutatedObject+` is how
+// the evaluated object must look once accepted
+func MutateRequest(mutatedObject *Request) ValidationResponse {
+    return ValidationResponse{
+        Accepted:      true,
+        MutatedObject: mutatedObject,
+    }
+}
+----
+
+Vous pouvez maintenant mettre à jour la fonction `validate` pour transformer la demande si elle n'est pas valide :
+
+[,go]
+----
+func validateRequest(settings Settings, request Request) ValidationResponse {
+    if slices.Contains(settings.ValidUsers, request.User) &&
+        slices.Contains(settings.ValidActions, request.Action) &&
+        slices.Contains(settings.ValidResources, request.Resource) {
+        return AcceptRequest()
+    }
+
+    if !slices.Contains(settings.ValidUsers, request.User) {
+        request.User = settings.DefaultUser
+    }
+
+    if !slices.Contains(settings.ValidActions, request.Action) {
+        request.Action = settings.DefaultAction
+    }
+
+    if !slices.Contains(settings.ValidResources, request.Resource) {
+        request.Resource = settings.DefaultResource
+    }
+
+    return MutateRequest(&request)
+}
+----

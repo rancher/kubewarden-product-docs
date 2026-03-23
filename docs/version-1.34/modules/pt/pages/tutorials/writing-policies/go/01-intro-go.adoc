@@ -1,0 +1,94 @@
+include::partial$variables.adoc[]
+= Escrevendo políticas em Go
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Escreva políticas de validação de controlador de admissão eficazes usando TinyGo, utilizando suas bibliotecas e ferramentas úteis projetadas especificamente para desenvolvedores Go.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "escrevendo-políticas", "go", "introdução"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas em Go"]
+:sidebar_label: Escrevendo políticas em Go
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+O suporte do Go para WebAssembly está evoluindo rapidamente.
+Esta página foi revisada pela última vez em dezembro de 2023.
+====
+
+
+O compilador oficial do Go pode produzir binários WebAssembly, para execução fora de um navegador, desde a versão v1.21.
+
+Há outro compilador Go que pode construir binários WebAssembly utilizáveis por {project-name}.
+Este projeto de compilador é https://tinygo.org/[TinyGo]:
+
+____
+TinyGo traz a linguagem de programação Go para sistemas embarcados e para a web moderna, criando um novo compilador baseado em LLVM.
+
+Você pode compilar e executar programas TinyGo em mais de 94 placas de microcontroladores diferentes, como o BBC micro:bit e o Arduino Uno.
+
+TinyGo também pode produzir código WebAssembly (Wasm) que é muito compacto em tamanho.
+Você pode compilar programas para navegadores da web, bem como para ambientes de servidor e computação distribuída que suportam a família de interfaces WebAssembly System Interface (WASI).
+____
+
+O projeto {short-project-name} atualmente sugere o uso do TinyGo por duas razões:
+
+* os binários são menores
+* suporte para https://wapc.io[waPC] pela capacidade de exportar funções para o runtime
+
+== Limitações do TinyGo
+
+O TinyGo ainda não suporta todos os recursos do Go, veja a https://tinygo.org/lang-support/[página] de suporte à linguagem TinyGo para ver o status atual do projeto.
+Atualmente, sua maior limitação é a falta de um pacote `reflect` totalmente suportado.
+Isso significa que os tipos oficiais de API Go do Kubernetes (por exemplo: `k8s.io/api/core/v1`) não compilam.
+
+{short-project-name} políticas precisam processar dados JSON, como configurações de políticas e a solicitação recebida pelo Kubernetes.
+
+Apesar das limitações atuais do TinyGo, ainda é fácil escrever {short-project-name} políticas de validação com ele.
+
+== Ferramentas
+
+Escrever {short-project-name} políticas requer uma versão do TinyGo superior a `v0.28.1`.
+No entanto, use a versão mais recente para obter os melhores resultados.
+
+[CAUTION]
+====
+Usar versões mais antigas do TinyGo resulta em erros de tempo de execução devido ao suporte limitado para reflexão em Go.
+====
+
+
+Essas bibliotecas Go são úteis ao escrever uma {short-project-name} política:
+
+* https://github.com/kubewarden/policy-sdk-go[{short-project-name} Go SDK]:
+Fornece estruturas e funções que reduzem a quantidade de código necessário.
+Também fornece auxiliares para testes.
+* https://github.com/kubewarden/k8s-objects[tipos Go do Kubernetes]:
+Os https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io[tipos Go oficiais do Kubernetes] não podem ser usados com o TinyGo.
+Este módulo fornece todos os Tipos do Kubernetes de uma maneira amigável ao TinyGo.
+* https://github.com/tidwall/gjson[gjson]:
+Isso fornece uma linguagem de consulta para navegação rápida de documentos JSON e recuperação de dados.
+Esta biblioteca não usa o pacote `encoding/json` fornecido pelo `stdlib` do Go, portanto, é utilizável com o TinyGo.
+* https://github.com/deckarep/golang-set[mapset]:
+Fornece uma implementação em Go da estrutura de dados https://en.wikipedia.org/wiki/Set_(abstract_data_type)[Set].
+Esta biblioteca reduz a quantidade de código a ser escrito, pois operações como Set `union`, `intersection`, `difference` são operações comuns em políticas {short-project-name}.
+
+Por fim, o {short-project-name} projeto fornece um https://github.com/kubewarden/go-policy-template[projeto de política Go template] que você pode usar para criar políticas Go {short-project-name}.
+
+== Obtendo dependências do TinyGo
+
+A maneira mais fácil de obter o TinyGo é usando as imagens de contêiner upstream.
+As versões oficiais estão https://hub.docker.com/r/tinygo/tinygo[aqui], enquanto as compilações da branch de desenvolvimento são automaticamente enviadas https://hub.docker.com/r/tinygo/tinygo-dev[aqui].
+
+Se necessário, experimente a página de https://tinygo.org/getting-started/[introdução ao TinyGo] para mais informações.
+
+== Pré-requisitos do tutorial
+
+Durante este tutorial, você precisará dessas ferramentas em sua máquina de desenvolvimento:
+
+* docker ou outro mecanismo de contêiner: usado para construir a política WebAssembly.
+Você usará o compilador incluído na imagem de contêiner oficial do TinyGo.
+* https://github.com/bats-core/bats-core[bats]: usado para escrever os testes e automatizar sua execução.
+* https://github.com/kubewarden/kwctl/releases[`kwctl`]:
+Ferramenta CLI fornecida por {short-project-name} para executar suas políticas fora do Kubernetes, entre outras ações.
+Está coberto na xref:tutorials/testing-policies/index.adoc[esta seção] da documentação.

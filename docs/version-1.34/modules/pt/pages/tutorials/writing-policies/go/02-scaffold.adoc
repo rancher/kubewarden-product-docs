@@ -1,0 +1,163 @@
+include::partial$variables.adoc[]
+= Criando uma nova política de validação
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explore a criação de uma nova política de validação que rejeita Pods com rótulos na lista de negação, validando rótulos com expressões regulares fornecidas pelo usuário para garantir a segurança.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "escrevendo-políticas", "go", "criando uma nova política de validação"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escrevendo políticas em Go", "nova política de validação"]
+:current-version: {page-origin-branch}
+
+Este tutorial abrange a criação de uma política que valida os rótulos dos objetos Pod.
+
+A política é rejeitar todos os Pods que usam um ou mais rótulos na lista de negação.
+A política também valida certos rótulos usando uma expressão regular fornecida pelo usuário.
+
+Para resumir, as configurações da política devem ser assim:
+
+[subs="+attributes",yaml]
+----
+# List of labels that cannot be used
+denied_labels:
+- foo
+- bar
+
+# Labels that are validated with user-defined regular expressions
+constrained_labels:
+  priority: "[123]"
+  cost-center: "^cc-\d+"
+----
+
+A política rejeita a criação deste Pod:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    foo: hello world
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+A política também rejeita a criação deste Pod:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  labels:
+    cost-center: cc-marketing
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Você pode usar as configurações da política para forçar o uso de uma especificação de rótulo, independentemente do conteúdo:
+
+[subs="+attributes",yaml]
+----
+constrained_labels:
+  mandatory-label: ".*" # <- this label must be present, we don't care about its value
+----
+
+== Estruturando um novo projeto de política
+
+Você pode criar um novo projeto de política usando o https://github.com/kubewarden/go-policy-template[repositório de modelo].
+Selecione o botão verde "Usar este modelo" próximo ao topo da página e siga o assistente do GitHub.
+
+Clone o repositório localmente e defina a diretiva `module` no arquivo `go.mod` para ficar assim:
+
+[,go]
+----
+module <path to your repository>
+----
+
+[NOTE]
+====
+Uma política real usaria um caminho de repositório, como `github.com/kubewarden/go-policy-template`.
+====
+
+
+== qualidade
+
+Desde que as ferramentas necessárias estejam em funcionamento, um comando `make test` usa o Docker para puxar uma imagem do compilador TinyGo, usando-a para construir e testar o modelo da política.
+
+O comando `make` padrão constrói o alvo `policy.wasm`. Então `make test` executa os testes Go definidos.
+O comando `make e2e-tests` executa testes usando https://github.com/bats-core/bats-core[bats] dentro de um cluster {short-project-name}.
+Após clonar o `go-policy-template`, executar esses comandos verifica se você tem as ferramentas necessárias para o tutorial.
+
+.Saída dos comandos `make`
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+make test
+docker run \
+        --rm \
+        -e GOFLAGS="-buildvcs=false" \
+        -v /home/jhk/projects/suse/tmp/go-kw-demo:/src \
+        -w /src tinygo/tinygo:0.30.0 \
+        tinygo build -o policy.wasm -target=wasi -no-debug .
+Unable to find image 'tinygo/tinygo:0.30.0' locally
+0.30.0: Pulling from tinygo/tinygo
+9aaefb8797c4: Pull complete
+24ab7ca26e01: Pull complete
+ca4ea8be6361: Pull complete
+50380d0859d2: Pull complete
+4f4fb700ef54: Pull complete
+ea0ddd497f04: Pull complete
+01ba28116afb: Pull complete
+Digest: sha256:5cbf5e50aec3a00fcff8bb4ae070a07eea8198187a97b21dff6d873d2274ce7a
+Status: Downloaded newer image for tinygo/tinygo:0.30.0
+go test -v
+=== RUN   TestParsingSettingsWithNoValueProvided
+--- PASS: TestParsingSettingsWithNoValueProvided (0.00s)
+=== RUN   TestIsNameDenied
+--- PASS: TestIsNameDenied (0.00s)
+=== RUN   TestEmptySettingsLeadsToApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestEmptySettingsLeadsToApproval (0.00s)
+=== RUN   TestApproval
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproval (0.00s)
+=== RUN   TestApproveFixture
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+--- PASS: TestApproveFixture (0.00s)
+=== RUN   TestRejectionBecauseNameIsDenied
+NATIVE: |{"level":"debug","message":"validating pod object","name":"test-pod","namespace":"default"}
+|
+NATIVE: |{"level":"info","message":"rejecting pod object","name":"test-pod","denied_names":"foo,test-pod"}
+|
+--- PASS: TestRejectionBecauseNameIsDenied (0.00s)
+PASS
+ok      github.com/kubewarden/go-policy-template        0.004s
+----
+
+e
+
+[subs="+attributes",console]
+----
+make e2e-tests
+bats e2e.bats
+e2e.bats
+ ✓ reject because name is on deny list
+ ✓ accept because name is not on the deny list
+ ✓ accept because the deny list is empty
+
+3 tests, 0 failures
+----
+
+======

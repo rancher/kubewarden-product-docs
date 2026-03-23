@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= Référence de métriques
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explorez les métriques et les modèles de cluster avec les métriques de plateforme exposées par {project-name} pour éclairer les processus de prise de décision.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "télémétrie", "métriques", "référence"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "métriques", "référence"]
+:sidebar_label: Référence de métriques
+:sidebar_position: 30
+:current-version: {page-origin-branch}
+
+{short-project-name} expose des métriques de plateforme pertinentes permettant aux administrateurs de cluster et aux développeurs de politiques d'identifier des modèles et des problèmes potentiels.
+
+== Serveur de politique
+
+Le composant Serveur de politique initialise et exécute des politiques.
+Lorsqu'il reçoit des demandes du serveur API Kubernetes, il transmet la demande à la politique, renvoyant la réponse fournie par la politique au serveur API Kubernetes.
+
+=== Métriques
+
+[NOTE]
+====
+https://opentelemetry.io/docs/concepts/signals/baggage/[Bagages] des attributs clé-valeur sont ajoutés à la métrique pour fournir des informations supplémentaires.
+====
+
+
+|===
+| Nom | Type | Bagages
+
+| `kubewarden_policy_evaluations_total`
+| Compteur
+| <<_kubewarden_policy_evaluations_total,Baggage>>
+|===
+
+==== `kubewarden_policy_evaluations_total`
+
+===== Bagages
+
+|===
+| Label | Description
+
+| `policy_name`
+| Nom de la politique
+
+| `resource_name`
+| Nom de la ressource évaluée
+
+| `resource_kind`
+| Type de la ressource évaluée
+
+| `resource_namespace`
+| Espace de noms de la ressource évaluée. Non présent si la ressource est à portée de cluster.
+
+| `resource_request_operation`
+| Type d'opération : `CREATE`, `UPDATE`, `DELETE`, `PATCH`, `WATCH`...
+
+| `accepted`
+| La demande a-t-elle été acceptée ?
+
+| `mutated`
+| La demande a-t-elle été modifiée ?
+
+| `error_code`
+| Code d'erreur renvoyé par la politique en cas de rejet, le cas échéant.
+  Non présent si la politique n'en a pas fourni.
+|===

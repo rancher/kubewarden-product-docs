@@ -1,0 +1,54 @@
+include::partial$variables.adoc[]
+= Netzwerkfähigkeiten
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über Netzwerkfähigkeiten und wie Sie Hostfunktionen für DNS-Abfragen sowie Kommunikationsprotokolle nutzen können.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["Richtlinien", "Spezifikation", "Host-Fähigkeiten", "Netzwerkfähigkeiten"]
+:doc-type: ["reference"]
+:keywords: ["Kubewarden", "Kubernetes", "Richtlinienspezifikation", "Netzwerkfähigkeiten"]
+:sidebar_label: Netzwerkfähigkeiten
+:current-version: {page-origin-branch}
+
+{project-name} Richtlinien können keine Netzwerkabfragen aus dem WebAssembly-Ausführungskontext heraus durchführen.
+
+Netzwerkoperationen können durch die Nutzung einer Reihe von Fähigkeiten, die vom Host bereitgestellt werden, durchgeführt werden.
+
+== DNS-Hostabfrage
+
+Diese Funktion führt eine DNS-Abfrage aus, beginnend mit dem FQDN, der durch die Richtlinie angegeben wird.
+
+=== Caching
+
+Die Abfrageergebnisse werden für 1 Minute zwischengespeichert.
+
+=== Kommunikationsprotokoll
+
+Dies ist die Beschreibung des waPC-Protokolls, das verwendet wird, um diese Fähigkeit bereitzustellen:
+
+==== waPC-Funktion - `v1/dns_lookup_host` Eingabe
+
+[,hcl]
+----
+# hostname - JSON encoded string
+string
+----
+
+==== waPC-Funktion - `v1/dns_lookup_host` Ausgabe
+
+[,hcl]
+----
+
+{
+  # list of IPs
+  "ips": [string]
+}
+----
+
+Alle IP-Adressen, die mit dem angegebenen FQDN verbunden sind, werden als Strings in der Antwort zurückgegeben.
+Sowohl IPv4- als auch IPv6-Einträge werden als Teil derselben Antwort zurückgegeben.
+
+Zum Beispiel, wenn der Manifest-Digest des `busybox:latest` Images angefordert wird, wären die Payloads wie folgt:
+
+* Eingabepayload: `"google.com"`
+* Ausgabepayload: `{ "ips": ["127.0.0.1"]}`

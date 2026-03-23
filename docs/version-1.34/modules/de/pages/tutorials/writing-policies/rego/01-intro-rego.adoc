@@ -1,0 +1,91 @@
+include::partial$variables.adoc[]
+= Rego
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über die Grundlagen der Rego-Sprache, einschließlich ihrer Verwendung in Verbindung mit Open Policy Agent und Gatekeeper-Frameworks zur Implementierung von Richtlinien als Code.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["richtlinien-schreiben", "rego", "einführung"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "richtlinien schreiben", "rego"]
+:sidebar_label: Rego
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Rego-Unterstützung ist in diesen Versionen verfügbar:
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+
+Rego-Richtlinien unterstützen kontextabhängige Daten ab Version {project-name} 1.9.
+====
+
+
+Die Rego-Sprache ist eine domänenspezifische Sprache, die es ermöglicht, Richtlinien als Code zu implementieren.
+https://www.openpolicyagent.org/docs/latest/policy-language/[Rego]
+ist eine von https://en.wikipedia.org/wiki/Datalog[Datalog] inspirierte Sprache.
+
+Es gibt zwei Möglichkeiten, Rego-Richtlinien zu schreiben, um Richtlinien als Code in Kubernetes,
+Open Policy Agent und Gatekeeper zu implementieren.
+
+Die nächsten Abschnitte zeigen, wie sich die beiden Frameworks unterscheiden,
+obwohl sie dieselbe Sprache verwenden.
+Wenn Sie mehr an der {short-project-name} Implementierung interessiert sind,
+können Sie direkt die spezifische Dokumentation des Frameworks besuchen, die unten verlinkt ist.
+
+* xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
+* xref:tutorials/writing-policies/rego/gatekeeper/01-intro.adoc[Gatekeeper]
+
+== Eine Sprache, zwei Frameworks
+
+=== Open Policy Agent (OPA)
+
+Open Policy Agent ist ein Projekt, das es Ihnen ermöglicht, Richtlinien als Code in jedem Projekt zu implementieren.
+Sie können OPA für jede richtlinienbasierte Überprüfung verwenden, die Ihre Anwendung benötigt.
+
+In diesem Kontext bedeutet das Schreiben von Richtlinien für Kubernetes einfach, OPA zu nutzen.
+Durch die Verwendung von Kubernetes Admission Webhooks ist es möglich, Anfragen mit OPA zu bewerten,
+das die in Rego geschriebenen Richtlinien ausführt.
+
+OPA hat eine optionale Integration mit Kubernetes über sein `kube-mgmt` Sidecar.
+Wenn es auf Kubernetes bereitgestellt wird und der OPA-Server die Rego-Richtlinien bewertet,
+kann es die konfigurierten Kubernetes-Ressourcen in Rego replizieren.
+So sind diese Kubernetes-Ressourcen für alle Richtlinien sichtbar.
+Mit OPA können Sie Richtlinien innerhalb der ConfigMap-Objekte von Kubernetes definieren.
+Sie können mehr darüber auf
+https://github.com/open-policy-agent/kube-mgmt[der Projektseite] lesen.
+
+=== Gatekeeper
+
+Gatekeeper konzentriert sich ausschließlich auf die Verwendung in Kubernetes und nutzt dies so gut wie möglich, wodurch Kubernetes-Workflows in bestimmten Fällen einfacher werden als mit OPA.
+
+== Betrachtung der Unterschiede
+
+Sowohl OPA als auch Gatekeeper-Richtlinien verwenden Rego, um Richtlinien als Code zu beschreiben.
+Jede Lösung hat Unterschiede beim Schreiben von Richtlinien in Rego, wie in den nächsten Abschnitten gezeigt wird.
+
+== Einstiegspunkt
+
+Der Einstiegspunkt ist der Name einer Regel innerhalb eines Pakets und ist die Regel, die zur Laufzeit aufgerufen wird, wenn die Richtlinie ausgeführt wird.
+
+== Aktuelle Einschränkungen
+
+=== Kontextabhängige Richtlinien
+
+Kontextabhängige Richtlinien sind Richtlinien, die die Eingabeanfrage nicht isoliert bewerten.
+Sie berücksichtigen andere Faktoren, um eine Entscheidung zu treffen.
+Zum Beispiel eine Richtlinie, die namespaced Ressourcen bewertet und eine Annotation im übergeordneten Namespace verwendet, um etwas in der Richtlinie zu konfigurieren.
+Ein weiteres Beispiel wäre eine Richtlinie, die `Ingress` Ressourcen bewertet, aber zur Entscheidungsfindung auch die Liste der vorhandenen `Ingress` Ressourcen hat.
+
+Die Idee der kontextabhängigen Richtlinien kann auch auf benutzerdefinierte Ressourcen ausgeweitet werden, sodass Ihre Richtlinie möglicherweise eine Anfrage basierend auf den aktuell verwendeten benutzerdefinierten Ressourcen bewerten möchte.
+
+Sowohl OPA als auch Gatekeeper unterstützen kontextabhängige Richtlinien, beginnend mit Version {short-project-name} 1.9.
+
+Weitere Details zu kontextabhängigen Richtlinien finden Sie
+xref:reference/spec/05-context-aware-policies.adoc[hier].
+
+=== Mutierende Richtlinien
+
+Gatekeeper unterstützt mutierende Richtlinien, aber {short-project-name} hat mutierende Richtlinien mit Gatekeeper-Kompatibilität noch nicht implementiert.
+Sie können Richtlinien verwenden, die das {short-project-name} SDK nutzen, um mutierende Richtlinien zu schreiben,
+aber derzeit können Sie mutierende Gatekeeper-Richtlinien in {short-project-name} nicht ausführen.

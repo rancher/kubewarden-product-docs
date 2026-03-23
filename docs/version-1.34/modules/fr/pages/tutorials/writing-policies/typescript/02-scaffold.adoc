@@ -1,0 +1,118 @@
+include::partial$variables.adoc[]
+= Créer une nouvelle stratégie de validation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Créez une nouvelle stratégie de validation pour rejeter les noms d'hôtes invalides dans les objets Pod par la configuration des paramètres de stratégie, testée avec les outils fournis.
+:keywords: {project-name}, kubewarden, kubernetes, rédaction de stratégies en TypeScript, nouvelle stratégie de validation
+:doc-type: didacticiel
+:doc-topic: {project-name}, kubewarden, rédaction de stratégies, typescript, création d'une nouvelle stratégie de validation
+:doc-persona: développeur-de-stratégie-kubewarden
+:current-version: {page-origin-branch}
+
+Ce tutoriel couvre la création d'une stratégie qui valide les noms d'hôtes des objets Pod.
+
+La stratégie consiste à rejeter tous les Pods qui utilisent un ou plusieurs noms d'hôtes sur la liste de refus.
+Vous fournissez la configuration de la stratégie en utilisant des paramètres du composant d'exécution.
+
+Pour résumer, les paramètres de la stratégie devraient ressembler à ceci :
+
+[source,yaml]
+----
+denied_hostnames:
+  - bad-host
+  - forbidden-host
+----
+
+La stratégie rejette la création de ce Pod :
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostname: bad-host
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Cependant, il accepte la création de ce Pod :
+
+[source,yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  hostname: allowed-host
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== Échafaudage d'un nouveau projet de stratégie
+
+Vous pouvez créer un nouveau projet de stratégie en utilisant le https://github.com/kubewarden/js-policy-template[dépôt de modèle]. Sélectionnez le bouton vert « Utiliser ce modèle » en haut de la page et suivez l'assistant de GitHub.
+Clonez le dépôt localement et mettez à jour le fichier `package.json` pour refléter les détails de votre stratégie :
+
+[source,json]
+----
+{
+  "name": "your-policy-name",
+  "version": "1.0.0",
+  "description": "Your policy description",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/your-policy-name"
+  }
+}
+----
+
+Assurez-vous d'utiliser un chemin de dépôt qui correspond à votre dépôt GitHub réel.
+
+== Tests
+
+À condition que les outils nécessaires soient en place, la commande `make all` construit la cible `annotated-policy.wasm`. La commande `make e2e` exécute des tests en utilisant `bats` avec `kwctl`.
+
+.Sortie des commandes `make`
+[source,console]
+----
+make all
+npx webpack --config webpack.config.cjs
+asset bundled.js 5.52 KiB [compared for emit] [minimized] (name: main)
+asset types.d.ts 430 bytes [compared for emit]
+asset index.d.ts 11 bytes [compared for emit]
+./src/index.ts 3.84 KiB [built] [code generated]
+./node_modules/kubewarden-policy-sdk/dist/bundle.js 3.85 KiB [built] [code generated]
+webpack 5.101.3 compiled successfully in 2280 ms
+npm install
+up to date, audited 400 packages in 2s
+58 packages are looking for funding
+  run `+npm fund+` for details
+
+found 0 vulnerabilities
+----
+
+[source,console]
+----
+make e2e
+npx webpack --config webpack.config.cjs
+asset bundled.js 5.52 KiB [compared for emit] [minimized] (name: main)
+asset types.d.ts 430 bytes [compared for emit]
+asset index.d.ts 11 bytes [compared for emit]
+./src/index.ts 3.84 KiB [built] [code generated]
+./node_modules/kubewarden-policy-sdk/dist/bundle.js 3.85 KiB [built] [code generated]
+webpack 5.101.3 compiled successfully in 1909 ms
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+
+5 tests, 0 failures
+----

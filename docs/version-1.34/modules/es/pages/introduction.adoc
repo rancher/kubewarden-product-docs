@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= ¿Qué es {project-name}?
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende sobre el papel de {project-name} en la gestión de políticas de Kubernetes, que incluye garantizar el cumplimiento y optimizar recursos.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["introduction"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "cncf", "cncf sandbox", "kubernetes", "admission policy manager"]
+:sidebar_label: Introducción
+:sidebar_position: 1
+:slug: /
+:current-version: {page-origin-branch}
+
+{project-name} es un motor de políticas de Kubernetes.
+Aspira a ser el motor de políticas universal para Kubernetes.
+
+{intro-paragraph}
+
+== ¿Cómo ayuda {project-name}?
+
+{short-project-name} ofrece flexibilidad para la admisión y aplicación de políticas en un entorno de Kubernetes.
+
+=== Beneficios y valor
+
+- Utiliza cualquier lenguaje de programación que genere binarios de https://webassembly.org[WebAssembly] para escribir tus políticas.
+- WebAssembly permite la compatibilidad de políticas entre procesadores y sistemas operativos.
+- Reutilización de políticas de otros motores de políticas sin necesidad de reescribirlas.
+- Distribuye políticas utilizando mecanismos estándar y seguros, como registros compatibles con https://opencontainers.org[OCI].
+- La aplicación de políticas en la admisión asegura que solo se ejecuten cargas de trabajo conformes.
+- El escáner de auditoría de {short-project-name} verifica de forma activa y continua la aplicación de políticas a lo largo del tiempo.
+- Verifica políticas utilizando herramientas y prácticas de https://slsa.dev[SLSA] (Niveles de sistema de suministro para artefactos de software).
+- {project-name} proporciona un enfoque integral para la gestión de políticas de admisión.
+- La membresía en CNCF y una creciente comunidad y ecosistema de código abierto ayudan a {short-project-name} con transparencia, colaboración y mejora.
+
+=== Casos de uso
+
+- Protección de la seguridad. Por ejemplo, aplica políticas que restrinjan los privilegios de los contenedores, aplica políticas de red o bloquea registros de imágenes inseguros.
+- Auditoría de conformidad. Asegúrate de que las cargas de trabajo cumplan con los estándares organizativos o regulatorios y las mejores prácticas.
+- Optimización de recursos. Aplica límites y cuotas de recursos.
+
+Hay más documentación sobre casos de uso en la página de xref:use-cases.adoc[casos de uso].
+
+== ¿Nuevo en {short-project-name}?
+
+Si eres nuevo en el proyecto {short-project-name}, comienza con la xref:quick-start.adoc[guía de inicio rápido] y la página de xref:explanations/architecture.adoc[arquitectura].
+Entonces depende de dónde te lleven tus intereses. Para los desarrolladores de políticas, hay secciones específicas de lenguaje en los tutoriales. Para integradores y administradores, hay una sección de 'cómo hacer'. La sección de explicaciones contiene material de fondo útil. También hay un xref:glossary.adoc[glosario].
+
+== ¿Qué es WebAssembly?
+
+Como se indica en https://webassembly.org/[la página oficial de WebAssembly]:
+
+____
+WebAssembly (abreviado Wasm) es un formato de instrucción binaria para una máquina virtual basada en pila. Wasm está diseñado como un objetivo de compilación portátil para lenguajes de programación, permitiendo su implementación en la web para aplicaciones de cliente y servidor.
+____
+
+Wasm fue concebido originalmente como una "extensión" del navegador. Sin embargo, la comunidad de WebAssembly está comprometida en esfuerzos para permitir la ejecución de código Wasm fuera de los navegadores.
+
+== ¿Por qué usar WebAssembly?
+
+Los usuarios pueden escribir políticas de Kubernetes utilizando su lenguaje de programación favorito, siempre que su cadena de herramientas pueda generar binarios Wasm.
+
+Los módulos Wasm son portátiles, una vez construidos, pueden ejecutarse en cualquier tipo de arquitectura de procesador y sistema operativo. Por ejemplo, una política desarrollada y construida en Apple Silicon puede ejecutarse en Linux AMD64/Intel64 sin conversión.
+
+Los autores de políticas pueden reutilizar sus habilidades, herramientas y mejores prácticas. Las políticas son programas "tradicionales" que pueden tener bloques reutilizables (bibliotecas regulares). Puedes analizarlas y probarlas, y puedes integrarlas en los flujos de trabajo actuales de CI y CD.
+
+== Distribución de políticas
+
+Puedes servir {short-project-name} políticas utilizando un servidor web estándar o, mejor aún, puedes publicarlas en un registro compatible con OCI como https://github.com/opencontainers/artifacts[artefactos OCI].
+
+ifeval::["{build-type}" == "community"]
+
+== Neutralidad del proveedor
+
+{short-project-name} es un proyecto [neutral al proveedor](https://contribute.cncf.io/maintainers/community/vendor-neutrality/) según lo definido por la CNCF.
+
+endif::[]

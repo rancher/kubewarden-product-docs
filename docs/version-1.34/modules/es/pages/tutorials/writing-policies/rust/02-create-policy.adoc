@@ -1,0 +1,112 @@
+include::partial$variables.adoc[]
+= Creación de una directiva
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a crear y configurar directivas de validación que controlen las solicitudes de creación de Pods basándose en criterios de rechazo personalizables.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "creating-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "policy creation"]
+:sidebar_label: Creación de una directiva
+:current-version: {page-origin-branch}
+
+Como ejemplo, creas una directiva de validación simple que procesa las solicitudes de creación de Pods.
+
+La directiva examina el atributo `metadata.name` del Pod y rechaza los Pods que tienen un nombre inválido.
+Su lista de nombres inválidos debería ser configurable por los usuarios finales de la directiva.
+
+Los ajustes de la directiva son algo como:
+
+[subs="+attributes",yaml]
+----
+invalid_names:
+- bad_name1
+- bad_name2
+----
+
+La directiva debería aceptar la creación de un Pod como el siguiente:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Debería rechazar la creación de un Pod como:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad_name1
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== Estructurando el nuevo proyecto de directiva
+
+Puedes crear un nuevo proyecto de directiva utilizando `cargo generate` con el https://github.com/kubewarden/rust-policy-template[proyecto plantilla].
+
+Primero, instala `cargo-generate`. Esto requiere https://pkgs.org/download/openssl-devel[openssl-devel].
+
+[subs="+attributes",shell]
+----
+cargo install cargo-generate
+----
+
+Ahora estructura el proyecto de la siguiente manera:
+
+[subs="+attributes",shell]
+----
+cargo generate --git https://github.com/kubewarden/rust-policy-template \
+               --branch main \
+               --name demo
+----
+
+El comando produce una salida como:
+
+[subs="+attributes",console]
+----
+🔧   Creating project called `+demo+`...
+✨   Done! New project created /<some-path-name>/demo
+----
+
+Esto crea el nuevo proyecto de directiva en el subdirectorio `demo`.
+
+[NOTE]
+====
+
+Si planeas hacer uso de la funcionalidad del registro de contenedores de GitHub en la demostración, necesitas https://docs.github.com/en/packages/working-with-a-github-packages-registry/enabling-improved-container-support-with-the-container-registry#enabling-the-container-registry-for-your-personal-account[habilitar el soporte mejorado para contenedores].
+====
+
+
+=== Evaluación
+
+Puedes probar:
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+Esto prueba la estructura generada. Si todo está correctamente en su lugar, verás una serie de mensajes de compilación que terminan con una salida como:
+
+[subs="+attributes",console]
+----
+running 4 tests
+test settings::tests::validate_settings ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+test tests::reject_pod_with_invalid_name ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

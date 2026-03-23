@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= Uso de autoridades de certificación personalizadas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura PolicyServer para utilizar autoridades de certificación personalizadas o fuentes inseguras junto con los registros especificados.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom certificate authorities"]
+:sidebar_label: Uso de CAs personalizadas
+:current-version: {page-origin-branch}
+
+== Autoridades de Certificación Personalizadas para registros de directivas
+
+Es posible especificar y configurar las Autoridades de Certificación que un PolicyServer utiliza al obtener los artefactos de ClusterAdmissionPolicy del registro de directivas. Los siguientes `spec` campos configuran el ejecutable `policy-server` desplegado a tal efecto.
+
+=== Fuentes inseguras
+
+[IMPORTANT]
+====
+
+El comportamiento predeterminado de `kwctl` y `policy-server` es hacer cumplir HTTPS con certificados de confianza que coincidan con el almacén CA del sistema. Puedes interactuar con registros utilizando certificados no confiables o incluso sin TLS, utilizando la configuración `insecure_sources`. Este enfoque es *altamente desaconsejado* para entornos más cercanos a producción.
+
+====
+
+Para configurar el PolicyServer para aceptar conexiones inseguras a registros específicos, utiliza el campo `spec.insecureSources` de PolicyServer. Este campo acepta una lista de URIs inseguras. Por ejemplo:
+
+[subs="+attributes",yaml]
+----
+spec:
+  insecureSources:
+    - localhost:5000
+    - host.k3d.internal:5000
+----
+
+Consulta xref:howtos/custom-certificate-authorities.adoc[Autoridades de Certificación Personalizadas] para más información sobre cómo el ejecutable `policy-server` trata las URIs inseguras.
+
+=== Autoridades de Certificación Personalizadas
+
+Puedes configurar el PolicyServer con una cadena de certificados personalizada de 1 o más certificados para un URI específico. Para hacer esto, utilizas el campo `spec.sourceAuthorities`.
+
+Este campo es un mapa de URIs, cada uno con su propia lista de cadenas que contienen certificados codificados en Privacy Enhanced Mail (PEM). Por ejemplo:
+
+[subs="+attributes",yaml]
+----
+spec:
+  sourceAuthorities:
+    "registry-pre.example.com":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-1 PEM cert
+        -----END CERTIFICATE-----
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-2 PEM cert
+        -----END CERTIFICATE-----
+    "registry-pre2.example.com:5500":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre2 PEM cert
+        -----END CERTIFICATE-----
+----
+
+Consulta xref:howtos/custom-certificate-authorities.adoc[Autoridades de Certificación Personalizadas] para más información sobre cómo el ejecutable `policy-server` las trata.

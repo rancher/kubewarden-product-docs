@@ -1,0 +1,209 @@
+include::partial$variables.adoc[]
+= Instalando kwctl ({project-name} CLI)
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: Instalando kwctl
+:description: Instala kwctl (el {project-name} CLI) siguiendo sus instrucciones de instalación para varios sistemas operativos, luego habilita la finalización de shell.
+:keywords: ["{project-name}", kubewarden, kubernetes, instalar kwctl, instalar, kwctl]
+:doc-persona: kubewarden-all
+:doc-type: howto
+:doc-topic: install-kwctl
+
+`kwctl` es la herramienta de interfaz de línea de comandos (CLI) para {project-name}. A continuación se presentan las instrucciones de instalación para algunos sistemas operativos.
+
+[tabs]
+====
+Linux::
++
+--
+Instalar para Linux
+
+. Homebrew
++
+Si utilizas el gestor de paquetes Homebrew en Linux, entonces:
++
+[source,console]
+----
+brew install kwctl
+----
++
+Verificar la instalación:
++
+[source,console]
+----
+kwctl --version
+----
+
+. Zypper (openSUSE)
++
+[source,console]
+----
+zypper install kwctl
+----
+
+. AUR
++
+Si estás utilizando Arch Linux, o una distribución basada en Arch, puedes instalar kwctl desde el AUR.
++
+.. Usando un ayudante de AUR (yay):
++
+[source,console]
+----
+yay -S kwctl
+----
++
+.. Usando makepkg:
++
+[source,console]
+----
+# Clone the AUR package
+git clone https://aur.archlinux.org/kwctl.git
+cd kwctl
+
+# Build and install the package
+makepkg -si
+----
++
+.. Verifica la instalación:
++
+[source,console]
+----
+kwctl --version
+----
+
+. Instalación manual
++
+.. Descarga la última versión de `kwctl` para Linux:
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-x86_64.zip
+----
++
+Para sistemas ARM64 (por ejemplo, Raspberry Pi), utiliza:
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-linux-aarch64.zip
+----
++
+.. Extrae los archivos del archivo `.zip` descargado:
++
+[source,console]
+----
+unzip kwctl-linux-x86_64.zip
+----
++
+Esto extrae los siguientes archivos:
++
+* `kwctl-linux-x86_64`: El binario `kwctl`
+* `kwctl-linux-x86_64.sig`: Un archivo de firma para verificar el binario
+* `kwctl-linux-x86_64.pem`: Un archivo de certificado para verificar la firma
++
+.. Mueve el binario a un directorio en tu PATH, renómbralo a `kwctl` y hazlo ejecutable.
++
+.. Verifica la instalación:
++
+[source,console]
+----
+kwctl --version
+----
+
+--
+macOS::
++
+--
+Instala para macOS.
+
+. Usando Homebrew
++
+.. Instale `kwctl`:
++
+[source,shell]
+----
+brew install kwctl
+----
++
+Verificar la instalación:
++
+[source,console]
+----
+kwctl --version
+----
++
+. Instalación manual
++
+.. Descarga la última versión de `kwctl` para macOS:
++
+... Para sistemas **Apple Silicon (ARM64)**, usa:
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-darwin-aarch64.zip
+----
+...  Para sistemas **Intel (x86_64)**, usa:
++
+[source,console]
+----
+curl -LO https://github.com/kubewarden/kwctl/releases/latest/download/kwctl-darwin-x86_64.zip
+----
++
+... Extrae los archivos del archivo `.zip` descargado:
++
+[source,console]
+----
+unzip kwctl-darwin-x86_64.zip
+----
++
+Esto extrae los siguientes archivos:
++
+* `kwctl-darwin-x86_64`: El binario `kwctl`
+* `kwctl-darwin-x86_64.sig`: Un archivo de firma para verificar el binario
+* `kwctl-darwin-x86_64.pem`: Un archivo de certificado para verificar la firma
++
+.. Mueve el binario a un directorio en tu PATH, renómbralo a `kwctl` y hazlo ejecutable.
++
+.. Verifica la instalación:
++
+[source,console]
+----
+kwctl --version
+----
+
+--
+Windows::
++
+--
+Instala para Windows
+
+. Descarga `kwctl`:
+    .. Abre tu navegador y ve a la página de lanzamientos de https://github.com/kubewarden/kwctl/releases/latest[{short-project-name}].
+    .. Descarga el archivo `kwctl-windows-x86_64.zip`.
+
+. Extrae los archivos del archivo zip descargado. Contendrá:
++
+* `kwctl-windows-x86_64.exe`: el binario `kwctl`.
+* `kwctl-windows-x86_64.sig`: un archivo de firma para verificar el binario.
+* `kwctl-windows-x86_64.pem`: un archivo de certificado para verificar la firma.
+
+. Cambia el nombre del archivo binario de `kwctl-windows-x86_64.exe` a `kwctl.exe` para facilitar su uso.
+
+. Mueve el binario a una ubicación cubierta por tu variable de entorno `PATH`.
+
+. Verifica la instalación. Abre una nueva ventana de símbolo del sistema o PowerShell y comprueba la instalación de `kwctl`:
++
+[source,console]
+----
+kwctl --version
+----
+--
+====
+
+== Instala las completaciones de shell
+
+La CLI de `kwctl` tiene la opción `--shell` para generar comandos de completación de shell para tu shell. Puedes usar la salida de este comando para integrar las completaciones en tu shell.
+
+[source,console]
+----
+kwctl completions --shell [bash|elvish|fish|powershell|zsh]
+----

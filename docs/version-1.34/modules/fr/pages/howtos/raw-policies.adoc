@@ -1,0 +1,303 @@
+include::partial$variables.adoc[]
+= Stratégies brutes
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez des stratégies brutes en tant que moteur d'évaluation de stratégies générique en utilisant {project-name}.
+:doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "kubernetes", "stratégies brutes"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "stratégies brutes"]
+:sidebar_label: Stratégies brutes
+:sidebar_position: 60
+:current-version: {page-origin-branch}
+
+À partir de `v1.9.0`, {project-name} prend en charge la possibilité d'écrire et d'exécuter des stratégies en dehors d'un cluster Kubernetes, en tant que moteur d'évaluation de stratégies générique.
+Le serveur de stratégies expose le point de terminaison `/validate_raw` qui peut être utilisé pour valider des documents JSON arbitraires contre une stratégie {short-project-name}.
+
+Pour ce guide, nous utiliserons les stratégies brutes suivantes :
+
+* https://github.com/kubewarden/raw-validation-policy[stratégie-de-validation-brute]
+* https://github.com/kubewarden/raw-mutation-policy[stratégie-de-mutation-brute]
+
+[NOTE]
+====
+Veuillez vous assurer que l'auteur de la stratégie a marqué la stratégie comme `policyType: raw` dans les métadonnées.
+Vous pouvez inspecter les métadonnées en utilisant `kwctl`
+
+[subs="+attributes",bash]
+----
+kwctl inspect ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+----
+====
+
+
+== Exécution du serveur de stratégies en dehors de Kubernetes
+
+Le serveur de stratégies peut être exécuté en dehors de Kubernetes en tant que conteneur autonome.
+
+Tout d'abord, créez un fichier `policies.yml` avec le contenu suivant :
+
+[subs="+attributes",yaml]
+----
+raw-validation:
+  module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+  settings:
+    validUsers:
+      - alice
+      - bob
+    validActions:
+      - read
+      - write
+    validResources:
+      - orders
+      - products
+
+raw-mutation:
+  module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+  allowedToMutate: true
+  settings:
+    forbiddenResources:
+      - privateResource
+      - secretResource
+    defaultResource: publicResource
+----
+
+Pour démarrer le serveur de stratégies :
+
+[subs="+attributes",bash]
+----
+# Create a docker volume to store the policies
+docker volume create --driver local \
+                --opt type=tmpfs \
+                --opt device=tmpfs \
+                --opt o=ui=65533 \
+                policy-store
+
+# Start the policy server
+docker run --rm -it \
+    -p 3000:3000 \
+    -v $(pwd)/policies.yml:/policies.yml \
+    -v policy-store:/registry \
+    ghcr.io/kubewarden/policy-server:1.9.0 \
+    --ignore-kubernetes-connection-failure=true
+----
+
+NOTE: le drapeau `--ignore-kubernetes-connection-failure=true` est requis pour démarrer le serveur de stratégies sans Kubernetes.
+Cependant, il est possible de démarrer le serveur de stratégies avec/dans Kubernetes et d'utiliser le point de terminaison de validation brute.
+Les stratégies brutes peuvent accéder aux xref:../explanations/context-aware-policies.adoc[capabilities] sensibles au contexte comme les stratégies standard.
+
+== Exécution d'un serveur de stratégies à l'intérieur de Kubernetes sans le contrôleur {short-project-name}
+
+Il n'est pas possible d'utiliser une instance de serveur de stratégies gérée par le contrôleur {short-project-name} pour héberger des stratégies brutes.
+Le contrôleur ne permettra pas à l'utilisateur de modifier le ConfigMap du serveur de stratégies pour ajouter une stratégie brute, car il essaiera de le réconcilier en annulant les modifications.
+À cause de cela, un serveur de stratégies dédié doit être démarré.
+
+Créez un fichier `policy-server.yaml` avec le contenu suivant :
+
+[subs="+attributes",yaml]
+----
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-server
+  template:
+    metadata:
+      labels:
+        app: policy-server
+    spec:
+      containers:
+        - name: policy-server
+          image: ghcr.io/kubewarden/policy-server:v1.9.0
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: policy-store
+              mountPath: /registry
+            - name: policies-config
+              mountPath: /policies.yml
+              subPath: policies.yml
+      volumes:
+        - name: policy-store
+          emptyDir: {}
+        - name: policies-config
+          configMap:
+            name: policies-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-server-service
+spec:
+  selector:
+    app: policy-server
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: policies-configmap
+data:
+  policies.yml: |
+    raw-validation:
+      module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+      settings:
+        validUsers:
+          - alice
+          - bob
+        validActions:
+          - read
+          - write
+        validResources:
+          - orders
+          - products
+    raw-mutation:
+      module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+      allowedToMutate: true
+      settings:
+        forbiddenResources:
+          - privateResource
+          - secretResource
+        defaultResource: publicResource
+----
+
+Appliquez la configuration :
+
+[subs="+attributes",bash]
+----
+kubectl apply -f policy-server.yaml
+----
+
+[IMPORTANT]
+====
+L'instance du serveur de stratégies déployée aura accès aux ressources Kubernetes qui pourraient être utilisées par des stratégies contextuelles.
+Le niveau d'accès aux ressources Kubernetes est déterminé par le compte de service utilisé pour exécuter la charge de travail du serveur de stratégies.
+
+Dans l'exemple précédent, aucun compte de service n'est défini dans la spécification de déploiement ; par conséquent, le compte de service `default` sera utilisé.
+====
+
+
+== Utilisation du point de terminaison validate_raw
+
+=== Validation
+
+Le point de validation brute est exposé à `/validate_raw` et accepte les requêtes `POST`.
+Puisque nous avons déployé un service, nous pouvons configurer un port-forward pour y accéder avec `kubectl port-forward service/policy-server-service 3000:3000 -n default`.
+
+Essayons de valider un document JSON contre la stratégie `raw-validation` :
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-validation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "customers"
+  }
+}'
+----
+
+La requête ne sera pas acceptée, car l'accès à la ressource `customers` n'a pas été accordé à `alice` :
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": false,
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+Essayons à nouveau avec une ressource valide :
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-validation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "orders"
+  }
+}'
+----
+
+Cette fois, la requête sera acceptée :
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": true,
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+[NOTE]
+====
+Si le champ `uid` est fourni dans la charge utile de la requête, il sera renvoyé dans la réponse.
+====
+
+
+=== Mutation
+
+Maintenant, essayons de modifier un document JSON contre la stratégie `raw-mutation` :
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-mutation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "privateResource"
+  }
+}'
+----
+
+La requête sera modifiée et la réponse contiendra un JSONPatch :
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": true,
+    "patchType": "JSONPatch",
+    "patch": "W3sib3AiOiJyZXBsYWNlIiwicGF0aCI6Ii9yZXNvdXJjZSIsInZhbHVlIjoicHVibGljUmVzb3VyY2UifV0=",
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+== Rédaction de stratégies brutes
+
+De la même manière que les stratégies qui valident les ressources Kubernetes, les stratégies brutes sont écrites en WebAssembly en utilisant les SDK {short-project-name}.
+Si vous êtes intéressé par l'écriture de stratégies brutes, veuillez vous référer à la documentation spécifique à la langue pour plus d'informations :
+
+* xref:../tutorials/writing-policies/go/10-raw-policies.adoc[Ok]
+* xref:../tutorials/writing-policies/rust/08-raw-policies.adoc[Rust]
+* xref:../tutorials/writing-policies/rego/open-policy-agent/05-raw-policies.adoc[OPA]
+* xref:../tutorials/writing-policies/wasi/02-raw-policies.adoc[WASI]

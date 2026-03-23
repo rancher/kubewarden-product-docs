@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= Audit Scanner - Einschränkungen
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über Einschränkungen bei der Verwendung des Audit Scanners zur Bewertung von Richtlinien und Ereignistypen in einer Kubernetes-Umgebung, einschließlich seiner Verwendung zur Bewertung von Richtlinien und Ereignistypen.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner", "limitations"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "audit scanner"]
+:sidebar_label: Nutzungsbeschränkungen
+:current-version: {page-origin-branch}
+
+== Unterstützte Ereignistypen
+
+Richtlinien können `CREATE`, `UPDATE` und `DELETE` Ereignisse inspizieren.
+
+Der Audit Scanner kann `UPDATE` Ereignisse nicht simulieren, da er nicht weiß, welcher Teil der Ressource geändert werden muss.
+
+Daher ignoriert der Audit Scanner eine Richtlinie, die sich nur mit `UPDATE` Ereignissen befasst.
+
+[NOTE]
+====
+
+Die Version v1.7.0 des Audit Scanners unterstützt nur `CREATE` Ereignisse. Die Verarbeitung von `DELETE` Ereignissen kommt bald.
+
+====
+
+
+== Richtlinien, die auf Benutzer- und Benutzergruppeninformationen basieren
+
+Jedes Kubernetes-Zulassungsanforderungsobjekt enthält Informationen darüber, welcher Benutzer (oder ServiceAccount) das Ereignis initiiert hat und zu welcher Gruppe er gehört.
+
+Alle vom Audit Scanner simulierten Ereignisse stammen vom selben festkodierten Benutzer und derselben Gruppe. Aus diesem Grund werden Richtlinien, die auf diesen Werten basieren, um ihre Entscheidungen zu treffen, keine sinnvollen Ergebnisse liefern.
+
+Für diese Fälle konfigurieren Sie die Richtlinie als nicht prüfbar.
+
+== Richtlinien, die auf externen Daten basieren
+
+Richtlinien können externe Daten anfordern und verwenden, wenn sie eine Bewertung durchführen. Sie können diese Richtlinien mit den Audit-Prüfungen bewerten, aber ihre Ergebnisse können sich je nach den externen Daten ändern.
+
+== Verwendung von `*` durch Richtlinien
+
+Sowohl die `AdmissionPolicy` als auch die `ClusterAdmissionPolicy` benutzerdefinierten Ressourcen haben die folgenden Felder:
+
+[subs="+attributes",yaml]
+----
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+----
+
+Die Attribute `apiGroups`, `apiVersions` und `resources` können das Platzhalterzeichen `*` verwenden. Dieses Platzhaltersymbol bewirkt, dass die Richtlinie mit allen Werten übereinstimmt, die im Feld verwendet werden. Der Audit Scanner ignoriert Richtlinien, die das Symbol `*` verwenden.

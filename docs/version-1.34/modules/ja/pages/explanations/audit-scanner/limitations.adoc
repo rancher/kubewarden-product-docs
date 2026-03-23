@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= 監査スキャナー - 制限事項
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Kubernetes 環境でポリシーやイベントタイプを評価するために監査スキャナーを使用する際の制限事項について、そのポリシーおよびイベントタイプ評価への利用も含めて学びます。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner", "limitations"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "監査スキャナー"]
+:sidebar_label: 制限
+:current-version: {page-origin-branch}
+
+== サポートされているイベントタイプ
+
+ポリシーは `CREATE`、`UPDATE`、および `DELETE` イベントを検査できます。
+
+監査スキャナーは `UPDATE` イベントをシミュレートできません。リソースのどの部分を変更する必要があるかを知らないためです。
+
+そのため、監査スキャナーは `UPDATE` イベントのみに関係するポリシーを無視します。
+
+[NOTE]
+====
+
+監査スキャナー v1.7.0 リリースは `CREATE` イベントのみをサポートしています。`DELETE` イベントの処理は近日中に対応予定です。
+
+====
+
+
+== ユーザーおよびユーザーグループ情報に依存するポリシー
+
+各 Kubernetes アドミッションリクエストオブジェクトには、イベントを開始したユーザー（または ServiceAccount）およびそのユーザーが属するグループに関する情報が含まれています。
+
+監査スキャナーによってシミュレートされたすべてのイベントは、同じハードコードされたユーザーとグループから発生します。そのため、これらの値に依存して意思決定を行うポリシーは、意味のある結果を生成しません。
+
+これらの場合は、ポリシーを監査対象外として構成してください。
+
+== 外部データに依存するポリシー
+
+ポリシーは評価を行う際に外部データを要求し、使用することができます。これらのポリシーは監査チェックで評価できますが、その結果は外部データによって変わる可能性があります。
+
+== ポリシーによる `*` の使用
+
+`AdmissionPolicy`と`ClusterAdmissionPolicy`のカスタムリソースには、次のフィールドがあります：
+
+[subs="+attributes",yaml]
+----
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+----
+
+`apiGroups`、`apiVersions`、および`resources`の属性は、ワイルドカード`*`を使用できます。このワイルドカード記号は、ポリシーがフィールドで使用されるすべての値に一致するようにします。監査スキャナーは、`*`記号を使用するポリシーを無視します。

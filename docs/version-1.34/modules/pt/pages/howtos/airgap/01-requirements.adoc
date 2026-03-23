@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+
+= Requisitos para instalar {project-name} em uma instalação air-gapped
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Saiba mais sobre os requisitos de instalação para {project-name} em ambientes air-gapped, incluindo registros privados suportados e detalhes de compatibilidade.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manual-do-operador", "air gap", "requisitos"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "air gap installation"]
+:sidebar_label: Requisitos
+:current-version: {page-origin-branch}
+
+. Registro privado que suporta artefatos OCI. É necessário para armazenar imagens de contêiner e políticas. Há uma lista de registros suportados pela Open Container Initiative (OCI) xref:reference/oci-registries-support.adoc[aqui].
+. https://github.com/kubewarden/kwctl[`kwctl`] 1.3.1 ou posterior.
+. docker v20.10.6 ou posterior.

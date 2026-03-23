@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= Modo monitor
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura las ClusterAdmissionPolicies o AdmissionPolicies para el modo monitor para rastrear y analizar las acciones de las políticas sin modificar las solicitudes entrantes.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "monitor-mode"]
+:doc-type: ["reference"]
+:keywords: ["kubernetes", "kubewarden", "monitor mode"]
+:sidebar_label: Modo monitor
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+Al definir una política, puedes elegir entre dos modos, especificados en su xref:reference/CRDs.adoc#admissionpolicyspec[`spec.mode`].
+Por defecto, una política se despliega en `mode: protect`.
+La política acepta, rechaza o muta solicitudes.
+
+Se puede optar por desplegar una política en modo monitor. En modo monitor:
+
+* La política acepta todas las solicitudes, como si la política no estuviera instalada.
+* El `policy-server` rastrea la política normalmente. Si una solicitud es rechazada o una política propone una mutación, entonces el rastreo contiene los detalles.
+* Las métricas del `policy-server` se actualizan normalmente, con el modo incluido en el conjunto de métricas. Por lo tanto, es fácil filtrar políticas por modo y centrarse en aquellas desplegadas utilizando el modo `monitor`.
+
+El `mode` es un atributo incluido en los recursos `ClusterAdmissionPolicy` y `AdmissionPolicy`. Hay dos valores que el atributo `mode` puede asumir: `monitor` y `protect`. El `mode` por defecto es `protect` si se omite.
+
+Para crear una política en `monitor mode` necesitas incluir la declaración `modo: monitor` como parte de la especificación del recurso. Por ejemplo, en la sección `spec` (marcada ➀), de este `ClusterAdmissionPolicy`:
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-capabilities
+spec:
+  mode: monitor <1>
+  policyServer: reserved-instance-for-tenant-a
+  module: registry://ghcr.io/kubewarden/policies/psp-capabilities:v0.1.3
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    allowed_capabilities:
+    - CHOWN
+    required_drop_capabilities:
+    - NET_ADMIN
+----
+<1> El atributo `mode: monitor` está en la sección `spec`.
+
+== Cambio del modo de la política
+
+Por motivos de seguridad, un usuario con permisos `UPDATE` sobre los recursos de política puede hacer que la política sea más restrictiva. Esto significa que puedes cambiar el `mode` de un `ClusterAdmissionPolicy` o `AdmissionPolicy` existente de `monitor` a `protect`.
+
+Sin embargo, no puedes cambiar el `mode` de un `ClusterAdmissionPolicy` o `AdmissionPolicy` existente de `protect` a `monitor`.
+
+Así que, para cambiar el `mode` de una política de `protect` a `monitor`, necesitas eliminar la política y recrearla en modo `monitor`. Cambiar una política de `protect` a `monitor` es lo mismo que eliminar la política, por lo que este enfoque asume que el usuario tiene permisos para eliminar políticas.
+
+== Una nota sobre las políticas de mutación
+
+Las políticas de mutación en modo `monitor` no realizarán una mutación en el recurso.
+En modo `monitor`, las políticas registran lo que su acción habría sido. También registran el parche de mutación que habrían producido en modo `protect`.
+
+[WARNING]
+====
+Cuando una política de mutación está en modo `monitor`, las políticas posteriores evalúan un recurso inalterado, y por lo tanto diferente, que cuando la política de mutación está en modo `protect`.
+====

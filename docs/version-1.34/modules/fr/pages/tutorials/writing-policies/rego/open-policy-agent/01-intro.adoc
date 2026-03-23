@@ -1,0 +1,38 @@
+include::partial$variables.adoc[]
+= Introduction à Open Policy Agent
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez comment Open Policy Agent utilise le langage Rego pour rédiger des stratégies qui évaluent et produisent des résultats pour une prise de décision sécurisée.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "open policy agent", "opa", "rego"]
+:sidebar_label: Introduction
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Le support d'Open Policy Agent a été introduit à partir de ces versions :
+
+* kwctl : v0.2.0
+* policy-server : v0.2.0
+====
+
+
+Open Policy Agent (OPA) est un cadre général de stratégies qui utilise le langage Rego pour rédiger des stratégies.
+
+== Introduction
+
+Les stratégies Rego fonctionnent en recevant une entrée à évaluer et produisent une sortie en réponse.
+En ce sens, OPA n'a pas d'outils spécifiques pour cibler la rédaction de stratégies pour Kubernetes.
+
+Plus précisément, les stratégies dans OPA reçoivent une entrée JSON et produisent une sortie JSON.
+Le serveur OPA est configuré pour recevoir des demandes de révision d'admission de Kubernetes.
+Les stratégies reçoivent un objet Kubernetes `AdmissionReview` au format JSON.
+Elles doivent retourner un objet `AdmissionReview` valide en tant que résultats de l'évaluation.
+
+== Compatibilité avec les stratégies existantes
+
+Toutes les stratégies peuvent être compilées pour la cible `wasm` (WebAssembly) avec l'outil CLI officiel `opa`.
+
+En termes d'exécution de stratégies, vous pouvez en savoir plus sur le xref:tutorials/writing-policies/rego/02-builtin-support.adoc[support intégré OPA] mis en œuvre dans {short-project-name}.

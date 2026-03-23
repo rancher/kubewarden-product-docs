@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= Soporte de registro OCI para {short-project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Distribuye las directivas de {project-name} como artefactos OCI a través de registros regulares de la Iniciativa de Contenedores Abiertos (OCI).
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["distributing-policies", "oci-registries-support"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "oci registry support"]
+:sidebar_label: Soporte de registro OCI
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+Distribuyes tus directivas de {project-name} como
+https://opencontainers.org[Artefactos OCI]
+usando registros regulares de la Iniciativa de Contenedores Abiertos (OCI).
+
+El almacenamiento de directivas de {short-project-name} está junto a las imágenes de contenedor.
+No requieren configuración o mantenimiento adicional
+más allá de lo necesario para las imágenes de contenedor regulares.
+
+[NOTE]
+====
+Puedes añadir un registro que funcione con {short-project-name} o
+corregir cualquier inexactitud del registro utilizando el
+botón "Editar esta página" en la parte inferior de la página
+====
+
+
+== Proyectos que implementan registros OCI
+
+* https://goharbor.io/[Harbor].
+* https://github.com/distribution/distribution[Distribution] (https://github.com/distribution/distribution/releases/tag/v2.7.0[≥ 2.7.0]).
+* https://access.redhat.com/products/red-hat-quay/[Quay]: Soportado, pero https://access.redhat.com/documentation/en-us/red_hat_quay/3/html/use_red_hat_quay/oci-intro#other-oci-artifacts-with-quay[inactivo por defecto en v3.6].
+
+== Registros OCI alojados
+
+* https://github.com/container-registry/[GitHub Container Registry]. Ver https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry[aquí].
+* https://quay.io[Quay.io]. Ver la lista de proyectos.
+* https://aws.amazon.com/ecr/[Amazon ECR]: Ver https://aws.amazon.com/blogs/containers/oci-artifact-support-in-amazon-ecr/[aquí].
+* https://cloud.google.com/artifact-registry[Google Artifact Registry]. Ver https://cloud.google.com/anthos-config-management/docs/how-to/sync-oci-artifacts-from-artifact-registry[aquí].
+* https://azure.microsoft.com/en-us/products/container-registry/[Azure Container Registry]. Ver https://learn.microsoft.com/en-us/azure/container-registry/container-registry-oci-artifacts[aquí].
+* https://hub.docker.com/[Docker Hub]. Ver https://docs.docker.com/docker-hub/oci-artifacts/[aquí].
+* https://cloud.ibm.com/docs/Registry[IBM Cloud Container Registry]. Ver https://cloud.ibm.com/docs/Registry?topic=Registry-registry_helm_charts[aquí].
+* https://jfrog.com/artifactory/[JFrog Artifactory]. Ver https://jfrog.com/help/r/jfrog-artifactory-documentation/docker-registry[aquí].
+
+== Herramientas que funcionan con registros OCI
+
+El proyecto {short-project-name} recomienda:
+
+* https://github.com/kubewarden/kwctl[`kwctl`] (nuestra herramienta CLI).
+* https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
+* https://github.com/google/go-containerregistry/blob/main/cmd/crane/README.md[Crane].
+
+== Problemas conocidos
+
+=== Docker Hub
+
+Actualmente, Docker Hub no soporta artefactos OCI, por lo que no se puede utilizar para almacenar directivas de {short-project-name}.
+Docker Inc. ha anunciado que Docker Hub soportará artefactos OCI en el https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[futuro].
+
+=== JFrog
+
+Aunque JFrog soporta artefactos OCI, solo es posible subir a él de forma parcial, siguiendo su especificación. https://github.com/kubewarden/kwctl/issues/59[Lee más aquí].

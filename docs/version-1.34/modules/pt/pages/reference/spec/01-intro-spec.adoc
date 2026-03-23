@@ -1,0 +1,13 @@
+include::partial$variables.adoc[]
+= Especificação de comunicação de política
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Descubra como usar efetivamente {project-name} as políticas por meio de uma API bem definida que permite interação e comunicação sem interrupções.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["escrevendo-políticas", "especificação", "introdução"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificação de política", "comunicação de política"]
+:sidebar_label: Especificação de comunicação de política
+:current-version: {page-origin-branch}
+
+O avaliador de políticas interage com {project-name} as políticas usando uma API bem definida. O objetivo desta seção é documentar a API usada pelo host (seja `policy-server` ou `kwctl`) para se comunicar com as políticas de {short-project-name}.

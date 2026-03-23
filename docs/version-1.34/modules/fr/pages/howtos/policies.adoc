@@ -1,0 +1,184 @@
+include::partial$variables.adoc[]
+= Configuration des stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez les stratégies en sélectionnant des espaces de noms spécifiques ou en définissant des messages de rejet personnalisés, et niez les résultats en utilisant AdmissionPolicyGroup.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manuel-opérateur", "stratégies"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "stratégies", "ClusterAdmissionPolicies", "AdmissionPolicies", "configuration", "espaces de noms"]
+:sidebar_label: Configuration des stratégies
+:sidebar_position: 90
+:current-version: {page-origin-branch}
+
+== Ignorer les espaces de noms pour une stratégie spécifique
+
+Par défaut, les stratégies s'appliquent à tous les espaces de noms pour lesquels le `PolicyServer` est configuré.
+Si vous souhaitez qu'une stratégie cible uniquement des espaces de noms spécifiques, vous pouvez déployer plusieurs `AdmissionPolicies` dans chaque espace de noms.
+
+Une autre option est de configurer `ClusterAdmissionPolicies` en définissant leur `spec.namespaceSelector` (voir xref:reference/CRDs.adoc#clusteradmissionpolicy[docs CRD]). Le `spec.namespaceSelector` décide s'il faut exécuter la stratégie sur un objet, en fonction de la correspondance entre l'espace de noms de cet objet et le sélecteur.
+
+Par exemple, voici une stratégie qui cible uniquement les espaces de noms `kube-system` et `my-namespace` :
+
+[subs="+attributes",yaml]
+----
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psa-enforcer-privileged-namespaces
+spec:
+  module: registry://ghcr.io/kubewarden/policies/psa-label-enforcer:v1.0.3
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["namespaces"]
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: true
+  namespaceSelector:
+    matchExpressions:
+      - key: "kubernetes.io/metadata.name"
+        operator: In
+        values: [kube-system, my-namespace]
+  settings:
+    modes:
+      enforce: "privileged"
+----
+
+Voici une stratégie qui cible tous les espaces de noms sauf les `kube-system` et `my-namespace` :
+
+[subs="+attributes",yaml]
+----
+---
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psa-enforcer-default-mode
+spec:
+  module: registry://ghcr.io/kubewarden/policies/psa-label-enforcer:v1.0.3
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["namespaces"]
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: true
+  namespaceSelector:
+    matchExpressions:
+      - key: "kubernetes.io/metadata.name"
+        operator: NotIn
+        values: [kube-system, my-namespace]
+  settings:
+    modes:
+      enforce: "restricted"
+----
+
+== Message de rejet personnalisé
+
+Lorsqu'une stratégie rejette une ressource, le message affiché à l'utilisateur est celui rédigé par l'auteur de la stratégie. Parfois, les opérateurs de cluster peuvent vouloir définir un message de rejet personnalisé. Par exemple, cela peut être utilisé pour pointer vers un wiki interne ou pour fournir un code d'erreur plus spécifique.
+
+Le champ `message` dans les types `ClusterAdmissionPolicy` et `AdmissionPolicy` peut être utilisé pour cela.
+
+[NOTE]
+====
+`ClusterAdmissionPolicyGroup` et `AdmissionPolicyGroup` ont déjà un champ `message` qui se comporte de la même manière.
+====
+
+Le champ `message` permet aux opérateurs de cluster de définir un message de rejet personnalisé qui remplace celui renvoyé par la stratégie. Lors de l'utilisation de cette configuration, le message de rejet original peut être trouvé dans le champ `causes` de la réponse.
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: pod-privileged-with-message
+spec:
+  module: registry://ghcr.io/kubewarden/policies/pod-privileged:1.0.2
+  policyServer: default
+  mode: protect
+  message: "Nops! You cannot do that"
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - "*"
+      operations:
+        - CREATE
+  mutating: false
+----
+
+Vous pouvez obtenir tous les détails d'une demande d'admission rejetée en augmentant le niveau de verbosité de kubectl :
+
+[subs="verbatim,attributes"]
+----
+$ kubectl -v4 run pod-privileged2 --image=registry.k8s.io/pause --privileged
+I0612 16:32:43.647601   48424 cert_rotation.go:137] Starting client certificate rotation controller
+I0612 16:32:43.662550   48424 helpers.go:246] server response object: [{
+  "metadata": {},
+  "status": "Failure",
+  "message": "admission webhook \"clusterwide-pod-privileged-with-message.kubewarden.admission\" denied the request: Nops! You cannot do that",
+  "details": {
+    "causes": [
+      {
+        "message": "Privileged container is not allowed"
+      }
+    ]
+  },
+  "code": 400
+}]
+----
+
+== Nier un résultat de stratégie en l'enveloppant dans un PolicyGroup
+
+Parfois, lors de l'utilisation d'une stratégie, elle n'implémente pas encore la logique inverse de ce dont vous avez besoin.
+
+Par exemple, vous souhaitez utiliser le lien:https://artifacthub.io/packages/kubewarden/priority-class-policy/priority-class-policy[`priority-class` stratégie] pour rejeter un ensemble de classes de priorité. Mais au moment de la rédaction, la stratégie `priority-class` ne prend en charge que les listes d'autorisation, pas la liste rouge.
+
+Un modèle courant consiste alors à envelopper votre stratégie dans un `AdmissionPolicyGroup` ou `ClusterAdmissionPolicyGroup`, et à nier le résultat de la stratégie dans son `spec.expression`.
+
+Par exemple, supposons que nous souhaitions que les utilisateurs utilisent toutes les classes de priorité définies à l'intérieur du cluster, sauf pour l'une des suivantes : `low-priority`, `med-priority` et `high-priority`.
+
+Actuellement, les paramètres de la stratégie permettent d'exprimer uniquement la liste des classes de priorité autorisées. La stratégie de groupe suivante permet de surmonter cette limitation.
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: AdmissionPolicyGroup
+metadata:
+  name: priority-class-denylist
+  namespace: your-namespace # or use a CLusterAdmissionPolicyGroup and set spec.namespaceSelector
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+  policies:
+    is_a_denied_priority_class:
+      module: ghcr.io/kubewarden/policies/priority-class-policy:v1.0.4
+      settings:
+        allowed_priority_classes:
+          - low-priority
+          - med-priority
+          - high-priority
+  expression: "!is_a_denied_priority_class()" # negated result
+  message: "the Pod is using a priorityClass that is not allowed"
+----
