@@ -1,0 +1,62 @@
+include::partial$variables.adoc[]
+= Sugerindo uma melhoria na documentação
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Inicie uma melhoria na documentação abrindo uma issue no GitHub com detalhes claros sobre o que está faltando, desatualizado, incorreto ou que requer uma revisão de qualidade.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution", "improvement"]
+:doc-type: ["howto"]
+:keywords: ["Kubewarden", "documentação", "sugerindo uma melhoria"]
+:sidebar_label: Sugerindo melhorias na documentação
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+Se você notar um problema com a documentação de {short-project-name} ou quiser sugerir novo conteúdo, abra uma issue. Você só precisa de acesso a uma https://github.com/join[conta do GitHub] e um navegador.
+
+Normalmente, qualquer novo trabalho de documentação para {short-project-name} começa com uma issue no GitHub.
+ifeval::["{build-type}" == "community"]
+A equipe de documentação https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name} avalia, categoriza e marca as issues].
+endif::[]
+ifeval::["{build-type}" == "product"]
+A equipe de documentação https://github.com/orgs/rancher/teams/docs[{short-project-name} avalia, categoriza e marca as issues].
+endif::[]
+Todos são bem-vindos para trabalhar em qualquer issue, incluindo o reporter, mas você deve atribuí-la a si mesmo antes de começar qualquer trabalho para evitar esforços duplicados.
+
+== Abrindo uma issue
+
+Para sugerir melhorias no conteúdo da documentação existente ou relatar um erro, abra uma issue.
+
+* Clique no ícone do Octocat do GitHub no topo. Isso redireciona você para o
+ifeval::["{build-type}" == "community"]
+  https://github.com/kubewarden/docs[repositório de documentação para {short-project-name}].
+endif::[]
+ifeval::["{build-type}" == "product"]
+  https://github.com/rancher/kubewarden-product-docs[repositório de documentação para {short-project-name}].
+endif::[]
+* Navegue até a aba Issues e clique em *Nova issue*.
+* Descreva o problema ou sugestão de melhoria. Quanto mais detalhes, melhor.
+* Clique em *Enviar nova issue*.
+* Após enviar a issue, você pode atribuí-la a si mesmo ou esperar que um membro da comunidade a pegue. Membros da equipe de documentação e da comunidade podem solicitar esclarecimentos antes de poderem agir sobre sua issue. Você deve verificar ativamente sua issue ou https://docs.github.com/en/account-and-profile/managing-subscriptions-and-notifications-on-github/setting-up-notifications/configuring-notificationsativar as notificações do GitHub.
+
+== Sugestões de novo conteúdo
+
+Para sugerir novo conteúdo, por favor, registre uma issue usando um desses mecanismos:
+
+* Escolha uma página existente na seção à qual você acha que o conteúdo pertence e clique em *Criar uma issue*. OU
+ifeval::["{build-type}" == "community"]
+* Navegue até https://github.com/kubewarden/docs/issues/new/choose[GitHub] e registre a issue diretamente.
+endif::[]
+ifeval::["{build-type}" == "product"]
+* Navegue até https://github.com/rancher/kubewarden-product-docs/issues/new/choose[GitHub] e registre a issue diretamente.
+endif::[]
+
+== Como você pode fazer uma contribuição contar?
+
+Nenhuma contribuição é grande ou pequena demais. No entanto, para que a comunidade derive o máximo valor, solicitamos que você siga o que está abaixo ao relatar uma issue:
+
+* Concentre-se em fornecer uma descrição clara da issue. Alguns pontos-chave a considerar seriam descrever o que está faltando, desatualizado, errôneo ou que requer melhoria qualitativa e técnica.
+* Descreva o impacto específico que a issue tem sobre os usuários.
+* Limite o escopo da issue. Se o escopo for grande, divida-o em tarefas menores dentro de uma issue. Por exemplo, "Criar um Guia de Contribuição" é amplo em escopo, pois haveria várias tarefas associadas à issue.
+  No entanto, "Corrigir um erro gramatical na página de Início Rápido" é uma issue com escopo mais restrito que exigiria apenas um único pull request.
+* Confira issues existentes para evitar trabalho duplicado.
+* Confira se existe um pull request ou issue existente. Confira se você faz referência à issue ou pull request existente na issue que está abrindo para dar contexto aos colaboradores que possam querer trabalhar nela.

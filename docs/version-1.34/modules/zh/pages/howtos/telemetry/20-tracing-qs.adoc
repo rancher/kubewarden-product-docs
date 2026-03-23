@@ -1,0 +1,369 @@
+include::partial$variables.adoc[]
+= 跟踪快速入门
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用此快速入门指南为策略服务器启用跟踪支持，以收集有关策略评估的详细信息，这些信息可用于调试 SUSE Security 准入问题。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "tracing", "quick-start"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "tracing", "quickstart"]
+:sidebar_label: 跟踪
+:current-version: {page-origin-branch}
+
+本节介绍如何为策略服务器启用跟踪支持。
+
+[NOTE]
+====
+
+在继续之前，请确保您已完成本文档的前一个
+xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry]
+部分。这是本节正常工作所必需的。
+
+====
+
+
+跟踪让您收集有关策略评估的详细信息。它可以帮助您调试 {project-name} 部署和策略中的问题。
+
+您使用 https://www.jaegertracing.io/[Jaeger] -- 来接收、存储和可视化跟踪事件。
+
+== 安装 Jaeger
+
+您使用 https://github.com/jaegertracing/jaeger-operator[Jaeger Operator] 来管理所有不同的 Jaeger 组件。您可以使用 Helm 图表安装 Jaeger Operator。
+
+[NOTE]
+====
+
+在撰写本文时（2022-06-21），只有特定版本的 Jaeger 与 Cert Manager 兼容，https://github.com/jaegertracing/helm-charts/blob/main/charts/jaeger-operator/COMPATIBILITY.md[请参阅兼容性图表]。
+
+====
+
+要安装 Helm 图表：
+
+[subs="+attributes",console]
+----
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+
+helm upgrade -i --wait \
+  --namespace jaeger \
+  --create-namespace \
+  --version 2.49.0 \
+  jaeger-operator jaegertracing/jaeger-operator \
+  --set rbac.clusterRole=true
+----
+
+[CAUTION]
+====
+
+这*不适合生产部署*。您应该查阅 Jaeger 的 https://www.jaegertracing.io/docs/latest/kubernetes/[官方文档]。
+
+====
+
+要创建 Jaeger 资源：
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: my-open-telemetry
+  namespace: jaeger
+spec: {}
+EOF
+----
+
+在创建 Jaeger Operator 资源后，您在 `my-open-telemetry-collector.jaeger.svc.cluster.local` 下有一个服务。Jaeger 查询 UI 由 `my-open-telemetry-query` 服务在 `jaeger` 名称空间中公开。
+
+== 安装 {short-project-name}
+
+现在您可以按照通常的方式继续部署 {short-project-name}。
+
+[NOTE]
+====
+
+`cert-manager` 是 OpenTelemetry 的要求，但您已经在本文档的前一部分中安装了它。
+
+====
+
+作为第一步，您添加包含 {short-project-name} 的 Helm 储存库：
+
+[subs="+attributes",console]
+----
+helm repo add kubewarden https://charts.kubewarden.io
+----
+
+然后您安装由 {short-project-name} 定义的自定义资源定义（CRDs）：
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  kubewarden-crds kubewarden/kubewarden-crds
+----
+
+现在您可以部署其余的 {short-project-name} 堆栈。官方的 `kubewarden-defaults` helm 图表创建一个名为 `default` 的 PolicyServer。您希望此 PolicyServer 实例启用跟踪。
+
+为此，您需要为 `kubewarden-controller` 图表指定一些额外的值。您应该创建一个 `values.yaml` 文件，包含以下内容：
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  mode: sidecar
+  tracing: True
+  sidecar:
+    tracing:
+      jaeger:
+        endpoint: "my-open-telemetry-collector.jaeger.svc.cluster.local:4317"
+        tls:
+          insecure: true
+----
+
+[CAUTION]
+====
+
+为了简单起见，OpenTelemetry 收集器与 Jaeger 端点之间的通信没有加密。
+
+再一次，这对生产部署来说是 *不合适的*。请参考 Jaeger 的 https://www.jaegertracing.io/docs/latest/kubernetes/[官方文档]。
+
+====
+
+然后您可以继续安装 helm 图表：
+
+[subs="+attributes",console]
+----
+helm install --wait --namespace kubewarden --create-namespace \
+  --values values.yaml \
+  kubewarden-controller kubewarden/kubewarden-controller
+
+helm install --wait --namespace kubewarden --create-namespace \
+  kubewarden-defaults kubewarden/kubewarden-defaults
+----
+
+这会创建 `PolicyServer` 的 `default` 实例：
+
+[subs="+attributes",console]
+----
+kubectl get policyservers.policies.kubewarden.io
+NAME      AGE
+default   3m7s
+----
+
+仔细查看运行 PolicyServer 实例的 Pod，您会看到它有两个容器。`policy-server` 和 OpenTelemetry Collector 边车 `otc-container`。
+
+== 强制执行策略
+
+您首先通过部署 https://github.com/kubewarden/safe-labels-policy[安全标签] 策略开始。
+
+您希望仅在具有标签 `environment` 且值为 `production` 的名称空间中强制执行该策略。
+
+对于具有此类标签的名称空间：
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-alpha-prod
+  labels:
+    environment: production
+EOF
+----
+
+接下来，您可以定义一个ClusterAdmissionPolicy：
+
+[subs="+attributes",yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: safe-labels
+spec:
+  module: registry://ghcr.io/kubewarden/policies/safe-labels:v0.1.6
+  settings:
+    mandatory_labels:
+    - owner
+  rules:
+    - apiGroups:
+        - apps
+      apiVersions:
+        - v1
+      resources:
+        - deployments
+      operations:
+        - CREATE
+        - UPDATE
+  namespaceSelector:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values: ["production"]
+  mutating: false
+EOF
+----
+
+您需要等待该策略变为活动状态：
+
+[subs="+attributes",console]
+----
+kubectl wait --for=condition=PolicyActive clusteradmissionpolicy/safe-labels
+----
+
+一旦该策略处于活动状态，您可以尝试它：
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: team-alpha-prod
+  labels:
+    owner: octocat
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+EOF
+----
+
+该策略允许创建此部署资源，因为它不违反该策略。
+
+该策略阻止此部署资源：
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-without-labels
+  namespace: team-alpha-prod
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+EOF
+----
+
+该策略在另一个名称空间中未被强制执行。
+
+此命令创建一个名为 `team-alpha-staging` 的新名称空间：
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-alpha-staging
+  labels:
+    environment: staging
+EOF
+----
+
+该策略允许在 `team-alpha-staging` 名称空间中创建没有任何标签的部署资源：
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-without-labels
+  namespace: team-alpha-staging
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+EOF
+----
+
+如预期的那样，此资源已成功创建。
+
+== 探索Jaeger UI
+
+您可以看到PolicyServer实例发送到Jaeger的跟踪事件，因为UI中列出了一个新服务`kubewarden-policy-server`：
+
+image::jaeger-ui-home.png[Jaeger 仪表板]
+
+Jaeger 收集器正在接收由您的 PolicyServer 生成的跟踪。
+
+如果您在之前的指南中安装了 Traefik，请使用此 `Ingress` 公开 Jaeger 查询 UI：
+
+[,yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-open-telemetry-query
+  namespace: jaeger
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-open-telemetry-query
+                port:
+                  number: 16686
+EOF
+----
+
+要通过 Traefik 访问 Jaeger UI，请运行：
+
+[,console]
+----
+kubectl -n traefik port-forward service/traefik 8080:80
+----
+
+然后转到 `\http://localhost:8080`。
+
+如果您更喜欢绕过 Traefik，请直接访问 Jaeger：
+
+[,console]
+----
+kubectl -n jaeger port-forward service/my-open-telemetry-query 16686
+----
+
+然后转到 `\http://localhost:16686`。

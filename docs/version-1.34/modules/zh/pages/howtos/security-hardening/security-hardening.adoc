@@ -1,0 +1,73 @@
+include::partial$variables.adoc[]
+= 安全强化
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: 安全强化
+:sidebar_position: 50
+:description: 使用安全强化提示和最佳实践来保护{project-name}，以减轻威胁。
+:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: HOWTO
+:doc-topic: 操作手册，安全
+
+{project-name} 力求在最简配置下确保安全。在本节及其子页面中，您可以找到安全强化提示（及其权衡）来保护{short-project-name}本身。
+
+请参考xref:/reference/threat-model.adoc[威胁模型]以获取更多信息。
+
+== `kubewarden-defaults` Helm图表
+
+操作员可以通过安装所有{short-project-name} Helm图表来获得安全部署。建议安装`kubewarden-defaults` Helm图表并启用其推荐的策略：
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=protect
+----
+
+这提供了一个默认的PolicyServer和默认策略，在保护模式下，确保{short-project-name}堆栈免受其他工作负载的影响。
+
+== 验证{short-project-name}工件
+
+请参考xref:/tutorials/verifying-kubewarden.adoc[验证{short-project-name}]教程。
+
+== RBAC
+
+{short-project-name} 描述了在不同 _说明_部分中的 RBAC 配置。用户可以微调xref:/explanations/audit-scanner/audit-scanner.adoc#_permissions_and_serviceaccounts[审计扫描器]功能所需的权限，以及xref:/explanations/context-aware-policies.adoc[每个策略服务器]服务帐户的上下文感知功能。
+
+查看所有角色：
+
+[source,console]
+----
+kubectl get clusterroles,roles -A | grep kubewarden
+----
+
+== 每个策略的权限
+
+对于上下文感知策略，操作员在其`spec.contextAwareResources`下为每个策略指定细粒度权限，这些权限与为策略服务器配置的服务帐户协同工作。
+
+== 工作负载覆盖
+
+默认情况下，{short-project-name}排除特定名称空间的{short-project-name}覆盖。这样做是为了简化首次使用和与其他工作负载的互操作性。
+
+注重安全的操作员可以通过设置`.global.skipNamespaces`值来调整`kubewarden-controller`和`kubewarden-defaults` Helm图表的名称空间列表。
+
+== Pod 安全准入
+
+从1.23开始，{short-project-name}的堆栈能够在一个名称空间中运行，该名称空间中实施了https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted[`restricted`Pod安全标准]，并遵循当前的 Pod安全强化最佳实践。
+
+为此，您需要将`pod-security.kubernetes.io/enforce: restricted`标签添加到{short-project-name}部署名称空间。
+
+```console
+kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
+```
+
+请参阅 Kubernetes Pod安全准入 的https://kubernetes.io/docs/concepts/security/pod-security-admission/[官方文档]以了解更多详细信息。
+
+=== SecurityContexts
+
+`kubewarden-controller` Helm图表配置了SecurityContexts并在其`values.yaml`中公开它们。
+
+`kubewarden-defaults` Helm图表允许在`.Values.policyServer.securityContexts`下配置默认的 PolicyServer `.spec.securityContexts`。
+
+对于由操作员管理的 PolicyServer，您可以通过它们的xref:/reference/CRDs.adoc#_policyserversecurity[`spec.securityContexts`]进行配置。

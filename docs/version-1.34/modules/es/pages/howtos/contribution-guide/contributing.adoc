@@ -1,0 +1,46 @@
+include::partial$variables.adoc[]
+= Contribuyendo a la documentación de {short-project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Contribuye a la documentación de {project-name} mediante mejoras al contenido existente, creación de nuevos temas y asistencia con la traducción.
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "contributing"]
+:sidebar_label: Contribuyendo a la documentación
+:sidebar_position: 2
+:current-version: {page-origin-branch}
+
+_{short-project-name} acoge sugerencias de mejora de todos los colaboradores, ya sean nuevos o experimentados._
+
+Puedes contribuir a la documentación de {short-project-name} mediante:
+
+* Mejorar el contenido existente
+* Crear nuevo contenido
+* (_Próximamente_) Ayudando con la traducción de la documentación
+
+== Introducción
+
+ifeval::["{build-type}" == "community"]
+
+Todo el mundo es bienvenido a sugerir cambios mediante la presentación de una solicitud de extracción. También puedes informar de un error o errata con la ayuda de un problema en GitHub al repositorio https://github.com/kubewarden/docs[`kubewarden/docs`].
+
+Para involucrarte con la documentación:
+
+* Familiarízate con el https://github.com/kubewarden/docs[repositorio de documentación] y el https://docusaurus.io/[generador de sitios estáticos].
+* Docusaurus utiliza la sintaxis Markdown y usa https://mdxjs.com/[MDX] como el analizador.
+* Entiende cómo xref:howtos/contribution-guide/suggesting-an-improvement.adoc[sugerir una mejora] y abrir una solicitud de extracción.
+
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+
+Todo el mundo es bienvenido a sugerir cambios mediante la presentación de una solicitud de extracción. También puedes informar de un error o errata con la ayuda de un problema en GitHub al repositorio https://github.com/rancher/kubewarden-product-docs[`rancher/kubewarden-product-docs`].
+
+Para involucrarte con la documentación:
+
+* Familiarízate con el https://github.com/rancher/kubewarden-product-docs[repositorio de documentación] y el https://antora.org/[generador de sitios estáticos].
+* Antora utiliza la sintaxis AsciiDoc.
+* Entiende cómo xref:howtos/contribution-guide/suggesting-an-improvement.adoc[sugerir una mejora] y abrir una solicitud de extracción.
+
+endif::[]

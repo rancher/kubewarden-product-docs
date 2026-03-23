@@ -1,0 +1,196 @@
+include::partial$variables.adoc[]
+
+= {project-name} vs OPA Gatekeeper
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:page-aliases: explanations/opa-comparison.adoc
+:description: Vergleichen Sie OPA Gatekeeper und das {project-name} Richtlinien-Management für Kubernetes-Umgebungen, um den besten Ansatz für Ihren Anwendungsfall zu bestimmen.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["explanations", "kubewarden-vs-opa_gatekeeper"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "Kubernetes", "opa gatekeeper", "vergleich"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+Diese Seite ist vom August 2023. Beide Projekte könnten sich seitdem weiterentwickelt haben.
+
+Wenn Sie feststellen, dass etwas fehlt oder ungenau ist, bitte
+https://github.com/kubewarden/docs/[melden Sie ein Problem] oder öffnen Sie einen PR über den Link
+am Ende der Seite.
+
+====
+
+Sowohl OPA Gatekeeper als auch Kubewarden, von dem {project-name} abgeleitet ist, sind Open-Source-Projekte und Teil der CNCF.
+
+Diese Tabelle bietet einen Vergleich zwischen OPA Gatekeeper und {short-project-name}. Themen, die weitere Informationen erfordern, haben Links zu weiterer Erklärung.
+
+|===
+| Funktion | OPA Gatekeeper | {short-project-name}
+
+| Validation
+| ✅
+| ✅
+
+| Mutation
+| ✅
+| ✅
+
+| Richtliniensprache <<_writing_policies,[1]>>
+| Rego
+| Rego, CEL, Go, Rust,...
+
+| Kontextbewusst <<_context_aware,[2]>>
+| ✅
+| ✅
+
+| Kubernetes-Integration <<_kubernetes_integration,[3]>>
+| clusterweite CRD
+| clusterweite und auf Namespace-Ebene befindliche CRDs
+
+| Richtlinienverteilung <<_policy_distribution,[4]>>
+| in Kubernetes CR eingebettet
+| Container-Registry oder in Kubernetes CR eingebettet (CEL)
+
+| CI/CD-Integration <<_cicd_integration,[5]>>
+| ✅
+| ✅
+
+| Richtliniendurchsetzungsmodi
+| verweigern, warnen
+| verweigern, warnen
+
+| Bereitstellungsmodus <<_deployment_mode,[6]>>
+| einzelner Evaluierungsserver
+| mehrere Evaluierungsserver
+
+| Hintergrundprüfungen <<_background_checks,[7]>>
+| ✅
+| ✅
+|===
+
+== Richtlinientypen
+
+Sowohl OPA Gatekeeper als auch Kubernetes können Validierungs- und Mutationsrichtlinien schreiben.
+
+Diese Richtlinien können auf jede Art von Kubernetes-Ressource abzielen, einschließlich benutzerdefinierter Ressourcen.
+
+== Richtlinien schreiben
+
+Sie schreiben OPA Gatekeeper-Richtlinien mit https://www.openpolicyagent.org/docs/latest/#rego[Rego]. Rego ist eine Abfragesprache, die vom Open Policy Agent-Projekt erstellt wurde.
+
+[IMPORTANT]
+====
+
+Sie können Rego nur verwenden, um Validierungsrichtlinien zu schreiben. Mutationsrichtlinien verwenden kein Rego, sondern ad-hoc Regeln, die in YAML definiert sind (siehe https://open-policy-agent.github.io/gatekeeper/website/docs/mutation[hier]).
+
+====
+
+
+Sie können {short-project-name} Richtlinien mit verschiedenen Paradigmen schreiben. Richtlinienautoren können sowohl traditionelle Programmiersprachen (wie Go, Rust und andere) als auch https://en.wikipedia.org/wiki/Domain-specific_language[domänenspezifische Sprachen] wie Rego und CEL verwenden. In {short-project-name} schreiben Sie validierende und mutierende Richtlinien auf die gleiche Weise.
+
+[CAUTION]
+====
+
+Das https://github.com/open-policy-agent/kube-mgmt[kube-mgmt] Open-Source-Projekt, das Teil des Open Policy Agent-Projekts ist, verwendet Rego.
+
+Trotz der Verwendung derselben Sprache sind für kube-mgmt geschriebene Richtlinien nicht mit OPA Gatekeeper kompatibel und umgekehrt.
+
+{short-project-name} kann Rego-Richtlinien verwenden, die sowohl für den Open Policy Agent als auch für OPA Gatekeeper geschrieben wurden. Weitere Informationen finden Sie xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[hier].
+
+====
+
+
+== Kontextbewusst
+
+Manchmal benötigt eine Richtlinie Daten über den aktuellen Zustand des Clusters, um eine Validierungs- oder Mutationsentscheidung zu treffen. Zum Beispiel könnte eine Richtlinie, die Ingress-Ressourcen validiert, wissen müssen, welche anderen Ingress-Ressourcen bereits im Cluster definiert sind, um sicherzustellen, dass keine Konflikte auftreten. {short-project-name} bezeichnet diese Richtlinien als "kontextbewusst".
+
+Sowohl OPA Gatekeeper als auch {short-project-name} unterstützen diese Arten von Richtlinien.
+
+Bei der Bereitstellung von OPA Gatekeeper entscheidet ein Kubernetes-Administrator, welche Art von Clusterdaten den Richtlinien zur Verfügung gestellt werden soll, wenn sie ausgewertet werden.
+
+Es ist wichtig zu betonen, wie diese Daten dann für alle bereitgestellten Richtlinien zugänglich sind.
+
+Wenn eine OPA Gatekeeper-Richtlinie beispielsweise Zugriff auf Kubernetes-Secrets benötigt, können auch alle anderen bereitgestellten Richtlinien diese Daten lesen.
+
+Umgekehrt bietet {short-project-name} einen granularen Zugriff auf Clusterressourcen.
+Jede Richtlinie hat nur Zugriff auf die Ressourcen, die der Kubernetes-Administrator angibt. Der Versuch, unbefugte Daten zu lesen, wird sofort blockiert und den Clusteradministratoren gemeldet.
+
+== Kubernetes-Integration
+
+OPA Gatekeeper hat eine clusterweite benutzerdefinierte Ressource, die die Definition von Richtlinien sowie deren Durchsetzung und Standort ermöglicht.
+
+{short-project-name} hat zwei verschiedene Arten von benutzerdefinierten Ressourcen, die zur Deklaration von Richtlinien verwendet werden. Eine arbeitet auf Cluster-Ebene, die andere auf Namespace-Ebene. Der Name der benutzerdefinierten Ressource auf Namespace-Ebene ist `AdmissionPolicy`.
+
+Richtlinien, die über eine `AdmissionPolicy` Ressource bereitgestellt werden, betreffen nur die Ressourcen, die innerhalb des Namensraums erstellt wurden, zu dem sie gehören. Deshalb können Sie nicht-administrativen Kubernetes-Nutzern die RBAC-Berechtigungen gewähren, die erforderlich sind, um `AdmissionPolicy` Ressourcen in den Namensräumen zu verwalten, auf die sie zugreifen können.
+
+Dies ermöglicht es Kubernetes-Administratoren, die mit Richtlinien verbundenen Arbeiten zu delegieren.
+
+== Richtlinienverteilung
+
+OPA Gatekeeper und {short-project-name} Richtlinien haben den Quellcode der Richtlinie (Rego für OPA Gatekeeper, CEL für {short-project-name}) in der benutzerdefinierten Ressource, die eine Richtlinie in Kubernetes definiert.
+
+Außerdem können {short-project-name} Richtlinien den Quellcode der Richtlinie verwalten wie Container-Images (für Rego, Go, Rust, ...). Sobald sie erstellt sind, werden sie als OCI-Artefakte in Container-Registries gepusht.
+
+Sie können {short-project-name} Richtlinien mit Container-Image-Tools wie `cosign` aus dem https://sigstore.dev[Sigstore-Projekt] signieren und verifizieren.
+
+Sie können {short-project-name} Richtlinien zwischen geografisch verteilten Container-Registries mit den traditionellen Werkzeugen und Prozessen verteilen, die für Container-Images übernommen wurden.
+
+== CI/CD-Integration
+
+Sowohl OPA Gatekeeper als auch {short-project-name} werden mit GitOps-Methoden verwaltet.
+
+Für OPA Gatekeeper gibt es jedoch eine Kopplung zwischen dem Rego-Code der Richtlinie und der benutzerdefinierten Ressource, die verwendet wird, um sie in Kubernetes bereitzustellen.
+Dies führt zu zusätzlichen Schritten in CI/CD-Pipelines.
+
+Rego hat https://www.openpolicyagent.org/docs/latest/policy-testing/[Testwerkzeuge], die die Erstellung von Unit-Testsuiten ermöglichen. Tests zu schreiben und sie in einer CI/CD-Pipeline auszuführen, ist entscheidend, um sicherzustellen, dass Richtlinien wie erwartet funktionieren.
+
+Um diese Testwerkzeuge zu verwenden, muss der Quellcode der Richtlinie in speziellen Textdateien verfügbar sein. Es ist unmöglich, den Quellcode aus den YAML-Dateien zu lesen, die verwendet werden, um die OPA Gatekeeper-Richtlinie zu deklarieren. Die CI/CD-Pipeline muss den Rego-Quellcode synchronisieren, um mit dem Code zu testen, der in der OPA Gatekeeper benutzerdefinierten Ressource definiert ist. Sie können dies mit Drittanbieter-Tools tun.
+
+{short-project-name} Richtlinien haben CI/CD-Pipelines wie traditionelle Microservices.
+In der Regel befindet sich der Quellcode in einem Git-Repository, und dann werden mit traditionellen CI/CD-Systemen Unit-Tests dagegen ausgeführt. Sie schreiben Unit-Tests mit den Testframeworks der Sprache, die zur Erstellung der Richtlinie verwendet wird. Sobald alle Tests bestanden sind, kompilieren Sie die Richtlinie zu WebAssembly und laden Sie sie in eine Container-Registry hoch. Diese Art von Pipeline wird normalerweise vom Autor der Richtlinie gewartet.
+
+Kubernetes-Administratoren warten typischerweise andere Automatisierungspipelines, die auf neue Versionen der Richtlinie reagieren (unter Verwendung von Automatisierungstools wie https://docs.github.com/en/code-security/dependabot/working-with-dependabot[Dependabot], https://www.mend.io/renovate/[Renovate bot], https://www.updatecli.io/[updatecli] und anderen) oder auf Änderungen an der Richtlinienkonfiguration.
+
+Die Pipeline testet die Richtlinie gegen verschiedene Arten von Anfragen. Sie können die Tests mit dem https://github.com/kubewarden/kwctl[`kwctl`] CLI-Tool durchführen, ohne dass ein laufender Kubernetes-Cluster erforderlich ist. Das `kwctl` CLI-Tool verwendet die gleiche Bewertungs-Engine, die auch vom {short-project-name} Stack verwendet wird, der in einem Kubernetes-Cluster bereitgestellt wird.
+
+== Richtliniendurchsetzungsmodi
+
+Sowohl OPA Gatekeeper als auch {short-project-name} können Richtlinien mit zwei verschiedenen Betriebsmodi bereitstellen:
+
+* `deny`: Verletzung einer Richtlinie lehnt die Anfrage ab
+* `warn`: Verletzung einer Richtlinie führt nicht zur Ablehnung und wird protokolliert
+
+== Bereitstellungsmodus
+
+Der gleiche Server bewertet alle OPA Gatekeeper-Richtlinien. Im Gegensatz dazu erlaubt {short-project-name} die Definition mehrerer Bewertungsserver. Sie definieren diese Server durch eine benutzerdefinierte Ressource namens `PolicyServer`.
+
+Bei der Deklaration einer {short-project-name} Richtlinie entscheidet der Kubernetes-Administrator, welcher `PolicyServer` sie hostet.
+
+[NOTE]
+====
+
+Das `PolicyServer` Objekt ist eine Abstraktion auf hoher Ebene, die von {short-project-name} eingeführt wurde.
+Hinter den Kulissen wird ein `Deployment` mit einer bestimmten Replikatgröße erstellt.
+
+Jede `PolicyServer` kann eine andere Replikatgröße als die anderen haben.
+
+====
+
+Dies ermöglicht interessante Szenarien wie die folgenden:
+
+* Stellen Sie kritische Richtlinien auf einem dedizierten Policy-Server-Pool bereit.
+* Stellen Sie die Richtlinien eines lärmenden Mandanten auf einem dedizierten Policy-Server-Pool bereit.
+
+== Hintergrundprüfungen
+
+Da Richtlinien hinzugefügt, entfernt und neu konfiguriert werden, könnten die bereits im Cluster vorhandenen Ressourcen nicht mehr konform sein.
+
+Sowohl OPA Gatekeeper als auch {short-project-name} verfügen über einen Scanner, der im Hintergrund arbeitet. Dieser Scanner bewertet bereits im Cluster definierte Ressourcen und kennzeichnet nicht konforme Ressourcen.
+
+Der einzige Unterschied zwischen OPA Gatekeeper und {short-project-name} besteht darin, wie die Scannergebnisse gespeichert werden.
+
+OPA Gatekeeper fügt die Details zu Verstößen dem `status`-Feld einer gegebenen `Constraint`-benutzerdefinierten Ressource hinzu (siehe https://open-policy-agent.github.io/gatekeeper/website/docs/audit#constraint-status[hier]).
+
+{short-project-name} speichert stattdessen die Ergebnisse in einer Sammlung der von https://openreports.io[openreports.io] definierten benutzerdefinierten Reports-Ressourcen.

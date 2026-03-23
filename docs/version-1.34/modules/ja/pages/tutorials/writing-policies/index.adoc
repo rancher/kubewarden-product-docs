@@ -1,0 +1,48 @@
+include::partial$variables.adoc[]
+= {project-name}ポリシーの作成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 特定のAPIを介して明確に定義された機能を公開することで、アドミッションコントローラーポリシーを開発します。サポートされている任意のプログラミング言語を使用できます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "ポリシーの作成"]
+:sidebar_label: ポリシーの作成
+:current-version: {page-origin-branch}
+
+このセクションでは、従来のコンピューティングの類推を使用して{project-name}ポリシーを紹介します。
+
+{short-project-name}ポリシーは、一つの仕事を行うプログラムのようなものです。
+入力データを受け取り、そのデータで計算を行い、結果を返します。
+
+入力データはKubernetesのアドミッションリクエストです。
+計算の結果は検証応答であり、Kubernetesに対して入力データ（アドミッションリクエスト）を受け入れるか、拒否するか、または変更するかを伝えます。
+
+https://github.com/kubewarden/policy-server[policy-server]{short-project-name}のコンポーネントは、これらの操作を実行します。
+
+ポリシーサーバーには、データ処理機能は含まれていません。
+ランタイムでアドオンを使用して処理機能を追加します。
+これらのアドオンが{short-project-name}ポリシーです。
+
+したがって、{short-project-name}ポリシーは「ポリシーサーバー」プログラムのhttps://en.wikipedia.org/wiki/Plug-in_%28computing%29[従来のプラグイン]のようなものです。
+
+まとめ:
+
+* {short-project-name}ポリシーは、明確に定義されたAPIを使用して、Kubernetesリクエストオブジェクトの検証、ユーザーが提供したポリシー設定の検証、その他の機能を公開するプラグインです。
+* ポリシーサーバーは、プラグイン（別名ポリシー）を読み込み、それらの公開された機能を使用してKubernetesリクエストを受け入れ、拒否し、または変更する「メイン」プログラムです。
+
+{short-project-name}ポリシーの作成は、検証ビジネスロジックを書くことと、それを明確に定義されたAPIを介して公開することから成ります。
+
+== プログラミング言語の要件
+
+{short-project-name}ポリシーをhttps://webassembly.org/[WebAssembly]バイナリとして提供します。
+
+ポリシーの著者は、WebAssemblyをコンパイルターゲットとしてサポートする任意のプログラミング言語を使用してポリシーを作成できます。
+サポートされている言語のリストは常に進化しており、https://github.com/appcypher/awesome-wasm-langs[このページ]はWebAssemblyの全体像を提供しています。
+
+現在、WebAssemblyにはホストとWebAssemblyゲスト間で複雑なデータ型を共有する公式な方法がありません。
+この制限を克服するために、{short-project-name}ポリシーはhttps://github.com/wapc[waPC]プロジェクトを使用しており、双方向通信チャネルを提供します。
+
+したがって、選択したプログラミング言語には利用可能なwaPCゲストSDKが必要です。
+もしそうでない場合は、お気軽にお問い合わせください。
+プロジェクトチームは、この制限を克服する手助けをすることができます。

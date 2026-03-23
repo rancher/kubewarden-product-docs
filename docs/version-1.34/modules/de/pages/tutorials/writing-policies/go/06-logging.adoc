@@ -1,0 +1,75 @@
+include::partial$variables.adoc[]
+= Protokollierung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie die Logger-Initialisierung für strukturiertes Logging in Ihrer Richtlinie mithilfe der Go SDK-Integration des oneLog-Projekts.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "logging"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "golang", "go", "logging"]
+:current-version: {page-origin-branch}
+
+Das Go SDK integriert sich fast ohne Anpassungen in das
+https://github.com/francoispqt/onelog[`onelog`]
+Projekt.
+// TODO: Last release 2019. Still good?
+
+Das Projekt hat sich für diese Bibliothek entschieden:
+
+* Es funktioniert mit WebAssembly-Binärdateien.
+Andere beliebte Logging-Lösungen können nicht für WebAssembly kompiliert werden.
+* Es bietet https://github.com/francoispqt/onelog#benchmarks[gute Leistung].
+* Es unterstützt strukturiertes Logging.
+
+== Logger initialisieren
+
+Sie müssen eine Logger-Struktur initialisieren.
+Durch die Durchführung dieser Initialisierung in einer globalen Variablen können Sie von den beiden Hauptzugangspunkten der Richtlinie protokollieren: `validate` und
+`validate_settings`.
+
+Im Hauptpaket `main.go` gibt es eine Initialisierung für den Logger:
+
+[,go]
+----
+var (
+    logWriter = kubewarden.KubewardenLogWriter{}
+    logger    = onelog.New(
+        &logWriter,
+        onelog.ALL, // shortcut for onelog.DEBUG|onelog.INFO|onelog.WARN|onelog.ERROR|onelog.FATAL
+    )
+)
+----
+
+== Logger verwenden
+
+Jetzt können Sie das `logger`-Objekt verwenden, um in Ihrer Richtlinie von überall zu protokollieren:
+
+[,go]
+----
+func validate(payload []byte) ([]byte, error) {
+    // ...
+    logger.Info("validating request")
+    // ...
+}
+----
+
+Sie können strukturiertes Logging hinzufügen:
+
+[,go]
+----
+func validate(payload []byte) ([]byte, error) {
+    // ...
+    logger.WarnWithFields("logging something important", func(e onelog.Entry) {
+        e.String("one_field", "a value")
+        e.String("another_field", "another value")
+    })
+    // ...
+}
+----
+
+Weitere Informationen finden Sie in der
+https://pkg.go.dev/github.com/francoispqt/onelog?utm_source=godoc[`onelog` Dokumentation]
+.
+
+Das Protokollieren der Richtlinie erfolgt an die Richtlinienauswerter (zum Beispiel `kwctl` oder `policy-server`) und diese protokollieren im Namen der Richtlinie.
+Sie verwenden Mechanismen, die mit anderen Komponenten interoperabel sind, die verteiltes Tracing ermöglichen, wie zum Beispiel https://www.jaegertracing.io/[Jaeger].

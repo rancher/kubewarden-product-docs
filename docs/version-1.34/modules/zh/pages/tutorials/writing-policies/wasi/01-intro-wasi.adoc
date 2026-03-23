@@ -1,0 +1,135 @@
+include::partial$variables.adoc[]
+= WASI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 编写与系统原语交互的WASI策略，当Go编译器的限制阻止使用waPC通信机制时。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "wasi"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "wasi"]
+:sidebar_label: WASI
+:current-version: {page-origin-branch}
+
+https://wasi.dev/[WebAssembly系统接口（WASI）]是一个WebAssembly标准，提供一组接口，允许在浏览器外执行WebAssembly。
+
+[CAUTION]
+====
+
+编写常规策略的作者不应使用普通的WASI系统接口来编写策略。
+
+此页面适用于{project-name}维护者或希望在前沿WASM平台上进行实验的低级策略作者。
+====
+
+
+使用WASI，您可以拥有一个与系统原语交互的WebAssembly模块，如STDOUT、STDERR、STDIN、环境变量等。
+
+许多用于编译{short-project-name}策略的编译器生成针对WASI接口的WebAssembly模块。
+然而，{short-project-name}策略使用https://github.com/wapc[waPC]项目在策略与策略运行时（`kwctl`或`policy-server`）之间实现双向通信。{short-project-name}通信协议的使用在xref:reference/spec/01-intro-spec.adoc[这里]进行了描述。
+
+在某些特殊情况下，waPC项目尚不可用。
+在这些情况下，您可以使用WASI提供的接口编写策略。
+
+[IMPORTANT]
+====
+
+{short-project-name}支持从{short-project-name} 1.7.0版本开始的WASI策略。
+====
+
+
+== 局限性
+
+在正常情况下，您不应使用WASI策略，因为它们在评估时的性能低于waPC/Rego策略。
+
+[NOTE]
+====
+
+策略与主机之间的双向通信可以实现，但需要在语言SDK内部进行更改。这对于使用xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[主机能力]和编写xref:/explanations/context-aware-policies.adoc[上下文感知]策略是必需的。
+
+目前，只有{short-project-name} Go 和 JavaScript/TypeScript SDK 将其暴露给 WASI 策略。
+
+如果您对此感兴趣，请与我们联系。然后我们可以优先考虑这项工作。
+
+====
+
+
+== 使用案例
+
+编写"普通WASI"策略的唯一原因是当您无法使用waPC通信机制时。
+
+目前（截至2023年6月），这样做的唯一好理由是使用官方的Go编译器生成WebAssembly模块。
+
+从1.21版本开始，官方的Go编译器能够生成针对WASI接口的WebAssembly模块。
+然而，这些模块尚不能向WebAssembly运行时导出函数。
+这个限制，由https://github.com/golang/go/issues/42372[这个专门的问题]跟踪，阻碍了waPC协议的采用。
+
+{short-project-name}项目团队建议您使用TinyGo编译器编写{short-project-name} Go策略，如xref:tutorials/writing-policies/go/01-intro-go.adoc[这里]所述。
+
+然而，某些复杂的Go代码库无法使用TinyGo编译器进行编译。
+这包括例如像https://github.com/google/cel-go[CEL-go]或https://github.com/kyverno/kyverno/[Kyverno]这样的代码库。
+在这种情况下，使用官方的Go编译器可以提供帮助。
+
+== 通信协议
+
+本节描述如何编写一个普通的WASI策略。
+
+您需要将代码编写为常规CLI程序。
+该程序必须接受以下子命令：
+
+* `validate`：此命令由策略引擎调用以评估入场请求。
+* `validate-settings`：此命令由策略引擎调用以验证策略设置。
+
+在这两种情况下，要验证的数据通过STDIN提供。
+策略必须通过STDOUT提供答案。
+您可以使用STDERR进行调试或错误消息。
+
+=== Validation
+
+请求的验证发生在使用`validate`子命令调用策略CLI程序时。
+
+STDIN必须包含描述`ValidationRequest`对象的JSON文档。
+策略必须向STDOUT写入包含`ValidationResponse`对象的JSON文档。
+
+`ValidationRequest`和`ValidationResponse`对象的描述见xref:reference/spec/03-validating-policies.adoc[这里]。
+
+=== 变异
+
+变异策略的工作方式与验证策略相同。
+策略CLI程序使用`validate`子命令调用。
+
+STDIN必须包含描述`ValidationRequest`对象的JSON文档。
+该策略必须向STDOUT写入一个包含`ValidationResponse`对象的JSON文档。
+
+`ValidationRequest`和`ValidationResponse`对象的描述见xref:reference/spec/03-validating-policies.adoc[这里]。
+
+当需要变异时，`ValidationResponse`对象必须有一个键`mutated_object`，包含要创建的对象。
+该过程的描述见xref:reference/spec/04-mutating-policies.adoc[这里]。
+
+== 上下文感知
+
+目前仅通过Go SDK支持。Go SDK像往常一样公开上下文感知能力，更多信息请见xref:explanations/context-aware-policies.adoc[这里]。
+
+作为WASI Go上下文感知策略的示例，请参见https://github.com/kubewarden/go-wasi-context-aware-test-policy[go-wasi-context-aware-test-policy]。
+
+=== 设置验证
+
+该策略必须提供一个名为`validate-settings`的子命令。
+该命令用于验证用户提供的设置。
+
+程序必须在STDIN接收一个包含用户提供的设置的JSON对象。
+然后它验证这些设置并向STDOUT写入一个`SettingsValidationResponse`对象。
+
+`SettingsValidationResponse`的格式和设置验证过程的描述见xref:reference/spec/02-settings.adoc[这里]。
+
+== 策略元数据
+
+每个{short-project-name}策略必须通过`kwctl annotate`命令进行注释。
+普通WASI策略的策略元数据必须具有此值：
+
+[subs="+attributes",yaml]
+----
+executionMode: wasi
+----
+
+== 模板项目
+
+https://github.com/kubewarden/go-wasi-policy-template[这个 GitHub 储存库] 包含一个基于 Go 的使用 WASI 协议的策略模板。

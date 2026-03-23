@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= Escáner de Auditoría - Limitaciones
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende sobre las limitaciones al usar el Escáner de Auditoría para evaluar directivas y tipos de eventos en un entorno de Kubernetes, incluyendo su uso para la evaluación de directivas y tipos de eventos.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner", "limitations"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "audit scanner"]
+:sidebar_label: limitaciones
+:current-version: {page-origin-branch}
+
+== Tipos de eventos soportados
+
+Las directivas pueden inspeccionar `CREATE`, `UPDATE` y `DELETE` eventos.
+
+El escáner de auditoría no puede simular eventos de `UPDATE`, ya que no sabe qué parte del recurso requiere cambios.
+
+Por lo tanto, el escáner de auditoría ignora una directiva que solo se ocupa de eventos de `UPDATE`.
+
+[NOTE]
+====
+
+La versión 1.7.0 del escáner de auditoría solo soporta eventos de `CREATE`. El manejo de eventos de `DELETE` llegará pronto.
+
+====
+
+
+== Directivas que dependen de la información del usuario y del grupo de usuario
+
+Cada objeto de solicitud de admisión de Kubernetes tiene información sobre qué usuario (o ServiceAccount) inició el evento y a qué grupo pertenece.
+
+Todos los eventos simulados por el escáner de auditoría provienen del mismo usuario y grupo codificados de forma fija. Debido a eso, las directivas que dependen de estos valores para tomar sus decisiones no producirán resultados significativos.
+
+Para estos casos, configura la directiva como no auditable.
+
+== Directivas que dependen de datos externos
+
+Las directivas pueden solicitar y usar datos externos al realizar una evaluación. Puedes evaluar estas directivas con las comprobaciones de auditoría, pero sus resultados pueden cambiar dependiendo de los datos externos.
+
+== Uso de `*` por directivas
+
+Tanto los recursos personalizados `AdmissionPolicy` como `ClusterAdmissionPolicy` tienen los siguientes campos:
+
+[subs="+attributes",yaml]
+----
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+----
+
+Los atributos `apiGroups`, `apiVersions` y `resources` pueden utilizar el comodín `*`. Este símbolo de comodín hace que la directiva coincida con todos los valores utilizados en el campo. El escáner de auditoría ignora las directivas que utilizan el símbolo `*`.

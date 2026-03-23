@@ -1,0 +1,51 @@
+include::partial$variables.adoc[]
+= Erstellen und Verteilen von Richtlinien
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Befolgen Sie diese wesentlichen Schritte, um Richtlinien effektiv für Ihr {project-name}-Setup zu erstellen und zu verteilen.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Richtlinien schreiben", "rust", "build-and-distribute"]
+:sidebar_label: Erstellen und Verteilen von Richtlinien
+:current-version: {page-origin-branch}
+
+== Erstellen der Richtlinie
+
+Bisher haben Sie die Richtlinie mit einem Kompilierungsziel erstellt, das dasselbe Betriebssystem und dieselbe Architektur Ihrer Entwicklungsmaschine verwendet.
+
+Es ist jetzt an der Zeit, die Richtlinie als WebAssembly-Binärdatei, eine `.wasm`-Datei, zu erstellen.
+
+Sie verwenden den Befehl:
+
+[subs="+attributes",console]
+----
+make policy.wasm
+----
+
+Dieser Befehl erstellt den Code im Release-Modus mit einem WebAssembly-Kompilierungsziel.
+
+Der Build erzeugt eine `policy.wasm`-Datei:
+
+[subs="+attributes",console]
+----
+$ file policy.wasm
+policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
+----
+
+== Verteilen der Richtlinie
+
+{project-name} dokumentiert die Verteilung von Richtlinien im
+xref:../../../explanations/distributing-policies.adoc[Verteilen von Richtlinien]
+Abschnitt.
+
+== Weitere Beispiele
+
+Sie finden weitere Rust {short-project-name}-Richtlinien im GitHub-Bereich von {short-project-name}.
+https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Diese Abfrage]
+kann Ihnen helfen, sie zu finden.
+
+Die {short-project-name}-Richtlinien-Repositories, die durch diese Abfrage angezeigt werden, haben GitHub-Aktionen, die die folgenden Aufgaben automatisieren:
+
+* Führen Sie Unit-Tests und Code-Linting bei Pull-Requests und nach Code-Merges in den Hauptzweig aus.
+* Erstellen Sie die Richtlinie im `release`-Modus und pushen Sie sie als Artefakt in eine OCI-Registry.

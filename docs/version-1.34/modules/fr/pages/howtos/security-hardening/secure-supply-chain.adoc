@@ -1,0 +1,625 @@
+include::partial$variables.adoc[]
+= Chaîne d'approvisionnement sécurisée
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez {project-name} pour valider l'intégrité des signatures des artefacts et des stratégies d'admission.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["politiques-de-distribution", "chaîne-d'approvisionnement-sécurisée"]
+:doc-type: ["howto"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "chaîne d'approvisionnement sécurisée", "infrastructure"]
+:sidebar_label: Chaîne d'approvisionnement sécurisée
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+Une infrastructure de chaîne d'approvisionnement sécurisée peut vérifier la validité de ses composants ou liens. Elle permet aux utilisateurs et aux développeurs de démontrer la traçabilité de ses composants logiciels ou artefacts. C'est une approche active pour atténuer les problèmes de sécurité.
+
+Le projet https://sigstore.dev/[Sigstore] fournit des outils et une infrastructure pour cela. C'est pour valider l'intégrité de la chaîne d'approvisionnement des artefacts.
+
+{short-project-name} utilise https://github.com/sigstore/cosign[`cosign`] avec l'infrastructure https://github.com/SigStore/fulcio[fulcio] et https://github.com/sigstore/rekor[rekor] offerte par le projet Sigstore.
+
+Les opérateurs de cluster peuvent configurer {project-name} pour n'exécuter que des stratégies signées par des entités de confiance. Les développeurs de stratégies peuvent signer leurs stratégies et les publier dans un registre.
+
+== Conditions préalables
+
+Dans les sections suivantes, vous devez installer quelques outils. C'est pour que les utilisateurs puissent signer et vérifier les signatures des artefacts OCI. Les exemples montrent l'utilisation des utilitaires https://docs.sigstore.dev/quickstart/quickstart-cosign/[`cosign`] et https://github.com/kubewarden/kwctl[`kwctl`] pour signer et inspecter les stratégies.
+
+Pour utiliser GitHub pour signer des stratégies, vous devez installer https://docs.sigstore.dev/cosign/system_config/installation/#github-actions[actions GitHub].
+
+La signature sans clé utilise les instances par défaut https://github.com/SigStore/fulcio[fulcio] et https://github.com/sigstore/rekor[rekor] fournies par le projet Sigstore. Consultez la documentation de Sigstore pour des détails sur l'utilisation de votre propre infrastructure pour cela, si nécessaire.
+
+== Signature des stratégies
+
+{short-project-name} recommande d'utiliser l'utilitaire https://github.com/sigstore/cosign[cosign] de Sigstore pour signer les stratégies. Cette section montre une méthode de signature de stratégies basée sur des clés. Vous devez générer une paire de clés privée-publique pour cela. Les clés générées aident à vérifier si les artefacts signés proviennent de l'utilisateur attendu. Pour générer cette paire de clés, utilisez cette commande `cosign generate-key-pair` :
+
+[subs="+attributes",bash]
+----
+cosign generate-key-pair
+----
+
+Ce qui entraîne une invite pour taper et vérifier un mot de passe :
+
+[subs="+attributes",console]
+----
+Enter password for private key: ●●●●●●●●
+Enter password for private key again: ●●●●●●●●
+Private key written to cosign.key
+Public key written to cosign.pub
+----
+
+Vous pouvez maintenant utiliser cette clé pour signer des stratégies.
+
+Ne partagez pas le fichier de clé privée, `cosign.key`. C'est un fichier secret à utiliser uniquement par le propriétaire de la clé pour signer des stratégies.
+
+Pour signer une stratégie, vous pouvez utiliser `cosign sign` en passant l'argument de ligne de commande `--key` avec votre fichier de clé privée :
+
+[subs="+attributes",bash]
+----
+cosign sign --key cosign.key ghcr.io/kubewarden/policies/user-group-psp:latest
+----
+
+Ce qui entraîne une invite pour le mot de passe, pour la clé privée spécifiée :
+
+[subs="+attributes",console]
+----
+an error occurred: no provider found for that key reference, will try to load key from disk...
+Enter password for private key: ●●●●●●●●
+Pushing signature to: ghcr.io/kubewarden/policies/user-group-psp
+----
+
+Cette commande signe la stratégie en créant un nouvel objet de signature. L'objet de signature est ensuite téléchargé dans le registre, avec la stratégie. Maintenant, la stratégie est prête à être utilisée dans une installation {short-project-name} utilisant la vérification de signature.
+
+La même stratégie peut être signée plusieurs fois, par le même utilisateur ou par des utilisateurs différents. Ces signatures sont ajoutées à l'objet de signature avec la signature originale.
+
+Pour plus d'informations sur le fonctionnement du processus de signature, consultez la documentation du projet https://docs.sigstore.dev/[Sigstore].
+
+=== Signature sans clé
+
+Souvent, les stratégies sont automatiquement construites à l'aide de pipelines CI/CD. Cela complique le processus de génération de clés. Ce flux de travail sans clé de Sigstore est destiné à ces situations. Au lieu d'utiliser des clés de signature à long terme, le flux de travail sans clé utilise des autorités de certification (AC) et des chaînes de certificats.
+
+Vous liez la clé de certificat à durée de vie courte générée dans une chaîne de confiance. Cela se fait par un défi d'identité pour confirmer l'identité du signataire. La durée de vie de la clé de certificat est suffisamment longue pour que la signature ait lieu. Le défi d'identité se déroule en s'authentifiant auprès d'un fournisseur OpenID Connect (OIDC). L'infrastructure publique Fulcio de Sigstore fournit la chaîne de confiance.
+
+La signature utilise l'utilitaire cosign de Sigstore.
+
+[subs="+attributes",bash]
+----
+$ cosign sign ghcr.io/kubewarden/policies/user-group-psp:latest
+----
+
+.sortie de cosign
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+Generating ephemeral keys...
+Retrieving signed certificate...
+Your browser will now be opened to:
+https://oauth2.sigstore.dev/auth/auth?access_type=online&client_id=sigstore&code_challenge=<REDACTED>&code_challenge_method=S256&nonce=<REDACTED>&redirect_uri=http%3A%2F%2Flocalhost%3A34021%2Fauth%2Fcallback&response_type=code&scope=openid+email&state=<REDACTED>
+client.go:196: root pinning is not supported in Spec 1.0.19
+Successfully verified SCT...
+tlog entry created with index: 1819248
+Pushing signature to: ghcr.io/kubewarden/policies/user-group-psp
+----
+
+======
+
+Cela signe la stratégie et la pousse vers le dépôt. Aucune clé n'est générée comme sous-produit.
+
+=== Comment signer des artefacts dans les flux de travail GitHub
+
+Lors de l'utilisation de la signature sans clé, dans une action GitHub, `cosign` n'a pas besoin que l'utilisateur se connecte à un fournisseur OIDC. Un jeton GitHub est disponible pendant l'exécution du flux de travail GitHub. Il est utilisé pour authentifier l'utilisateur et générer les clés éphémères. Le processus de signature est le même que celui utilisé en mode sans clé. Ceci est un exemple de la façon dont le projet {short-project-name} signe ses stratégies :
+
+.YAML décrivant la signature des stratégies {short-project-name}.
+[%collapsible]
+======
+
+[,yaml]
+----
+# ... beginning of the workflow file ...
+jobs:
+  build:
+    name: Build container image
+    runs-on: ubuntu-latest
+    steps:
+      # ... other steps building the container image ...
+      -
+      name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ inputs.GITHUB_TOKEN }}
+      -
+      name: Publish Wasm policy artifact to OCI registry with the 'latest' tag
+      shell: bash
+      if: ${{ startsWith(github.ref, 'refs/heads/') }}
+      env:
+        COSIGN_EXPERIMENTAL: 1
+      run: |
+        set -ex
+        echo Pushing policy to OCI container registry
+        IMMUTABLE_REF=$(kwctl push -o json ${{ PATH_TO_BUILT_WASM_FILE }} ghcr.io/myorg/policies/my-great-policy:latest | jq -r .immutable_ref)
+        echo Keyless signing of policy using cosign
+        cosign sign ${IMMUTABLE_REF}
+      # ... other build steps ...
+
+# ... remainder of the workflow file ...
+----
+
+======
+
+[NOTE]
+====
+
+Les développeurs de stratégies peuvent utiliser les modèles de stratégies {short-project-name}. Ils ont des actions GitHub pour construire, tester, signer et publier des stratégies.
+
+====
+
+
+== Liste des signatures de stratégie
+
+Vous pouvez vérifier la signature dans une stratégie publiée avec `kwctl inspect`. Cela montre les informations sur la stratégie et ses signatures comme indiqué ci-dessous :
+
+.kwctl inspect registry://ghcr.io/kubewarden/policies/us....
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+$ kwctl inspect registry://ghcr.io/kubewarden/policies/user-group-psp:v0.2.0
+Details
+title:              psp-user-group
+description:        Short description
+author:             José Guilherme Vanz <jguilhermevanz@suse.com>
+url:                https://github.com/kubewarden/user-group-psp-policy
+source:             https://github.com/kubewarden/user-group-psp-policy
+license:            Apache-2.0
+mutating:           true
+context aware:      false
+execution mode:     kubewarden-wapc
+protocol version:   1
+
+Annotations
+io.kubewarden.kwctl 0.2.5-rc2
+
+Rules
+────────────────────
+---
+- apiGroups:
+    - ""
+  apiVersions:
+    - v1
+  resources:
+    - pods
+  operations:
+    - CREATE
+────────────────────
+
+Usage
+This policy enforce the user and group used in the container.
+
+Sigstore signatures
+
+Digest:                            sha256:026af67682a85d424e7d95db460171635f5c3957d67b53499bece912cc0413cc
+Media type:                        application/vnd.dev.cosign.simplesigning.v1+json
+Size:                              258
+Annotations
+dev.sigstore.cosign/certificate    -----BEGIN CERTIFICATE-----
+                                   MIIDRzCCAsygAwIBAgITbPUZlUFkkAHtbzc3rzC/3zXj1DAKBggqhkjOPQQDAzAq
+                                   MRUwEwYDVQQKEwxzaWdzdG9yZS5kZXYxETAPBgNVBAMTCHNpZ3N0b3JlMB4XDTIy
+                                   MDIyNTE2MzAwMloXDTIyMDIyNTE2NDAwMVowEzERMA8GA1UEChMIc2lnc3RvcmUw
+                                   WTATBgcqhkjOPQIBBggqhkjOPQMBBwNCAAR/O5c6ZI5BzBweoEIam4uWu5fqzHx0
+                                   3PTCgfXyyvIjorz9wX08bsndkHdWfFObU+PztbxX78An43Yw9/fHtO93o4IB5jCC
+                                   AeIwDgYDVR0PAQH/BAQDAgeAMBMGA1UdJQQMMAoGCCsGAQUFBwMDMAwGA1UdEwEB
+                                   /wQCMAAwHQYDVR0OBBYEFCP/v7NEJQglbDmyC5VMgnvhiuBUMB8GA1UdIwQYMBaA
+                                   FFjAHl+RRaVmqXrMkKGTItAqxcX6MHgGA1UdEQRxMG+GbWh0dHBzOi8vZ2l0aHVi
+                                   LmNvbS9rdWJld2FyZGVuL2dpdGh1Yi1hY3Rpb25zLy5naXRodWIvd29ya2Zsb3dz
+                                   L3JldXNhYmxlLXJlbGVhc2UtcG9saWN5LXJ1c3QueW1sQHJlZnMvaGVhZHMvdjEw
+                                   NgYKKwYBBAGDvzABAwQoMmJiMGQ4NjZjMzFmOGMyZTQ3NDMxMDI4M2ExNmFkMWFi
+                                   NjBlZjA1YjAuBgorBgEEAYO/MAEFBCBrdWJld2FyZGVuL3VzZXItZ3JvdXAtcHNw
+                                   LXBvbGljeTAcBgorBgEEAYO/MAEEBA5SZWxlYXNlIHBvbGljeTASBgorBgEEAYO/
+                                   MAECBARwdXNoMDkGCisGAQQBg78wAQEEK2h0dHBzOi8vdG9rZW4uYWN0aW9ucy5n
+                                   aXRodWJ1c2VyY29udGVudC5jb20wHgYKKwYBBAGDvzABBgQQcmVmcy90YWdzL3Yw
+                                   LjIuMDAKBggqhkjOPQQDAwNpADBmAjEAyGQbNCkOifStO7yCCfF8yXyc144ANn2x
+                                   Ty92WYC0pTaVhviOED47fgD6TncKf+92AjEAjBfjLmCG/Mwrh8t+gfHJEAWWEc9Q
+                                   +j9NR4wF66uABS/TTh5CYlrnIuqSD+GBHGwV
+                                   -----END CERTIFICATE-----
+dev.sigstore.cosign/timestamp      {"signatures":[{"keyid":"b6710623a30c010738e64c5209d367df1c0a18cf90e6ab5292fb01680f83453d","sig":"3046022100f666a7f4b3d85d8003f2c166e27827dfa0c4ab9282e9dab19485f4e702c61700022100dfe826e0edab5f80a40f08cc87b87777a4db30775d85684fe4950e797f2f565c"}],"signed":{"_type":"timestamp","spec_version":"1.0","version":15,"expires":"2022-03-08T19:14:05Z","meta":{"snapshot.json":{"length":1655,"hashes":{"sha256":"36cf063d0717f6dc03e23027721adcd69b684d293956d3a1a7db7b0848f711d7","sha512":"f90946d0a2dc58dae4505cfb91517a40299adf9e8719f52af187e2025aad69fcdeaeded271ec25db24869841c16fbe24f3fc56f56af8fdbb8808dccec4636b64"},"version":15}}}}
+dev.sigstore.cosign/bundle         {"SignedEntryTimestamp":"MEUCIEfu4qR+HsexSDk5h2QXMduvoRCX10J+4CLQWtYw5VD6AiEAyYCEjvJdv2Sr5tZ4LApnddH/4v+CoV1QkuvbCQ3iIUM=","Payload":{"body":"eyJhcGlWZXJzaW9uIjoiMC4wLjEiLCJraW5kIjoiaGFzaGVkcmVrb3JkIiwic3BlYyI6eyJkYXRhIjp7Imhhc2giOnsiYWxnb3JpdGhtIjoic2hhMjU2IiwidmFsdWUiOiIwMjZhZjY3NjgyYTg1ZDQyNGU3ZDk1ZGI0NjAxNzE2MzVmNWMzOTU3ZDY3YjUzNDk5YmVjZTkxMmNjMDQxM2NjIn19LCJzaWduYXR1cmUiOnsiY29udGVudCI6Ik1FWUNJUUNXNWZRZ1BUUTdaTlNuRkhzbHJOTlFrS2dTSVFpOGNSMTU5UEExc0s4VGlRSWhBSndMOWJPcUJKbVduN1lLZG9Tem80c2xPZ2s4SkJCanFYZHNydDNyeVF0QiIsInB1YmxpY0tleSI6eyJjb250ZW50IjoiTFMwdExTMUNSVWRKVGlCRFJWSlVTVVpKUTBGVVJTMHRMUzB0Q2sxSlNVUlNla05EUVhONVowRjNTVUpCWjBsVVlsQlZXbXhWUm10clFVaDBZbnBqTTNKNlF5OHplbGhxTVVSQlMwSm5aM0ZvYTJwUFVGRlJSRUY2UVhFS1RWSlZkMFYzV1VSV1VWRkxSWGQ0ZW1GWFpIcGtSemw1V2xNMWExcFlXWGhGVkVGUVFtZE9Wa0pCVFZSRFNFNXdXak5PTUdJelNteE5RalJZUkZSSmVRcE5SRWw1VGxSRk1rMTZRWGROYkc5WVJGUkplVTFFU1hsT1ZFVXlUa1JCZDAxV2IzZEZla1ZTVFVFNFIwRXhWVVZEYUUxSll6SnNibU16VW5aamJWVjNDbGRVUVZSQ1oyTnhhR3RxVDFCUlNVSkNaMmR4YUd0cVQxQlJUVUpDZDA1RFFVRlNMMDgxWXpaYVNUVkNla0ozWlc5RlNXRnROSFZYZFRWbWNYcEllREFLTTFCVVEyZG1XSGw1ZGtscWIzSjZPWGRZTURoaWMyNWthMGhrVjJaR1QySlZLMUI2ZEdKNFdEYzRRVzQwTTFsM09TOW1TSFJQT1ROdk5FbENOV3BEUXdwQlpVbDNSR2RaUkZaU01GQkJVVWd2UWtGUlJFRm5aVUZOUWsxSFFURlZaRXBSVVUxTlFXOUhRME56UjBGUlZVWkNkMDFFVFVGM1IwRXhWV1JGZDBWQ0NpOTNVVU5OUVVGM1NGRlpSRlpTTUU5Q1FsbEZSa05RTDNZM1RrVktVV2RzWWtSdGVVTTFWazFuYm5ab2FYVkNWVTFDT0VkQk1WVmtTWGRSV1UxQ1lVRUtSa1pxUVVoc0sxSlNZVlp0Y1ZoeVRXdExSMVJKZEVGeGVHTllOazFJWjBkQk1WVmtSVkZTZUUxSEswZGlWMmd3WkVoQ2VrOXBPSFphTW13d1lVaFdhUXBNYlU1MllsTTVjbVJYU214a01rWjVXa2RXZFV3eVpIQmtSMmd4V1dreGFGa3pVbkJpTWpWNlRIazFibUZZVW05a1YwbDJaREk1ZVdFeVduTmlNMlI2Q2t3elNteGtXRTVvV1cxNGJFeFlTbXhpUjFab1l6SlZkR05IT1hOaFYwNDFURmhLTVdNelVYVmxWekZ6VVVoS2JGcHVUWFpoUjFab1draE5kbVJxUlhjS1RtZFpTMHQzV1VKQ1FVZEVkbnBCUWtGM1VXOU5iVXBwVFVkUk5FNXFXbXBOZWtadFQwZE5lVnBVVVROT1JFMTRUVVJKTkUweVJYaE9iVVpyVFZkR2FRcE9ha0pzV21wQk1WbHFRWFZDWjI5eVFtZEZSVUZaVHk5TlFVVkdRa05DY21SWFNteGtNa1o1V2tkV2RVd3pWbnBhV0VsMFdqTktkbVJZUVhSalNFNTNDa3hZUW5aaVIyeHFaVlJCWTBKbmIzSkNaMFZGUVZsUEwwMUJSVVZDUVRWVFdsZDRiRmxZVG14SlNFSjJZa2RzYW1WVVFWTkNaMjl5UW1kRlJVRlpUeThLVFVGRlEwSkJVbmRrV0U1dlRVUnJSME5wYzBkQlVWRkNaemM0ZDBGUlJVVkxNbWd3WkVoQ2VrOXBPSFprUnpseVdsYzBkVmxYVGpCaFZ6bDFZM2sxYmdwaFdGSnZaRmRLTVdNeVZubFpNamwxWkVkV2RXUkROV3BpTWpCM1NHZFpTMHQzV1VKQ1FVZEVkbnBCUWtKblVWRmpiVlp0WTNrNU1GbFhaSHBNTTFsM0NreHFTWFZOUkVGTFFtZG5jV2hyYWs5UVVWRkVRWGRPY0VGRVFtMUJha1ZCZVVkUllrNURhMDlwWmxOMFR6ZDVRME5tUmpoNVdIbGpNVFEwUVU1dU1uZ0tWSGs1TWxkWlF6QndWR0ZXYUhacFQwVkVORGRtWjBRMlZHNWpTMllyT1RKQmFrVkJha0ptYWt4dFEwY3ZUWGR5YURoMEsyZG1TRXBGUVZkWFJXTTVVUW9yYWpsT1VqUjNSalkyZFVGQ1V5OVVWR2cxUTFsc2NtNUpkWEZUUkN0SFFraEhkMVlLTFMwdExTMUZUa1FnUTBWU1ZFbEdTVU5CVkVVdExTMHRMUW89In19fX0=","integratedTime":1645806604,"logIndex":1506651,"logID":"c0d23d6ad406973f9559f3ba2d1ca01f84147d8ffc5b8445c224f98b9591801d"}}
+dev.sigstore.cosign/chain          -----BEGIN CERTIFICATE-----
+                                   MIIB9zCCAXygAwIBAgIUALZNAPFdxHPwjeDloDwyYChAO/4wCgYIKoZIzj0EAwMw
+                                   KjEVMBMGA1UEChMMc2lnc3RvcmUuZGV2MREwDwYDVQQDEwhzaWdzdG9yZTAeFw0y
+                                   MTEwMDcxMzU2NTlaFw0zMTEwMDUxMzU2NThaMCoxFTATBgNVBAoTDHNpZ3N0b3Jl
+                                   LmRldjERMA8GA1UEAxMIc2lnc3RvcmUwdjAQBgcqhkjOPQIBBgUrgQQAIgNiAAT7
+                                   XeFT4rb3PQGwS4IajtLk3/OlnpgangaBclYpsYBr5i+4ynB07ceb3LP0OIOZdxex
+                                   X69c5iVuyJRQ+Hz05yi+UF3uBWAlHpiS5sh0+H2GHE7SXrk1EC5m1Tr19L9gg92j
+                                   YzBhMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBRY
+                                   wB5fkUWlZql6zJChkyLQKsXF+jAfBgNVHSMEGDAWgBRYwB5fkUWlZql6zJChkyLQ
+                                   KsXF+jAKBggqhkjOPQQDAwNpADBmAjEAj1nHeXZp+13NWBNa+EDsDP8G1WWg1tCM
+                                   WP/WHPqpaVo0jhsweNFZgSs0eE7wYI4qAjEA2WB9ot98sIkoF3vZYdd3/VtWB5b9
+                                   TNMea7Ix/stJ5TfcLLeABLE4BNJOsQ4vnBHJ
+                                   -----END CERTIFICATE-----
+dev.cosignproject.cosign/signature MEYCIQCW5fQgPTQ7ZNSnFHslrNNQkKgSIQi8cR159PA1sK8TiQIhAJwL9bOqBJmWn7YKdoSzo4slOgk8JBBjqXdsrt3ryQtB
+----
+
+======
+
+== Vérification des stratégies
+
+Vous pouvez vérifier si une stratégie est correctement signée avec `cosign` ou `kwctl`. Ils ont des options de ligne de commande similaires pour vérifier les signatures des stratégies. Pour vérifier le binaire de signature avec une clé, utilisez `kwctl` comme ceci :
+
+[subs="+attributes",console]
+----
+$ kwctl verify -k cosign.pub ghcr.io/kubewarden/policies/user-group-psp:latest
+2022-03-29T14:49:31.878180Z  INFO kwctl::verify: Policy successfully verified
+----
+
+Ou `cosign` :
+
+[subs="+attributes",console]
+----
+$ cosign verify --key cosign.pub ghcr.io/kubewarden/policies/user-group-psp:latest
+
+Verification for ghcr.io/kubewarden/policies/user-group-psp:latest --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - The signatures were verified against the specified public key
+  - Any certificates were verified against the Fulcio roots.
+
+[{"critical":{"identity":{"docker-reference":"ghcr.io/kubewarden/policies/user-group-psp"},"image":{"docker-manifest-digest":"sha256:af520a8ccee03811d426c48634b7007f1220c121cc23e14962bb64510585ce97"},"type":"cosign container image signature"},"optional":null}]
+----
+
+== Configuration du serveur de stratégie pour vérifier les signatures des stratégies
+
+Vous pouvez configurer {short-project-name} avec un `ConfigMap` pour n'exécuter que des stratégies de confiance. La structure `ConfigMap` est décrite dans xref:reference/verification-config.adoc#_signature_configuration_reference[Référence de configuration de signature]. Elle est utilisée pour vérifier une stratégie en utilisant `kwctl`. Le `ConfigMap` doit définir les configurations autorisées sous le champ `verification-config`.
+
+Par exemple, vous souhaitez exécuter des stratégies signées par l'organisation GitHub {short-project-name}. Alors un exemple de `ConfigMap` pour ce scénario serait :
+
+.$ cat kubewarden_signatures.yaml
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+$ cat kubewarden_signatures.yaml
+apiVersion: v1
+allOf:
+  - kind: githubAction
+    owner: kubewarden
+
+# note that the data is stored under verification-config field
+$ kubectl  create configmap my-signatures-configuration --from-file=verification-config=kubewarden_signatures.yaml
+
+$ kubectl get configmap -o yaml my-signatures-configuration
+apiVersion: v1
+data:
+  verification-config: |
+    apiVersion: v1
+    allOf:
+      - kind: githubAction
+        owner: kubewarden
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-03-29T18:27:20Z"
+  name: my-signatures-configuration
+  namespace: default
+  resourceVersion: "10279"
+  uid: d53e1c56-1fee-45de-92f5-9bd73b8cead4
+----
+
+======
+
+Vous pouvez utiliser `kwctl scaffold verification-config` pour générer un fichier de configuration de vérification par défaut pour le `ConfigMap` :
+
+[subs="+attributes",console]
+----
+$ kwctl scaffold verification-config > verification_config.yaml
+----
+
+.$ cat verification_config.yaml
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+$ kwctl scaffold verification-config > verification_config.yaml
+$ cat verification_config.yaml
+# Default {short-project-name} verification config
+#
+# With this config, the only valid policies are those signed by {short-project-name}
+# infrastructure.
+#
+# This config can be saved to its default location (for this OS) with:
+#   kwctl scaffold verification-config > /home/kubewarden/.config/kubewarden/verification-config.yml
+#
+# Providing a config in the default location enables Sigstore verification.
+# See https://docs.kubewarden.io for more Sigstore verification options.
+---
+apiVersion: v1
+allOf:
+  - kind: githubAction
+    owner: kubewarden
+    repo: ~
+    annotations: ~
+anyOf: ~
+----
+
+======
+
+Vous pouvez utiliser ce `verification_config.yml` pour créer le `ConfigMap`.
+
+[subs="+attributes",console]
+----
+$ kubectl create configmap my-signatures-configuration --from-file==verification_config.yaml
+configmap/my-signatures-configuration created
+----
+
+Ensuite, nous pouvons inspecter avec `get configmap`.
+
+.kubectl get configmap
+[%collapsible]
+======
+
+[subs="+attributes",console]
+----
+$ kubectl get configmap -o yaml my-signatures-configuration
+apiVersion: v1
+data:
+  verification-config: |+
+    # Default {short-project-name} verification config
+    #
+    # With this config, the only valid policies are those signed by {short-project-name}
+    # infrastructure.
+    #
+    # This config can be saved to its default location (for this OS) with:
+    #   kwctl scaffold verification-config > /home/kubewarden/.config/kubewarden/verification-config.yml
+    #
+    # Providing a config in the default location enables Sigstore verification.
+    # See https://docs.kubewarden.io for more Sigstore verification options.
+    ---
+    apiVersion: v1
+    allOf:
+      - kind: githubAction
+        owner: kubewarden
+        repo: ~
+        annotations: ~
+    anyOf: ~
+
+kind: ConfigMap
+metadata:
+  creationTimestamp: "2022-04-07T11:54:27Z"
+  name: my-signatures-configuration
+  namespace: default
+  resourceVersion: "1317"
+  uid: 74dec846-7fcd-4b4b-8184-700c816f685a
+----
+
+======
+
+Après avoir créé le `ConfigMap` pour stocker les exigences de signature, vous pouvez configurer un serveur de stratégie. Pour commencer à valider les signatures de stratégie en définissant le nom `ConfigMap` dans le champ `verificationConfig` (marqué ➀).
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: PolicyServer
+metadata:
+  name: default
+  finalizers:
+    - kubewarden
+spec:
+  image: ghcr.io/kubewarden/policy-server:v0.2.7
+  serviceAccountName: policy-server
+  replicas: 1
+//highlight-next-l
+  # name of the confimap with the signatures requirements
+  verificationConfig: your_configmap <1>
+  env:
+    - name: KUBEWARDEN_ENABLE_METRICS
+      value: "1"
+    - name: KUBEWARDEN_LOG_FMT
+      value: otlp
+    - name: "KUBEWARDEN_LOG_LEVEL"
+      value: "info"
+----
+<1> `verificationConfig`
+
+Si vous déployez le serveur de stratégie par défaut en utilisant le chart Helm `kubewarden-defaults`, vous configurez ce champ en définissant le nom `ConfigMap` dans la valeur `policyServer.verificationConfig`.
+
+Maintenant, le serveur de stratégie rejette les AdmissionPolicies et ClusterAdmissionPolicies non fiables en refusant de démarrer. Vous devez supprimer la stratégie non fiable ou changer les exigences de signature pour un serveur de stratégie en cours d'exécution.
+
+== Référence de configuration de signature
+
+Vous pouvez valider les exigences de signature contenues dans un fichier. Voici un exemple :
+
+.Un fichier d'exigences de signature
+[%collapsible]
+======
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+
+allOf: <1>
+  - kind: githubAction
+    owner: kubewarden   # mandatory
+    annotations:
+      env: prod
+
+anyOf: # at least `+anyOf.minimumMatches+` are required to match <2>
+  minimumMatches: 2 # default is 1
+  signatures:
+  - kind: pubKey
+    owner: flavio # optional
+    key: .... # mandatory
+    annotations:  # optional
+      env: prod
+      foo: bar
+  - kind: pubKey
+    owner: victor # optional
+    key: .... # mandatory
+  - kind: genericIssuer
+    issuer: https://github.com/login/oauth
+    subject:
+      equal: alice@example.com
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      equal: https://github.com/flavio/policy-secure-pod-images/.github/workflows/release.yml@refs/heads/main
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      urlPrefix: https://github.com/flavio/
+  - kind: genericIssuer
+    issuer: https://token.actions.githubusercontent.com
+    subject:
+      urlPrefix: https://github.com/kubewarden # <- it will be post-fixed with `+/+` for security reasons
+  - kind: githubAction
+    owner: flavio   # mandatory
+    repo: policy1 # optional
+  - kind: pubKey
+    owner: alice # optional
+    key: .... # mandatory
+----
+<1> `allOf`
+<2> `anyOf`
+======
+
+=== Validation de signature
+
+La configuration ci-dessus contient les deux sections surlignées, `allOf` et `anyOf` :
+
+* `allOf` : la stratégie est fiable uniquement si toutes les exigences de signature ici sont valides.
+* `anyOf` : la stratégie est fiable si le critère `minimumMatches` est respecté.
+
+Ci-dessus, le champ `minimumMatches` est 2. Ainsi, au moins deux des exigences de signature doivent être respectées. La valeur par défaut pour le champ `minimumMatches` est `1`.
+
+Toutes les exigences de signature de `allOf` *et* le nombre minimum de `anyOf` doivent être respectées.
+
+=== Validation de clé publique
+
+Pour vérifier qu'une stratégie est signée avec la bonne clé publique, vous spécifiez les données de la clé et le propriétaire de la clé. Dans cet exemple, vous définissez `kind`, à `pubKey` et la `key` a la clé publique. Le champ propriétaire est facultatif, mais peut être utile pour clarifier qui possède la clé.
+
+[subs="+attributes",yaml]
+----
+  - kind: pubKey
+    owner: bob # optional
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MBFKHFDGHKIJH0CAQYIKoZIzj0DAQcDQgAEX0HFTtCfTtPmkx5p1RbDE6HJSGAVD
+      BVDF6SKFSF87AASUspkQsN3FO4iyWodCy5j3o0CdIJD/KJHDJFHDFIu6sA==
+      -----END PUBLIC KEY-----
+----
+
+=== Validation de signature sans clé
+
+Une stratégie signée en mode sans clé n'a pas de clé publique à vérifier. Vous pouvez toujours vérifier la stratégie avec les données OIDC utilisées lors du processus de signature. Pour cela, il est nécessaire de définir la validation de signature comme `genericIssuer`.
+
+Il est possible de vérifier les informations de la signature :
+
+* `issuer`(obligatoire) : Cela correspond à l'attribut `Issuer` dans le certificat généré par Fulcio. Cela montre l'OIDC utilisé pour signer la stratégie.
+* `subject` : Champ utilisé pour faire correspondre l'attribut `Subject` dans le certificat de Fulcio. Le champ `Subject` (Fulcio) contient l'utilisateur utilisé pour s'authentifier auprès du fournisseur OIDC. Le champ de vérification, `subject`, peut avoir l'un des deux sous-champs :
+ ** `equal` : Le `Subject` (Fulcio) du certificat doit être égal à la valeur dans la validation de signature ;
+ ** `urlPrefix` : La valeur du champ `Subject` (Fulcio) du certificat doit être précédée de la valeur définie dans la validation de signature.
+
+[NOTE]
+====
+
+À la fois le `cosign verify` et le `kwctl inspect` peuvent montrer des informations sur les signatures sans clé.
+
+====
+
+
+Par exemple, cette configuration signifie que la stratégie doit avoir une signature sans clé d'Alice utilisant l'OIDC de GitHub :
+
+[subs="+attributes",yaml]
+----
+- kind: genericIssuer
+  issuer: https://github.com/login/oauth
+  subject:
+    equal: alice@example.com
+----
+
+Cette configuration nécessite que la stratégie soit signée dans les actions GitHub, à partir d'un dépôt appartenant à l'utilisateur GitHub `flavio` :
+
+[subs="+attributes",yaml]
+----
+- kind: genericIssuer
+  issuer: https://token.actions.githubusercontent.com
+  subject:
+    urlPrefix: https://github.com/flavio
+----
+
+=== Vérification de la signature de GitHub Actions
+
+Le "type", `githubAction` sert à valider les stratégies signées dans GitHub Actions.
+Vous pouvez le faire avec le type `genericIssuer` également. Pour simplifier le processus d'exigence de signature, utilisez deux champs supplémentaires pour `githubAction` :
+
+* `owner` (obligatoire) : ID GitHub de l'utilisateur ou de l'organisation en qui il faut avoir confiance
+* `repo` : le nom du dépôt auquel il faut faire confiance
+
+Par exemple, le dernier extrait, utilisant `genericIssuer`, pourrait être réécrit comme suit :
+
+[subs="+attributes",yaml]
+----
+- kind: githubAction
+  owner: flavio
+----
+
+=== Validation des annotations de signature
+
+Tous les types de signature peuvent avoir d'autres champs de validation optionnels, `annotations`.
+Ces champs sont des données clé/valeur ajoutées lors du processus de signature.
+
+Avec {short-project-name}, vous pouvez vérifier que la signature de la stratégie est faite par des utilisateurs de confiance *et* qu'ils ont des annotations spécifiques.
+
+La prochaine validation vérifie 2 conditions pour la stratégie :
+
+* qu'elle est signée avec une clé spécifique
+* elle a une annotation d'environnement de production
+
+[subs="+attributes",yaml]
+----
+- kind: pubKey
+  key: |
+    -----BEGIN PUBLIC KEY-----
+    MBFKHFDGHKIJH0CAQYIKoZIzj0DAQcDQgAEX0HFTtCfTtPmkx5p1RbDE6HJSGAVD
+    BVDF6SKFSF87AASUspkQsN3FO4iyWodCy5j3o0CdIJD/KJHDJFHDFIu6sA==
+    -----END PUBLIC KEY-----
+  annotations:
+    environment: production
+----
+
+=== Utilisation d'un fichier de configuration de vérification de signature pour vérifier un artefact OCI de stratégie
+
+Vous pouvez tester si une stratégie passe la vérification en utilisant le fichier de configuration de vérification.
+Utilisez l'option `--verification-config-path` de la commande `kwctl verify`
+
+[subs="+attributes",console]
+----
+$ cat signatures_requirements.yaml
+apiVersion: v1
+allOf:
+  - kind: pubKey
+    key: |
+      -----BEGIN PUBLIC KEY-----
+      MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE5Q+cN1Jj2S7N05J4AXnqwP2DyzSg
+      Mc+raYce2Wthrd30MSgFtoh5ADAkCd/nML2Nx8UD9KBuASRb0gG5jXqgMQ==
+      -----END PUBLIC KEY-----
+
+$ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/kubewarden/policies/user-group-psp:latest
+2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
+----
+
+Ce dernier exemple teste si une stratégie donnée provient de l'organisation {short-project-name} :
+
+[subs="+attributes",console]
+----
+$ cat kubewarden_signatures.yaml
+apiVersion: v1
+allOf:
+  - kind: githubAction
+    owner: kubewarden
+
+$ kwctl verify --verification-config-path kubewarden_signatures.yaml ghcr.io/kubewarden/policies/user-group-psp:latest
+2022-03-29T18:07:39.062292Z  INFO kwctl::verify: Policy successfully verified
+----

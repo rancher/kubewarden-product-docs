@@ -1,0 +1,176 @@
+include::partial$variables.adoc[]
+= Escrevendo a lógica de validação
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Escreva a lógica de validação para recursos do Kubernetes no arquivo src/index.ts, acessando os dados da solicitação recebida para retornar uma resposta.
+:keywords: "{project-name}", kubewarden, kubernetes, escrevendo políticas, typescript
+:doc-type: tutorial
+:doc-topic: {project-name}, kubewarden, escrevendo-políticas, typescript, lógica-de-validação
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+[WARNING]
+====
+Crítico: Não escreva informações de log no STDOUT.
+
+Escrever no STDOUT quebra as políticas. Em vez disso, use STDERR para log ou a funcionalidade de log fornecida pelo {project-name} SDK. A saída da política para o STDOUT deve conter apenas a resposta de validação.
+====
+
+A lógica de validação vai no arquivo `src/index.ts`.
+
+Sua lógica de validação precisa:
+
+* Obter as informações relevantes da solicitação de validação recebida.
+* Retornar uma resposta com base na entrada e nas configurações da política.
+
+A solicitação recebida contém um objeto JSON com o recurso do Kubernetes a ser validado.
+Você pode acessar os dados deste objeto JSON através das funções auxiliares do {short-project-name} SDK.
+
+== A função `validate`
+
+A política fornecida pelo modelo já possui uma função `validate` em `src/index.ts`.
+Você pode usá-la lá, adicionando sua lógica para rejeitar Pods com nomes de host negados.
+
+É assim que a função deve parecer quando completa:
+
+[source,javascript]
+----
+/**
+ * Validates the incoming request against policy settings.
+ * Accepts or rejects the request based on denied hostnames.
+ */
+function validate(): void {
+  try {
+    // NOTE 1
+    // Read the validation request payload
+    const validationRequest = Validation.Validation.readValidationRequest();
+
+    // NOTE 2
+    // Extract policy settings from the validation request
+    const settings: PolicySettings = validationRequest.settings || {};
+
+    // NOTE 3
+    // Extract the Kubernetes object (Pod) from the validation request
+    const resource = getKubernetesResource(validationRequest);
+    if (!resource) {
+      writeOutput(Validation.Validation.rejectRequest('Failed to parse Kubernetes resource.'));
+      return;
+    }
+
+    // Only process Pod resources
+    if (resource.kind !== 'Pod') {
+      writeOutput(Validation.Validation.acceptRequest());
+      return;
+    }
+
+    // NOTE 4
+    // Extract hostname from the Pod spec
+    const hostname = getPodHostname(resource as Pod);
+    const deniedHostnames = settings.denied_hostnames || [];
+
+    // NOTE 5
+    // Validate the hostname against the deny list
+    if (!hostname) {
+      writeOutput(Validation.Validation.acceptRequest());
+      return;
+    }
+
+    if (deniedHostnames.includes(hostname)) {
+      writeOutput(
+        Validation.Validation.rejectRequest(
+          `+Pod hostname '${hostname}' is not allowed. Denied hostnames: [${deniedHostnames.join(', ')}]+`
+        ),
+      );
+    } else {
+      writeOutput(Validation.Validation.acceptRequest());
+    }
+  } catch (err) {
+    console.error('Validation error:', err);
+    writeOutput(Validation.Validation.rejectRequest(`+Validation failed: ${err}+`));
+  }
+}
+----
+
+=== O que cada NOTA faz
+
+* NOTA 1: Leia a solicitação de validação recebida usando `readValidationRequest()`.
+* NOTA 2: Extraia as configurações definidas pelo usuário da solicitação de validação (por exemplo, nomes de host negados).
+* NOTA 3: Analise o objeto Kubernetes (esperado ser um Pod) do payload da solicitação.
+* NOTA 4: Extraia o campo de nome do host da seção de especificação do Pod.
+* NOTA 5: Compare o nome do host com a lista de negados e retorne uma resposta apropriada.
+
+== Funções auxiliares
+
+A política usa várias funções auxiliares para processar a solicitação de validação:
+
+=== getKubernetesResource
+
+Esta função extrai o recurso Kubernetes da solicitação de validação:
+
+[source,javascript]
+----
+/**
+ * Safely parses and extracts the Kubernetes resource from the validation request.
+ *
+ * @param {ValidationRequest} validationRequest - The validation request object.
+ * @returns {KubernetesResource | undefined} The parsed Kubernetes resource if available.
+ */
+function getKubernetesResource(validationRequest: ValidationRequest): KubernetesResource | undefined {
+  try {
+    let requestObject: string | KubernetesResource | undefined = validationRequest.request?.object;
+    if (typeof requestObject === 'string') {
+      requestObject = JSON.parse(requestObject) as unknown as KubernetesResource;
+    } else if (requestObject === undefined) {
+      return undefined;
+    }
+    return requestObject as KubernetesResource;
+  } catch (error) {
+    console.error('Error parsing Kubernetes resource:', error);
+    return undefined;
+  }
+}
+----
+
+Esta função lida com o caso em que o objeto Kubernetes é uma string JSON ou um objeto já analisado.
+
+=== getPodHostname
+
+Esta função extrai o nome do host de um recurso Pod:
+
+[source,javascript]
+----
+/**
+ * Extracts the hostname from a Pod resource.
+ *
+ * @param {Pod} pod - The Pod resource.
+ * @returns {string | undefined} The hostname if set, otherwise undefined.
+ */
+import type { Pod } from 'kubernetes-types/core/v1';
+function getPodHostname(pod: Pod): string | undefined {
+  return pod.spec?.hostname;
+}
+----
+
+Esta função extrai o nome do host da especificação do Pod.
+
+== Ponto de entrada da política
+
+A política usa uma instrução switch para lidar com diferentes ações:
+
+[source,javascript]
+----
+const action = policyAction();
+switch (action) {
+  case 'validate':
+    validate();
+    break;
+  case 'validate-settings':
+    validateSettings();
+    break;
+  default:
+    console.error('Unknown action:', action);
+    writeOutput(new Validation.Validation.ValidationResponse(false, 'Unknown policy action'));
+}
+----
+
+O {short-project-name} Javy plug-in fornece a função `policyAction()` indicando se a política deve validar um recurso ou validar suas configurações.

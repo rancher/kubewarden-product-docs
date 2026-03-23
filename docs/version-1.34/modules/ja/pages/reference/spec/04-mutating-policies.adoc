@@ -1,0 +1,165 @@
+include::partial$variables.adoc[]
+= 変更ポリシー
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Kubernetesクラスター内のオブジェクトの変更を提案するために、waPC（何でも後のポリシーコンフィグレーター）内で検証関数（validateおよびvalidate_settings）を実装することによって、変更ポリシーを構成します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "mutating-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "ポリシー仕様", "変更ポリシー"]
+:sidebar_label: 変更ポリシー
+:current-version: {page-origin-branch}
+
+変更ポリシーの構造は、検証ポリシーと同じです：
+
+* `validate`および`validate_settings`のwaPC関数を登録する必要があります。
+* ホストとポリシー間で使用される通信APIは、検証ポリシーで使用されるものと同じです。
+
+変更ポリシーはリクエストを受け入れ、`ValidationResponse`オブジェクトを返すことによって、受信オブジェクトの変更を提案できます。これは次のようになります：
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": <object to be created>
+}
+----
+
+`mutated_object`フィールドには、ポリシーがKubernetesクラスター内で作成したいオブジェクトが含まれており、JSONにシリアライズされています。
+
+== 具体的な例
+
+ポリシーがこの`ValidationRequest`を受け取ったと仮定します：
+
+[subs="+attributes",json]
+----
+{
+  "settings": {},
+  "request": {
+    "operation": "CREATE",
+    "object": {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "security-context-demo-4"
+      },
+      "spec": {
+        "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": ["NET_ADMIN", "SYS_TIME"]
+            }
+          }
+        }
+        ]
+      }
+    }
+  }
+}
+----
+
+[NOTE]
+====
+
+この例では、重要なフィールドのみが`request`オブジェクトに含まれています。
+
+====
+
+
+このリクエスト生成は、誰かが次のようなPodを作成しようとしたために発生します：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+----
+
+ポリシーが次の`ValidationResponse`で応答すると仮定します：
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "name": "security-context-demo-4"
+    },
+    "spec": {
+      "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": [
+                "NET_ADMIN",
+                "SYS_TIME"
+              ],
+              "drop": [
+                "BPF"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+----
+
+それはリクエストの受け入れにつながりますが、最終的なPodは次のようになります：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+        drop:
+        - BPF
+----
+
+ご覧の通り、ポリシーはPod内で宣言された唯一のコンテナの`securityContext.capabilities.drop`セクションを変更しました。
+
+コンテナは、ポリシーのために`BPF`機能を失っています。
+
+== 要約
+
+変更ポリシーが実装しなければならない関数は次のとおりです：
+
+|===
+| *waPC関数名*| *入力ペイロード*| *出力ペイロード*
+
+| `validate`
+| `\{  "request": \{    // AdmissionReview.request data  \},  "settings": \{    // your policy configuration  \}\}`
+| `\{  **// mandatory**  "accepted": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,  // optional, ignored if accepted  "code": integer,   // JSON Object to be created  // Can be used only when the  // request is accepted  "mutated_object": object\}`
+
+| `validate_settings`
+| `\{  // your policy configuration\}`
+| `\{  **// mandatory**  "validate": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,\}`
+|===

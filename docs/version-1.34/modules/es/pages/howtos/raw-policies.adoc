@@ -1,0 +1,303 @@
+include::partial$variables.adoc[]
+= Directivas en bruto
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura directivas en bruto como un motor de evaluación de directivas genérico utilizando {project-name}.
+:doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "raw policies"]
+:sidebar_label: Directivas en bruto
+:sidebar_position: 60
+:current-version: {page-origin-branch}
+
+Desde `v1.9.0` en adelante, {project-name} admite la capacidad de escribir y ejecutar directivas fuera de un clúster de Kubernetes, como un motor de evaluación de directivas genérico.
+El Servidor de Directivas expone el endpoint `/validate_raw` que se puede utilizar para validar documentos JSON arbitrarios contra una directiva {short-project-name}.
+
+Para esta guía, utilizaremos las siguientes directivas en bruto:
+
+* https://github.com/kubewarden/raw-validation-policy[directiva-de-validación-en-bruto]
+* https://github.com/kubewarden/raw-mutation-policy[directiva-de-mutación-en-bruto]
+
+[NOTE]
+====
+Por favor, asegúrate de que el autor de la directiva ha marcado la directiva como `policyType: raw` en los metadatos.
+Puedes inspeccionar los metadatos utilizando `kwctl`
+
+[subs="+attributes",bash]
+----
+kwctl inspect ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+----
+====
+
+
+== Ejecutando el servidor de directivas fuera de Kubernetes
+
+El Servidor de Directivas se puede ejecutar fuera de Kubernetes como un contenedor independiente.
+
+Primero, crea un archivo `policies.yml` con el siguiente contenido:
+
+[subs="+attributes",yaml]
+----
+raw-validation:
+  module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+  settings:
+    validUsers:
+      - alice
+      - bob
+    validActions:
+      - read
+      - write
+    validResources:
+      - orders
+      - products
+
+raw-mutation:
+  module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+  allowedToMutate: true
+  settings:
+    forbiddenResources:
+      - privateResource
+      - secretResource
+    defaultResource: publicResource
+----
+
+Para iniciar el servidor de directivas:
+
+[subs="+attributes",bash]
+----
+# Create a docker volume to store the policies
+docker volume create --driver local \
+                --opt type=tmpfs \
+                --opt device=tmpfs \
+                --opt o=ui=65533 \
+                policy-store
+
+# Start the policy server
+docker run --rm -it \
+    -p 3000:3000 \
+    -v $(pwd)/policies.yml:/policies.yml \
+    -v policy-store:/registry \
+    ghcr.io/kubewarden/policy-server:1.9.0 \
+    --ignore-kubernetes-connection-failure=true
+----
+
+NOTE: la bandera `--ignore-kubernetes-connection-failure=true` es necesaria para iniciar el servidor de directivas sin Kubernetes.
+Sin embargo, es posible iniciar el Servidor de Directivas con/dentro de Kubernetes y utilizar el endpoint de validación en bruto.
+Las directivas en bruto pueden acceder a xref:../explanations/context-aware-policies.adoc[capabilities] orientadas al contexto, al igual que las directivas estándar.
+
+== Ejecutando un Servidor de Directivas dentro de Kubernetes sin el controlador {short-project-name}
+
+No es posible utilizar una instancia del Servidor de Directivas gestionada por el controlador {short-project-name} para alojar directivas en bruto.
+El controlador no permitirá al usuario cambiar el ConfigMap del Servidor de Directivas para añadir una directiva en bruto, ya que intentará reconciliarlo revirtiendo los cambios.
+Debido a ello, se debe iniciar un Servidor de Directivas dedicado.
+
+Crea un `policy-server.yaml` archivo con el siguiente contenido:
+
+[subs="+attributes",yaml]
+----
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-server
+  template:
+    metadata:
+      labels:
+        app: policy-server
+    spec:
+      containers:
+        - name: policy-server
+          image: ghcr.io/kubewarden/policy-server:v1.9.0
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: policy-store
+              mountPath: /registry
+            - name: policies-config
+              mountPath: /policies.yml
+              subPath: policies.yml
+      volumes:
+        - name: policy-store
+          emptyDir: {}
+        - name: policies-config
+          configMap:
+            name: policies-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-server-service
+spec:
+  selector:
+    app: policy-server
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: policies-configmap
+data:
+  policies.yml: |
+    raw-validation:
+      module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+      settings:
+        validUsers:
+          - alice
+          - bob
+        validActions:
+          - read
+          - write
+        validResources:
+          - orders
+          - products
+    raw-mutation:
+      module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+      allowedToMutate: true
+      settings:
+        forbiddenResources:
+          - privateResource
+          - secretResource
+        defaultResource: publicResource
+----
+
+Aplica la configuración:
+
+[subs="+attributes",bash]
+----
+kubectl apply -f policy-server.yaml
+----
+
+[IMPORTANT]
+====
+La instancia del Servidor de Directivas desplegada tendrá acceso a los recursos de Kubernetes que podrían ser utilizados por directivas orientadas al contexto.
+El nivel de acceso a los recursos de Kubernetes está determinado por la cuenta de servicio utilizada para ejecutar la carga de trabajo del Servidor de Directivas.
+
+En el ejemplo anterior, no se define ninguna cuenta de servicio dentro de la especificación de ampliación; por lo tanto, se va a utilizar la cuenta de servicio `default`.
+====
+
+
+== Usando el endpoint validate_raw
+
+=== Validación
+
+El endpoint de validación en bruto está expuesto en `/validate_raw` y acepta solicitudes `POST`.
+Dado que hemos desplegado un servicio, podemos establecer un port-forward para acceder a él con `kubectl port-forward service/policy-server-service 3000:3000 -n default`.
+
+Intentemos validar un documento JSON contra la directiva `raw-validation`:
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-validation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "customers"
+  }
+}'
+----
+
+La solicitud no será aceptada, ya que no se ha concedido acceso a `alice` para el recurso `customers`:
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": false,
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+Intentemos de nuevo con un recurso válido:
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-validation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "orders"
+  }
+}'
+----
+
+Esta vez, la solicitud será aceptada:
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": true,
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+[NOTE]
+====
+Si se proporciona el campo `uid` en la carga útil de la solicitud, se devolverá como parte de la respuesta.
+====
+
+
+=== Mutación
+
+Ahora, intentemos mutar un documento JSON contra la directiva `raw-mutation`:
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-mutation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "privateResource"
+  }
+}'
+----
+
+La solicitud será mutada y la respuesta contendrá un JSONPatch:
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": true,
+    "patchType": "JSONPatch",
+    "patch": "W3sib3AiOiJyZXBsYWNlIiwicGF0aCI6Ii9yZXNvdXJjZSIsInZhbHVlIjoicHVibGljUmVzb3VyY2UifV0=",
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+== Escribiendo directivas en bruto
+
+De manera similar a las directivas que validan recursos de Kubernetes, las directivas en bruto se escriben en WebAssembly utilizando SDKs de {short-project-name}.
+Si estás interesado en escribir directivas en bruto, consulta la documentación específica del lenguaje para más información:
+
+* xref:../tutorials/writing-policies/go/10-raw-policies.adoc[Ir]
+* xref:../tutorials/writing-policies/rust/08-raw-policies.adoc[Rust]
+* xref:../tutorials/writing-policies/rego/open-policy-agent/05-raw-policies.adoc[OPA]
+* xref:../tutorials/writing-policies/wasi/02-raw-policies.adoc[WASI]

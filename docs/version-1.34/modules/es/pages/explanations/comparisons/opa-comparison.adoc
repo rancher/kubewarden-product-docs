@@ -1,0 +1,197 @@
+include::partial$variables.adoc[]
+
+= {project-name} vs OPA Gatekeeper
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:page-aliases: explanations/opa-comparison.adoc
+:description: Compara la gestión de políticas de OPA Gatekeeper y {project-name} para entornos de Kubernetes para determinar el mejor enfoque para tu caso de uso.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["explanations", "kubewarden-vs-opa_gatekeeper"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "opa gatekeeper", "comparison"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+Esta página es de agosto de 2023. Ambos proyectos pueden haber evolucionado desde entonces.
+
+Si encuentras que falta algo o es inexacto, por favor https://github.com/kubewarden/docs/[informa de un problema] o abre un PR utilizando el enlace al final de la página.
+
+====
+
+Tanto OPA Gatekeeper como Kubewarden, de los cuales se deriva {project-name}, son proyectos de código abierto y forman parte de CNCF.
+
+Esta tabla proporciona una comparación entre OPA Gatekeeper y {short-project-name}. Los temas que requieren más información tienen enlaces a más explicaciones.
+
+|===
+| Función | OPA Gatekeeper | {short-project-name}
+
+| Validación
+| ✅
+| ✅
+
+| Mutación
+| ✅
+| ✅
+
+| Lenguaje de políticas <<_writing_policies,[1]>>
+| Rego
+| Rego, CEL, Go, Rust,...
+
+| Context aware <<_context_aware,[2]>>
+| ✅
+| ✅
+
+| Integración de Kubernetes <<_kubernetes_integration,[3]>>
+| CRD a nivel de clúster
+| CRDs a nivel de clúster y con espacio de nombres
+
+| Distribución de directivas <<_policy_distribution,[4]>>
+| integrado en CR de Kubernetes
+| Registro de contenedores, o integrado en CR de Kubernetes (CEL)
+
+| integración de CI/CD <<_cicd_integration,[5]>>
+| ✅
+| ✅
+
+| modos de aplicación de directivas
+| denegar, advertir
+| denegar, advertir
+
+| modo de ampliación <<_deployment_mode,[6]>>
+| servidor de evaluación único
+| múltiples servidores de evaluación
+
+| Verificaciones de antecedentes <<_background_checks,[7]>>
+| ✅
+| ✅
+|===
+
+== Tipos de directivas
+
+Tanto OPA Gatekeeper como Kubernetes pueden escribir directivas de validación y mutación.
+
+Estas directivas pueden dirigirse a cualquier tipo de recurso de Kubernetes, incluyendo Recursos Personalizados.
+
+== Escritura de directivas
+
+Escribes directivas de OPA Gatekeeper utilizando https://www.openpolicyagent.org/docs/latest/#rego[Rego]. Rego es un lenguaje de consulta creado por el proyecto Open Policy Agent.
+
+[IMPORTANT]
+====
+
+Solo puedes usar Rego para escribir directivas de validación. Las directivas de mutación no utilizan Rego, sino que emplean reglas ad-hoc definidas en YAML (ver https://open-policy-agent.github.io/gatekeeper/website/docs/mutation[aquí]).
+
+====
+
+
+Puedes escribir {short-project-name} directivas utilizando diferentes paradigmas. Los autores de directivas pueden usar tanto lenguajes de programación tradicionales (como Go, Rust y otros) como https://en.wikipedia.org/wiki/Domain-specific_language[Lenguajes Específicos de Dominio] (por ejemplo, Rego y CEL). En {short-project-name} se escriben directivas de validación y mutación de la misma manera.
+
+[CAUTION]
+====
+
+El proyecto de código abierto https://github.com/open-policy-agent/kube-mgmt[kube-mgmt], parte del proyecto Open Policy Agent, utiliza Rego.
+
+A pesar de usar el mismo lenguaje, las directivas escritas para kube-mgmt no son compatibles con OPA Gatekeeper y viceversa.
+
+{short-project-name} puede utilizar directivas Rego escritas tanto para Open Policy Agent como para OPA Gatekeeper. Más información está xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[aquí].
+
+====
+
+
+== Consciente del contexto
+
+A veces, una política necesita datos sobre el estado actual del clúster para tomar una decisión de validación o mutación. Por ejemplo, una política que valida recursos de Ingress podría necesitar conocer otros recursos de Ingress ya definidos en el clúster para asegurar que no ocurran conflictos. {short-project-name} llama a estas directivas "conscientes del contexto".
+
+Tanto OPA Gatekeeper como {short-project-name} admiten estos tipos de directivas.
+
+Al desplegar OPA Gatekeeper, un administrador de Kubernetes decide qué tipo de datos del clúster poner a disposición de las directivas en el momento de la evaluación.
+
+Es importante destacar cómo estos datos son accesibles por todas las directivas desplegadas.
+
+Por ejemplo, si una directiva de OPA Gatekeeper requiere acceso a Secrets de Kubernetes, todas las demás directivas desplegadas también pueden leer estos datos.
+
+Por el contrario, {short-project-name} proporciona un acceso granular a los recursos del clúster.
+Cada directiva tiene acceso solo a los recursos que el administrador de Kubernetes especifica. Intentar leer datos no autorizados es bloqueado de inmediato y reportado a los administradores del clúster.
+
+== Kubernetes integration
+
+OPA Gatekeeper tiene un Recurso Personalizado a nivel de clúster, que permite la definición de directivas y cómo y dónde hacerlas cumplir.
+
+{short-project-name} tiene dos tipos diferentes de Recursos Personalizados utilizados para declarar directivas. Uno funciona a nivel de clúster, el otro está en un espacio de nombres. El nombre del Recurso Personalizado en un espacio de nombres es `AdmissionPolicy`.
+
+Las directivas desplegadas a través de un recurso `AdmissionPolicy` afectan solo a los recursos creados dentro del espacio de nombres al que pertenecen. Debido a eso, puedes permitir que los usuarios de Kubernetes que no son administradores tengan los privilegios de RBAC necesarios para gestionar recursos `AdmissionPolicy`, en los espacios de nombres a los que pueden acceder.
+
+Esto permite a los administradores de Kubernetes delegar el trabajo relacionado con las directivas.
+
+== Distribución de directivas
+
+OPA Gatekeeper y las directivas {short-project-name} tienen el código fuente de la directiva (Rego para OPA Gatekeeper, CEL para {short-project-name}) en el Recurso Personalizado que define una directiva en Kubernetes.
+
+Además, las directivas {short-project-name} pueden tener el código fuente de la directiva gestionado como imágenes de contenedor (para Rego, Go, Rust, ...). Una vez construidas, se envían a los registros de contenedores como artefactos OCI.
+
+Puedes firmar y verificar las directivas {short-project-name} utilizando herramientas de imágenes de contenedor como `cosign`, del proyecto https://sigstore.dev[Sigstore project].
+
+Puedes distribuir las directivas {short-project-name} entre registros de contenedores distribuidos geográficamente utilizando las herramientas y procesos tradicionales adoptados para imágenes de contenedor.
+
+== Integración CI/CD
+
+Tanto OPA Gatekeeper como {short-project-name} se gestionan utilizando metodologías GitOps.
+
+Sin embargo, para OPA Gatekeeper, hay un acoplamiento entre el código Rego de la directiva y el Recurso Personalizado utilizado para desplegarlo en Kubernetes.
+Esto introduce pasos adicionales en las canalizaciones CI/CD.
+
+Rego tiene https://www.openpolicyagent.org/docs/latest/policy-testing/[herramientas de prueba] que permiten la creación de suites de pruebas de unidad. Escribir pruebas y ejecutarlas en una canalización CI/CD es esencial para asegurar que las directivas se comporten como se espera.
+
+Para utilizar estas herramientas de prueba, el código fuente de la directiva debe estar disponible en archivos de texto dedicados. Es imposible leer el código fuente de los archivos YAML utilizados para declarar la directiva de OPA Gatekeeper. La canalización CI/CD debe sincronizar el código fuente Rego para probarlo con el código definido en el Recurso Personalizado del OPA Gatekeeper. Puedes hacer esto utilizando herramientas de terceros.
+
+Las directivas {short-project-name} tienen canalizaciones CI/CD como los microservicios tradicionales.
+Normalmente, su código fuente reside en un repositorio de Git y luego, utilizando sistemas tradicionales de CI/CD, se ejecutan pruebas unitarias en él. Escribes pruebas unitarias utilizando los marcos de prueba del lenguaje empleado para escribir la directiva. +
+Una vez que todas las pruebas pasan, compilas la directiva a WebAssembly y la subes a un registro de contenedores. +
+Puedes realizar la prueba utilizando la herramienta CLI , sin requerir un clúster de Kubernetes en funcionamiento. +
+Define estos servidores mediante un Recurso Personalizado llamado . Una vez que todas las pruebas pasan, compilas la directiva a WebAssembly y la subes a un registro de contenedores. Este tipo de canalización suele ser mantenido por el autor de la política.
+
+Los administradores de Kubernetes suelen mantener otras canalizaciones de automatización que reaccionan a nuevas versiones de la política (utilizando herramientas de automatización como https://docs.github.com/en/code-security/dependabot/working-with-dependabot[Dependabot], https://www.mend.io/renovate/[Renovate bot], https://www.updatecli.io/[updatecli] y otras), o a cambios en la configuración de la política.
+
+La canalización prueba la política contra diferentes tipos de solicitudes. Puedes realizar la prueba utilizando la herramienta CLI https://github.com/kubewarden/kwctl[`kwctl`], sin requerir un clúster de Kubernetes en funcionamiento. La herramienta CLI `kwctl` utiliza el mismo motor de evaluación que utiliza la pila {short-project-name} desplegada en un clúster de Kubernetes.
+
+== Modos de aplicación de directivas
+
+Tanto OPA Gatekeeper como {short-project-name} pueden desplegar directivas utilizando dos modos de operación diferentes:
+
+* `deny`: la violación de una directiva rechaza la solicitud
+* `warn`: la violación de una directiva no causa rechazo y se registra
+
+== Modo de ampliación
+
+El mismo servidor evalúa todas las directivas de OPA Gatekeeper. Por el contrario, {short-project-name} permite la definición de múltiples servidores de evaluación. Define estos servidores mediante un Recurso Personalizado llamado `PolicyServer`.
+
+Al declarar una directiva {short-project-name}, el administrador de Kubernetes decide qué `PolicyServer` la alberga.
+
+[NOTE]
+====
+
+El objeto `PolicyServer` es una abstracción de alto nivel introducida por {short-project-name}.
+Detrás de escena, se crea un `Deployment` con un tamaño de réplica específico.
+
+Cada `PolicyServer` puede tener un tamaño de réplica diferente de los demás.
+
+====
+
+Esto permite escenarios interesantes como los siguientes:
+
+* Despliega directivas críticas en un grupo dedicado de Servidores de Políticas.
+* Despliega las directivas de un inquilino ruidoso en un grupo dedicado de Servidores de Políticas.
+
+== Verificaciones de antecedentes
+
+A medida que se añaden, eliminan y reconfiguran directivas, los recursos ya presentes en el clúster pueden volverse no conformes.
+
+Tanto OPA Gatekeeper como {short-project-name} tienen un escáner que opera en segundo plano. Este escáner evalúa los recursos ya definidos en el clúster y señala aquellos que no son conformes.
+
+La única diferencia entre OPA Gatekeeper y {short-project-name} es cómo se guardan los resultados del escáner.
+
+OPA Gatekeeper añade los detalles de la violación al campo `status` de un recurso personalizado `Constraint` dado (ver https://open-policy-agent.github.io/gatekeeper/website/docs/audit#constraint-status[aquí]).
+
+{short-project-name} En cambio, almacena los resultados dentro de un conjunto de Recursos Personalizados de Informes definidos por https://openreports.io[openreports.io].

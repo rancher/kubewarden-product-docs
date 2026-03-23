@@ -1,0 +1,34 @@
+include::partial$variables.adoc[]
+= Para quem é este projeto? As personas.
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: Para quem é este projeto? As personas.
+:keywords: ["{project-name}", Kubewarden, documentação, personas]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [explanation]
+
+## {project-name} personas
+
+[cols="1,2", options="header"]
+|===
+|Persona |Descrição
+
+|**Usuário de política**
+|Alguém que pega uma política e a utiliza em um cluster. Eles implantam políticas e observam resultados. Eles configuram as definições da política, mas não escrevem o código interno da política (se houver).
+
+|**Operador**
+|Alguém operando {short-project-name} em um cluster. Instala e mantém {short-project-name}.
+
+|**Distribuidor de política**
+|Alguém que escreveu uma política e deseja compartilhá-la com outros. Eles querem que a política seja consumida pelo papel de “usuário de política”. Um distribuidor de políticas {short-project-name}, para lugares como ArtifactHub ou repositórios OCI privados.
+
+|**Desenvolvedor de política**
+|Uma pessoa projetando e escrevendo políticas para {short-project-name} para que outros possam consumir.
+
+|**Integrador**
+|Constrói com, usando ou sobre {short-project-name}. Talvez uma interface personalizada ou uma ferramenta auxiliar para gerar políticas.
+
+|**Ações do**
+|Uma pessoa trabalhando no conjunto de produtos {short-project-name}. Construindo o próprio {short-project-name}.
+|===

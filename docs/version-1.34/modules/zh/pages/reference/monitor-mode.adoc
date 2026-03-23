@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= 监控模式
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置集群接纳策略或接纳策略以监控模式跟踪和分析策略操作，而不修改传入请求。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "monitor-mode"]
+:doc-type: ["reference"]
+:keywords: ["kubernetes", "kubewarden", "monitor mode"]
+:sidebar_label: 监控模式
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+在定义策略时，您可以选择两种模式，指定在其xref:reference/CRDs.adoc#admissionpolicyspec[`spec.mode`]中。
+您默认在`mode: protect`中部署策略。
+然后，策略接受、拒绝或变更请求。
+
+可以选择在监控模式下部署策略。在监控模式下：
+
+* 策略接受所有请求，就好像该策略未安装一样。
+* `policy-server`正常跟踪该策略。如果请求被拒绝或策略提出变更，则跟踪包含详细信息。
+* `policy-server`指标正常更新，模式包含在指标负载中。因此，按模式过滤策略并专注于使用`monitor`模式部署的策略变得容易。
+
+`mode`是包含在`ClusterAdmissionPolicy`和`AdmissionPolicy`资源中的一个属性。`mode`属性可以取两个值：`monitor`和`protect`。如果省略，`mode`默认为`protect`。
+
+要在`monitor mode`中创建策略，您需要将语句`mode:监控`作为资源规范的一部分。例如，在此`ClusterAdmissionPolicy`的`spec`部分（标记为➀）:
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-capabilities
+spec:
+  mode: monitor <1>
+  policyServer: reserved-instance-for-tenant-a
+  module: registry://ghcr.io/kubewarden/policies/psp-capabilities:v0.1.3
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    allowed_capabilities:
+    - CHOWN
+    required_drop_capabilities:
+    - NET_ADMIN
+----
+<1> `mode: monitor` 属性位于 `spec` 部分。
+
+== 更改策略模式
+
+出于安全考虑，具有 `UPDATE` 权限的用户可以对策略资源进行更严格的限制。这意味着您可以将现有的 `ClusterAdmissionPolicy` 或 `AdmissionPolicy` 的 `mode` 从 `monitor` 更改为 `protect`。
+
+但是，您不能将现有的 `ClusterAdmissionPolicy` 或 `AdmissionPolicy` 的 `mode` 从 `protect` 更改为 `monitor`。
+
+因此，要将策略的 `mode` 从 `protect` 更改为 `monitor`，您需要删除该策略并在 `monitor` 模式下重新创建它。将策略从 `protect` 切换到 `monitor` 与删除策略相同，因此此方法假设用户具有删除策略的权限。
+
+== 关于变更策略的说明
+
+在 `monitor` 模式下变更策略不会对资源执行变更。
+在 `monitor` 模式下，策略记录它们本应执行的操作。它们还记录在 `protect` 模式下本应生成的补丁。
+
+[WARNING]
+====
+当变更策略处于 `monitor` 模式时，后续策略评估的是一个未更改的、与变更策略处于 `protect` 模式时不同的资源。
+====

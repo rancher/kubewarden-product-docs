@@ -1,0 +1,23 @@
+include::partial$variables.adoc[]
+= 自定义资源定义 (CRD)
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解有关 {project-name} 的自定义资源定义（CRD），并访问相关的 API 参考。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["operator-manual", "crd"]
+:doc-type: ["reference"]
+:doctype: book
+:keywords: ["{project-name}", "Kubewarden", "kubernetes", "自定义资源定义", "CRD"]
+:sidebar_label: 自定义资源定义 (CRD)
+:sidebar_position: 5
+:current-version: {page-origin-branch}
+
+您可以在此页面和 {project-name}https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev] 上找到  自定义资源的定义。
+
+////
+API REFERENCE GOES BELOW.
+From a file generated in the kubewarden/kubewarden-controller repo
+in docs/crds.
+////
+
+include::latest@shared:en:partial$CRD-docs-for-docs-repo-v1.33-forward.adoc[]

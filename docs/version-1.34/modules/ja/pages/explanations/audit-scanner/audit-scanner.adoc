@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= Kubewarden audit scannerとは何ですか？
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Kubewarden audit scannerが、各クラスターにおけるAdmission Controllerポリシーに基づくコンプライアンスを継続的に検証する役割について学びましょう。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "Kubewarden audit scanner", "kubernetes"]
+:sidebar_label: 監査スキャナー
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+
+Kubewarden audit scanner機能は、{project-name} 1.7.0リリースから利用可能です。
+
+====
+
+
+`audit-scanner`コンポーネントは、クラスター内のリソースを常にチェックします。それは、クラスターに展開された{short-project-name}ポリシーに従っていないものにフラグを立てます。
+
+ポリシーは時間とともに進化します。新しいポリシーの展開やポリシーの更新があります。
+バージョンや設定が変更されます。これにより、クラスター内に既に存在するリソースがもはやコンプライアンスを満たさない状況が生じる可能性があります。監査スキャン機能は、Kubernetes管理者にクラスターのコンプライアンス状態を常に検証するツールを提供します。
+
+{short-project-name}におけるKubewarden audit scannerの使用を説明するために、次のシナリオを考えてみましょう。
+
+ボブがクラスターにWordPress Podを展開していると仮定します。ボブはKubernetesに不慣れで、間違いを犯し、特権コンテナとして実行されるPodを展開します。この時点では、それを防ぐポリシーはないため、Podはクラスター内に正常に作成されます。
+
+数日後、Kubernetes管理者のアリスが特権コンテナの作成を禁止する{short-project-name}ポリシーを施行します。ボブが展開したPodは、既に存在するため、クラスター内で実行され続けます。
+
+Kubewarden audit scannerによって生成されたレポートは、アリスが作成ポリシーに違反しているすべてのワークロードを特定するのに役立ちます。これはボブによって作成されたWordPress Podを含みます。
+
+Kubewarden audit scannerは次のように動作します：
+
+* 監査するすべてのリソースを特定します。
+* 各リソースについて、そのリソースのデータを使用して合成アドミッションリクエストを構築します。
+* 各アドミッションリクエストを監査リクエスト専用のポリシーサーバーエンドポイントに送信します。
+
+リクエストを評価するポリシーにおいて、実際のリクエストと監査リクエストの間に違いはありません。この監査ポリシーサーバーエンドポイントには、評価に関するデータを収集するための計測機能があります。そのため、ユーザーは監視ツールを使用してKubewarden audit scannerのデータを分析できます。
+
+== Kubewarden audit scannerを有効にします。
+
+{short-project-name} 1.7.0リリースからKubewarden audit scannerを有効にできます。
+
+詳細なインストール手順はxref:howtos/audit-scanner.adoc[Kubewarden audit scannerのハウツー]にあります。
+
+== ポリシー
+
+デフォルトでは、Kubewarden audit scannerはすべてのポリシーを評価します。Kubewarden audit scannerでポリシー評価をスキップしたいオペレーターは、ポリシー定義の`spec.backgroundAudit`フィールドを`false`に設定する必要があります。
+
+また、{short-project-name}のポリシーは現在、2つのオプションの注釈をサポートしています：
+
+* `io.kubewarden.policy.severity`注釈を使用すると、ポリシー違反の重大度レベルを指定できます。たとえば、`critical`、`high`、`medium`、`low`、または`info`です。
+* `io.kubewarden.policy.category`注釈を使用すると、特定のドメインまたは目的に基づいてポリシーを分類できます。たとえば、`PSP`、`compliance`、または`performance`です。
+
+詳細についてはポリシー作成者のxref:tutorials/writing-policies/index.adoc[ドキュメント]を参照してください。
+
+== 権限とサービスアカウント
+
+{short-project-name}のKubewarden audit scannerは、Kubernetesリソースをスキャンし、結果を保存するために、特定のロールベースのアクセス制御（RBAC）構成を必要とします。インストールにより、これらの権限を持つ正しいデフォルトのサービスアカウントが作成されます。ユーザーはリソースへのアクセスを構成するために、自分自身のサービスアカウントを作成できます。
+
+デフォルトのKubewarden audit scanner`ServiceAccount`は、Kubernetesによって提供される`view` `ClusterRole`にバインドされます。この`ClusterRole`は、ネームスペース内の幅広いKubernetesリソースへの読み取り専用アクセスを許可します。この役割の詳細については、https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles[Kubernetesドキュメント]をご覧ください。
+
+Kubewarden audit scannerは、`ClusterRole`にバインドされ、{short-project-name}リソースタイプへの読み取りアクセスと`PolicyReport`CRDへの読み書きアクセスを付与します。 これらの権限により、Kubewarden audit scannerは監査評価を実施し、評価結果に基づいてポリシーレポートを作成するためにリソースを取得できます。

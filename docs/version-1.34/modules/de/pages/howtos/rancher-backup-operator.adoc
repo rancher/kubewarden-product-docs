@@ -1,0 +1,126 @@
+include::partial$variables.adoc[]
+
+= Sicherung und Wiederherstellung mit dem Rancher Backup Operator
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren und Verwalten von Sicherungen und Wiederherstellungen mit dem Rancher Backup Operator auf jedem Kubernetes-Cluster.
+:keywords: "{project-name}", Kubernetes, Kubewarden, Rancher Backup Operator, Sicherung, Wiederherstellung
+:doc-persona: Kubewarden-operator, Kubewarden-integrator
+:doc-type: howto
+:doc-topic: Operator-Handbuch, Rancher Backup Operator
+:current-version: {page-origin-branch}
+
+Der `rancher-backup` Operator kann verwendet werden, um Rancher auf jedem Kubernetes-Cluster zu sichern und wiederherzustellen.
+
+Seit Version `v9.0.0` unterstützt `rancher-backup` {project-name}. Dies beinhaltet:
+
+- Der Standard-Rancher-Namespace `cattle-kubewarden-system` (oder `cattle-kubewarden-*`) sowie der Standard-{short-project-name}-Namespace `kubewarden`.
+- Die benötigten Ressourcen von {short-project-name} werden über die Helm-Charts installiert.
+- Die {short-project-name} CRDs, die nach der Wiederherstellung vom {short-project-name} Controller abgeglichen werden.
+- Das `policy-reporter` Subchart des `kubewarden-controller` Charts, für deren Standardwerte. Dies umfasst nicht die Grafana-Integration oder andere Plugins.
+
+== Benutzergeheimnisse
+
+Der Backup-Prozess umfasst keine vom Benutzer erstellten Geheimnisse, wie die, die verwendet werden, um xref:/howtos/policy-servers/02-private-registry.adoc#_creating_the_secret[PolicyServers für private Registries zu konfigurieren], es sei denn, sie sind korrekt gekennzeichnet. Dafür kennzeichnen Sie die Geheimnisse auf eine der folgenden Arten. Entweder:
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker app.kubernetes.io/part-of=kubewarden
+----
+
+oder:
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
+----
+
+== Installation des Rancher Backup Operators
+
+Folgen Sie dem Link: \https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html[Rancher Manager] Dokumentation. Für eine Minikube-Installation, bei der PersistentVolumes vom Typ `hostPath` verwendet werden, die Minikube standardmäßig unterstützt, und die den Namen `standard` trägt.
+
+Man muss den Backup Operator anweisen, auch {short-project-name} benutzerdefinierte CRs zu sichern, indem der Wert `optionalResources.kubewarden.enabled` auf `true` gesetzt wird.
+
+Die Installation erfolgt wie folgt:
+
+[source,console]
+----
+helm repo add rancher-charts https://charts.rancher.io
+helm repo update
+helm install --wait --create-namespace -n cattle-resources-system \
+    rancher-backup-crd rancher-charts/rancher-backup-crd
+helm install --wait -n cattle-resources-system \
+    rancher-backup rancher-charts/rancher-backup \
+    --set persistence.enabled=true --set persistence.storageClass=standard \
+    --set optionalResources.kubewarden.enabled=true
+----
+
+== Sicherung
+
+Verwenden Sie die `rancher-resource-set-full`, um die {short-project-name} Geheimnisse zu sichern.
+Dazu gehören die TLS-Geheimnisse, die bei der Helm-Installation erstellt werden.
+
+Wenn Sie `rancher-resource-basic` bevorzugen, denken Sie bitte daran, die benötigten TLS-Geheimnisse zu sichern oder manuell zu erstellen.
+
+Hier ist ein Beispiel für die Durchführung einer unverschlüsselten Sicherung an den Standardstandort mit der `rancher-resource-set-full`:
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Backup
+metadata:
+  name: default-location-backup
+spec:
+  resourceSetName: rancher-resource-set-full
+EOF
+backup.resources.cattle.io/default-location-backup created
+----
+
+Die `rancher-backup` Protokolle oder die Sicherung zeigen die Erstellung der Sicherungsdatei an:
+
+[source,shell]
+----
+kubectl logs -n cattle-resources-system -l app.kubernetes.io/name=rancher-backup -f
+...
+INFO[2025/06/26 10:07:48] Processing backup default-location-backup
+INFO[2025/06/26 10:07:48] For backup CR default-location-backup, filename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z
+...
+INFO[2025/06/26 10:07:49] Done with backup
+----
+
+Sie können auch den Status sehen, indem Sie die Ressource beschreiben:
+
+[source,shell]
+----
+kubectl get backups
+NAME                      LOCATION   TYPE       LATEST-BACKUP                                                                              RESOURCESET                 AGE    STATUS
+default-location-backup   PV         One-time   default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   rancher-resource-set-full   111s   Completed
+----
+
+Siehe die Rancher-Dokumentation für weitere link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_backup[Beispiele für Sicherungen].
+
+== Wiederherstellung
+
+Um die unverschlüsselte Sicherung vom Standardstandort wiederherzustellen, entnehmen Sie den Dateinamen aus der Spalte LATEST-BACKUP, wenn Sie die Sicherungsressource anzeigen, um eine Wiederherstellungsressource zu erstellen:
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Restore
+metadata:
+  name: restore-default
+spec:
+  backupFilename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z.tar.gz
+EOF
+restore.resources.cattle.io/restore-default created
+
+kubectl get restores
+NAME              BACKUP-SOURCE   BACKUP-FILE                                                                                AGE   STATUS
+restore-default   PV              default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   6s    Completed
+----
+
+Siehe die Rancher-Dokumentation für weitere link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_restore[Wiederherstellungsbeispiele].
+
+

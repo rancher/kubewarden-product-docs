@@ -1,0 +1,84 @@
+include::partial$variables.adoc[]
+= Rego
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Rego言語の基本を学び、Open Policy AgentおよびGatekeeperフレームワークと連携してポリシーをコードとして実装する方法を理解します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["ポリシーの作成", "rego", "イントロダクション"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "ポリシーの作成", "rego"]
+:sidebar_label: Rego
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Regoのサポートは、これらのリリースから利用可能です：
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+
+Regoポリシーは、{project-name} 1.9リリースからのコンテキスト対応データをサポートしています。
+====
+
+
+Rego言語は、ポリシーをコードとして実装するためのドメイン特化型言語です。
+https://www.openpolicyagent.org/docs/latest/policy-language/[Rego]
+は、https://en.wikipedia.org/wiki/Datalog[Datalog]に触発された言語です。
+
+Kubernetesでポリシーをコードとして実装するためのRegoポリシーの記述方法は2つあります。
+Open Policy AgentとGatekeeperです。
+
+次のセクションでは、同じ言語を使用しているにもかかわらず、2つのフレームワークの違いを示します。
+もし{short-project-name}の実装に興味がある場合は、下記のリンク先にあるフレームワーク固有のドキュメントを直接ご覧いただけます。
+
+* xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
+* xref:tutorials/writing-policies/rego/gatekeeper/01-intro.adoc[Gatekeeper]
+
+== 1つの言語、2つのフレームワーク
+
+=== Open Policy Agent (OPA)
+
+Open Policy Agentは、あらゆるプロジェクトにおいてポリシーをコードとして実装できるようにするプロジェクトです。
+OPAは、アプリケーションのあらゆるポリシーベースの検査に利用できます。
+
+この文脈において、Kubernetes向けのポリシー作成は、単にOPAを活用することにすぎません。
+KubernetesのAdmission Webhookを用いることで、リクエストをOPAで評価し、Regoで記述されたポリシーを実行できます。
+
+OPAは、`kube-mgmt`サイドカーを通じてKubernetesとの任意の統合を実現しています。
+Kubernetesにデプロイされ、OPAサーバーがRegoポリシーを評価することで、構成されたKubernetesリソースをRegoに複製することができます。
+そのため、これらのKubernetesリソースはすべてのポリシーから参照可能です。
+OPAを使用すると、KubernetesのConfigMapオブジェクト内にポリシーを定義できます。
+詳細については、https://github.com/open-policy-agent/kube-mgmt[プロジェクトページ]をご覧ください。
+
+=== Gatekeeper
+
+GatekeeperはKubernetesでの使用に特化しており、可能な限りその利点を活かし、特定のケースではOPAよりもKubernetesのワークフローを簡素化します。
+
+== 違いを見てみましょう
+
+OPAとGatekeeperのポリシーは、ポリシーをコードとして記述するためにRegoを使用します。
+各ソリューションは、Regoでポリシーを書く際に違いがあります。次のセクションで示します。
+
+== エントリーポイント
+
+エントリーポイントは、パッケージ内のルールの名前であり、ポリシーが実行されるときにランタイムによって呼び出されるルールです。
+
+== 現在の制限
+
+=== コンテキスト認識ポリシー
+
+コンテキスト認識ポリシーは、入力リクエストを孤立して評価しないポリシーです。
+他の要因を考慮して決定を下します。
+例えば、名前空間リソースを評価し、ポリシー内で何かを構成するために親名前空間のアノテーションを使用するポリシーです。
+別の例は、`Ingress`リソースを評価するポリシーですが、決定を下すために既存の`Ingress`リソースのリストも持っているポリシーです。
+
+コンテキスト認識ポリシーのアイデアは、カスタムリソースにも拡張できるため、ポリシーは現在使用されているカスタムリソースに基づいてリクエストを評価したい場合があります。
+
+OPAとGatekeeperの両方は、{short-project-name} 1.9リリースからコンテキスト認識ポリシーをサポートしています。
+
+コンテキスト認識ポリシーの詳細は、xref:reference/spec/05-context-aware-policies.adoc[こちら]です。
+
+=== ミューテーションポリシー
+
+Gatekeeperはミューテーションポリシーをサポートしていますが、{short-project-name}はまだGatekeeper互換のミューテーションポリシーを実装していません。
+{short-project-name} SDKを使用してミューテーションポリシーを書くことができるポリシーを使用できますが、現在のところ、{short-project-name}でGatekeeperのミューテーションポリシーを実行することはできません。

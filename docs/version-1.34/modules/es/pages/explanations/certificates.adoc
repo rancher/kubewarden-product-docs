@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Rotación de certificados
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a rotar certificados en tu {project-name} sin causar tiempo de inactividad.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explanations", "certificates"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "certificate", "controller", "reconciliation"]
+:sidebar_label: Rotación de certificados
+:sidebar_position: 21
+
+{project-name} v1.17.0 eliminó la dependencia de cert-manager. El controlador es capaz de gestionar todos los certificados utilizados por todos los componentes. Ahora, el controlador tiene un nuevo bucle de reconciliación que asegura que los certificados estén siempre actualizados y que la configuración del webhook sea correcta.
+
+La instalación del gráfico de Helm realiza la primera generación de certificados. Genera la CA raíz con diez años hasta la expiración. La instalación del gráfico de Helm también genera el certificado del servidor web del webhook del controlador, firmado por la CA raíz. El servidor API utiliza esto para comunicarse con el {short-project-name} controlador para validar el CRD. Tiene una expiración de un año.
+
+Una vez que el controlador comienza, su reconciliador renueva los certificados automáticamente cuando están a punto de expirar. También actualiza todos los certificados y configuraciones de webhook utilizados por toda la pila {short-project-name}.
+
+[NOTE]
+====
+Todos los certificados generados por el gráfico de Helm y posteriormente por el controlador utilizan claves ECDSA P256.
+====
+
+El bucle de reconciliación renueva los certificados 60 días antes de la expiración.
+Los certificados rotan sin tiempo de inactividad. El bucle de reconciliación también se encarga de renovar la CA raíz.
+
+El controlador genera una nueva CA raíz 60 días antes de su expiración. El controlador actualiza el paquete de CA utilizado por todos los webhooks para incluir tanto la nueva CA raíz como la antigua.
+
+El cambio de la CA raíz lleva al reconciliador a recrear los certificados emitidos a los webhooks. La propagación de los nuevos certificados requiere un periodo de tiempo. Sin embargo, durante este tiempo, el paquete de CA actualizado permite que el servidor API continúe comunicándose con todos los webhooks sin ningún tiempo de inactividad.
+
+Cuando un nuevo certificado está listo y el antiguo es inválido, el controlador actualiza el paquete de CA, utilizado por los webhooks, para incluir solo la última CA raíz.
+
+Cuando se renueva el certificado del servidor de directivas o del servidor web del controlador, el controlador actualiza el secreto con el nuevo certificado firmado por la CA raíz. Debido a esta función de recarga, el controlador y el servidor de directivas utilizan el nuevo certificado sin necesidad de reiniciar procesos, por lo que no hay tiempo de inactividad.

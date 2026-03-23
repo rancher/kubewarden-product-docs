@@ -1,0 +1,195 @@
+include::partial$variables.adoc[]
+
+= Installation en isolation physique avec Hauler
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Utilisez Hauler pour installer {project-name} dans des environnements isolés physiquement.
+:keywords: ["{project-name}", Kubewarden, kubernetes, installation en isolation physique, Hauler]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manuel de l'opérateur, isolation physique, installation, Hauler
+
+Ce guide vous montre comment installer {project-name} dans des environnements isolés physiquement en utilisant link:https://docs.hauler.dev/docs/intro[Hauler]. Hauler est un outil qui aide les utilisateurs à exécuter des charges de travail dans des environnements isolés physiquement. Il déplace les ressources nécessaires pour les applis dans ces environnements isolés physiquement.
+
+{short-project-name} fournit un fichier manifeste avec toutes les ressources nécessaires pour exécuter {short-project-name} dans un environnement privé. Cette documentation décrit comment vous pouvez l'utiliser. Référez-vous à la documentation de Hauler pour en savoir plus à son sujet.
+
+Le flux de travail de base utilisant le manifeste de Hauler est :
+
+. Obtenez-le à partir de la page de version de {short-project-name}
+. Chargez toutes les ressources nécessaires pour exécuter {short-project-name} dans un magasin local
+. Exportez-les dans un fichier
+. Déplacez le fichier dans l'environnement privé
+. Chargez les ressources dans Hauler fonctionnant à l'intérieur de l'environnement privé
+. Copiez tout dans un registre, à utiliser dans le processus d'installation, dans votre environnement isolé physiquement
+
+== Téléchargez le manifeste de Hauler depuis la page de version du chart Helm
+
+Téléchargez `hauler_manifest.yml` depuis le {short-project-name} link:https://github.com/kubewarden/helm-charts/releases/[page de version].
+
+Synchronisez les ressources définies dans le manifeste avec votre magasin Hauler :
+
+[source,shell]
+----
+hauler store sync --filename hauler_manifest.yaml
+----
+
+Hauler télécharge toutes les ressources du manifeste vers le magasin local. Ce processus prend quelques minutes. Une fois terminé, vous pouvez voir les ressources synchronisées avec la commande `hauler store info`.
+
+== Générez le fichier tarball avec toutes les ressources {short-project-name}.
+
+Exécutez la commande Hauler pour exporter toutes les ressources précédemment chargées dans le magasin vers un fichier :
+
+[source,shell]
+----
+hauler store save --filename kubewarden-resources.tar.zst
+----
+
+[NOTE]
+====
+
+{short-project-name} container images support x86_64 and architecture ARM. Par conséquent, lorsque vous enregistrez la ressource dans le fichier, vous pouvez voir des messages d'avertissement comme celui-ci :
+
+[source,shell]
+----
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter:3.3.3]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter-ui:2.4.1]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/policy-server:v1.27.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/audit-scanner:v1.27.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/rancher/kuberlr-kubectl:v5.0.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/kubewarden-controller:v1.27.0]
+----
+
+Pour éviter ce message d'avertissement, vous pouvez définir le drapeau CLI `--platform` pour indiquer l'architecture de plateforme que vous souhaitez enregistrer dans le fichier.
+
+====
+
+== Transférez le tarball dans votre environnement isolé physiquement.
+
+Maintenant que vous avez toutes les ressources {short-project-name} dans `kubewarden-resources.tar.zst`, copiez-les dans votre environnement isolé physiquement et chargez-les dans le magasin Hauler là-bas :
+
+[source,shell]
+----
+hauler store load --filename kubewarden-resources.tar.zst
+# Check if the resources are loaded
+hauler store info
+----
+
+Maintenant, toutes les ressources nécessaires pour installer {short-project-name} sont dans le magasin Hauler de votre environnement isolé physiquement.
+
+== Peupler le registre privé.
+
+Pour utiliser les ressources de votre magasin Hauler, il est nécessaire de les rendre disponibles dans un registre interne. Vous pouvez utiliser les commandes Hauler pour les copier dans votre registre privé.
+
+[source,shell]
+----
+hauler store copy registry://localhost:5000
+----
+
+Vous pouvez également exécuter Hauler pour démarrer un registre avec toutes les ressources du magasin. Ce registre n'est pas sécurisé, et vous devez adapter la configuration du cluster :
+
+[source,shell]
+----
+# Find IP address of your host
+# hostname -I
+
+# Update registries.yaml for k3s based cluster to allow insecure access
+# mirrors:
+#   "<HOST_IP>:5000":
+#     endpoint:
+#       - "http://<HOST_IP>:5000"
+# configs:
+#   "<HOST_IP>:5000":
+#     tls:
+#       insecure_skip_verify: true
+
+# Configure policy-server to allow pulling policies from insecure sources
+# helm install .. kubewarden-defaults .. --set policyServer.insecureSources[0]=<HOST_IP:5000>
+
+hauler store serve registry
+----
+
+Cela démarre un registre à l'adresse `localhost:5000`. À partir de ce point, vous pouvez utiliser d'autres commandes comme Skopeo pour copier toutes les images de conteneurs, les modules de politique et les charts Helm utilisés par {short-project-name} dans votre registre privé.
+
+== Installez {short-project-name}
+
+Maintenant que votre registre privé a tout ce qu'il faut, vous pouvez installer {short-project-name}. La différence par rapport à une installation standard de {short-project-name} est que vous devez changer le registre dans les images de conteneurs et les politiques pour qu'il soit le registre privé. De plus, vous devez installer les charts Helm à partir des artefacts OCI.
+
+Installez la pile {short-project-name} :
+
+[source,shell]
+----
+helm install --wait -n kubewarden kubewarden-crds --create-namespace \
+    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-crds
+helm install --wait -n kubewarden kubewarden-controller \
+    --set "global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>" \
+    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-controller
+----
+
+[CAUTION]
+====
+
+Pour utiliser le sous-chart PolicyReporter disponible dans le `kubewarden-controller` chart Helm, vous devez définir d'autres valeurs spécifiques au sous-chart dans un environnement isolé physiquement. Voir un exemple ci-dessous :
+
+[source,shell]
+----
+helm install --wait -n kubewarden kubewarden-controller oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-controller \
+    --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set auditScanner.policyReporter=true \
+    --set policy-reporter.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.image.repository=kyverno/policy-reporter \
+    --set policy-reporter.ui.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.ui.image.repository=kyverno/policy-reporter-ui
+----
+
+Il est nécessaire de définir `auditScanner.policyReporter` et quatre autres valeurs pour activer le sous-chart et configurer le registre et le dépôt avec l'emplacement du magasin d'images du Policy Reporter. Pour plus d'informations sur les valeurs du sous-chart Helm de rapport de politique, référez-vous à la documentation du Policy Reporter : \link:https://kyverno.github.io/policy-reporter-docs/getting-started/helm.html[documentation du Policy Reporter].
+
+====
+
+[source,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-defaults \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+Enfin, configurez chaque serveur de politique pour récupérer les politiques de votre registre privé. Voir la section xref:/howtos/policy-servers/02-private-registry.adoc[utilisation du registre privé] de la documentation.
+
+Créez maintenant {short-project-name} politiques dans votre cluster. Les politiques doivent être disponibles dans votre registre privé.
+
+[source,yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v0.2.2
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+  mutating: false
+EOF
+----
+
+[CAUTION]
+====
+
+Les ressources `PolicyServer` doivent utiliser l'image disponible dans votre registre privé.
+Par exemple :
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: reserved-instance-for-tenant-a
+spec:
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
+  replicas:
+----
+
+====

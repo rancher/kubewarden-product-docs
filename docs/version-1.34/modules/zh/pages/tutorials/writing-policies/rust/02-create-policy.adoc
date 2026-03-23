@@ -1,0 +1,112 @@
+include::partial$variables.adoc[]
+= 创建策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 学习创建和配置验证策略，以根据可自定义的拒绝标准控制 Pod 创建请求。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "creating-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "策略创建"]
+:sidebar_label: 创建策略
+:current-version: {page-origin-branch}
+
+作为示例，您创建一个简单的验证策略来处理 Pod 创建请求。
+
+该策略查看 Pod 的 `metadata.name` 属性，并拒绝名称无效的 Pod。
+无效名称的列表应由策略的最终用户进行配置。
+
+策略设置看起来像：
+
+[subs="+attributes",yaml]
+----
+invalid_names:
+- bad_name1
+- bad_name2
+----
+
+该策略应接受创建如下的 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+它应拒绝创建如下的 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad_name1
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== 搭建新的策略项目
+
+您可以通过使用 `cargo generate` 和 https://github.com/kubewarden/rust-policy-template[模板项目] 创建一个新的策略项目。
+
+首先，安装 `cargo-generate`。这需要 https://pkgs.org/download/openssl-devel[openssl-devel]。
+
+[subs="+attributes",shell]
+----
+cargo install cargo-generate
+----
+
+现在按如下方式搭建项目：
+
+[subs="+attributes",shell]
+----
+cargo generate --git https://github.com/kubewarden/rust-policy-template \
+               --branch main \
+               --name demo
+----
+
+该命令产生如下输出：
+
+[subs="+attributes",console]
+----
+🔧   Creating project called `+demo+`...
+✨   Done! New project created /<some-path-name>/demo
+----
+
+这将在 `demo` 子目录中创建新的策略项目。
+
+[NOTE]
+====
+
+如果您计划在演示中使用 GitHub 容器注册表功能，您需要 https://docs.github.com/en/packages/working-with-a-github-packages-registry/enabling-improved-container-support-with-the-container-registry#enabling-the-container-registry-for-your-personal-account[启用改进的容器支持]。
+====
+
+
+=== 测试
+
+您可以尝试：
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+这将测试生成的脚手架。如果一切正确，您将看到一系列编译消息，最后输出如下：
+
+[subs="+attributes",console]
+----
+running 4 tests
+test settings::tests::validate_settings ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+test tests::reject_pod_with_invalid_name ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

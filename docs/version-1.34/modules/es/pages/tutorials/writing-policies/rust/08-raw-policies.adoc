@@ -1,0 +1,246 @@
+include::partial$variables.adoc[]
+= Directivas en bruto
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende sobre directivas en bruto que evalúan documentos JSON arbitrarios, así como ver ejemplos de implementación de directivas en Rust.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["writing-policies", "rust", "raw-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "raw policies", "rust"]
+:sidebar_label: Directivas en bruto
+:current-version: {page-origin-branch}
+
+Las directivas en bruto son directivas que pueden evaluar documentos JSON arbitrarios.
+Para más información sobre las directivas en bruto, consulta la página de xref:howtos/raw-policies.adoc[directivas en bruto].
+
+== Ejemplos
+
+Los siguientes ejemplos deberían parecerte familiares si completaste la página de xref:tutorials/writing-policies/rust/05-mutation-policy.adoc[validación] de este tutorial.
+
+[NOTE]
+====
+Recuerda marcar la directiva como `raw` utilizando el campo `policyType` en la configuración `metadata.yml`.
+Consulta la especificación de xref:tutorials/writing-policies/metadata.adoc[metadatos] para más información.
+====
+
+
+=== Validación
+
+Escribamos una directiva que acepte una solicitud en el siguiente formato:
+
+[subs="+attributes",json]
+----
+{
+  "request": {
+    "user": "alice",
+    "action": "delete",
+    "resource": "products"
+  }
+}
+----
+
+y valida que:
+
+* `user` está en la lista de usuarios válidos
+* `action` está en la lista de acciones válidas
+* `resource` está en la lista de recursos válidos
+
+Comienza por estructurar la directiva utilizando la https://github.com/kubewarden/rust-policy-template[plantilla de directiva de Rust].
+
+Primero, definimos los tipos que representan la carga útil de la solicitud.
+Declararemos un tipo `RawValidationRequest` personalizado que contenga el `Request` y el `Settings`, en lugar de utilizar el tipo `ValidationRequest` que proporciona el SDK:
+
+[subs="+attributes",rust]
+----
+/// RawValidationRequest represents the request that is sent to the validate function by the Policy Server.
+#[derive(Deserialize)]
+pub(crate) struct RawValidationRequest {
+    pub(crate) request: Request,
+    pub(crate) settings: Settings,
+}
+
+#[derive(Serialize, Deserialize)]
+/// Request represents the payload of the request.
+pub(crate) struct Request {
+    pub(crate) user: String,
+    pub(crate) resource: String,
+    pub(crate) action: String,
+}
+----
+
+Luego necesitamos definir el tipo `Settings` e implementar el rasgo `Validatable`:
+
+[subs="+attributes",rust]
+----
+/// Settings represents the settings of the policy.
+#[derive(Serialize, Deserialize, Default, Debug)]
+#[serde(default, rename_all = "camelCase")]
+pub(crate) struct Settings {
+    pub(crate) valid_users: Vec<String>,
+    pub(crate) valid_actions: Vec<String>,
+    pub(crate) valid_resources: Vec<String>,
+}
+
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        info!(LOG_DRAIN, "starting settings validation");
+
+        if self.valid_users.is_empty() {
+            return Err("validUsers cannot be empty".to_string());
+        }
+
+        if self.valid_actions.is_empty() {
+            return Err("validActions cannot be empty".to_string());
+        }
+
+        if self.valid_resources.is_empty() {
+            return Err("validResources cannot be empty".to_string());
+        }
+
+        Ok(())
+    }
+}
+----
+
+Finalmente, definimos la función `validate`:
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: RawValidationRequest =
+        if let Ok(validation_request) = serde_json::from_slice(payload) {
+            validation_request
+        } else {
+            return kubewarden::reject_request(
+                Some("cannot unmarshal request".to_string()),
+                None,
+                None,
+                None,
+            );
+        };
+
+    info!(LOG_DRAIN, "starting validation");
+
+    let request = validation_request.request;
+    let settings = validation_request.settings;
+
+    if settings.valid_users.contains(&request.user)
+        && settings.valid_actions.contains(&request.action)
+        && settings.valid_resources.contains(&request.resource)
+    {
+        info!(LOG_DRAIN, "accepting resource");
+        kubewarden::accept_request()
+    } else {
+        kubewarden::reject_request(
+            Some("this request is not accepted".to_string()),
+            None,
+            None,
+            None,
+        )
+    }
+}
+----
+
+=== Mutación
+
+Modifiquemos el ejemplo anterior para mutar la solicitud en lugar de rechazarla.
+En este caso, la configuración contendrá el `defaultUser`, `defaultAction` y `defaultRequest` que se utilizarán para mutar la solicitud si el usuario, la acción o el recurso no son válidos.
+
+Necesitamos actualizar el tipo `Settings` con los nuevos campos:
+
+[subs="+attributes",rust]
+----
+/// Settings represents the settings of the policy.
+#[derive(Serialize, Deserialize, Default, Debug)]
+#[serde(default, rename_all = "camelCase")]
+pub(crate) struct Settings {
+    pub(crate) valid_users: Vec<String>,
+    pub(crate) valid_actions: Vec<String>,
+    pub(crate) valid_resources: Vec<String>,
+    pub(crate) default_user: String,
+    pub(crate) default_action: String,
+    pub(crate) default_resource: String,
+}
+
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        info!(LOG_DRAIN, "starting settings validation");
+
+        if self.valid_users.is_empty() {
+            return Err("validUsers cannot be empty".to_string());
+        }
+
+        if self.valid_actions.is_empty() {
+            return Err("validActions cannot be empty".to_string());
+        }
+
+        if self.valid_resources.is_empty() {
+            return Err("validResources cannot be empty".to_string());
+        }
+
+        if self.default_user.is_empty() {
+            return Err("defaultUser cannot be empty".to_string());
+        }
+
+        if self.default_action.is_empty() {
+            return Err("defaultAction cannot be empty".to_string());
+        }
+
+        if self.default_resource.is_empty() {
+            return Err("defaultResource cannot be empty".to_string());
+        }
+
+        Ok(())
+    }
+}
+----
+
+y la función `validate` para introducir la mutación:
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: RawValidationRequest =
+        if let Ok(validation_request) = serde_json::from_slice(payload) {
+            validation_request
+        } else {
+            return kubewarden::reject_request(
+                Some("cannot unmarshal request".to_string()),
+                None,
+                None,
+                None,
+            );
+        };
+
+    info!(LOG_DRAIN, "starting validation");
+
+    let request = validation_request.request;
+    let settings = validation_request.settings;
+
+    if settings.valid_users.contains(&request.user)
+        && settings.valid_actions.contains(&request.action)
+        && settings.valid_resources.contains(&request.resource)
+    {
+        info!(LOG_DRAIN, "accepting request");
+        return kubewarden::accept_request();
+    }
+
+    info!(LOG_DRAIN, "mutating request");
+    let mut request = request;
+
+    if !settings.valid_users.contains(&request.user) {
+        request.user = settings.default_user;
+    }
+
+    if !settings.valid_actions.contains(&request.action) {
+        request.action = settings.default_action;
+    }
+
+    if !settings.valid_resources.contains(&request.resource) {
+        request.resource = settings.default_resource;
+    }
+
+    let mutated_request = serde_json::to_value(request)?;
+    kubewarden::mutate_request(mutated_request)
+}
+----

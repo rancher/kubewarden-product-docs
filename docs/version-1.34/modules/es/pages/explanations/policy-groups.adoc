@@ -1,0 +1,250 @@
+include::partial$variables.adoc[]
+= Grupos de directivas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a crear directivas complejas combinando directivas más simples a través de Grupos de Directivas, utilizando específicamente las definiciones de AdmissionPolicyGroup y ClusterAdmissionPolicyGroup.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explanations", "policy-group"]
+:doc-type: ["explanation"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:sidebar_label: Grupos de directivas
+:sidebar_position: 21
+:current-version: {page-origin-branch}
+
+La función de grupo de directivas permite a los usuarios crear directivas complejas combinando directivas más simples. Introduce dos nuevas definiciones de recursos personalizadas (CRDs):
+
+* `AdmissionPolicyGroup`: para políticas de admisión que se aplican a espacios de nombres específicos.
+* `ClusterAdmissionPolicyGroup`: para políticas de admisión que se aplican a todo el clúster.
+
+Estos grupos de directivas permiten a los usuarios utilizar directivas existentes, reduciendo la necesidad de crear directivas personalizadas y mejorando la reutilización. Al evitar la duplicación de la lógica de directivas, los usuarios pueden simplificar la gestión y crear directivas personalizadas con una configuración similar a DSL.
+
+Los grupos de directivas permiten la evaluación combinada de múltiples directivas utilizando operadores lógicos. Esto permite la definición de lógica compleja. Sin embargo, mientras que las directivas ordinarias pueden incluir lógica de mutación para modificar recursos durante la admisión, los grupos de directivas solo realizan validación.
+
+La configuración para los grupos de directivas es similar a la de las directivas ordinarias. La diferencia es la adición de los campos `expression`, `message` y `policies`, y la declaración de reglas conscientes del contexto en una ubicación diferente.
+
+Este es un ejemplo de un `ClusterAdmissionPolicyGroup` que puedes utilizar en las siguientes secciones para explicar los diferentes campos:
+
+.Un `ClusterAdmissionPolicyGroup` que rechaza Pods que utilizan imágenes con la etiqueta `latest`, a menos que las imágenes estén firmadas por dos partes de confianza: Alice y Bob.
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    signed_by_alice:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyg65hiNHt8FXTamzCn34IE3qMGcV
+                yQz3gPlhoKq3yqa1GIofcgLjUZtcKlUSVAU2/S5gXqyDnsW6466Jx/ZVlg==
+                -----END PUBLIC KEY-----
+    signed_by_bob:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X
+                urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==
+                -----END PUBLIC KEY-----
+    reject_latest:
+      module: registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0
+      settings:
+        tags:
+          reject:
+            - latest
+  expression: "reject_latest() || (signed_by_alice() && signed_by_bob())"
+  message: "the image is using the latest tag or is not signed by Alice and Bob"
+----
+======
+
+== Campos de configuración principales
+
+Esta sección cubre los principales campos de configuración de un grupo de directivas.
+
+=== El atributo `policies`
+
+El campo de políticas es un mapa de directivas ordinarias. {project-name} llama a las directivas por el grupo de directivas, para determinar si se acepta o se rechaza el recurso en evaluación. Las definiciones de estas directivas son una versión simplificada de las directivas ordinarias {short-project-name}, que contienen solo los atributos `module`, `settings` y `contextAwareResources`. Estos elementos son necesarios para que las directivas funcionen dentro de un grupo de directivas.
+
+Un nombre único identifica cada directiva del grupo de directivas. Por ejemplo, el siguiente fragmento define tres directivas: `signed_by_alice`, `signed_by_bob` y `reject_latest_tag`.
+
+[,yaml]
+----
+policies:
+  signed_by_alice:
+    module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.8
+    settings: {} # settings for the policy
+  signed_by_bob:
+    module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.8
+    settings: {} # settings for the policy
+  reject_latest_tag:
+    module: ghcr.io/kubewarden/policies/trusted-repos-policy:v0.2.0
+    settings: {} # settings for the policy
+----
+
+[TIP]
+====
+
+Un grupo de directivas puede incluir la misma directiva múltiples veces con diferentes configuraciones.
+
+====
+
+
+=== El atributo `expression`
+
+El atributo `expression` contiene una declaración compuesta por los identificadores de las directivas unidos por operadores lógicos.
+
+La evaluación de la declaración `expression` debe dar como resultado un valor booleano.
+
+La representación de las directivas es como una función nombrada según el identificador especificado en el mapa `.spec.policies`. Los resultados producidos por la evaluación de las directivas se evalúan utilizando los operadores lógicos proporcionados por el usuario.
+
+Estos son los operadores soportados:
+
+* `&&`: utilizado para realizar operaciones `AND`
+* `||`: utilizado para realizar operaciones `OR`
+* `!`: utilizado para realizar operaciones `NOT`
+
+Puedes usar paréntesis redondos `( )` para definir prioridades de evaluación.
+
+Por ejemplo, dada la siguiente expresión:
+
+[,console]
+----
+reject_latest() || (signed_by_alice() && signed_by_bob())
+----
+
+La directiva rechaza cargas de trabajo que tienen imágenes utilizando la etiqueta `latest`, a menos que tanto Alice como Bob hayan firmado las imágenes.
+
+=== El atributo `message` y el formato de respuesta
+
+El campo `message` especifica el mensaje devuelto cuando la evaluación de `expression` resulta en un rechazo. La respuesta incluye el mensaje, junto con los resultados de la evaluación de las directivas individuales.
+
+[IMPORTANT]
+====
+
+La evaluación de las directivas que pertenecen al grupo solo se lleva a cabo si es necesario.
+
+Por ejemplo, dado la siguiente expresión:
+
+[,console]
+----
+reject_latest() || (signed_by_alice() && signed_by_bob())
+----
+
+Las directivas `signed_by_bob` y `signed_by_alice` no se evalúan cuando la directiva `reject_latest` devuelve `true`.
+
+De la misma manera, la directiva `signed_by_bob` no se evalúa si las directivas `signed_by_alice` y `reject_latest` devuelven `false`.
+
+Esto evita evaluaciones innecesarias de directivas en el grupo y otorga respuestas rápidas a las solicitudes de admisión.
+
+====
+
+El sistema envía todos los detalles de evaluación de las directivas del grupo como parte de la AdmissionResponse `.status.details.causes` cuando una directiva de grupo realiza un rechazo.
+
+Puedes obtener todos los detalles de una solicitud de admisión rechazada aumentando el nivel de verbosidad de `kubectl`:
+
+[,shell]
+----
+kubectl -v4 apply -f signed-pod.yml
+I0919 18:29:40.251332    4330 helpers.go:246] server response object: [{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "error when creating \"signed-pod.yml\": admission webhook \"clusterwide-demo.kubewarden.admission\" denied the request: the image is using the latest tag or is not signed by Alice and Bob",
+  "details": {
+    "causes": [
+      {
+        "message": "Resource signed is not accepted: verification of image testing.registry.svc.lan/busybox:latest failed: Host error: Callback evaluation failure: Image verification failed: missing signatures\nThe following constraints were not satisfied:\nkind: pubKey\nowner: null\nkey: |\n  -----BEGIN PUBLIC KEY-----\n  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X\n  urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==\n  -----END PUBLIC KEY-----\nannotations: null\n",
+        "field": "spec.policies.signed_by_bob"
+      },
+      {
+        "message": "not allowed, reported errors: tags not allowed: latest",
+        "field": "spec.policies.reject_latest"
+      }
+    ]
+  },
+  "code": 400
+}]
+Error from server: error when creating "signed-pod.yml": admission webhook "clusterwide-demo.kubewarden.admission" denied the request: the image is using the latest tag or is not signed by Alice and Bob
+----
+
+La respuesta completa de admisión está disponible en los registros del Policy Server cuando se ejecuta en modo de depuración. Además, los detalles de evaluación son siempre parte de las trazas de OpenTelemetry emitidas por el Policy Server.
+
+== Políticas Conscientes del Contexto
+
+Otra distinción entre grupos de directivas y directivas ordinarias es la ubicación de definición de las reglas de recursos conscientes del contexto. Cada directiva en un grupo acepta un campo opcional `contextAwareResources` para especificar los recursos a los que la directiva puede acceder durante la evaluación. De manera similar a las directivas ordinarias, solo puedes utilizar capacidades conscientes del contexto definiendo un `ClusterAdmissionPolicyGroup`. Esto es por razones de seguridad, ya que solo los usuarios no privilegiados pueden desplegar recursos `AdmissionPolicyGroup`. Para más detalles, consulta la documentación de las xref:explanations/context-aware-policies.adoc[políticas conscientes del contexto].
+
+.Un ejemplo de un grupo de directivas que hace uso de una directiva consciente del contexto.
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo-ctx-aware
+spec:
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - services
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    unique_service_selector:
+      module: registry://ghcr.io/kubewarden/policies/unique-service-selector-policy:v0.1.0
+      contextAwareResources:
+        - apiVersion: v1
+          kind: Service
+      settings:
+        app.kubernetes.io/name: MyApp
+    owned_by_foo_team:
+      module: registry://ghcr.io/kubewarden/policies/safe-annotations:v0.2.9
+      settings:
+        mandatory_annotations:
+          - owner
+        constrained_annotations:
+          owner: "foo-team"
+  expression: "unique_service_selector() || (!unique_service_selector() && owned_by_foo_team())"
+  message: "the service selector is not unique or the service is not owned by the foo team"
+----
+======
+
+En el ejemplo anterior, la directiva `unique_service_selector` puede acceder al recurso `Service`. Sin embargo, la directiva `owned_by_foo_team` no tiene acceso a los recursos de Kubernetes.
+
+== Validación de Configuración
+
+Cuando el Policy Server se inicia, valida la configuración de ambos grupos de directivas y directivas ordinarias. Sin embargo, los grupos de directivas pasan por un paso de validación adicional para comprobar que la expresión es válida y evalúa a un valor booleano.
+
+== Escáner de Auditoría
+
+De manera similar a los CRDs AdmissionPolicy y ClusterAdmissionPolicy, el campo `backgroundAudit` indica si incluir el grupo de directivas durante la xref:../explanations/audit-scanner/audit-scanner.adoc[auditoría].
+
+== Policy Server
+
+Puedes extender el archivo de configuración `policies.yml` para incluir grupos de directivas junto a directivas ordinarias. Al igual que con las directivas ordinarias, la descarga de módulos se realiza una vez. Se utiliza el mismo módulo de directiva tanto en un grupo de directivas como en una directiva ordinaria.

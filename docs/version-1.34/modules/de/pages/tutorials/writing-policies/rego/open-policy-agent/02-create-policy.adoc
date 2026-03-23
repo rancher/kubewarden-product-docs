@@ -1,0 +1,165 @@
+include::partial$variables.adoc[]
+= Eine neue Richtlinie erstellen
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erstellen Sie eine Richtlinie, die alle namespaced Ressourcen bewertet und deren Erstellung im Standard-Namespace für praktisches Lernen verbietet.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "open-policy-agent", "create-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "eine Richtlinie erstellen", "open policy agent", "opa", "rego"]
+:sidebar_label: Eine neue Richtlinie erstellen
+:current-version: {page-origin-branch}
+
+Sie können eine Beispielrichtlinie erstellen, die hilft, die wichtigen Konzepte zu verstehen.
+
+[NOTE]
+====
+Es gibt eine https://github.com/kubewarden/opa-policy-template[Kubewarden/opa-policy-template], die Sie verwenden können, um eine bestehende Richtlinie zu portieren.
+====
+
+
+== Anforderungen
+
+Sie werden in diesem Abschnitt eine Richtlinie schreiben, kompilieren und ausführen.
+Sie benötigen diese Werkzeuge, um dieses Tutorial abzuschließen:
+
+* https://github.com/open-policy-agent/opa/releases[`opa`]: Sie werden die `opa` Kommandozeilenschnittstelle verwenden, um Ihre Richtlinie als `wasm` Ziel zu erstellen.
+* https://github.com/kubewarden/kwctl/releases[`kwctl`]: Sie werden `kwctl` verwenden, um Ihre erstellte Richtlinie auszuführen.
+
+== Die Richtlinie
+
+Sie werden eine Richtlinie erstellen, die jede Art von namespaced Ressource bewertet.
+Ziel ist es, die Erstellung einer Ressource zu verbieten, wenn der Ziel-Namespace `default` ist. Andernfalls wird die Anfrage akzeptiert.
+Beginnen Sie damit, ein Verzeichnis mit dem Namen `opa-policy` zu erstellen.
+
+Erstellen Sie ein Verzeichnis mit dem Namen `data` im `opa-policy` Verzeichnis.
+Dieses Verzeichnis enthält die aufgezeichneten `AdmissionReview` Objekte vom Kubernetes API-Server.
+Sie sind der Einfachheit halber für die Übung reduziert, damit Sie sich auf die wichtigen Teile konzentrieren können.
+
+Erstellen Sie eine `default-ns.json` Datei mit dem folgenden Inhalt im `data` Verzeichnis:
+
+[subs="+attributes",json]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "nginx",
+        "namespace": "default",
+        "uid": "04dc7a5e-e1f1-4e34-8d65-2c9337a43e64"
+      }
+    }
+  }
+}
+----
+
+Dies simuliert die Erstellung einer Pod-Operation im `default` Namespace.
+Erstellen Sie jetzt ein weiteres Anfragebeispiel in `other-ns.json` im `data` Verzeichnis:
+
+[subs="+attributes",json]
+----
+{
+  "apiVersion": "admission.k8s.io/v1",
+  "kind": "AdmissionReview",
+  "request": {
+    "uid": "1299d386-525b-4032-98ae-1949f69f9cfc",
+    "operation": "CREATE",
+    "object": {
+      "kind": "Pod",
+      "apiVersion": "v1",
+      "metadata": {
+        "name": "nginx",
+        "namespace": "other",
+        "uid": "04dc7a5e-e1f1-4e34-8d65-2c9337a43e64"
+      }
+    }
+  }
+}
+----
+
+Sie können sehen, dass dies eine weitere Pod-Erstellungsanfrage simuliert, diesmal unter einem Namespace namens `other`.
+
+Gehen Sie zurück zu Ihrem `opa-policy` Verzeichnis und beginnen Sie, Ihre Rego-Richtlinie zu schreiben.
+
+Erstellen Sie in diesem Verzeichnis eine Datei mit dem Namen `request.rego` im `opa-policy` Verzeichnis.
+Der Name kann beliebig sein, aber Sie werden ihn für diese Übung verwenden.
+Dies ist eine Rego-Datei, die Hilfscode bezüglich der Anfrage/Antwort selbst enthält.
+Insbesondere ermöglicht es Ihnen, Ihren Richtliniencode zu vereinfachen und diesen gemeinsamen Teil in verschiedenen Richtlinien wiederzuverwenden.
+
+Der Inhalt ist:
+
+[,rego]
+----
+package policy
+
+import data.kubernetes.admission
+
+main = {
+    "apiVersion": "admission.k8s.io/v1",
+    "kind": "AdmissionReview",
+    "response": response,
+}
+
+response = {
+    "uid": input.request.uid,
+    "allowed": false,
+    "status": {"message": reason},
+} {
+    reason = concat(", ", admission.deny)
+    reason != ""
+} else = {
+    "uid": input.request.uid,
+    "allowed": true,
+} {
+    true
+}
+----
+
+Sie müssen zu diesem Zeitpunkt nicht im Detail auf den Rego-Code eingehen.
+Sie können darüber auf seiner https://www.openpolicyagent.org/docs/latest/policy-language/[Website] lernen.
+
+In diesem Fall gibt es entweder `allowed: true` oder `allowed: false` zurück.
+Dies hängt davon ab, ob das andere Paket, `data.kubernetes.admission`, eine `deny` Anweisung hat, die zu `true` evaluiert.
+
+Wenn irgendein `data.kubernetes.admission.deny` zu `true` evaluiert, evaluiert die `response` hier den ersten Block.
+Andernfalls evaluiert es den zweiten Block, was zur Annahme führt.
+Da kein `deny` Block zu `true` evaluiert wurde, bedeutet dies, dass die Richtlinie die Anfrage akzeptiert.
+
+Dies ist nur das Grundgerüst der Richtlinie, also der Hilfsprogrammteil.
+Jetzt erstellen Sie eine weitere Datei, die beispielsweise `policy.rego` heißt, in unserem `opa-policy` Verzeichnis mit diesen Inhalten:
+
+[,rego]
+----
+package kubernetes.admission
+
+deny[msg] {
+    input.request.object.metadata.namespace == "default"
+    msg := "it is forbidden to use the default namespace"
+}
+----
+
+Dies ist der wichtige Teil Ihrer Richtlinie.
+Die `deny` Anweisung evaluiert zu `true`, wenn alle Anweisungen darin zu `true` evaluiert werden.
+In diesem Fall gibt es nur eine Anweisung, die überprüft, ob der Namespace `default` ist.
+
+Durch das Design des Open Policy Agent hat `input` das abfragbare Objekt mit dem `AdmissionReview` Objekt, sodass wir es bequem inspizieren können.
+
+Wenn alles gut gelaufen ist, sollte Ihr Baum wie folgt aussehen:
+
+[subs="+attributes",console]
+----
+.
+├── data
+│   ├── default-ns.json
+│   └── other-ns.json
+├── policy.rego
+└── request.rego
+
+1 directory, 4 files
+----

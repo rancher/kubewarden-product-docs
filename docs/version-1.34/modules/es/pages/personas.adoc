@@ -1,0 +1,34 @@
+include::partial$variables.adoc[]
+= ¿Para quién es este proyecto? Las personas.
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: ¿Para quién es este proyecto? Las personas.
+:keywords: ["{project-name}", Kubewarden, documentación, personas]
+:doc-persona: [kubewarden-all]
+:doc-type: [explicación]
+:doc-topic: [explicación]
+
+## {project-name} personas
+
+[cols="1,2", options="header"]
+|===
+|Persona |Descripción
+
+|**Usuario de directivas**
+|Alguien que toma una directiva y la utiliza en un clúster. Despliegan directivas y observan resultados. Configuran los ajustes de la directiva pero no escriben el código interno de la directiva (si es que hay alguno).
+
+|**Operador**
+|Alguien que opera {short-project-name} en un clúster. Instala y mantiene {short-project-name}.
+
+|**Distribuidor de directivas**
+|Alguien que ha escrito una directiva y quiere compartirla con otros. Quieren que la directiva sea consumida por el rol de “usuario de directivas”. Un distribuidor de directivas de {short-project-name}, a lugares como ArtifactHub o repositorios OCI privados.
+
+|**Desarrollador de directivas**
+|Una persona que diseña y escribe directivas para {short-project-name} para que otros las consuman.
+
+|**Integrador**
+|Construye con, usando, o sobre {short-project-name}. Quizás una interfaz de usuario personalizada o una herramienta auxiliar para generar directivas.
+
+|**Acciones del**
+|Una persona que trabaja en el conjunto de productos de {short-project-name}. Construyendo {short-project-name} en sí mismo.
+|===

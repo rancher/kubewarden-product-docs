@@ -1,0 +1,61 @@
+include::partial$variables.adoc[]
+= Protokollierung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie die Protokollierungsfunktionen für Ihre Richtlinie, indem Sie die Integration von {project-name} mit der SLOG-Bibliothek verwenden und initialisieren.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
+:doc-type: ["tutorial"]
+:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
+:sidebar_label: Protokollierung
+:current-version: {page-origin-branch}
+
+Sie können Ihre Richtlinie so konfigurieren, dass sie Protokolle schreibt.
+Die `policy-server` oder `kwctl` leitet diese Protokolleinträge mit den entsprechenden Informationen weiter.
+
+Die für das Rust SDK gewählte Protokollierungsbibliothek ist https://github.com/slog-rs/slog[`slog`].
+Es ist ein beliebtes, bekanntes Crate und integriert sich sauber mit {project-name}.
+
+== Logger initialisieren
+
+Das Projekt empfiehlt, einen globalen Sink zu erstellen, in den Sie von überall in Ihrer Richtlinie protokollieren können.
+Verwenden Sie dafür das `lazy_static` Crate:
+
+[subs="+attributes",rust]
+----
+use slog::{o, Logger};
+
+lazy_static! {
+    static ref LOG_DRAIN: Logger = Logger::root(
+        logging::KubewardenDrain::new(),
+        o!("policy" => "sample-policy")
+    );
+}
+----
+
+== Den Logger verwenden
+
+Jetzt können Sie innerhalb der `validate` oder `validate_settings` Funktionen protokollieren, indem Sie die von `slog` exportierten Makros verwenden, die für jeden unterstützten Protokollierungslevel vorgesehen sind:
+
+[subs="+attributes",rust]
+----
+use slog::{info, o, warn, Logger};
+
+fn validate(payload: &[u8]) -> CallResult {
+    // ...
+    info!(LOG_DRAIN, "starting validation");
+    // ...
+    warn!(
+        LOG_DRAIN, "structured log";
+        "some_resource_name" => &some_resource_name
+    );
+    // ...
+}
+----
+
+Die `slog` Bibliothek sendet alle Protokolle an den Drain, der in der globalen Variablen initialisiert wurde.
+Dies synchronisiert mit dem Richtlinienauswerter, der die Richtlinie ausführt.
+Dies ist entweder `kwctl` oder `policy-server`.
+Dann protokolliert der Richtlinienauswerter diese Informationen und fügt weitere bekannte kontextuelle Informationen hinzu, wie die Kubernetes-Anfrage `uid`.
+
+Weitere Informationen zu den von slog angebotenen https://docs.rs/slog/2.7.0/slog/macro.log.html[Protokollierungs-Makros] finden Sie in der https://docs.rs/slog/2.7.0/slog/index.html[Dokumentation].

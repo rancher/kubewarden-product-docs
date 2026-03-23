@@ -1,0 +1,111 @@
+include::partial$variables.adoc[]
+= Festlegung von Richtlinieneinstellungen
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Definieren Sie Richtlinieneinstellungen und -strukturen in Ihrem Code, um eine Grundlage für die Validierung der Integrität der Richtlinie durch effizientes Einstellungsmanagement zu schaffen. Stellen Sie sicher, dass alle Änderungen verfolgt werden, z. B. wer die Änderung vorgenommen hat, wann und was geändert wurde.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "policy-settings"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "richtlinien schreiben", "richtlinieneinstellungen", "rust"]
+:sidebar_label: Festlegung von Richtlinieneinstellungen
+:current-version: {page-origin-branch}
+
+== Die Struktur der Richtlinieneinstellungen
+
+Zuerst definieren Sie die Struktur, die die Richtlinieneinstellungen enthält.
+
+Öffnen Sie die `demo/src/settings.rs`-Datei und ändern Sie die Definition von `Settings`
+`struct`, sodass sie wie folgt aussieht:
+
+[subs="+attributes",rust]
+----
+pub(crate) struct Settings {
+    pub invalid_names: HashSet<String>,
+}
+----
+
+Dies fügt automatisch die Liste der ungültigen Namen in eine Set-Sammlung ein.
+
+== Die Funktion zur Validierung der Einstellungen
+
+Als Nächstes schreiben Sie eine Funktion zur Validierung der Einstellungen, um sicherzustellen, dass die Richtlinie immer mit mindestens einem ungültigen Namen ausgeführt wird.
+
+Sie tun dies, indem Sie die Implementierung des `Validatable`-Traits ändern.
+
+Ändern Sie die in `src/settings.rs` definierte Gerüstimplementierung, sodass sie wie folgt aussieht:
+
+[subs="+attributes",rust]
+----
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        if self.invalid_names.is_empty() {
+            Err(String::from("No invalid name specified. Specify at least one invalid name to match"))
+        } else {
+            Ok(())
+        }
+    }
+}
+----
+
+== Fügen Sie Unit-Tests hinzu
+
+Jetzt können Sie einen Unit-Test schreiben, um sicherzustellen, dass die Validierung der Einstellungen funktioniert.
+Sie können dies auf die https://doc.rust-lang.org/stable/book/ch11-00-testing.html[übliche Rust-Art] tun.
+
+Am Ende der `src/settings.rs`-Datei gibt es bereits einige Standardtests. Ersetzen Sie den automatisch generierten Code, sodass er wie folgt aussieht:
+
+[subs="+attributes",rust]
+----
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use kubewarden_policy_sdk::settings::Validatable;
+
+    #[test]
+    fn accept_settings_with_a_list_of_invalid_names() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("bad_name1"));
+        invalid_names.insert(String::from("bad_name2"));
+
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn reject_settings_without_a_list_of_invalid_names() -> Result<(), ()> {
+        let invalid_names = HashSet::<String>::new();
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_err());
+        Ok(())
+    }
+}
+----
+
+Sie können jetzt die Unit-Tests ausführen, indem Sie Folgendes tun:
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+Dies erzeugt eine Ausgabe, die der folgenden ähnlich ist:
+
+[subs="+attributes",console]
+----
+   Compiling demo v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src/lib.rs (target/debug/deps/demo-bea8e11b21717093)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

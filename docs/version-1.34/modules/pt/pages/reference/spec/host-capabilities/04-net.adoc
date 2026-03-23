@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= Capacidades de rede
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Saiba sobre as capacidades de rede e como usar funções de host para consultas DNS, bem como protocolos de comunicação.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "network-capabilities"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "especificação de políticas", "capacidades de rede"]
+:sidebar_label: Capacidades de rede
+:current-version: {page-origin-branch}
+
+As políticas {project-name} não podem fazer solicitações de rede a partir do contexto de execução do WebAssembly.
+
+Operações de rede podem ser realizadas aproveitando uma série de capacidades expostas pelo host.
+
+== Consulta de host DNS
+
+Esta função realiza uma consulta DNS a partir do FQDN fornecido pela política.
+
+=== Armazenamento em cache
+
+Os resultados da consulta são armazenados em cache por 1 minuto.
+
+=== Protocolo de comunicação
+
+Esta é a descrição do protocolo waPC usado para expor esta capacidade:
+
+==== função waPC - `v1/dns_lookup_host` entrada
+
+[,hcl]
+----
+# hostname - JSON encoded string
+string
+----
+
+==== função waPC - `v1/dns_lookup_host` saída
+
+[,hcl]
+----
+
+{
+  # list of IPs
+  "ips": [string]
+}
+----
+
+Todos os endereços IP associados ao FQDN fornecido,
+serão retornados como strings na resposta.
+Tanto as entradas IPv4 quanto IPv6 são retornadas como parte da mesma resposta.
+
+Por exemplo, ao solicitar o digest do manifesto da
+`busybox:latest` imagem,
+os payloads seriam:
+
+* Payload de entrada: `"google.com"`
+* Payload de saída: `{ "ips": ["127.0.0.1"]}`

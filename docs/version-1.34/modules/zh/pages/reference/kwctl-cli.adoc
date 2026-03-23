@@ -1,0 +1,493 @@
+// This file was converted from Markdown to AsciiDoc.
+
+include::partial$variables.adoc[]
+= kwctl CLI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:title: kwctl CLI
+:description: 探索 \`kwctl` 命令行工具以管理 {project-name} 策略并执行加载策略等任务。
+:keywords: cli，参考，kwctl
+:doc-persona: kubewarden-operator
+:doc-type: 参考手册
+:doc-topic: 操作手册
+
+== `kwctl` 的命令行帮助
+
+本文件包含 `kwctl` 命令行程序的帮助内容。
+
+*命令概述：*
+
+* <<kwctl,`kwctl`>>
+* <<kwctl-annotate,`kwctl annotate`>>
+* <<kwctl-bench,`kwctl bench`>>
+* <<kwctl-completions,`kwctl completions`>>
+* <<kwctl-digest,`kwctl digest`>>
+* <<kwctl-docs,`kwctl docs`>>
+* <<kwctl-info,`kwctl info`>>
+* <<kwctl-inspect,`kwctl inspect`>>
+* <<kwctl-load,`kwctl load`>>
+* <<kwctl-policies,`kwctl policies`>>
+* <<kwctl-pull,`kwctl pull`>>
+* <<kwctl-push,`kwctl push`>>
+* <<kwctl-rm,`kwctl rm`>>
+* <<kwctl-run,`kwctl run`>>
+* <<kwctl-save,`kwctl save`>>
+* <<kwctl-scaffold,`kwctl scaffold`>>
+* <<kwctl-scaffold-admission-request,`kwctl scaffold admission-request`>>
+* <<kwctl-scaffold-artifacthub,`kwctl scaffold artifacthub`>>
+* <<kwctl-scaffold-manifest,`kwctl scaffold manifest`>>
+* <<kwctl-scaffold-vap,`kwctl scaffold vap`>>
+* <<kwctl-scaffold-verification-config,`kwctl scaffold verification-config`>>
+* <<kwctl-verify,`kwctl verify`>>
+
+[[kwctl]]
+=== `kwctl`
+
+管理 {project-name} 策略的工具
+
+*用法：* `kwctl [OPTIONS] <COMMAND>`
+
+==== 子命令
+
+* `annotate` — 向 WebAssembly 模块添加 {short-project-name} 元数据
+* `bench` — 对 {short-project-name} 策略进行基准测试
+* `completions` — 生成 shell 补全
+* `digest` — 从策略的 OCI 清单中获取摘要
+* `docs` — 为 kwctl 命令生成 markdown 文档
+* `info` — 显示系统信息
+* `inspect` — 检查 {short-project-name} 策略
+* `load` — 从 tar.gz 文件加载策略
+* `policies` — 列出所有已下载的策略
+* `pull` — 从给定的 URI 拉取 {short-project-name} 策略
+* `push` — 将 {short-project-name} 策略推送到 OCI 注册表
+* `rm` — 从存储中移除 {short-project-name} 策略
+* `run` — 从给定的 URI 运行 {short-project-name} 策略
+* `save` — 将策略保存到 tar.gz 文件
+* `scaffold` — 为 Kubernetes 资源或配置文件生成骨架
+* `verify` — 使用 Sigstore 验证来自给定 URI 的 {short-project-name} 策略
+
+==== 选项
+
+* `-v`, `--verbose <VERBOSE>` — 增加详细程度
+* `--no-color <NO-COLOR>` — 禁用彩色输出
+
+[[kwctl-annotate]]
+=== `kwctl annotate`
+
+向 WebAssembly 模块添加 {short-project-name} 元数据
+
+*用法：* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
+
+==== 参数
+
+* `<WASM-PATH>` — 要注释的 WebAssembly 模块的路径
+
+==== 选项
+
+* `-m`, `--metadata-path <PATH>` — 包含元数据的文件
+* `-o`, `--output-path <PATH>` — 输出文件
+* `-u`, `--usage-path <PATH>` — 包含策略使用信息的文件
+
+[[kwctl-bench]]
+=== `kwctl bench`
+
+对 {short-project-name} 策略进行基准测试。
+
+可以通过以下方式指定策略： +
+- URI：例如，`registry://ghcr.io/kubewarden/policies/psp-policy:latest` 或 `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
+- SHA 前缀：例如，`c3b80a10f9c3`（要求策略已被拉取） +
+- 本地 WASM 文件：例如，`file://home/tux/new-policy/psp-policy.wasm` +
+- 本地 YAML 文件：例如，`file://home/tux/cluster-admission-policy.yaml`（包含 {short-project-name} 自定义资源的声明，如 `ClusterAdmissionPolicy`、`AdmissionPolicy` 等）
+
+默认行为:
+如果省略模式，则假定为 `file://`，根目录为当前目录。
+
+关于 {short-project-name} 自定义资源的说明： +
+- 标志 `--request-path`、`--settings-path` 和 `--settings-json` 被忽略；设置从自定义资源定义中读取。 +
+- `--execution-mode` 标志适用于 YAML 文件中的所有策略。 +
+- `--raw` 标志不能使用，因为 {short-project-name} 的自定义资源不支持 `raw` 策略。
+
+仅评估自定义资源定义（CRD）的以下属性： +
+- 策略模块 +
+- 策略设置 +
+- 策略可以访问的上下文感知资源
+
+其他字段，如 `rules`、`matchConditions`、`objectSelector` 和 `namespaceSelector` 被忽略。
+
+YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl` 在每次评估中使用相同的请求来评估文件中的每个策略。
+
+*用法：* `kwctl bench [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== 参数
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — 策略 URI、SHA 前缀或包含 {short-project-name} 策略资源的 YAML 文件。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录。
+
+==== 选项
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — 授予对策略的 `contextAwareResources` 部分中定义的 Kubernetes 资源的访问权限。警告：仔细检查资源列表以避免滥用。默认已禁用。
+* `--cert-email <VALUE>` — Fulcio 证书中预期的电子邮件。
+* `--cert-oidc-issuer <VALUE>` — Fulcio 证书中预期的 OIDC 发行者。
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — 关闭 wasmtime 缓存的使用。
+* `--docker-config-json-path <PATH>` — 指向包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
+* `--dump-results-to-disk <DUMP_RESULTS_TO_DISK>` — 如果找到目标，则将结果放入 target/tiny-bench/label/..，用于比较之前的运行。
+* `-e`、`--execution-mode <MODE>` — 用于执行此策略的运行时。 +
+  可能的值：`opa`、`gatekeeper`、`kubewarden`、`wasi`。
+* `--github-owner <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 拥有者。
+* `--github-repo <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 仓库。
+* `--measurement-time <SECONDS>` — 基准测试“应该”运行多长时间，num_samples 优先，因此如果要基准测试的代码比允许的时间限制慢，基准测试将花费更长时间以便能够收集 num_samples。
+* `--num-resamples <NUM>` — 应该进行多少次重采样。
+* `--num-samples <NUM>` — 应该进行多少次重采样。建议至少进行50次，超过100次似乎不会产生显著不同的结果。
+* `--raw <RAW>` — 验证原始请求。 +
+  默认值：`false`
+* `--record-host-capabilities-interactions <FILE>` — 将所有策略和主机能力通信记录到指定文件中。有助于后续与'--replay-host-capabilities-interactions' 标志结合使用。
+* `--replay-host-capabilities-interactions <FILE>` — 在策略和主机能力交换期间，主机会将提供文件中找到的答案回放。这对于以可重现的方式测试策略非常有用，因为没有与OCI注册表、DNS、Kubernetes的外部交互。
+* `-r`, `--request-path <PATH>` — 包含 Kubernetes 准入请求对象的 JSON 格式文件
+* `--settings-json <VALUE>` — 包含此策略设置的JSON字符串。
+* `-s`, `--settings-path <PATH>` — 包含此策略设置的文件。
+* `--sigstore-trust-config <PATH>` — 符合Sigstore protobuf规范中ClientTrustConfig消息的JSON格式文件。此文件配置整个 Sigstore 实例状态，包括用于访问 CA 和工件透明服务的 URI，以及加密 root 本身。
+* `--sources-path <PATH>` — 包含源信息的 YAML 文件（https，不安全的注册表主机，自定义 CA 的 ...）
+* `-a`, `--verification-annotation <KEY=VALUE>` — 以key=value格式的注释。可以重复多次。
+* `--verification-config-path <PATH>` — 包含验证配置的 YAML 文件（签名，公钥 ...）。
+* `-k`, `--verification-key <PATH>` — 用于验证策略的密钥路径。可以重复多次。
+* `--warm-up-time <SECONDS>` — 基准测试应该预热多长时间。
+
+[[kwctl-completions]]
+=== `kwctl completions`
+
+生成 shell 补全
+
+*用法：* `kwctl completions --shell <VALUE>`
+
+==== 选项
+
+* `-s`, `--shell <VALUE>` — Shell 类型 +
+  可能的值：`bash`、`elvish`、`fish`、`powershell`、`zsh`
+
+[[kwctl-digest]]
+=== `kwctl digest`
+
+从策略的 OCI 清单中获取摘要
+
+*用法：* `kwctl digest [OPTIONS] <uri>`
+
+==== 参数
+
+* `<URI>` — 策略 URI
+
+==== 选项
+
+* `--docker-config-json-path <PATH>` — 包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
+* `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
+
+[[kwctl-docs]]
+=== `kwctl docs`
+
+生成 kwctl 命令的 markdown 文档
+
+*用法：* `kwctl docs --output <FILE>`
+
+==== 选项
+
+* `-o`, `--output <FILE>` — 文档文件将存储的路径
+
+[[kwctl-info]]
+=== `kwctl info`
+
+显示系统信息
+
+*用法：* `kwctl info`
+
+[[kwctl-inspect]]
+=== `kwctl inspect`
+
+检查 {short-project-name} 策略
+
+*用法：* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
+
+==== 参数
+
+* `<URI_OR_SHA_PREFIX>` — 策略 URI 或 SHA 前缀。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录。
+
+==== 选项
+
+* `--docker-config-json-path <PATH>` — 包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
+* `-o`, `--output <FORMAT>` — 输出格式 +
+  可能的值：`yaml`
+* `--show-signatures <SHOW-SIGNATURES>` — 显示 sigstore 签名
+* `--sources-path <PATH>` — 包含源信息的 YAML 文件（https，不安全的注册表主机，自定义 CA 的 ...）。
+
+[[kwctl-load]]
+=== `kwctl load`
+
+从 tar.gz 文件加载策略
+
+*用法：* `kwctl load --input <input>`
+
+==== 选项
+
+* `--input <INPUT>` — 从 tarball 加载策略
+
+[[kwctl-policies]]
+=== `kwctl policies`
+
+列出所有已下载的策略
+
+*用法：* `kwctl policies`
+
+[[kwctl-pull]]
+=== `kwctl pull`
+
+从给定 URI 拉取 {short-project-name} 策略
+
+*用法：* `kwctl pull [OPTIONS] <uri>`
+
+==== 参数
+
+* `<URI>` — 策略 URI。支持的方案：registry://、https://, file://
+
+==== 选项
+
+* `--cert-email <VALUE>` — Fulcio 证书中预期的电子邮件。
+* `--cert-oidc-issuer <VALUE>` — Fulcio 证书中预期的 OIDC 发行者。
+* `--docker-config-json-path <DOCKER_CONFIG>` — 包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
+* `--github-owner <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 拥有者。
+* `--github-repo <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 仓库。
+* `-o`, `--output-path <PATH>` — 输出文件。如果未提供，将下载到 {short-project-name} 存储
+* `--sigstore-trust-config <PATH>` — 符合Sigstore protobuf规范中ClientTrustConfig消息的JSON格式文件。此文件配置整个Sigstore实例状态，包括用于访问CA和工件透明服务的URI以及加密信任根本身。
+* `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
+* `-a`, `--verification-annotation <KEY=VALUE>` — 以key=value格式的注释。可以重复多次。
+* `--verification-config-path <PATH>` — 包含验证配置的YAML文件（签名，公钥...）。
+* `-k`, `--verification-key <PATH>` — 用于验证策略的密钥路径。可以重复多次。
+
+[[kwctl-push]]
+=== `kwctl push`
+
+将{short-project-name}策略推送到OCI注册表
+
+*用法:* `kwctl push [OPTIONS] <policy> <uri>`
+
+策略元数据中的注释将成为OCI清单的一部分。
+多行注释被跳过，因为它们与OCI规范不兼容。
+'io.kubewarden.policy.source'注释被传播为'org.opencontainers.image.source'，以允许像renovatebot这样的工具检测策略更新。
+
+==== 参数
+
+* `<POLICY>` — 要推送的策略。可以是本地文件的路径、策略 URI 或商店中策略的 SHA 前缀。
+* `<URI>` — 策略 URI。支持的方案：registry://
+
+==== 选项
+
+* `--docker-config-json-path <PATH>` — 指向包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
+* `-f`、`--force <FORCE>` — 还推送未注释的策略
+* `-o`, `--output <PATH>` — 输出格式 +
+  默认值：`text` +
+  可能的值：`text`、`json`
+* `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
+
+[[kwctl-rm]]
+=== `kwctl rm`
+
+从商店中去除{short-project-name}策略
+
+*用法:* `kwctl rm <uri_or_sha_prefix>`
+
+==== 参数
+
+* `<URI_OR_SHA_PREFIX>` — 策略URI或SHA前缀
+
+[[kwctl-run]]
+=== `kwctl run`
+
+在本地运行一个或多个{short-project-name}策略。
+
+可以通过以下方式指定策略： +
+- URI：例如，`registry://ghcr.io/kubewarden/policies/psp-policy:latest` 或 `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
+- SHA 前缀：例如，`c3b80a10f9c3`（要求策略已被拉取） +
+- 本地 WASM 文件：例如，`file://home/tux/new-policy/psp-policy.wasm` +
+- 本地 YAML 文件：例如，`file://home/tux/cluster-admission-policy.yaml`（包含 {short-project-name} 自定义资源的声明，如 `ClusterAdmissionPolicy`、`AdmissionPolicy` 等）
+
+默认行为:
+如果省略模式，则假定为 `file://`，根目录为当前目录。
+
+关于 {short-project-name} 自定义资源的说明： +
+- 标志 `--request-path`、`--settings-path` 和 `--settings-json` 被忽略；设置从自定义资源定义中读取。 +
+- `--execution-mode` 标志适用于 YAML 文件中的所有策略。 +
+- `--raw` 标志不能使用，因为 {short-project-name} 的自定义资源不支持 `raw` 策略。
+
+仅评估自定义资源定义（CRD）的以下属性： +
+- 策略模块 +
+- 策略设置 +
+- 策略可以访问的上下文感知资源
+
+其他字段，如 `rules`、`matchConditions`、`objectSelector` 和 `namespaceSelector`，被忽略。
+
+YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl` 在每次评估中使用相同的请求来评估文件中的每个策略。
+
+*用法:* `kwctl run [OPTIONS] --request-path <PATH> <uri_or_sha_prefix_or_yaml_file>`
+
+==== 参数
+
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — 策略 URI、SHA 前缀或包含 {short-project-name} 策略资源的 YAML 文件。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录.
+
+==== 选项
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — 授予对策略的 `contextAwareResources` 部分中定义的 Kubernetes 资源的访问权限。警告：仔细检查资源列表以避免滥用。默认已禁用。
+* `--cert-email <VALUE>` — Fulcio 证书中预期的电子邮件。
+* `--cert-oidc-issuer <VALUE>` — Fulcio 证书中预期的 OIDC 发行者。
+* `--disable-wasmtime-cache <DISABLE-WASMTIME-CACHE>` — 关闭 wasmtime 缓存的使用。
+* `--docker-config-json-path <PATH>` — 包含 Docker 'config.json' 文件的目录路径。可用于指示注册表身份验证详细信息。
+* `-e`、`--execution-mode <MODE>` — 用于执行此策略的运行时。 +
+  可能的值：`opa`、`gatekeeper`、`kubewarden`、`wasi`。
+* `--github-owner <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 拥有者。
+* `--github-repo <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 储存库。
+* `--raw <RAW>` — 验证原始请求。 +
+  默认值：`false`
+* `--record-host-capabilities-interactions <FILE>` — 将所有策略和主机能力通信记录到指定文件中。有助于后续与'--replay-host-capabilities-interactions'标志结合使用。
+* `--replay-host-capabilities-interactions <FILE>` — 在策略和主机能力交换期间，主机会将提供文件中找到的答案回放。这对于以可重现的方式测试策略非常有用，因为没有与OCI注册表、DNS、Kubernetes的外部交互。
+* `-r`, `--request-path <PATH>` — 包含Kubernetes准入请求对象的JSON格式文件
+* `--settings-json <VALUE>` — 包含此策略设置的JSON字符串。
+* `-s`, `--settings-path <PATH>` — 包含此策略设置的文件。
+* `--sigstore-trust-config <PATH>` — 符合Sigstore protobuf规范中ClientTrustConfig消息的JSON格式文件。此文件配置整个Sigstore实例状态，包括用于访问CA和工件透明服务的URI以及加密信任根本身。
+* `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
+* `-a`, `--verification-annotation <KEY=VALUE>` — 以key=value格式的注释。可以重复多次。
+* `--verification-config-path <PATH>` — 包含验证配置的YAML文件（签名，公钥...）。
+* `-k`, `--verification-key <PATH>` — 用于验证策略的密钥路径。可以重复多次。
+
+[[kwctl-save]]
+=== `kwctl save`
+
+将策略保存到tar.gz文件
+
+*用法:* `kwctl save --output <FILE> <policies>...`
+
+==== 参数
+
+* `<POLICIES>` — 要保存的策略列表
+
+==== 选项
+
+* `-o`、`--output <FILE>` — 文件将被存储的路径
+
+[[kwctl-scaffold]]
+=== `kwctl scaffold`
+
+生成 Kubernetes 资源或配置文件
+
+*用法:* `kwctl scaffold <COMMAND>`
+
+==== 子命令
+
+* `admission-request` — 生成准入请求对象
+* `artifacthub` — 从 metadata.yml 文件输出 artifacthub-pkg.yml 文件
+* `manifest` — 输出Kubernetes资源清单
+* `vap` — 将 Kubernetes `ValidatingAdmissionPolicy` 转换为 {short-project-name} `ClusterAdmissionPolicy`
+* `verification-config` — 输出默认的 Sigstore 验证配置文件
+
+[[kwctl-scaffold-admission-request]]
+=== `kwctl scaffold admission-request`
+
+生成一个准入请求对象.
+
+*用法:* `kwctl scaffold admission-request [OPTIONS] --operation <TYPE>`
+
+==== 选项
+
+* `--object <PATH>` — 包含被接纳的新对象的文件
+* `--old-object <PATH>` — 包含现有对象的文件
+* `-o`, `--operation <TYPE>` — {short-project-name} 自定义资源类型 +
+  可能的值：`CREATE`
+
+[[kwctl-scaffold-artifacthub]]
+=== `kwctl scaffold artifacthub`
+
+从 metadata.yml 文件输出 artifacthub-pkg.yml 文件
+
+*用法:* `kwctl scaffold artifacthub [OPTIONS]`
+
+==== 选项
+
+* `-m`, `--metadata-path <PATH>` — 包含策略元数据的文件
+* `-o`, `--output <FILE>` — artifact-pkg.yml 文件将被存储的路径
+* `-q`, `--questions-path <PATH>` — 包含策略的 questions-ui 内容的文件
+* `-v`, `--version <VALUE>` — 策略的 Semver 版本
+
+[[kwctl-scaffold-manifest]]
+=== `kwctl scaffold manifest`
+
+输出 Kubernetes 资源清单
+
+*用法:* `kwctl scaffold manifest [OPTIONS] --type <VALUE> <uri_or_sha_prefix>`
+
+==== 参数
+
+* `<URI_OR_SHA_PREFIX>` — 策略 URI 或 SHA 前缀。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录.
+
+==== 选项
+
+* `--allow-context-aware <ALLOW-CONTEXT-AWARE>` — 使用策略元数据定义哪些 Kubernetes 资源可以被策略访问。警告：仔细检查资源列表以避免滥用。默认已禁用。
+* `--cert-email <VALUE>` — Fulcio 证书中预期的电子邮件。
+* `--cert-oidc-issuer <VALUE>` — Fulcio 证书中预期的 OIDC 发行者。
+* `--docker-config-json-path <DOCKER_CONFIG>` — 指向包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
+* `--fulcio-cert-path <PATH>` — Fulcio 证书的路径。可以重复多次。
+* `--github-owner <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 拥有者。
+* `--github-repo <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 储存库.
+* `--rekor-public-key-path <PATH>` — Rekor 公钥的路径。可以重复多次。
+* `--settings-json <VALUE>` — 包含此策略设置的JSON字符串。
+* `-s`, `--settings-path <PATH>` — 包含此策略设置的文件。
+* `--sigstore-trust-config <PATH>` — 符合Sigstore protobuf规范中ClientTrustConfig消息的JSON格式文件。此文件配置整个Sigstore实例状态，包括用于访问CA和工件透明服务的URI以及加密信任根本身。
+* `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
+* `--title <VALUE>` — 策略标题
+* `-t`, `--type <VALUE>` — {short-project-name} 自定义资源类型 +
+  可能的值：`ClusterAdmissionPolicy`、`AdmissionPolicy`
+* `-a`, `--verification-annotation <KEY=VALUE>` — 以key=value格式的注释。可以重复多次。
+* `--verification-config-path <PATH>` — 包含验证配置信息的 YAML 文件（签名、公钥...）。
+* `-k`, `--verification-key <PATH>` — 用于验证策略的密钥路径。可以重复多次。
+
+[[kwctl-scaffold-vap]]
+=== `kwctl scaffold vap`
+
+将 Kubernetes `ValidatingAdmissionPolicy` 转换为 {short-project-name} `ClusterAdmissionPolicy`
+
+*用法:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
+
+==== 选项
+
+* `-b`, `--binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml>` — 包含 ValidatingAdmissionPolicyBinding 定义的文件。
+* `--cel-policy <URI>` — 要使用的 CEL 策略模块。 +
+  默认值：`ghcr.io/kubewarden/policies/cel-policy:latest`
+* `-p`, `--policy <VALIDATING-ADMISSION-POLICY.yaml>` — 包含 ValidatingAdmissionPolicy 定义的文件。
+
+[[kwctl-scaffold-verification-config]]
+=== `kwctl scaffold verification-config`
+
+输出一个默认的 Sigstore 验证配置文件。
+
+*用法:* `kwctl scaffold verification-config`
+
+[[kwctl-verify]]
+=== `kwctl verify`
+
+使用 Sigstore 从给定的 URI 验证 {short-project-name} 策略。
+
+*用法:* `kwctl verify [OPTIONS] <uri>`
+
+==== 参数
+
+* `<URI>` — 策略 URI。支持的方案：registry://
+
+==== 选项
+
+* `--cert-email <VALUE>` — Fulcio 证书中预期的电子邮件。
+* `--cert-oidc-issuer <VALUE>` — Fulcio 证书中预期的 OIDC 发行者。
+* `--docker-config-json-path <PATH>` — 包含 Docker 'config.json' 文件的目录。可用于指示注册表身份验证详细信息。
+* `--github-owner <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 拥有者。
+* `--github-repo <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 储存库。
+* `--sigstore-trust-config <PATH>` — 符合 Sigstore protobuf 规范中 ClientTrustConfig 消息的 JSON 格式文件。此文件配置整个 Sigstore 实例状态，包括用于访问 CA 和工件透明服务的 URI 以及加密 root 本身。
+* `--sources-path <PATH>` — 包含源信息的 YAML 文件（https、不安全的注册表主机、自定义 CA...）。
+* `-a`, `--verification-annotation <KEY=VALUE>` — 以 key=value 格式的注释。可以重复多次。
+* `--verification-config-path <PATH>` — 包含验证配置信息的 YAML 文件（签名、公钥...）。
+* `-k`, `--verification-key <PATH>` — 用于验证策略的密钥路径。可以重复多次。
+
+'''
+
+此文档由 https://crates.io/crates/clap-markdown[`clap-markdown`] 自动生成。

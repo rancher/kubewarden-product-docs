@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Soporte integrado
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Determina qué funciones integradas están disponibles para los módulos de WebAssembly y comprende su implementación y uso en el desarrollo de directivas Rego.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "built-in-support"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "builtin wasm support"]
+:sidebar_label: Soporte integrado
+:current-version: {page-origin-branch}
+
+Además, para construir una directiva para el `wasm` objetivo, necesita ejecutarse.
+
+El equipo de Open Policy Agent (OPA) tiene una página que puedes consultar para https://www.openpolicyagent.org/docs/latest/policy-reference/#built-in-functions[soporte integrado].
+
+Al construir una directiva Rego en un módulo de WebAssembly, ciertas de estas funciones integradas están en el propio archivo Wasm.
+Son las integradas marcadas con una marca verde en la página de integradas vinculada.
+El tiempo de ejecución de WebAssembly que evalúa el módulo proporciona las otras.
+
+Las integradas marcadas como `SDK-dependent` son las que el anfitrión debe implementar, en este caso, {project-name}.
+OPA y Gatekeeper pueden utilizarlas dependiendo de las necesidades de la directiva.
+En cualquier caso, estas integradas están expuestas a la directiva y cualquier directiva nueva o existente podría depender de ellas.
+
+Todavía hay ciertas integradas que aún no son proporcionadas por {short-project-name}, sin embargo, basándose en las directivas vistas en abierto, las ya integradas deberían ser suficientes para la mayoría de los usuarios de Kubernetes.
+
+https://github.com/kubewarden/policy-evaluator/issues/56[Este problema de GitHub] lleva un seguimiento de las integradas Rego que aún tenemos que implementar.
+No dudes en comentar allí para ayudar a priorizar nuestro trabajo.
+
+== Ejecutando directivas con integradas faltantes
+
+Cuando se ejecuta una directiva con `kwctl` o con `policy-server`, se inspecciona la lista de integradas utilizadas por la directiva.
+Si alguna de las integradas utilizadas falta, el programa termina la ejecución registrando un error fatal que informa sobre las integradas faltantes.

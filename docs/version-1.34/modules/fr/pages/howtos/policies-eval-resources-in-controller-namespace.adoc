@@ -1,0 +1,76 @@
+include::partial$variables.adoc[]
+
+= Autoriser les évaluations dans l'espace de noms du contrôleur d'admission
+:description: Comment configurer le contrôleur d'admission pour permettre l'évaluation des stratégies dans son propre espace de noms
+:keywords: ["politiques", "ClusterAdmissionPolicies", "ClusterAdmissionPoliciesGroup", "configuration", "espaces de noms"]
+:doc-persona: ["kubewarden-operator"]
+:doc-type: ["howto"]
+:doc-topic: ["manuel de l'opérateur", "politiques"]
+
+Par défaut, le contrôleur d'admission ne permet pas aux stratégies d'évaluer les ressources dans son propre espace de noms. Cela empêche les erreurs de configuration susceptibles de compromettre {short-project-name}l'installation.
+
+Cette mesure de sécurité est mise en œuvre en deux couches. La première couche est contrôlée par le `--always-accept-admission-reviews-on-deployments-namespace` drapeau CLI.
+Ce drapeau, qui est activé par défaut dans les charts Helm, permet au contrôleur de configurer `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE`la variable d'environnement dans les déploiements de PolicyServer. Cette variable indique au serveur de stratégies d'accepter toujours les examens d'admission de l'espace de noms défini dans la variable. La deuxième couche est le contrôleur d'admission lui-même, qui par défaut ajoute un sélecteur d'espace de noms aux stratégies à l'échelle du cluster pour ignorer l'espace de noms où le contrôleur s'exécute.
+
+Cependant, dans certains scénarios, les administrateurs de cluster peuvent vouloir que les stratégies évaluent les ressources dans cet espace de noms. Cette page explique comment faire cela en désactivant les deux couches de protection.
+
+== Supprimer la variable d'environnement de protection de PolicyServer
+
+La première étape consiste à configurer le contrôleur pour ne pas définir `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE`la variable d'environnement dans les déploiements de PolicyServer.
+
+Pour ce faire, mettez à niveau votre installation de {short-project-name} et définissez la valeur `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` du chart Helm `kubewarden-controller` sur `false` :
+
+[source,console]
+----
+helm upgrade -n kubewarden
+  --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
+  kubewarden-controller kubewarden/kubewarden-controller
+----
+
+Ce changement permet aux serveurs de stratégies d'évaluer les ressources de n'importe quel espace de noms.
+Une fois cela fait, les stratégies peuvent être configurées pour évaluer les examens d'admission de {short-project-name}l'espace de noms.
+
+== Configurer des stratégies pour évaluer les ressources dans l'espace de noms du contrôleur d'admission
+
+Pour permettre à une stratégie d'évaluer les ressources créées dans l'espace de noms du contrôleur d'admission, déployez des stratégies à l'échelle du cluster avec `allowInsideAdmissionControllerNamespace`le champ dans la spécification défini sur `true`:
+
+[NOTE]
+.Et les stratégies de l'espace de noms ?
+====
+Ce champ de spécification est disponible uniquement dans les stratégies à l'échelle du cluster.
+Parce que les stratégies de l'espace de noms évaluent les ressources dans le même espace de noms où elles sont déployées, il n'est pas logique d'ajouter ce champ à leurs CRD.
+De plus, l'espace de noms du contrôleur d'admission doit être géré par les opérateurs de cluster, qui peuvent décider s'il faut déployer une stratégie là-bas.
+====
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: PSP
+    io.kubewarden.policy.severity: medium
+  name: pod-privileged-policy
+spec:
+  module: registry://ghcr.io/kubewarden/policies/pod-privileged:v1.0.10
+  settings: {}
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - pods
+      operations:
+        - CREATE
+  mutating: false
+  allowInsideAdmissionControllerNamespace: true
+----
+
+Cette option de configuration, qui est `false` par défaut, fait en sorte que le contrôleur omette d'ajouter le sélecteur d'espace de noms qui exclut l'espace de noms du contrôleur d'admission, permettant à la stratégie d'évaluer les ressources de tous les espaces de noms, y compris cet espace de noms.
+
+[NOTE]
+.Qu'en est-il de mes sélecteurs d'espace de noms personnalisés ?
+====
+Les CRD de stratégies permettent également aux utilisateurs de définir leurs propres sélecteurs d'espace de noms. Ces sélecteurs ne sont pas modifiés. Cela signifie que si un utilisateur définit un sélecteur qui omet {short-project-name}l'espace de noms, la stratégie ignorera toujours cet espace de noms comme prévu.
+====

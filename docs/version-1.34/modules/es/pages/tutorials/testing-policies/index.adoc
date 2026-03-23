@@ -1,0 +1,22 @@
+include::partial$variables.adoc[]
+= Pruebas de directivas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a crear y probar {project-name} directivas con {project-name} para una gestión segura del clúster.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "persons", "policy author", "cluster operator"]
+:sidebar_label: Pruebas de directivas
+:current-version: {page-origin-branch}
+
+== Personas de pruebas de directivas
+
+Esta sección cubre el tema de probar {project-name} Directivas.
+Hay dos personas interesadas en probar directivas:
+
+* *Desarrollador de directivas*: estás escribiendo una {short-project-name} Directiva y quieres asegurarte de que tu código se comporta como esperas.
+* *Operador de clúster*: encontraste una {short-project-name} Directiva y quieres probar y ajustar la configuración de la directiva antes de desplegarla.
+Quieres seguir probando estas configuraciones en tus pipelines de CI/CD y otras tareas administrativas.
+
+Las siguientes secciones de la documentación muestran cómo estas personas pueden probar {short-project-name} directivas.

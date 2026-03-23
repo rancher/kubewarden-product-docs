@@ -1,0 +1,249 @@
+include::partial$variables.adoc[]
+= Modelo de Amenaza
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Lee y comprende el Modelo de Amenaza de Control de Admisión para idear tu propio modelo de amenaza específico para las circunstancias, asegurando configuraciones seguras dentro de Kubernetes.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["security", "threat-model"]
+:doc-type: ["reference"]
+:keywords: ["kubernetes", "modelo de amenaza de control de admisión", "kubewarden"]
+:sidebar_label: Modelo de Amenaza
+:sidebar_position: 80
+:current-version: {page-origin-branch}
+
+El https://github.com/kubernetes/community/tree/master/sig-security[Grupo de Interés Especial (SIG) de Seguridad de Kubernetes] ha definido un Modelo de Amenaza de Control de Admisión para Kubernetes. El equipo {project-name} evalúa continuamente {short-project-name} en relación con este modelo de amenaza y trabaja para proporcionar configuraciones seguras. Se recomienda que los administradores de {short-project-name} lean y comprendan el modelo de amenaza, y lo utilicen para idear su propio modelo de amenaza específico para las circunstancias según sea necesario.
+
+Los detalles sobre cada amenaza están en el https://github.com/kubernetes/sig-security/tree/main/sig-security-docs/papers/admission-control[documento publicado por SIG Seguridad].
+
+== Amenazas de Kubernetes
+
+=== Amenaza 1 - El atacante inunda el webhook con tráfico impidiendo su operación
+
+==== Escenario
+
+Un atacante que tiene acceso al punto final del Webhook, a nivel de red, podría enviar grandes cantidades de tráfico, causando una denegación de servicio efectiva al controlador de admisión.
+
+==== Mitigación
+
+El webhook falla cerrado. Si el webhook no responde a tiempo, por cualquier motivo, el servidor API debería rechazar la solicitud.
+Este es el comportamiento por defecto de {short-project-name}.
+
+Fallar cerrado significa que si, por cualquier motivo, {short-project-name} deja de responder o falla, el servidor API rechaza la solicitud por defecto.
+Esto es incluso si la solicitud es normalmente aceptada por {short-project-name}.
+
+=== Amenaza 2 - El atacante pasa cargas de trabajo que requieren procesamiento complejo causando tiempos de espera.
+
+==== Escenario
+
+Un atacante, que puede acceder al controlador de admisión a nivel de red, envía solicitudes al controlador de admisión que requieren un procesamiento complejo y causan tiempos de espera, ya que el controlador de admisión utiliza potencia de cálculo para procesar las cargas de trabajo.
+
+==== Mitigación
+
+El webhook falla cerrado y autentica a los llamadores.
+Este es el comportamiento por defecto de {short-project-name}.
+
+=== Amenaza 3 - El atacante explota la mala configuración del webhook para eludir.
+
+==== Escenario
+
+Un atacante, que tiene derechos para crear cargas de trabajo en el clúster, puede explotar una mala configuración para eludir el control de seguridad previsto.
+
+==== Mitigación
+
+Revisiones regulares de la configuración del webhook pueden ayudar a detectar problemas.
+
+=== Amenaza 4 - El atacante tiene derechos para eliminar o modificar el objeto webhook de Kubernetes.
+
+==== Escenario
+
+Un atacante que tiene acceso a la API de Kubernetes, tiene privilegios suficientes para eliminar el objeto webhook en el clúster.
+
+==== Mitigación
+
+Los derechos de RBAC deben ser controlados estrictamente.
+
+==== To-do
+
+La mayor parte de RBAC no está dentro del alcance de la discusión actual. Sin embargo, lo siguiente llegará a su debido tiempo, para ayudar a los usuarios de {short-project-name}:
+
+* Direcciones sobre el mínimo de RBAC que se debe implementar.
+* Provisionar y documentar una directiva que detecte y pueda bloquear cambios en RBAC.
+
+=== Amenaza 5 - El atacante obtiene acceso a credenciales válidas para el webhook.
+
+==== Escenario
+
+Un atacante obtiene acceso a credenciales de cliente válidas para el webhook del controlador de admisión.
+
+==== Mitigación
+
+El webhook falla cerrado.
+Este es el comportamiento por defecto de {short-project-name}.
+
+=== Amenaza 6 - El atacante obtiene acceso a una credencial de administrador del clúster.
+
+==== Escenario
+
+Un atacante obtiene acceso a una credencial de nivel administrador del clúster en el clúster de Kubernetes.
+
+==== Mitigación
+
+N/D
+
+=== Amenaza 7 - El atacante intercepta el tráfico en la red de contenedores.
+
+==== Escenario
+
+Un atacante que tiene acceso a la red de contenedores puede interceptar el tráfico entre el servidor API y el webhook del controlador de admisión.
+
+==== Mitigación
+
+Dado que el webhook utiliza cifrado TLS para todo el tráfico, {short-project-name} es seguro.
+
+=== Amenaza 8 - El atacante lleva a cabo un ataque MITM en el webhook
+
+==== Escenario
+
+Un atacante en la red del contenedor, que tiene acceso a la capacidad NET_RAW, puede intentar utilizar herramientas MITM para interceptar el tráfico entre el servidor API y el webhook del controlador de admisión.
+
+==== Mitigación
+
+Configura el clúster con autenticación mTLS para los Webhooks y habilita la función mTLS en la pila {short-project-name}. Alternativamente, configura mTLS utilizando un CNI que soporte Políticas de Red. Consulta xref:/reference/security-hardening/webhooks-hardening.adoc["Webhooks seguros con TLS mutuo"] para más información.
+
+Utiliza la política https://artifacthub.io/packages/kubewarden/capabilities-psp/capabilities-psp[capabilities-psp] y configúrala para eliminar las capacidades NET_RAW.
+
+=== Amenaza 9 - El atacante roba tráfico del webhook mediante suplantación
+
+==== Escenario
+
+Un atacante puede redirigir el tráfico del servidor API previsto, para el webhook del controlador de admisión, mediante suplantación.
+
+==== Mitigación
+
+Configura el clúster con autenticación mTLS para los Webhooks y habilita la función mTLS en la pila {short-project-name}. Alternativamente, configura mTLS utilizando un CNI que soporte Políticas de Red. Consulta xref:/reference/security-hardening/webhooks-hardening.adoc["Webhooks seguros con TLS mutuo"] para más información.
+
+=== Amenaza 10 - Abusando de una regla de mutación para crear un contenedor privilegiado
+
+==== Escenario
+
+Un atacante puede hacer que un controlador de admisión mutante modifique una carga de trabajo, de tal manera que permita la creación de contenedores privilegiados.
+
+==== Mitigación
+
+Revisa y prueba todas las reglas.
+
+=== Amenaza 11 - El atacante despliega cargas de trabajo en espacios de nombres que están exentos del control de admisión
+
+==== Escenario
+
+Un atacante puede desplegar cargas de trabajo en espacios de nombres de Kubernetes exentos de la configuración del controlador de admisión.
+
+==== Mitigación
+
+Los derechos de RBAC están estrictamente controlados
+
+==== To-do
+
+La mayor parte del RBAC está fuera del alcance respecto a esta decisión. Sin embargo, el equipo {short-project-name} tiene como objetivo:
+
+* Advertir a los usuarios a través de nuestra documentación y _sugerir_ el mínimo RBAC que se debe utilizar.
+* Proporcionar una política que detecte cambios en RBAC y *quizás* los bloquee.
+
+=== Amenaza 12 - La regla de bloqueo puede ser eludida debido a una coincidencia faltante (por ejemplo, contenedores de inicialización faltantes)
+
+==== Escenario
+
+Un atacante creó un manifiesto de carga de trabajo que utiliza una característica de la API de Kubernetes que no está cubierta por el controlador de admisión
+
+==== Mitigación
+
+Revisa y prueba todas las reglas. Debéis revisar los PRs que cambian cualquier regla en la ampliación de directivas.
+
+=== Amenaza 13 - El atacante explota una mala coincidencia de cadenas en una lista de denegación para eludir las reglas
+
+==== Escenario
+
+Un atacante, que tiene derechos para crear cargas de trabajo, elude una regla explotando una mala coincidencia de cadenas.
+
+==== Mitigación
+
+Revisa y prueba todas las reglas.
+
+==== To-do
+
+Introduce pruebas para cubrir esta regla.
+Como siempre, debéis revisar los PRs que cambian las reglas en la ampliación de directivas.
+
+=== Amenaza 14 - El atacante utiliza características nuevas/antiguas de la API de Kubernetes que no tienen reglas
+
+==== Escenario
+
+Un atacante, con derechos para crear cargas de trabajo, utiliza nuevas características de la API de Kubernetes (por ejemplo, una versión de API cambiada) para eludir una regla.
+
+==== Mitigación
+
+Revisa y prueba todas las reglas. Hay una directiva que prueba el uso de recursos que han quedado obsoletos. Está disponible desde https://github.com/kubewarden/deprecated-api-versions-policy[la directiva-de-versiones-api-obsoletas].
+
+NOTE: `deprecated-api-versions-policy` solo trata con Recursos Personalizados que conoce. La amenaza son tanto las versiones de recursos que han quedado obsoletos como las nuevas desconocidas que se utilizan de manera incorrecta, por lo tanto, la directiva solo cubre parte del problema.
+
+=== Amenaza 15 - El atacante despliega un contenedor privilegiado en un nodo que ejecuta el controlador de Webhook
+
+==== Escenario
+
+Un atacante, que tiene derechos para desplegar contenedores privilegiados en el clúster, crea un contenedor privilegiado en el nodo del clúster donde opera el webhook del controlador de admisión.
+
+==== Mitigación
+
+El controlador de admisión utiliza directivas restrictivas para prevenir cargas de trabajo privilegiadas.
+
+=== Amenaza 16 - El atacante monta un hostPath privilegiado que permite la modificación de la configuración del controlador de Webhook
+
+==== Escenario
+
+Un atacante, que tiene derechos para desplegar volúmenes hostPath con cargas de trabajo, crea un volumen que permite el acceso a los archivos del pod del controlador de admisión.
+
+Desplegad el `kubewarden-default` Helm chart y habilitad sus directivas recomendadas, que incluyen la directiva `hostpaths-psp`. Esta directiva está configurada para reducir los volúmenes hostPath compartidos.
+
+=== Amenaza 17 - El atacante tiene acceso SSH privilegiado al nodo del clúster que ejecuta el webhook de admisión.
+
+==== Escenario
+
+Un atacante puede iniciar sesión en los nodos del clúster como un usuario privilegiado a través de SSH.
+
+==== Mitigación
+
+N/D
+
+=== Amenaza 18 - El atacante utiliza directivas para enviar datos confidenciales de las solicitudes de admisión a sistemas externos.
+
+==== Escenario
+
+Un atacante puede configurar una directiva que escucha las solicitudes de admisión y envía datos sensibles a un sistema externo.
+
+==== Mitigación
+
+* Configura el clúster con autenticación mTLS para los Webhooks y habilita la función mTLS en la pila {short-project-name}. Alternativamente, configura mTLS utilizando un CNI que soporte Políticas de Red.
+
+* Por defecto, las directivas de {short-project-name} no tienen acceso a la red y se ejecutan en un entorno restrictivo, controlando estrictamente el acceso externo a los Webhooks.
+
+== Amenazas de {short-project-name}
+
+=== Amenaza {short-project-name} 1 - Inicio de confianza para el controlador de admisión.
+
+==== Escenario
+
+Suponiendo un clúster de Kubernetes confiable pero nuevo, un atacante puede comprometer la pila {short-project-name} antes de su ampliación y de la aplicación de cualquiera de las directivas de seguridad.
+
+Por ejemplo, mediante:
+
+* el uso de imágenes no firmadas y maliciosas para:
+ ** {short-project-name}-controller
+ ** servidor-de-directiva
+ ** cualquiera de las dependencias de {short-project-name}
+ ** cualquiera de las dependencias opcionales (Grafana, Prometheus y otras)
+* comprometiendo la carga útil de los gráficos de Helm
+
+==== Mitigación
+
+. {short-project-name} proporciona un Software Bill Of Materials, que enumera todas las imágenes necesarias. Esto ayuda con Zero-Trust. El administrador de Kubernetes debe verificar las imágenes de {short-project-name}, las imágenes de sus dependencias y los gráficos fuera del clúster de Kubernetes, en un entorno de confianza. Puedes hacer esto con `cosign`, por ejemplo. Por cierto, esta es parte de la implementación necesaria para instalaciones en un entorno aislado.
+. Utiliza gráficos de Helm firmados y resúmenes verificados en lugar de etiquetas para las imágenes de {short-project-name} en esos gráficos de Helm. Sin embargo, esto no asegura las dependencias.

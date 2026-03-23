@@ -1,0 +1,70 @@
+include::partial$variables.adoc[]
+= Seguimento
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Ative o rastreamento para detalhes minuciosos sobre avaliações de políticas e para depurar problemas relacionados à implantação de {project-name}.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "tracing"]
+:doc-type: ["hosto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:current-version: {page-origin-branch}
+
+O rastreamento permite a coleta de detalhes minuciosos sobre avaliações de políticas.
+É uma ferramenta útil para depurar problemas na sua implantação de {project-name} e nas políticas.
+
+{short-project-name} usa https://www.jaegertracing.io/[Jaeger] para receber, armazenar e visualizar eventos de rastreamento.
+
+*_Logs de rastreamento de políticas_* image:ui_policy_tracing.png[Logs de rastreamento de políticas da UI]
+
+== Pré-requisitos
+
+Você precisa do Cert-Manager e do OpenTelemetry. Siga xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[estas instruções] para instalar o Cert Manager e o Operador OpenTelemetry.
+
+== Instale o Jaeger
+
+Aplique os passos de instalação do xref:howtos/telemetry/20-tracing-qs.adoc#_install_jaeger[guia rápido de rastreamento].
+
+Uma vez que o operador Jaeger cria todos os recursos, há um Serviço sob `my-open-telemetry-collector.jaeger.svc.cluster.local`.
+
+A UI de Consulta do Jaeger é acessível no seguinte endereço:
+
+[subs="+attributes",console]
+----
+https://<CLUSTER_IP>/api/v1/namespaces/jaeger/services/http:my-open-telemetry-query:16686/proxy/search
+----
+
+Este endpoint pode ser único dependendo da sua configuração. Você pode encontrar o endpoint listado para o seu recurso Jaeger na página de Serviços.
+
+=== Atualize `rancher-kubewarden-controller` com o endpoint do Jaeger
+
+Você precisará editar o recurso `rancher-kubewarden-controller` para adicionar o endpoint do Jaeger "my-open-telemetry-collector.jaeger.svc.cluster.local:4317".
+
+Por exemplo:
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  tracing: true
+  mode: sidecar
+  sidecar:
+    tracing:
+      jaeger:
+        endpoint: my-open-telemetry-collector.jaeger.svc.cluster.local:4317
+        tls:
+          insecure: true
+----
+
+A instalação do serviço, `my-open-telemetry-collector`, está sob o namespace `jaeger`.
+
+[CAUTION]
+====
+
+Para simplificar, não estamos criptografando a comunicação entre o coletor OpenTelemetry e o endpoint do Jaeger.
+
+Isto é *inadequado para implantação em produção*. Você deve ler a https://www.jaegertracing.io/docs/latest/kubernetes/[documentação] do Jaeger.
+
+====
+
+
+Agora você deve ser capaz de visualizar quaisquer solicitações falhadas para políticas vinculadas a um servidor de políticas específico. Você também pode ver a visualização detalhada de qualquer política específica.
+Você pode obter uma visão mais aprofundada dos rastreamentos usando a UI do Jaeger.

@@ -1,0 +1,193 @@
+include::partial$variables.adoc[]
+= Schutz vor Zeitüberschreitung bei der Richtlinienbewertung
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie Zeitüberschreitungen für die Richtlinienbewertung, um eine rechtzeitige Fertigstellung sicherzustellen und eine Erschöpfung der Ressourcen mit der integrierten Schutzfunktion des Policy Servers zu verhindern.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-evaluation-timeout"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "schutz-vor-richtlinienzeitüberschreitung"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+Dieses Feature ist ab {project-name} v1.5.0 für Zeitüberschreitungen pro Policy-Server verfügbar und ab v1.29.0 für Zeitüberschreitungen pro Richtlinie.
+
+====
+
+Der Schutz vor Zeitüberschreitung bei der Richtlinienbewertung ist eine Sicherheitsfunktion der Richtlinien und des Policy Servers. Zweck ist es, die Zeit zu begrenzen, die eine Anfrage zur Bewertung benötigen kann.
+
+== Beschreibung
+
+Sie können {short-project-name} Richtlinien sowohl mit traditionellen Programmiersprachen (wie xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] und xref:../tutorials/writing-policies/index.adoc[anderen]) als auch mit der speziellen Abfragesprache xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego] schreiben. Beide Ansätze haben ihre Vorzüge, daher ist ein Ziel von {short-project-name}, den Richtlinienautoren die Wahl des besten Werkzeugs für ihre Bedürfnisse zu ermöglichen.
+
+Bei der Verwendung einer traditionellen https://en.wikipedia.org/wiki/Turing_completeness[Turing-vollständigen] Sprache können Probleme wie folgende auftreten:
+
+* https://en.wikipedia.org/wiki/Infinite_loop[Unendliche Schleifen]
+* https://en.wikipedia.org/wiki/Deadlock[Deadlocks]
+* Langsam laufender Code ohne Optimierungen
+* Rechenintensive Operationen
+
+Die Funktion zum Schutz vor Zeitüberschreitung bei der Richtlinienbewertung beendet die Bewertung einer Anfrage nach einer vordefinierten Zeitspanne. Dies stellt sicher, dass der Policy Server immer über Rechenressourcen verfügt, um eingehende Anfragen zu verarbeiten.
+
+== Nutzungsbeschränkungen
+
+Derzeit ist der Schutz vor Zeitüberschreitung bei der Richtlinienbewertung in der Lage, die meisten lang laufenden Bewertungen zu unterbrechen. Es gibt bestimmte Randfälle, die noch nicht behandelt werden.
+Dies umfasst das Auslösen einer `sleep`-Anweisung innerhalb einer Richtlinie und Deadlocks.
+
+Eine zukünftige Version des Policy Servers wird diese Szenarien ansprechen.
+
+Schließlich betrifft das Zeitlimit für die Richtlinienbewertung alle Richtlinien, die von einer Policy Server-Instanz gehostet werden. Derzeit gibt es keine Möglichkeit, das Zeitlimit für die Richtlinienbewertung auf Richtlinienbasis anzupassen.
+
+== Konfiguration
+
+Alle Werte der pro-Richtlinie-Zeitlimits, des pro-Policy-Server-Zeitlimits und der Webhook-Zeitlimits werden validiert, sodass sie alle innerhalb akzeptabler Werte zueinander liegen. Zum Beispiel ist es nicht möglich, einen Wert für das Zeitlimit der Richtlinienbewertung festzulegen, der höher ist als das Webhook-Zeitlimit von Kubernetes.
+
+### Pro Richtlinie
+
+Beginnend mit {short-project-name} v1.29.0 kann jede {short-project-name}-Richtlinie ihr eigenes Zeitlimit über ihr `spec.timeoutEvalSeconds`-Attribut festlegen. Dies ist nicht zu verwechseln mit `spec.timeoutSeconds`, das für das Webhook-Zeitlimit verwendet wird (siehe Abschnitt [unten](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+
+Das `spec.timeoutEvalSeconds` ist feingranular und ermöglicht eine Anpassung des Zeitlimits pro Richtlinie.
+
+Diese Einstellung hat Vorrang vor der globalen Bewertungszeitlimit-Konfiguration pro Policy-Server.
+
+Zum Beispiel, um ein längeres Bewertungszeitlimit für eine bestimmte Richtlinie festzulegen:
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Secrets
+    io.kubewarden.policy.severity: medium
+  name: env-variable-secrets-scanner
+spec:
+  module: registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.6
+  settings: {}
+  timeoutEvalSeconds: 10 // Set evaluation timeout
+  mutating: false
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+----
+
+=== Pro Policy-Server
+
+Beginnend mit {short-project-name} v1.5.0 kommen Policy-Server mit einem konfigurierbaren Bewertungszeitlimit, das standardmäßig aktiviert ist. Die Unterbrechung einer Anforderungsbewertung erfolgt nach 2 Sekunden. Diese Konfiguration betrifft alle Richtlinien, die in diesem Policy-Server geplant sind. Das konfigurierbare `spec.timeoutEvalSeconds`-Zeitlimit pro Richtlinie hat Vorrang vor dieser Einstellung pro Policy-Server.
+
+Sie können dieses Verhalten anpassen, indem Sie diese Umgebungsvariablen verwenden:
+
+* `KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION`: Dies deaktiviert die Richtlinienbewertung vollständig. Jeder zugewiesene Wert schaltet die Funktion aus.
+* `KUBEWARDEN_POLICY_TIMEOUT`: Dies setzt einen anderen Timeout-Wert fest. Der Wert ist in Sekunden mit einem Standardwert von `2`.
+
+Bei Verwendung der https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/PolicyServer/v1@v1.4.2[`PolicyServer`] Kubernetes Custom Resource Definition können Sie diese Umgebungsvariablen wie folgt festlegen:
+
+[source,yaml]
+----
+# A Policy Server that has policy evaluation timeout disabled
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: no-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION
+      value: "true"
+---
+
+# A Policy Server that has policy evaluation timeout enabled,
+# with a 3 seconds timeout value
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: custom-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_POLICY_TIMEOUT
+      value: "3"
+----
+
+== Vergleich mit dem Timeout des Kubernetes Dynamic Admission Controllers
+
+{short-project-name} ist eine https://en.wikipedia.org/wiki/Webhook[Webhook] Implementierung des https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetes Dynamic Admission Controllers].
+
+Intern führt der Kubernetes-API-Server eine HTTP-Anfrage an den Policy-Server von {short-project-name} durch, in der ein bevorstehendes Ereignis beschrieben wird. Nach der HTTP-Anfrage wartet der Kubernetes API-Server auf eine Antwort. Der Kubernetes API-Server wartet jedoch nicht ewig. Nach einer bestimmten Zeit betrachtet er die Anfrage als abgelaufen.
+
+Zitat aus der https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[offiziellen Kubernetes-Dokumentation]:
+
+____
+Da Webhooks die Latenz von API-Anfragen erhöhen, sollten sie so schnell wie möglich ausgewertet werden. `timeoutSeconds` ermöglicht die Konfiguration, wie lange der API-Server auf eine Antwort des Webhooks warten soll, bevor er den Aufruf als Fehler behandelt.
+
+Wenn der Timeout abläuft, bevor der Webhook antwortet, wird der Webhook-Aufruf ignoriert oder der API-Aufruf wird basierend auf der https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy[Fehlerrichtlinie] abgelehnt.
+
+Der Timeout-Wert muss zwischen 1 und 30 Sekunden liegen.
+
+Der Timeout für einen Admission Webhook beträgt standardmäßig 10 Sekunden.
+____
+
+Das bedeutet, dass unabhängig von der Funktion zur Bewertung des Timeout der Richtlinie jede Kubernetes-Zulassungsanfrage einem Timeout unterliegt.
+
+Jede {short-project-name} Richtlinie kann ihren eigenen Timeout-Wert über das `timeoutSeconds` Attribut der `ClusterAdmissionPolicy` und `AdmissionPolicy` benutzerdefinierten Ressourcen festlegen.
+Standardmäßig beträgt der Timeout-Wert 10 Sekunden.
+
+[IMPORTANT]
+====
+
+Alle Kubernetes-Zulassungsanfragen, die an einen Policy-Server gerichtet sind, unterliegen zwei verschiedenen Timeouts:
+
+* Der Timeout-Wert des Kubernetes API-Servers. Standardmäßig auf 10 Sekunden eingestellt, kann er pro Richtlinie über das spezielle `spec.timeoutSeconds` Attribut der Policy Custom Resource angepasst werden.
+* Die Zeitüberschreitung der Richtlinienbewertung. Im Policy-Server über Umgebungsvariablen oder pro Richtlinie über das Attribut `spec.timeoutEvalSeconds` auf der benutzerdefinierten Ressource festgelegt.
+
+====
+
+Jetzt können Sie die folgenden Szenarien untersuchen, um die Unterschiede zwischen der Webhook-Zeitüberschreitung von Kubernetes und der Zeitüberschreitung der Richtlinienbewertung von {short-project-name} besser zu verstehen.
+
+
+=== Die Zeitüberschreitung der Richtlinienbewertung von {short-project-name} ist deaktiviert.
+
+Angenommen, Sie haben einen Policy-Server, bei dem die Funktion zur Zeitüberschreitung der Richtlinienbewertung deaktiviert ist und keine auf ihm geplante Richtlinie ihr Feld `spec.timeoutEvalSeconds` gesetzt hat. Dieser Policy-Server hostet eine Richtlinie, die von einem Fehler betroffen ist, der dazu führt, dass sie während der Bewertung in eine Endlosschleife gerät.
+
+Der Kubernetes-API-Server sendet eine Zulassungsanfrage zur Bewertung durch diese fehlerhafte Richtlinie. Infolgedessen gerät die Richtlinienbewertung in eine Endlosschleife.
+In der Zwischenzeit wartet der Kubernetes-API-Server auf eine Antwort.
+
+Nach 10 Sekunden tritt die Webhook-Zeitüberschreitung von Kubernetes ein, und die Anfrage wird gemäß der Fehlerrichtlinie des Webhooks behandelt.
+
+Jetzt hat der Policy-Server Rechenressourcen, die in dieser Endlosschleife feststecken.
+Im Laufe der Zeit, mit weiteren Zulassungsanfragen, die die fehlerhafte Richtlinie auslösen, gehen dem Policy-Server die Rechenressourcen aus. Er ist nicht in der Lage, auf den Kubernetes-API-Server zu antworten. Dies entspricht einem Denial of Service (DOS)-Angriff auf den Policy-Server.
+
+=== Die Zeitüberschreitung der Richtlinienbewertung von {short-project-name} ist aktiviert.
+
+Angenommen, ein Szenario, in dem derselbe Policy-Server jetzt die Funktion zur Zeitüberschreitung der Richtlinienbewertung aktiviert hat, entweder global im Policy-Server oder in der Richtlinie über das Feld `spec.timeoutEvalSeconds`, und die Zeitüberschreitung der Richtlinienbewertung beträgt 2 Sekunden.
+
+Der Kubernetes-API-Server sendet eine Zulassungsanfrage zur Bewertung durch diese fehlerhafte Richtlinie. Infolgedessen gerät die Richtlinienbewertung in eine Endlosschleife.
+In der Zwischenzeit wartet der Kubernetes-API-Server auf eine Antwort.
+
+Nach zwei Sekunden unterbricht die Funktion zur Zeitüberschreitung der Richtlinienbewertung von {short-project-name} die Richtlinienbewertung und erzeugt eine Ablehnungsantwort. Die Antwort enthält eine Nachricht, die erklärt, dass die Ablehnung erfolgt ist, weil die Richtlinienbewertung nicht rechtzeitig abgeschlossen wurde.
+
+[NOTE]
+====
+
+Die Einstellung der Zeitüberschreitung der Richtlinienbewertung von {short-project-name} auf einen Wert, der so hoch ist wie die Webhook-Zeitüberschreitung von Kubernetes, ist keine gute Wahl.
+
+Während die Bewertung der Richtlinie weiterhin unterbrochen ist, wodurch die Chancen eines DOS-Angriffs verringert werden, wird die endgültige Ablehnungsantwort nicht vom Policy Server erzeugt. Die Ablehnung kommt vom Kubernetes-API-Server mit dem Webhook-Timeout.
+
+Infolgedessen ist es für Benutzer und Kubernetes-Operatoren schwieriger, diese langsamen oder fehlerhaften Richtlinien zu erkennen. Der einzige Beweis für die Unterbrechung der Richtlinienbewertung findet sich in den Protokollen des Policy Servers und in den Trace-Events.
+
+====
+

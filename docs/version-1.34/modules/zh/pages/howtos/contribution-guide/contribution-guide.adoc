@@ -1,0 +1,18 @@
+include::partial$variables.adoc[]
+= 贡献指南
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解如何通过我们的全面贡献指南为SUSE项目做出贡献，该指南概述了步骤和最佳实践。
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "contributing"]
+:sidebar_label: 贡献指南
+:sidebar_position: 1 
+:current-version: {page-origin-branch}
+
+_{project-name}欢迎所有贡献者，无论是新手还是经验丰富的。_
+
+ifeval::["{build-type}" == "community"]
+请查看贡献指南https://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[此处]。
+endif::[]

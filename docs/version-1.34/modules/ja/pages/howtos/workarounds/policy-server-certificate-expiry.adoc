@@ -1,0 +1,29 @@
+include::partial$variables.adoc[]
+= リリースv1.16.0以下のポリシーサーバー証明書ローテーションの問題
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}におけるポリシーサーバー証明書ローテーションの問題を、バージョン1.16から解決します。
+:doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["howto", "workarounds", "policy server certificates"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "policy server certificates"]
+:sidebar_label: 証明書のローテーション
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+.{project-name} v1.16.0およびそれ以前のための回避策
+====
+
+この回避策は、{short-project-name} v1.16.0およびそれ以前の場合にのみ必要です。
+v1.17.0以降、コントローラーはポリシーサーバーの証明書を自動的に更新します。
+
+====
+
+v1.14のリリースプロセス中に、{short-project-name}はポリシーサーバーの証明書ローテーションに関連するバグを発見しました。ルートCAの設定は10年の有効期限ですが、各ポリシーサーバー証明書のシークレットは1年の有効期限です。しかし、コントローラーは現在、自動的にそれらを更新することができません。
+
+v1.14のリリースでは、{short-project-name}はポリシーサーバーのシークレットが10年の有効期限で作成されることを確認しました。
+
+リリースがv1.16.0以上の場合、自動更新プロセスが実施されています。
+
+それまでは、ユーザーは期限切れの証明書シークレット（policy-server-default）を手動で削除し、コントローラーのリコンシリエーションをトリガーできます。これは、ポリシーを追加、削除、または更新するか、ポリシーサーバーのレプリカ数を調整することで行います。

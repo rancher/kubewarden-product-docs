@@ -1,0 +1,74 @@
+include::partial$variables.adoc[]
+= Intégration avec GitHub Actions
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez comment intégrer GitHub Actions pour automatiser des tâches, effectuer des tests unitaires, des tests de bout en bout et des workflows CI/CD.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "github-action-integration"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "github", "integration"]
+:sidebar_label: GitHub Actions
+:sidebar_position: 56
+:current-version: {page-origin-branch}
+
+== Automatisation
+
+Cette section décrit comment vous pouvez utiliser GitHub Actions pour automatiser des tâches.
+
+Le squelette du projet inclut déjà toutes les actions GitHub dont vous avez besoin.
+Vous pouvez trouver les Actions dans les fichiers `.github/workflows/test.yml` et `.github/workflows/release.yml`.
+
+Vous pouvez adapter ces principes pour utiliser un système CI différent.
+
+== Tests
+
+L'automatisation des tests unitaires et des tests de bout en bout fonctionne immédiatement, sans configuration supplémentaire.
+Il utilise les jobs définis dans `.github/workflows/test.yml`.
+
+== Version
+
+Le squelette du projet comprend un job `release` dans `.github/workflows/release.yml`.
+
+Ce job effectue les étapes suivantes :
+
+* Extraire le code
+* Construire la stratégie WebAssembly
+* Pousser la stratégie vers un registre Open Container Initiative (OCI)
+* Créer une nouvelle version GitHub
+
+Pour activer le job, ajustez l'entrée d'action `oci-target` pour le workflow réutilisable (`reusable-release-policy-go.yml`) appelé dans le fichier `release.yml`.
+
+Le job agit différemment en fonction du commit qui a déclenché son exécution.
+
+Les commits réguliers entraînent la création d'un artefact OCI appelé `<policy-name>:latest`.
+Une version GitHub n'est pas créée pour ces commits.
+
+Créer une étiquette qui correspond au modèle `v*` entraîne :
+
+* Création d'un artefact OCI appelé `<policy-name>:<tag>`.
+* Création d'une version GitHub nommée `Release <full tag name>`.
+La version inclut les ressources, le code source de la stratégie et le binaire WebAssembly.
+
+=== Un exemple
+
+Supposons une stratégie nommée `safe-labels` et qu'elle doit être publiée sous le nom de `ghcr.io/kubewarden/policies/safe-labels`.
+
+Le contenu de la section `jobs.push-to-oci-registry.env` de `ci.yml` devrait ressembler à :
+
+[subs="+attributes",yaml]
+----
+jobs:
+  push-to-oci-registry:
+    runs-on: ubuntu-latest
+    env:
+      WASM_BINARY_NAME: policy.wasm
+      OCI_TARGET: ghcr.io/kubewarden/policies/safe-labels
+----
+
+Pousser une étiquette nommée `v0.1.0` entraîne la création et la publication de l'artefact OCI appelé `ghcr.io/kubewarden/policies/safe-labels:v0.1.0`.
+
+Cela crée une version GitHub nommée `Release v0.1.0`.
+La version inclut les ressources suivantes :
+
+* Code source compressé sous les noms `zip` et `tar.gz`
+* Un fichier nommé `policy.wasm` ; c'est la stratégie WebAssembly réelle.

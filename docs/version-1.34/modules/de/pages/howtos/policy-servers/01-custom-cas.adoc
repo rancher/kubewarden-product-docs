@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= Verwenden von benutzerdefinierten CAs
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Konfigurieren Sie PolicyServer, um entweder benutzerdefinierte CAs oder unsichere Quellen in Verbindung mit den angegebenen Registrierungen zu verwenden.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "benutzerdefinierte CAs"]
+:sidebar_label: Verwenden von benutzerdefinierten CAs
+:current-version: {page-origin-branch}
+
+== Benutzerdefinierte CAs für Policy-Registrierungen
+
+Es ist möglich, die CAs anzugeben und zu konfigurieren, die ein PolicyServer verwendet, wenn er die ClusterAdmissionPolicy-Artefakte aus der Policy-Registrierung abruft. Die folgenden `spec` Felder konfigurieren das bereitgestellte `policy-server` ausführbare Programm entsprechend.
+
+=== Unsichere Quellen
+
+[IMPORTANT]
+====
+
+Das Standardverhalten von `kwctl` und `policy-server` besteht darin, HTTPS mit vertrauenswürdigen Zertifikaten durchzusetzen, die mit dem System-CA-Speicher übereinstimmen. Sie können mit Registrierungen interagieren, die unvertrauenswürdige Zertifikate verwenden, oder sogar ohne TLS, indem Sie die `insecure_sources` Einstellung verwenden. Dieser Ansatz wird *dringend abgeraten* für Umgebungen, die näher an der Produktion sind.
+
+====
+
+Um den PolicyServer so zu konfigurieren, dass er unsichere Verbindungen zu bestimmten Registrierungen akzeptiert, verwenden Sie das `spec.insecureSources` Feld von PolicyServer. Dieses Feld akzeptiert eine Liste von unsicheren URIs. Beispiel:
+
+[subs="+attributes",yaml]
+----
+spec:
+  insecureSources:
+    - localhost:5000
+    - host.k3d.internal:5000
+----
+
+Siehe xref:howtos/custom-certificate-authorities.adoc[Benutzerdefinierte CAs] für weitere Informationen darüber, wie das `policy-server` ausführbare Programm unsichere URIs behandelt.
+
+=== Benutzerdefinierte CAs
+
+Sie können den PolicyServer mit einer benutzerdefinierten Zertifikatskette von 1 oder mehr Zertifikaten für eine bestimmte URI konfigurieren. Um dies zu tun, verwenden Sie das Feld `spec.sourceAuthorities`.
+
+Dieses Feld ist eine Zuordnung von URIs, jede mit ihrer eigenen Liste von Zeichenfolgen, die Privacy Enhanced Mail (PEM) kodierte Zertifikate enthalten. Beispiel:
+
+[subs="+attributes",yaml]
+----
+spec:
+  sourceAuthorities:
+    "registry-pre.example.com":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-1 PEM cert
+        -----END CERTIFICATE-----
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-2 PEM cert
+        -----END CERTIFICATE-----
+    "registry-pre2.example.com:5500":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre2 PEM cert
+        -----END CERTIFICATE-----
+----
+
+Siehe xref:howtos/custom-certificate-authorities.adoc[Benutzerdefinierte CAs] für weitere Informationen darüber, wie das `policy-server` ausführbare Programm sie behandelt.

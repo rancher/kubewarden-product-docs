@@ -1,0 +1,98 @@
+include::partial$variables.adoc[]
+= Richtlinien im Artifact Hub veröffentlichen
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Veröffentlichen Sie {project-name} Richtlinien im Artifact Hub, indem Sie ein gut strukturiertes Git-Repository-Layout erstellen und GitHub Actions für die automatisierte Paketierung konfigurieren, um Continuous Integration zu ermöglichen.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "Richtlinien veröffentlichen", "Artifact Hub"]
+:sidebar_label: Im Artifact Hub veröffentlichen
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+https://artifacthub.io/[Artifact Hub] ist eine Website, auf der Benutzer Pakete und Konfigurationen für https://cncf.io[CNCF] Projekte finden, installieren und veröffentlichen können.
+
+{project-name} Richtlinien können im Artifact Hub veröffentlicht und einem breiten Publikum von CNCF-Nutzern zugänglich gemacht werden.
+
+[NOTE]
+====
+Artifact Hub ist eine Plattform zur Inhaltsaggregation und hostet tatsächlich nicht die Artefakte, die dort veröffentlicht werden.
+
+Artifact Hub erfordert, dass Sie Container-Image-Repositories physisch in einer Container-Registry oder auf einem Webserver hosten.
+Siehe den Abschnitt xref:explanations/distributing-policies.adoc[Richtlinien verteilen] für weitere Informationen, wie Sie Ihre Richtlinien hosten können.
+====
+
+
+Dieses Dokument konzentriert sich auf die Schritte, die erforderlich sind, um eine {short-project-name} Richtlinie im Artifact Hub auffindbar zu machen.
+
+== Bereiten Sie Ihr Git-Repository vor
+
+Artifact Hub durchsucht Git-Repositories nach speziellen Metadatendateien.
+
+Es gibt verschiedene Arten von Layouts, die das Git-Repository haben kann. Sie sind alle ausführlich in der https://artifacthub.io/docs/topics/repositories/#kubewarden-policies-repositories[offiziellen Artifact Hub-Dokumentation] dokumentiert.
+
+Artifact Hub ist flexibel und ermöglicht es Ihnen, Ihren Code auf folgende Weise zu organisieren:
+
+* Haben Sie ein Git-Repository, das dem Artifact Hub gewidmet ist: Dieses Repository wird keinen Quellcode für Richtlinien enthalten. Es wird eine Sammlung der von Artifact Hub benötigten YAML-Dateien sein.
+
+* Fügen Sie ein Artifact Hub-Verzeichnis in das Git-Repository ein, das den Quellcode Ihrer Richtlinie enthält. Dies ist eine Iteration des vorherigen Ansatzes, die sich nur auf eine Richtlinie konzentriert, die im Git-Repository definiert ist. Dieser Ansatz ermöglicht es, mehrere Versionen der auf Artifact Hub veröffentlichten Richtlinie zu behalten.
+
+* Fügen Sie die `artifacthub-pkg.yml` und die `artifacthub-repo.yml` Dateien in das Stammverzeichnis des Git-Repositorys ein, das den Quellcode der Richtlinie enthält. Dieser Ansatz ist der einfachste. Die einzige Einschränkung besteht darin, dass nur die neueste Version der Richtlinie auf Artifact Hub sichtbar ist.
+
+Der letzte Ansatz wird in unseren offiziellen Richtlinienvorlagen verwendet. Das eingerichtete Git-Repository enthält die `artifacthub-repo.yml` Datei, und unsere GitHub Actions generieren und pushen die `artifacthub-pkg.yml` in einen `artifacthub` Branch, damit Artifact Hub darauf zugreifen kann.
+
+== Veröffentlichungsschritte
+
+Bevor Sie eine Richtlinie auf Artifact Hub veröffentlichen, müssen Sie ein Konto https://artifacthub.io/[dort] erstellen.
+
+Stellen Sie vor der Veröffentlichung der Richtlinie sicher, dass Ihr Git-Repository das richtige Layout hat, mit einer gut formatierten `metadata.yml` und den obligatorischen Anmerkungen.
+
+Wenn Sie dies manuell tun möchten, können Sie die `artifacthub-pkg.yml` Datei erstellen, indem Sie ein `kwctl scaffold artifacthub` (mit Version `>= 1.23`) ausführen. Dieser Befehl nimmt die `metadata.yml` im aktuellen Pfad und gibt ein `artifacthub-pkg.yml` aus. Die `artifacthub-pkg.yml` enthält Felder wie `version:`, `createdAt:`, die ein bestimmtes Format haben müssen und aktuell sein müssen. Das Format der `artifacthub-pkg.yml` wird https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-pkg.yml[hier] beschrieben.
+
+Wenn Sie unsere GitHub Actions >= `v4.0.0` verwenden, kann der Release-Workflow mit dem Eingabewert `artifacthub: true` konfiguriert werden. Wenn so konfiguriert, haben unsere GitHub Actions nach einem erfolgreichen Release (nachdem die Richtlinie erfolgreich erstellt, signiert und gepusht wurde) einen letzten Job, der die `artifacthub-pkg.yml` für Sie generiert, dann die Änderungen committet und in den `artifacthub` Branch pusht. Die kanonischen Dateien sind immer die im `main` Branch. Für das Verhalten früherer Versionen unserer GitHub Actions siehe die Dokumentation der Versionen vor 1.23.
+
+Stellen Sie schließlich sicher, dass Ihre Richtlinie in einer Container-Registry oder auf einem Webserver veröffentlicht wird.
+
+[NOTE]
+====
+Im Moment sind die Inhalte der `artifacthub-repo.yml` Datei nicht relevant.
+====
+
+
+Sobald alles an seinem Platz ist, melden Sie sich bei Artifact Hub an und gehen Sie zu Ihrem https://artifacthub.io/control-panel/repositories?page=1[Steuerungsebene].
+
+Entscheiden Sie, ob Sie die Richtlinie als Benutzer oder unter einer Artifact Hub-Organisation, zu der Sie gehören, veröffentlichen möchten. Dies geschieht, indem Sie den richtigen _"Steuerungspanel-Kontext"_ auswählen.
+
+Drücken Sie dann die _"Hinzufügen"_ Schaltfläche und füllen Sie das Formular aus:
+
+* Wählen Sie _"{short-project-name} Richtlinien"_ als Art aus.
+* Geben Sie einen _"Namen"_ und _"Anzeigename"_ Ihrer Wahl ein.
+* Geben Sie die URL zu Ihrem Git-Repository ein.
+* Geben Sie `artifacthub` als den zu verfolgenden Branch ein.
+
+Drücken Sie schließlich die _"Hinzufügen"_ Schaltfläche. Dies bringt Sie zurück zur _"Repositories"_ Seite, wo Sie Ihr neu erstelltes Repository sehen werden.
+
+Jedes Repository hat mehrere Informationsfelder. Finden Sie die _"ID"_ Eigenschaft des Repositories, das Sie gerade erstellt haben, und kopieren Sie sie.
+
+Gehen Sie zurück zu Ihrem Git-Repository und bearbeiten Sie die `artifacthub-repo.yml`. Stellen Sie sicher, dass der `repositoryID` Schlüssel, der im Dokument gefunden wurde, den Wert hat, den Sie gerade von der Artifact Hub-Webseite kopiert haben.
+
+[TIP]
+====
+Das Format der `artifacthub-repo.yml` Datei ist https://github.com/artifacthub/hub/blob/master/docs/metadata/artifacthub-repo.yml[hier] definiert.
+
+Jetzt ist ein guter Zeitpunkt, um einige weitere Anpassungen an dieser Datei vorzunehmen.
+====
+
+
+Sobald Sie mit den Änderungen fertig sind, committen Sie die aktualisierte `artifacthub-repo.yml` Datei und pushen Sie sie. Während des nächsten Scans wird Artifact Hub diese Datei finden und das https://artifacthub.io/docs/topics/repositories/#verified-publisher[_"Verifizierter Herausgeber"_ Abzeichen] zu Ihrem Artifact Hub-Repository hinzufügen.
+
+== Artifact Hub auf dem neuesten Stand halten
+
+Vergessen Sie nicht, die Inhalte der `artifacthub-pkg.yml` Datei jedes Mal zu aktualisieren, wenn Sie eine neue Version Ihrer Richtlinie veröffentlichen. Zum Beispiel müssen Sie das `io.kubewarden.policy.version` Feld aktualisieren (das normalerweise mit dem Richtlinien-OCI-Tag übereinstimmt) und jede andere Annotation, die Sie ändern möchten.
+
+[NOTE]
+====
+Die Inhalte der `artifacthub-repo.yml` Datei müssen nicht geändert werden.
+====
+

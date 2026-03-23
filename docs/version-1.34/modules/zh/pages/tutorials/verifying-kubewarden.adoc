@@ -1,0 +1,199 @@
+include::partial$variables.adoc[]
+= 验证 {project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 验证 {project-name} 团队生成的不同工件，以确保通过使用 SBOM 和溯源文件实现安全的供应链。
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["security", "verifying-kubewarden"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "security", "verification"]
+:current-version: {page-origin-branch}
+
+{project-name} 堆栈提供不同的证明和保证：
+
+- 溯源证明：描述构建过程、构建依赖关系，并有助于复现构建。实施 https://slsa.dev/spec/v1.0/[SLSA] 标准（在我们的案例中为第 3 级）。
+- SBOM 证明：包含软件依赖关系。帮助下游用户确定 {short-project-name} 及其依赖关系的漏洞。
+- 签名工件：指示工件是否真实，从而提供供应链安全。这包括交付物，以及溯源和 SBOM 证明。
+
+{short-project-name} 工件、溯源证明和 SBOM 使用 https://docs.sigstore.dev[Sigstore] 签名，采用无密钥工作流程。这意味着签名证书包含以下信息，其中 `*` 匹配任何后续字符：
+
+* 颁发者：`https://token.actions.githubusercontent.com`
+* 主题：`https://github.com/kubewarden/*`
+* 用于 GHA 的 x509 证书扩展，"github_workflow_repository": `kubewarden/*`
+
+[IMPORTANT]
+====
+本教程中使用的 `--certificate-identity-regexp` cosign CLI 标志的主题利用 `https://github.com/kubewarden/*` 值来简化解释。然而，这允许具有相同前缀的储存库中的工件绕过验证。例如 `github.com/kubewarden/policy-server1`。
+
+如果您想要更安全的检查，您需要使用完整的 URL：
+
+----
+https://github.com/kubewarden/policy-server/.github/workflows/container-image.yml@refs/tags/v1.30.0
+----
+
+请注意，URL 包含完整的储存库路径、工作流文件路径和版本标签。如果您遵循此最佳实践，您可以使用完整的 URL 结合 cosign CLI 标志 `--certificate-identity`。
+====
+
+{short-project-name} 团队也在努力改善安全供应链，并使整个堆栈符合 SLSA 级别 3。因此，主要工件还包括 SBOM 和溯源文件。在接下来的部分中，我们将展示如何验证 {short-project-name} 团队生成的不同工件，以及如何使用 SBOM 和溯源文件确保工件的安全供应链。
+
+[#container-images]
+== 容器映像
+
+要验证 {short-project-name} 团队生成的无密钥签名容器镜像，您可以使用 `cosign` CLI 工具。例如，要验证 `kubewarden/policy-server` 镜像，您可以执行以下命令：
+
+[source, console]
+----
+cosign verify ghcr.io/kubewarden/policy-server:v1.30.0 \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+Verification for ghcr.io/kubewarden/policy-server:v1.30.0 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+
+<snipped json>
+----
+
+然后，您可以验证返回的 JSON 中的证书是否包含正确的颁发者、主题和 `github_workflow_repository` 扩展。
+
+您还可以使用 link:https://github.com/rancherlabs/slsactl[`slsactl`] 进行验证。
+例如，对于版本 1.30.0：
+
+[source, console]
+----
+slsactl verify ghcr.io/kubewarden/policy-server:v1.30.0
+----
+
+同样适用于 {short-project-name} 团队生成的所有其他镜像，例如 `kubewarden/kubewarden-controller` 和 `kubewarden/audit-scanner`。
+
+所有容器镜像也都有 SBOM 和溯源文件，可以用来确保镜像的安全供应链。您可以在组件的发布页面或在 OCI 注册表中附加到容器镜像的地方找到证明文件。
+
+我们使用 Docker 来构建镜像及其证明。然而，cosign 命令 https://github.com/sigstore/cosign/issues/2688[尚不支持] 从 OCI 注册表生成的 Docker 证明的验证。
+因此，您需要从发布页面或注册表下载文件并在本地验证它们。如果您想从 OCI 注册表下载证明文件，可以遵循 https://docs.docker.com/build/metadata/attestations/attestation-storage/[Docker 文档] 并使用 `crane` 或 `docker` 本身从注册表下载文件。
+
+从 {short-project-name} 组件的发布页面下载证明文件时，请检查它们：
+
+[,console]
+----
+$ cosign verify-blob --bundle audit-scanner-attestation-amd64-checksum-cosign.bundle \
+    --certificate-oidc-issuer=https://token.actions.githubusercontent.com \
+    --certificate-identity="https://github.com/kubewarden/audit-scanner/.github/workflows/attestation.yml@refs/tags/v1.30.0" \
+    audit-scanner-attestation-amd64-checksum.txt
+Verified OK
+----
+
+现在文件的完整性已验证，您可以检查 SBOM 和溯源文件。
+您可以使用 link:https://github.com/rancherlabs/slsactl[`slsactl] 从容器镜像中获取这些文件。
+例如，对于版本 1.30.0：
+
+[,console]
+----
+slsactl download provenance ghcr.io/kubewarden/policy-server:v1.30.0
+slsactl download sbom ghcr.io/kubewarden/policy-server:v1.30.0
+----
+
+== Helm 图表
+
+您可以在我们的 `https://` 传统 Helm 储存库的 https://charts.kubewarden.io. 中找到 {short-project-name} Helm 图表。
+
+相同的 Helm 图表通过 Sigstore 的无密钥签名进行签名，并推送到一个 OCI 储存库，该储存库保存 Helm 图表及其溯源证明作为 OCI 工件。
+
+Helm 图表与 https://hauler.dev[Hauler] 清单一起发布，该清单列出了所有所需的工件。
+
+=== 使用 Hauler 进行验证
+
+Hauler 在下载时会自动验证工件。有关更多信息，请参见 xref:/howtos/airgap/03-hauler.adoc[我们的文档]。
+
+=== 手动验证
+
+自 Helm 3.8.0 以来，Helm 支持 OCI 注册表，但由于其中的限制，无法通过 `helm` 进行搜索。您可以在 GitHub 容器注册表中找到 https://github.com/orgs/kubewarden/packages?tab=packages&q=charts[图表列表]。
+
+要验证 Helm 图表，您需要安装 `cosign`。然后执行以下命令，例如：
+
+----
+cosign verify ghcr.io/kubewarden/charts/kubewarden-defaults:1.5.4 \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+Verification for ghcr.io/kubewarden/charts/kubewarden-defaults:1.5.4 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+
+<snipped json>
+----
+
+然后您可以验证返回的 JSON 中的证书是否包含正确的颁发者、主题和 `github_workflow_repository` 扩展。
+
+图表证明作为工件层推送到 OCI 注册表。请参见 xref:#container-images[容器镜像] 部分以了解如何验证它们。
+
+{short-project-name} 图表内含 `imagelist.txt` 以及（如适用时）`policylist.txt`。因此，如果您已经验证了图表，您可以使用这些列表来验证所使用的容器镜像和策略。
+
+{short-project-name} 也遵循有关 Helm 图表的常规做法。因此，可以使用像 https://github.com/cvila84/helm-image[helm-image] 这样的插件，或者使用以下脚本找到 Helm 图表中的所有镜像：
+
+[subs="+attributes",bash]
+----
+#!/usr/bin/env bash
+helm pull --untar kubewarden/kubewarden-controller && \
+helm pull --untar kubewarden/kubewarden-defaults && \
+{ helm template ./kubewarden-controller; helm template ./kubewarden-defaults } \
+    | yq '..|.image? | select(.)' \
+    | sort -u | sed 's/"//g'
+----
+
+这给我们带来了：
+
+----
+ghcr.io/kubewarden/kubewarden-controller:v0.5.5
+ghcr.io/kubewarden/policy-server:v0.3.1
+ghcr.io/kubewarden/kubectl:v1.21.4
+----
+
+现在，对于该列表中的每个镜像，您可以按照 xref:#container-images[前一部分] 的说明验证它们的 Sigstore 签名。
+
+== kwctl
+
+kwctl 二进制文件使用 https://docs.sigstore.dev/cosign/signing/signing_with_blobs/[Sigstore 的 blob 签名] 进行签名。
+
+当您下载一个 https://github.com/kubewarden/kwctl/releases/[`kwctl` 版本] 时，每个 zip 文件包含一个可以用于验证的 Sigstore 包文件：`kwctl-*bundle.sigstore`。
+
+为了验证 kwctl，您需要安装 cosign，然后执行以下命令：
+
+----
+cosign verify-blob \
+  --bundle kwctl-linux-x86_64.bundle.sigstore \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  kwctl-linux-x86_64
+
+Verified OK
+----
+
+然后您可以验证返回的 JSON 中的证书是否包含正确的颁发者、主题和 `github_workflow_repository` 扩展。
+
+SBOM 已在项目的 https://github.com/kubewarden/kwctl/releases[GitHub Releases] 中签名并发布。
+
+对于 `kwctl` 的溯源证明，通过使用 https://cli.github.com/manual/gh_attestation_verify[`gh attestation verify`] 进行验证。例如，使用 `gh attestation verify kwctl-linux-x86_64 --repo kubewarden/kwctl`。
+
+== 策略
+
+由 {short-project-name} 团队维护的策略也使用 Sigstore 项目进行签名。与常规容器镜像类似，可以使用 `cosign` 验证它们：
+
+----
+cosign verify ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.5 \
+  --certificate-identity-regexp 'https://github.com/kubewarden/*' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+
+Verification for ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.5 --
+The following checks were performed on each of these signatures:
+  - The cosign claims were validated
+  - Existence of the claims in the transparency log was verified offline
+  - The code-signing certificate was verified using trusted certificate authority certificates
+
+  <snipped json>
+----
+
+然后您可以验证返回的 JSON 中的证书是否包含正确的颁发者、主题和 `github_workflow_repository` 扩展。

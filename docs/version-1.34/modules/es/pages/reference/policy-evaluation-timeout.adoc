@@ -1,0 +1,193 @@
+include::partial$variables.adoc[]
+= Protección contra el tiempo de espera de evaluación de directivas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura los tiempos de espera de evaluación de directivas para asegurar la finalización oportuna y prevenir el agotamiento de recursos con la función de protección integrada del Servidor de Directivas.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-evaluation-timeout"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "protección contra el tiempo de espera de directivas"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+Esta función está disponible a partir de {project-name} v1.5.0 para el tiempo de espera por Servidor de Directivas y desde v1.29.0 para el tiempo de espera por directiva.
+
+====
+
+La protección contra el tiempo de espera de evaluación de directivas es una característica de seguridad de las Directivas y del Servidor de Directivas. Su propósito es limitar la cantidad de tiempo que puede tomar la evaluación de una solicitud.
+
+== Finalidad
+
+Puedes escribir directivas {short-project-name} utilizando tanto lenguajes de programación tradicionales (como xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] y xref:../tutorials/writing-policies/index.adoc[otros]) o utilizando el lenguaje de consulta especial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Ambos enfoques tienen méritos, por lo que un objetivo de {short-project-name} es permitir que los autores de directivas elijan la mejor herramienta para sus necesidades.
+
+Al utilizar un lenguaje tradicional https://en.wikipedia.org/wiki/Turing_completeness[Turing-completo], es posible tener problemas como:
+
+* https://en.wikipedia.org/wiki/Infinite_loop[Bucles infinitos]
+* https://en.wikipedia.org/wiki/Deadlock[Interbloqueos]
+* Código lento que carece de optimizaciones
+* Operaciones computacionalmente intensivas
+
+La función de protección contra el tiempo de espera de evaluación de directivas termina la evaluación de una solicitud después de un período de tiempo predefinido. Esto asegura que el Servidor de Directivas siempre tenga recursos de computación disponibles para procesar solicitudes entrantes.
+
+== limitaciones
+
+Actualmente, la protección contra el tiempo de espera de evaluación de directivas es capaz de interrumpir la mayoría de las evaluaciones de larga duración. Existen ciertos edge cases que aún no se han manejado.
+Esto incluye invocar una instrucción `sleep` desde dentro de una directiva y interbloqueos.
+
+Una futura versión del Servidor de Directivas abordará estos escenarios.
+
+Finalmente, el tiempo de espera de evaluación de directivas afecta a todas las directivas alojadas por una instancia de Servidor de Directivas. Actualmente, no hay forma de ajustar el tiempo de espera de evaluación de directivas por directiva.
+
+== Configuración
+
+Todos los valores de los tiempos de espera de evaluación por directiva, el tiempo de espera de evaluación por Servidor de Directivas y los tiempos de espera de webhook son validados para que todos estén dentro de valores aceptables entre sí. Por ejemplo, no es posible establecer un valor de tiempo de espera de evaluación de directivas que sea mayor que el tiempo de espera del webhook de Kubernetes.
+
+### Por Directiva
+
+A partir de {short-project-name} v1.29.0, cada Directiva {short-project-name} puede establecer su propio valor de tiempo de espera a través de su atributo `spec.timeoutEvalSeconds`. Esto no debe confundirse con `spec.timeoutSeconds`, utilizado para el tiempo de espera del Webhook (ver sección [abajo](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+
+El `spec.timeoutEvalSeconds` es granular, permitiendo el ajuste del tiempo de espera de evaluación por directiva.
+
+Esta configuración tiene prioridad sobre la configuración global de tiempo de espera de evaluación por Servidor de Directivas.
+
+Por ejemplo, para establecer un tiempo de espera de evaluación más largo para una directiva específica:
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Secrets
+    io.kubewarden.policy.severity: medium
+  name: env-variable-secrets-scanner
+spec:
+  module: registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.6
+  settings: {}
+  timeoutEvalSeconds: 10 // Set evaluation timeout
+  mutating: false
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+----
+
+=== Por Servidor de Directivas
+
+A partir de {short-project-name} v1.5.0, los Servidores de Directivas vienen con un tiempo de espera de evaluación configurable, habilitado por defecto. La interrupción de la evaluación de una solicitud se produce después de 2 segundos. Esta configuración afecta a todas las directivas programadas en ese Servidor de Directivas. El tiempo de espera configurable `spec.timeoutEvalSeconds` por Directiva tiene prioridad sobre esta configuración por Servidor de Directivas.
+
+Puedes ajustar este comportamiento utilizando estas variables de entorno:
+
+* `KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION`: Esto desactiva completamente la evaluación de directivas. Cualquier valor asignado desactiva la función.
+* `KUBEWARDEN_POLICY_TIMEOUT`: Esto establece un valor de tiempo de espera diferente. El valor está en segundos con un valor por defecto de `2`.
+
+Al utilizar la https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/PolicyServer/v1@v1.4.2[`PolicyServer`] Definición de Recursos Personalizados de Kubernetes, puedes establecer estas variables de entorno de la siguiente manera:
+
+[source,yaml]
+----
+# A Policy Server that has policy evaluation timeout disabled
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: no-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION
+      value: "true"
+---
+
+# A Policy Server that has policy evaluation timeout enabled,
+# with a 3 seconds timeout value
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: custom-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_POLICY_TIMEOUT
+      value: "3"
+----
+
+== Comparación con el tiempo de espera del Controlador de Admisión Dinámico de Kubernetes
+
+{short-project-name} es una implementación de https://en.wikipedia.org/wiki/Webhook[webhook] del https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Controlador de Admisión Dinámico de Kubernetes].
+
+Internamente, el servidor API de Kubernetes realiza una solicitud HTTP al Servidor de Políticas de {short-project-name} describiendo un evento que está a punto de suceder. Después de la solicitud HTTP, el Servidor API de Kubernetes espera una respuesta. Sin embargo, el servidor API de Kubernetes no espera para siempre. Después de un cierto período de tiempo, considera que la solicitud ha superado el tiempo de espera.
+
+Citando la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[documentación oficial de Kubernetes]:
+
+____
+Debido a que los webhooks añaden latencia a las solicitudes API, deben evaluarse lo más rápido posible. `timeoutSeconds` permite configurar cuánto tiempo debe esperar el servidor API para que un webhook responda antes de tratar la llamada como un fallo.
+
+Si el tiempo de espera expira antes de que el webhook responda, la llamada al webhook será ignorada o la llamada API será rechazada según la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy[directiva de fallo].
+
+El valor de tiempo de espera debe estar entre 1 y 30 segundos.
+
+El tiempo de espera para un webhook de admisión tiene un valor por defecto de 10 segundos.
+____
+
+Eso significa que, independientemente de la función de tiempo de espera de evaluación de directivas, cada solicitud de admisión de Kubernetes está sujeta a un tiempo de espera.
+
+Cada Directiva {short-project-name} puede establecer su propio valor de tiempo de espera a través del atributo `timeoutSeconds` de los recursos personalizados `ClusterAdmissionPolicy` y `AdmissionPolicy`.
+Por defecto, el valor de tiempo de espera es de 10 segundos.
+
+[IMPORTANT]
+====
+
+Todas las solicitudes de admisión de Kubernetes realizadas a un Servidor de Directivas están sujetas a dos tiempos de espera diferentes:
+
+* El valor de tiempo de espera del servidor API de Kubernetes. Establecido en 10 segundos por defecto, ajustable en función de cada Directiva a través del atributo `spec.timeoutSeconds` en el Recurso Personalizado de la Directiva.
+* El tiempo de espera de evaluación de la directiva. Establecido en el Servidor de Directivas a través de variables de entorno o por Directiva a través del atributo `spec.timeoutEvalSeconds` en el Recurso Personalizado de la Directiva.
+
+====
+
+Ahora puedes examinar los siguientes escenarios para entender mejor las diferencias entre el tiempo de espera del Webhook de Kubernetes y el tiempo de espera de evaluación de la directiva de {short-project-name}.
+
+
+=== El tiempo de espera de evaluación de la directiva de {short-project-name} está deshabilitado.
+
+Supón que tienes un Servidor de Directivas que tiene la función de tiempo de espera de evaluación de la directiva desactivada, y ninguna directiva programada en él ha establecido su campo `spec.timeoutEvalSeconds`. Este Servidor de Directivas está alojando una directiva afectada por un error que provoca que entre en un bucle infinito durante la evaluación.
+
+El servidor API de Kubernetes envía una solicitud de admisión para evaluación por esta directiva con errores. Como resultado, la evaluación de la directiva entra en un bucle infinito.
+Mientras tanto, el servidor API de Kubernetes está esperando una respuesta.
+
+Después de 10 segundos, se produce el tiempo de espera del webhook de Kubernetes, y la solicitud se maneja de acuerdo con la directiva de fallo del webhook.
+
+Ahora el Servidor de Directivas tiene recursos computacionales atrapados en este bucle infinito.
+Con el tiempo, con más solicitudes de admisión que activan la directiva con errores, el Servidor de Directivas se queda sin recursos computacionales. No puede responder al servidor API de Kubernetes. Esto es equivalente a un ataque de Denegación de Servicio (DOS) al Servidor de Directivas.
+
+=== El tiempo de espera de evaluación de la directiva de {short-project-name} está habilitado.
+
+Supongamos un escenario en el que el mismo Servidor de Directivas ahora tiene habilitada la función de tiempo de espera de evaluación de la directiva, ya sea globalmente en el Servidor de Directivas, o en la Directiva a través de la directiva `spec.timeoutEvalSeconds`, y el tiempo de espera de evaluación de la directiva es de 2 segundos.
+
+El servidor API de Kubernetes envía una solicitud de admisión para evaluación por esta directiva con errores. Como resultado, la evaluación de la directiva entra en un bucle infinito.
+Mientras tanto, el servidor API de Kubernetes está esperando una respuesta.
+
+Después de dos segundos, la función de tiempo de espera de evaluación de la directiva de {short-project-name} interrumpe la evaluación de la directiva y produce una respuesta de rechazo. La respuesta contiene un mensaje explicando que el rechazo ocurrió porque la evaluación de la directiva no se completó a tiempo.
+
+[NOTE]
+====
+
+Establecer el tiempo de espera de evaluación de la directiva de {short-project-name} a un valor tan alto como el tiempo de espera del webhook de Kubernetes no es una buena elección.
+
+Aunque la evaluación de la directiva sigue interrumpida, reduciendo las posibilidades de un ataque DOS, la respuesta final de rechazo no es producida por el Servidor de Directivas. El rechazo proviene del servidor API de Kubernetes con el tiempo de espera del webhook.
+
+Como resultado, es más difícil para los usuarios y los operadores de Kubernetes detectar estas directivas lentas o con errores. La única prueba de la interrupción de la evaluación de directivas se encuentra en los registros del Servidor de Directivas y en los eventos de seguimiento.
+
+====
+

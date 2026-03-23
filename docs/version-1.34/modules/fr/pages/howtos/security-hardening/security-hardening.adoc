@@ -1,0 +1,74 @@
+include::partial$variables.adoc[]
+= Renforcement de la sécurité
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Renforcement de la sécurité
+:sidebar_position: 50
+:description: Sécurisez {project-name} avec des conseils de renforcement de la sécurité et des meilleures pratiques pour atténuer les menaces.
+:keywords: ["{project-name}", kubewarden, kubernetes, sécurité]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manuel-opérateur, sécurité
+
+{project-name} s'efforce d'être sécurisé avec peu de configuration. Dans cette section et ses sous-pages, vous pouvez trouver des conseils de renforcement (avec leurs compromis) pour sécuriser {short-project-name} lui-même.
+
+Veuillez vous référer au xref:/reference/threat-model.adoc[modèle de menace] pour plus d'informations.
+
+== `kubewarden-defaults` chart Helm
+
+Les opérateurs peuvent obtenir un déploiement sécurisé en installant tous les {short-project-name} charts Helm. Il est recommandé d'installer le `kubewarden-defaults` chart Helm et d'activer ses stratégies recommandées avec :
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=protect
+----
+
+Cela fournit un PolicyServer par défaut et des stratégies par défaut, en mode protection, pour garantir que la pile {short-project-name} est à l'abri d'autres charges de travail.
+
+== Vérification des artefacts {short-project-name}
+
+Référez-vous au tutoriel xref:/tutorials/verifying-kubewarden.adoc[Vérification
+{short-project-name}].
+
+== RBAC
+
+{short-project-name} décrit les configurations RBAC dans différentes sections _Explications_. Les utilisateurs peuvent affiner les autorisations nécessaires pour la fonctionnalité xref:/explanations/audit-scanner/audit-scanner.adoc#_permissions_and_serviceaccounts[Scanner d’audit], ainsi que le compte de service xref:/explanations/context-aware-policies.adoc[par PolicyServer] pour la fonctionnalité contextuelle.
+
+Pour voir tous les Rôles :
+
+[source,console]
+----
+kubectl get clusterroles,roles -A | grep kubewarden
+----
+
+== Autorisations par stratégie
+
+Pour les stratégies contextuelles, les opérateurs spécifient des autorisations granulaires par stratégie sous son `spec.contextAwareResources`, et celles-ci fonctionnent en conjonction avec le compte de service configuré pour le PolicyServer où la stratégie s'exécute.
+
+== Couverture des charges de travail
+
+Par défaut, {short-project-name} exclut des espaces de noms spécifiques de la couverture {short-project-name}. Cela est fait pour simplifier l'utilisation pour la première fois et l'interopérabilité avec d'autres charges de travail.
+
+Les opérateurs soucieux de la sécurité peuvent ajuster cette liste d'espaces de noms via la valeur `.global.skipNamespaces` pour le chart Helm `kubewarden-controller` et le chart Helm `kubewarden-defaults`.
+
+== Admission de sécurité des pods
+
+À partir de la version 1.23, la pile de {short-project-name} peut fonctionner dans un espace de noms où https://kubernetes.io/docs/concepts/security/pod-security-standards/#restricted[`restricted` Pod Security Standards] sont en place, avec les meilleures pratiques actuelles de renforcement de la sécurité des Pods.
+
+Pour ce faire, vous devez ajouter l'étiquette `pod-security.kubernetes.io/enforce: restricted` à l'espace de noms de déploiement {short-project-name}.
+
+```console
+kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
+```
+
+Voir la https://kubernetes.io/docs/concepts/security/pod-security-admission/[documentation officielle] de l'Admission de Sécurité des Pods de Kubernetes pour plus de détails.
+
+=== SecurityContexts
+
+Le `kubewarden-controller` chart Helm configure les SecurityContexts et les expose dans son `values.yaml`.
+
+Le `kubewarden-defaults` chart Helm permet de configurer le PolicyServer par défaut `.spec.securityContexts` sous `.Values.policyServer.securityContexts`.
+
+Pour les PolicyServers gérés par des opérateurs, vous pouvez les configurer via leur xref:/reference/CRDs.adoc#_policyserversecurity[`spec.securityContexts`].

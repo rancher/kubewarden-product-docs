@@ -1,0 +1,57 @@
+include::partial$variables.adoc[]
+= 审计扫描器 - 限制
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解在 Kubernetes 环境中使用审计扫描器评估策略和事件类型时的限制，包括其在策略和事件类型评估中的使用。
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner", "limitations"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "kubernetes", "audit scanner"]
+:sidebar_label: 局限性
+:current-version: {page-origin-branch}
+
+== 支持的事件类型
+
+策略可以检查 `CREATE`、`UPDATE` 和 `DELETE` 事件。
+
+审计扫描器无法模拟 `UPDATE` 事件，因为它不知道资源的哪个部分需要更改。
+
+因此，审计扫描器忽略仅关注 `UPDATE` 事件的策略。
+
+[NOTE]
+====
+
+审计扫描器 v1.7.0 版本仅支持 `CREATE` 事件。对 `DELETE` 事件的处理即将推出。
+
+====
+
+
+== 依赖用户和用户组信息的策略
+
+每个 Kubernetes 准入请求对象都包含关于发起该事件的用户（或 ServiceAccount）以及所属用户组的信息。
+
+审计扫描器模拟的所有事件都来自同一个硬编码的用户和组。因此，依赖这些值来做出决策的策略将不会产生有意义的结果。
+
+对于这些情况，将策略配置为不可审计。
+
+== 依赖外部数据的策略
+
+策略在执行评估时可以请求和使用外部数据。您可以使用审计检查评估这些策略，但其结果可能会根据外部数据而变化。
+
+== 策略对 `*` 的使用
+
+`AdmissionPolicy`和`ClusterAdmissionPolicy`自定义资源都有以下字段：
+
+[subs="+attributes",yaml]
+----
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+----
+
+`apiGroups`、`apiVersions`和`resources`属性可以使用通配符`*`。这个通配符符号使得策略匹配字段中使用的所有值。审计扫描器会忽略使用`*`符号的策略。

@@ -1,0 +1,116 @@
+include::partial$variables.adoc[]
+= ポリシーグループの使用方法
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 画像の署名やその他の基準に基づいて非準拠のポッドを拒否する、特定のルールを持つポリシーグループを実装します。
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explanations", "policy-group"]
+:doc-type: ["howto"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "ポリシーグループ", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:sidebar_label: ポリシーグループ
+:sidebar_position: 36
+:current-version: {page-origin-branch}
+
+[TIP]
+====
+ポリシーグループを使用する前に、xref:explanations/policy-groups.adoc[説明]を参照してください。
+====
+
+
+ポリシーグループのxref:../explanations/policy-groups.adoc[説明]の例を使用して、これらのコマンドを実装します。
+
+[,shell]
+----
+kubectl apply -f group-policy-demo.yaml
+----
+
+.`ClusterAdmissionPolicyGroup`は、`latest`タグを持つイメージを使用するポッドを拒否します。ただし、そのイメージが2人の信頼できる当事者によって署名されている場合を除きます。アリスとボブ。
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    signed_by_alice:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyg65hiNHt8FXTamzCn34IE3qMGcV
+                yQz3gPlhoKq3yqa1GIofcgLjUZtcKlUSVAU2/S5gXqyDnsW6466Jx/ZVlg==
+                -----END PUBLIC KEY-----
+    signed_by_bob:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X
+                urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==
+                -----END PUBLIC KEY-----
+    reject_latest:
+      module: registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0
+      settings:
+        tags:
+          reject:
+            - latest
+  expression: "reject_latest() || (signed_by_alice() && signed_by_bob())"
+  message: "the image is using the latest tag or is not signed by Alice and Bob"
+----
+======
+
+ポリシーが有効になると、非準拠のポッドの作成は拒否されます。
+グループの一部であるポリシーの評価に関する詳細情報を取得するには、`kubectl`の冗長レベルを上げてください。
+
+[,console]
+----
+kubectl -v4 apply -f signed-pod.yml
+I0919 18:29:40.251332    4330 helpers.go:246] server response object: [{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "error when creating \"signed-pod.yml\": admission webhook \"clusterwide-demo.kubewarden.admission\" denied the request: the image is using the latest tag or is not signed by Alice and Bob",
+  "details": {
+    "causes": [
+      {
+        "message": "Resource signed is not accepted: verification of image testing.registry.svc.lan/busybox:latest failed: Host error: Callback evaluation failure: Image verification failed: missing signatures\nThe following constraints were not satisfied:\nkind: pubKey\nowner: null\nkey: |\n  -----BEGIN PUBLIC KEY-----\n  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X\n  urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==\n  -----END PUBLIC KEY-----\nannotations: null\n",
+        "field": "spec.policies.signed_by_bob"
+      },
+      {
+        "message": "not allowed, reported errors: tags not allowed: latest",
+        "field": "spec.policies.reject_latest"
+      }
+    ]
+  },
+  "code": 400
+}]
+Error from server: error when creating "signed-pod.yml": admission webhook "clusterwide-demo.kubewarden.admission" denied the request: the image is using the latest tag or is not signed by Alice and Bob
+----
+
+[NOTE]
+====
+グループの一部であるポリシーによって生成された評価出力は、`kubectl`の冗長レベルを上げることでのみ表示されます。
+
+ポリシーの評価出力を見るには、`4`の冗長レベルが十分です。
+====
+

@@ -1,0 +1,373 @@
+include::partial$variables.adoc[]
+= Démarrage rapide du traçage
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Activez la prise en charge du traçage pour le Policy Server en utilisant ce guide de démarrage rapide afin de collecter des détails précis sur les évaluations de stratégie, lesquels peuvent être utilisés pour déboguer les problèmes d'admission SUSE Security.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["opérateur-manuel", "télémétrie", "traçage", "démarrage-rapide"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "traçage", "démarrage rapide"]
+:sidebar_label: Suivi
+:current-version: {page-origin-branch}
+
+Cette section montre comment activer la prise en charge du traçage pour le Policy Server.
+
+[NOTE]
+====
+
+Avant de continuer, assurez-vous d'avoir complété la section précédente
+xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry]
+de cette documentation. C'est nécessaire pour que cette section fonctionne correctement.
+
+====
+
+
+Le traçage vous permet de collecter des détails précis sur les évaluations de stratégies. Cela peut être un outil utile pour déboguer des problèmes dans votre {project-name} déploiement et stratégies.
+
+Vous utilisez https://www.jaegertracing.io/[Jaeger] -- qui sert à recevoir, stocker et visualiser les événements de traçage.
+
+== Installer Jaeger
+
+Vous utilisez le https://github.com/jaegertracing/jaeger-operator[Jaeger Operator]
+pour gérer tous les différents composants de Jaeger. Vous pouvez installer le Jaeger Operator en utilisant des charts Helm.
+
+[NOTE]
+====
+
+Au moment de la rédaction (2022-06-21), seules des versions spécifiques de Jaeger sont
+compatibles avec Cert Manager,
+https://github.com/jaegertracing/helm-charts/blob/main/charts/jaeger-operator/COMPATIBILITY.md[voir
+le tableau de compatibilité].
+
+====
+
+Pour installer le chart Helm :
+
+[subs="+attributes",console]
+----
+helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+
+helm upgrade -i --wait \
+  --namespace jaeger \
+  --create-namespace \
+  --version 2.49.0 \
+  jaeger-operator jaegertracing/jaeger-operator \
+  --set rbac.clusterRole=true
+----
+
+[CAUTION]
+====
+
+Ceci est *non adapté à un déploiement en production*. Vous devriez consulter la https://www.jaegertracing.io/docs/latest/kubernetes/[documentation officielle de Jaeger].
+
+====
+
+Pour créer une ressource Jaeger :
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: my-open-telemetry
+  namespace: jaeger
+spec: {}
+EOF
+----
+
+Après la création des ressources Jaeger Operator, vous avez un Service sous `my-open-telemetry-collector.jaeger.svc.cluster.local`. L'interface utilisateur de Jaeger Query est exposée par le Service `my-open-telemetry-query` dans l'espace de noms `jaeger`.
+
+== Installez {short-project-name}
+
+Vous pouvez maintenant procéder au déploiement de {short-project-name} de la manière habituelle.
+
+[NOTE]
+====
+
+Le `cert-manager` est une exigence d'OpenTelemetry, mais vous l'avez déjà installé dans une section précédente de cette documentation.
+
+====
+
+Comme première étape, vous ajoutez le dépôt Helm qui contient {short-project-name} :
+
+[subs="+attributes",console]
+----
+helm repo add kubewarden https://charts.kubewarden.io
+----
+
+Ensuite, vous installez les définitions de ressources personnalisées (CRDs) définies par {short-project-name} :
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  kubewarden-crds kubewarden/kubewarden-crds
+----
+
+Vous pouvez maintenant déployer le reste de la pile {short-project-name}. Le chart Helm officiel `kubewarden-defaults` crée un PolicyServer nommé `default`. Vous souhaitez que cette instance de PolicyServer ait le traçage activé.
+
+Pour ce faire, vous devez spécifier quelques valeurs supplémentaires pour le chart `kubewarden-controller`. Vous devez créer un fichier `values.yaml` avec le contenu suivant :
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  mode: sidecar
+  tracing: True
+  sidecar:
+    tracing:
+      jaeger:
+        endpoint: "my-open-telemetry-collector.jaeger.svc.cluster.local:4317"
+        tls:
+          insecure: true
+----
+
+[CAUTION]
+====
+
+Pour des raisons de simplicité, il n'y a pas de cryptage de la communication entre le collecteur OpenTelemetry et le point de terminaison Jaeger.
+
+Encore une fois, cela est *non adapté à un déploiement en production*. Consultez la https://www.jaegertracing.io/docs/latest/kubernetes/[documentation officielle] de Jaeger.
+
+====
+
+Ensuite, vous pouvez procéder à l'installation des charts Helm :
+
+[subs="+attributes",console]
+----
+helm install --wait --namespace kubewarden --create-namespace \
+  --values values.yaml \
+  kubewarden-controller kubewarden/kubewarden-controller
+
+helm install --wait --namespace kubewarden --create-namespace \
+  kubewarden-defaults kubewarden/kubewarden-defaults
+----
+
+Cela crée l'instance `default` de `PolicyServer` :
+
+[subs="+attributes",console]
+----
+kubectl get policyservers.policies.kubewarden.io
+NAME      AGE
+default   3m7s
+----
+
+En regardant de plus près le Pod exécutant l'instance de PolicyServer, vous pouvez voir qu'il a deux conteneurs à l'intérieur. Le `policy-server` et le collecteur OpenTelemetry sidecar `otc-container`.
+
+== Application d'une stratégie
+
+Vous commencez par déployer la stratégie https://github.com/kubewarden/safe-labels-policy[safe-labels].
+
+Vous souhaitez que la stratégie soit appliquée uniquement dans les espaces de noms qui ont une étiquette `environment` avec une valeur de `production`.
+
+À un espace de noms qui a une telle étiquette :
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-alpha-prod
+  labels:
+    environment: production
+EOF
+----
+
+Ensuite, vous pouvez définir une ClusterAdmissionPolicy :
+
+[subs="+attributes",yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: safe-labels
+spec:
+  module: registry://ghcr.io/kubewarden/policies/safe-labels:v0.1.6
+  settings:
+    mandatory_labels:
+    - owner
+  rules:
+    - apiGroups:
+        - apps
+      apiVersions:
+        - v1
+      resources:
+        - deployments
+      operations:
+        - CREATE
+        - UPDATE
+  namespaceSelector:
+    matchExpressions:
+    - key: environment
+      operator: In
+      values: ["production"]
+  mutating: false
+EOF
+----
+
+Vous devez attendre que la stratégie devienne active :
+
+[subs="+attributes",console]
+----
+kubectl wait --for=condition=PolicyActive clusteradmissionpolicy/safe-labels
+----
+
+Une fois la stratégie active, vous pouvez l'essayer :
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: team-alpha-prod
+  labels:
+    owner: octocat
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+EOF
+----
+
+La stratégie permet la création de cet objet Deployment car il ne viole pas la stratégie.
+
+La stratégie bloque cet objet Deployment :
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-without-labels
+  namespace: team-alpha-prod
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+EOF
+----
+
+La stratégie n'est pas appliquée dans un autre espace de noms.
+
+Cette commande crée un nouvel espace de noms appelé `team-alpha-staging` :
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: team-alpha-staging
+  labels:
+    environment: staging
+EOF
+----
+
+La stratégie permet la création d'une ressource Deployment, sans aucune étiquette, dans l'espace de noms `team-alpha-staging` :
+
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-without-labels
+  namespace: team-alpha-staging
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+EOF
+----
+
+Comme prévu, cette ressource est créée avec succès.
+
+== Exploration de l'interface utilisateur de Jaeger
+
+Vous pouvez voir les événements de trace envoyés par l'instance PolicyServer à Jaeger, car il y a un nouveau service `kubewarden-policy-server` répertorié dans l'interface utilisateur :
+
+image::jaeger-ui-home.png[tableau de bord Jaeger]
+
+Le collecteur Jaeger reçoit les traces générées par votre PolicyServer.
+
+Si vous avez installé Traefik dans le guide précédent, exposez l'interface utilisateur de requête Jaeger avec ce `Ingress` :
+
+[,yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-open-telemetry-query
+  namespace: jaeger
+spec:
+  ingressClassName: traefik
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-open-telemetry-query
+                port:
+                  number: 16686
+EOF
+----
+
+Pour accéder à l'interface utilisateur de Jaeger avec Traefik, exécutez :
+
+[,console]
+----
+kubectl -n traefik port-forward service/traefik 8080:80
+----
+
+Ensuite, allez à `\http://localhost:8080`.
+
+Si vous préférez contourner Traefik, accédez directement à Jaeger :
+
+[,console]
+----
+kubectl -n jaeger port-forward service/my-open-telemetry-query 16686
+----
+
+Ensuite, allez à `\http://localhost:16686`.

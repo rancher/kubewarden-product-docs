@@ -1,0 +1,193 @@
+include::partial$variables.adoc[]
+= 策略评估超时保护
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置策略评估超时以确保及时完成，并通过 Policy Server 的内置保护功能防止资源耗尽。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-evaluation-timeout"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "策略超时保护"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+此功能从 {project-name} v1.5.0 开始可用于每个 Policy Server 的超时，从 v1.29.0 开始可用于每个策略的超时。
+
+====
+
+策略评估超时保护是策略和 Policy Server 的安全功能。其目的是限制请求评估所需的时间。
+
+== 用途
+
+您可以使用传统编程语言（如 xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go]、xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] 和 xref:../tutorials/writing-policies/index.adoc[其他]）或使用特殊查询语言 xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego] 编写 {short-project-name} 策略。这两种方法各有优点，因此 {short-project-name} 的目标是让策略作者选择最适合他们需求的工具。
+
+使用传统的 https://en.wikipedia.org/wiki/Turing_completeness[图灵完备] 语言时，可能会出现以下问题：
+
+* https://en.wikipedia.org/wiki/Infinite_loop[无限循环]
+* https://en.wikipedia.org/wiki/Deadlock[死锁]
+* 缺乏优化的慢运行代码
+* 计算密集型操作
+
+策略评估超时保护功能在预定义的时间段后终止请求的评估。这确保 Policy Server 始终有计算资源可用于处理传入请求。
+
+== 局限性
+
+目前，策略评估超时保护能够中断大多数长时间运行的评估。仍有某些边缘情况尚未处理。
+这包括从策略内部调用 `sleep` 指令和死锁。
+
+未来的 Policy Server 版本将解决这些场景。
+
+最后，策略评估超时影响由 Policy Server 实例托管的所有策略。目前，没有办法在每个策略的基础上调整策略评估超时。
+
+== 配置
+
+每个策略的评估超时、每个 Policy Server 的评估超时以及 webhook 超时的所有值都经过验证，以确保它们彼此之间都在可接受的范围内。例如，无法设置高于 Kubernetes webhook 超时的策略评估超时值。
+
+### 每个策略
+
+从 {short-project-name} v1.29.0 开始，每个 {short-project-name} 策略可以通过其 `spec.timeoutEvalSeconds` 属性设置自己的超时值。这与用于 webhook 超时的 `spec.timeoutSeconds` 不同（见下文 [部分](#comparison-with-kubernetes-dynamic-admission-controller-timeout)）。
+
+`spec.timeoutEvalSeconds` 是细粒度的，允许对每个策略的评估超时进行调整。
+
+此设置优先于每个 Policy Server 的全局超时评估配置。
+
+例如，要为特定策略设置更长的评估超时：
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Secrets
+    io.kubewarden.policy.severity: medium
+  name: env-variable-secrets-scanner
+spec:
+  module: registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.6
+  settings: {}
+  timeoutEvalSeconds: 10 // Set evaluation timeout
+  mutating: false
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+----
+
+=== 每个策略服务器
+
+从 {short-project-name} v1.5.0 开始，策略服务器配备了可配置的评估超时，默认启用。请求评估的中断发生在 2 秒后。此配置影响在该策略服务器中调度的所有策略。每个策略可配置的 `spec.timeoutEvalSeconds` 超时设置优先于此每个策略服务器设置。
+
+您可以通过使用这些环境变量来调整此行为：
+
+* `KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION`：这会完全禁用策略评估。任何分配的值都会关闭该功能。
+* `KUBEWARDEN_POLICY_TIMEOUT`：这设置了不同的超时值。该值以秒为单位，默认值为`2`。
+
+使用 https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/PolicyServer/v1@v1.4.2[`PolicyServer`] 的 Kubernetes 自定义资源定义时，可以按如下方式设置这些环境变量：
+
+[source,yaml]
+----
+# A Policy Server that has policy evaluation timeout disabled
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: no-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION
+      value: "true"
+---
+
+# A Policy Server that has policy evaluation timeout enabled,
+# with a 3 seconds timeout value
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: custom-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_POLICY_TIMEOUT
+      value: "3"
+----
+
+== 与 Kubernetes 动态准入控制器超时的比较
+
+{short-project-name}是https://en.wikipedia.org/wiki/Webhook[webhook]的实现，属于https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetes 动态准入控制器]。
+
+在内部，Kubernetes API 服务器向 {short-project-name} 的策略服务器发出 HTTP 请求，描述即将发生的事件。在 HTTP 请求后，Kubernetes API 服务器会等待响应。然而，Kubernetes API 服务器并不会无限期等待。在一定时间后，它会认为请求已超时。
+
+引用https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[官方 Kubernetes 文档]：
+
+____
+由于 webhook 会增加 API 请求延迟，因此应尽快评估。`timeoutSeconds`允许配置 API 服务器在将调用视为失败之前等待 webhook 响应的时间。
+
+如果超时在 webhook 响应之前到期，则将忽略 webhook 调用，或者根据 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy[故障策略]拒绝 API 调用。
+
+超时值必须在1到30秒之间。
+
+准入webhook的超时默认为10秒。
+____
+
+这意味着，无论策略评估超时功能如何，每个 Kubernetes 准入请求都受到超时的限制。
+
+每个{short-project-name}策略可以通过`timeoutSeconds`属性设置自己的超时值，适用于`ClusterAdmissionPolicy`和`AdmissionPolicy`自定义资源。
+默认情况下，超时值为10秒。
+
+[IMPORTANT]
+====
+
+所有发送到策略服务器的Kubernetes准入请求都受到两种不同超时的限制：
+
+* Kubernetes API 服务器的超时值。默认设置为10秒，可以通过策略自定义资源上的专用`spec.timeoutSeconds`属性进行调整。
+* 策略评估超时。可以在策略服务器中通过环境变量设置，或在策略自定义资源的 `spec.timeoutEvalSeconds` 属性上为每个策略单独设置超时值。
+
+====
+
+现在您可以检查以下场景，以更好地理解 Kubernetes 的 Webhook 超时与 {short-project-name} 的策略评估超时之间的差异。
+
+
+=== {short-project-name}的策略评估超时已禁用。
+
+假设您有一个策略服务器，其策略评估超时功能已关闭，并且在其上调度的没有策略设置其`spec.timeoutEvalSeconds`字段。该策略服务器托管着一个有缺陷的策略，该缺陷导致其在评估期间进入无限循环。
+
+Kubernetes API 服务器发送一个请求以由这个有缺陷的策略进行评估。因此，策略评估进入无限循环。
+与此同时，Kubernetes API 服务器正在等待响应。
+
+10秒后，Kubernetes 的 Webhook 超时发生，请求根据 Webhook 的失败策略进行处理。
+
+现在，策略服务器的计算资源被困在这个无限循环中。
+随着更多的请求触发有缺陷的策略，策略服务器的计算资源耗尽。它无法响应 Kubernetes API 服务器。这相当于对策略服务器的拒绝服务（DOS）攻击。
+
+=== {short-project-name}的策略评估超时已启用。
+
+假设一种情况，其中同一策略服务器现在启用了策略评估超时功能，无论是在策略服务器中全局启用，还是在策略中通过策略`spec.timeoutEvalSeconds`启用，策略评估超时为2秒。
+
+Kubernetes API 服务器发送一个请求以由这个有缺陷的策略进行评估。因此，策略评估进入无限循环。
+与此同时，Kubernetes API 服务器正在等待响应。
+
+两秒后，{short-project-name}的策略评估超时功能中断了策略评估并产生拒绝响应。响应包含一条消息，解释拒绝发生的原因是策略评估未能及时完成。
+
+[NOTE]
+====
+
+将{short-project-name}的策略评估超时设置为与Kubernetes的Webhook超时一样高的值并不是一个好选择。
+
+虽然策略评估仍然被中断，减少了DOS攻击的可能性，但最终的拒绝响应并未由策略服务器产生。拒绝来自 Kubernetes API 服务器，原因是 Webhook 超时。
+
+因此，用户和 Kubernetes 操作员更难以检测这些缓慢或有缺陷的策略。策略评估中断的唯一证据在于策略服务器的日志和跟踪事件。
+
+====
+

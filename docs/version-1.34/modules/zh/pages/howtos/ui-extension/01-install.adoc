@@ -1,0 +1,81 @@
+include::partial$variables.adoc[]
+= Rancher UI 扩展快速入门
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解如何将 {project-name} UI 作为 Rancher Manager 的扩展安装，并通过逐步指南完成安装过程。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "ui-extension", "installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "rancher ui extension"]
+:current-version: {page-origin-branch}
+
+本节描述了如何将 {project-name} UI 作为 https://github.com/rancher/rancher[Rancher Manager] 的扩展进行安装。
+
+== 安装 {short-project-name} UI 扩展
+
+您将 {short-project-name} UI 作为全局扩展安装，但通过 Rancher UI 将 {short-project-name} 控制器作为集群范围的资源进行安装。
+
+[NOTE]
+====
+
+对于隔离的安装，请按照 xref:howtos/airgap/02-install.adoc[这些步骤] 操作。
+
+====
+
+
+在扩展页面中，选择 "启用" 按钮并选择添加 Rancher 扩展储存库的选项。启用后，"{short-project-name}" 扩展项会自动出现。选择此项以安装扩展。安装完成后，您可以将 {short-project-name} 安装到所需的集群中。
+
+=== 安装 {short-project-name}
+
+按照之前的步骤，在您的集群中，侧边菜单中会出现一个新的 {short-project-name} 项目。此仪表板页面引导您完成安装过程，完成先决条件。
+
+[NOTE]
+====
+
+在安装向导的 "APP 安装" 步骤中，"安装 {short-project-name}" 按钮可能会保持灰色。如果发生这种情况，请刷新页面并返回此步骤。
+
+====
+
+
+== 安装后
+
+完成安装后，仪表板页面和侧边菜单现在包含新项目，即策略服务器、集群准入策略和准入策略。在这里，您可以创建策略服务器和策略，以控制集群内的行为。
+
+*_仪表板视图_* image:ui_dashboard.png[UI 仪表板]
+
+=== 启用默认策略服务器和策略
+
+在仪表板页面中，您可以选择“安装图表”按钮来安装 https://github.com/kubewarden/helm-charts/tree/main/charts/kubewarden-defaults[`kubewarden-defaults`] Helm 图表。此图表包括默认的策略服务器和一些精选的策略。
+
+安装图表后，您可以在可排序的表格中查看默认策略服务器的详细信息及相关策略。
+
+*_策略服务器详细视图_*image:ui_policyserver_detail.png[UI 策略服务器详细信息]
+
+=== 创建策略
+
+在创建策略时，您最初会在策略网格中获得“自定义策略”选项。提供策略名称、模块和规则所需的信息。建议添加策略目录储存库以访问{short-project-name}的官方策略。
+
+*_创建自定义策略_*image:ui_policy_custom.png[UI 策略白名单]
+
+=== 附加功能
+
+按照说明包含xref:howtos/ui-extension/02-metrics.adoc[监控]或xref:howtos/ui-extension/03-tracing.adoc[追踪]。
+
+== 隔离的安装
+
+由于{short-project-name}是Rancher官方扩展，Rancher团队提供了一种机制，来自动生成扩展目录映像。当https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[安装Rancher管理器]用于隔离实例时，这将被添加到`rancher-images.txt`文件中。
+
+一旦此映像被镜像到可访问您隔离集群的注册表中，您可以在 Rancher UI 中导入该映像。这会创建一个本地Helm储存库，包含{short-project-name}用户界面图表以供安装。
+
+=== 安装步骤
+
+. https://ranchermanager.docs.rancher.com/how-to-guides/new-user-guides/kubernetes-resources-setup/secrets[创建]在`cattle-ui-plugin-system`名称空间内创建注册表密钥。在*注册表域名*字段中输入映像地址的域名。
+. 返回到*扩展*页面（例如，`https://cluster-ip/dashboard/c/local/uiplugins`）。
+. 在右上角，选择*管理扩展目录*。image:ui_airgap_01.png[管理目录]
+. 选择*导入扩展目录*按钮。 \image:ui_airgap_02.png[Import Catalogs]
+. 在*目录图像参考*字段中输入图像地址。
+. 从*拉取密钥*下拉菜单中选择您刚刚创建的密钥。image:ui_airgap_03.png[输入目录信息]
+. 单击*加载*。扩展现在将处于*待处理*状态。
+. 返回到*扩展*页面。
+. 选择*可用*选项卡，然后单击*重新加载*按钮，以确保扩展列表是最新的。 image:ui_airgap_04.png[Install {short-project-name}]
+. 找到您刚刚添加的{short-project-name}扩展，并选择*安装*按钮。

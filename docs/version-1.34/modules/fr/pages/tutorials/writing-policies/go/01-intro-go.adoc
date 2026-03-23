@@ -1,0 +1,94 @@
+include::partial$variables.adoc[]
+= Rédaction de stratégies en Go
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Rédigez des stratégies de validation efficaces pour le contrôleur d'admission en utilisant TinyGo, avec ses bibliothèques et outils utiles conçus spécifiquement pour les développeurs Go.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction de stratégies en Go"]
+:sidebar_label: Rédaction de stratégies en Go
+:sidebar_position: 8
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Le support de Go pour WebAssembly évolue rapidement.
+Cette page a été révisée pour la dernière fois en décembre 2023.
+====
+
+
+Le compilateur Go officiel peut produire des binaires WebAssembly, pour une exécution en dehors d'un navigateur, depuis la version v1.21.
+
+Il existe un autre compilateur Go qui peut construire des binaires WebAssembly utilisables par {project-name}.
+Ce projet de compilateur est https://tinygo.org/[TinyGo]:
+
+____
+TinyGo apporte le langage de programmation Go aux systèmes embarqués et au web moderne en créant un nouveau compilateur basé sur LLVM.
+
+Vous pouvez compiler et exécuter des programmes TinyGo sur plus de 94 cartes de microcontrôleurs différentes telles que le BBC micro:bit et l'Arduino Uno.
+
+TinyGo peut également produire du code WebAssembly (Wasm) qui est très compact en taille.
+Vous pouvez compiler des programmes pour les navigateurs web, ainsi que pour les environnements de calcul serveur et edge computing qui prennent en charge la famille d'interfaces WebAssembly System Interface (WASI).
+____
+
+Le projet {short-project-name} suggère actuellement d'utiliser TinyGo pour deux raisons :
+
+* les binaires sont plus petits
+* support pour https://wapc.io[waPC] grâce à la capacité d'exporter des fonctions vers le composant d'exécution
+
+== Limitations de TinyGo
+
+TinyGo ne prend pas encore en charge toutes les fonctionnalités de Go, consultez la https://tinygo.org/lang-support/[page] de support du langage TinyGo pour voir l'état actuel du projet.
+Actuellement, sa plus grande limitation est l'absence d'un paquet `reflect` entièrement pris en charge.
+Cela signifie que les types d'API Go Kubernetes officiels (par exemple : `k8s.io/api/core/v1`) ne se compilent pas.
+
+Les stratégies {short-project-name} doivent traiter des données JSON telles que les paramètres de stratégie et la demande reçue par Kubernetes.
+
+Malgré les limitations actuelles de TinyGo, il est toujours facile d'écrire des stratégies de validation {short-project-name} avec cet outil.
+
+== Outils
+
+L'écriture de stratégies {short-project-name} nécessite une version de TinyGo supérieure à `v0.28.1`.
+Cependant, utilisez la dernière version pour obtenir les meilleurs résultats.
+
+[CAUTION]
+====
+L'utilisation de versions plus anciennes de TinyGo entraîne des erreurs d'exécution en raison du support limité pour la réflexion Go.
+====
+
+
+Ces bibliothèques Go sont utiles lors de l'écriture d'une stratégie {short-project-name} :
+
+* https://github.com/kubewarden/policy-sdk-go[{short-project-name} SDK Go] :
+Fournit des structures et des fonctions réduisant la quantité de code nécessaire.
+Elle fournit également des helpers de test.
+* https://github.com/kubewarden/k8s-objects[types Go Kubernetes] :
+Les https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io[types Go officiels de Kubernetes] ne peuvent pas être utilisés avec TinyGo.
+Ce module fournit tous les types Kubernetes d'une manière compatible avec TinyGo.
+* https://github.com/tidwall/gjson[gjson] :
+Cela fournit un langage de requête pour une navigation rapide dans les documents JSON et la récupération de données.
+Cette bibliothèque n'utilise pas le paquet `encoding/json` fourni par le `stdlib` de Go, donc elle est utilisable avec TinyGo.
+* https://github.com/deckarep/golang-set[mapset] :
+Fournit une implémentation Go de la structure de données https://en.wikipedia.org/wiki/Set_(abstract_data_type)[Set].
+Cette bibliothèque réduit la quantité de code à écrire, car des opérations telles que Set `union`, `intersection`, `difference` sont des opérations courantes dans les stratégies {short-project-name}.
+
+Enfin, le projet {short-project-name} fournit un https://github.com/kubewarden/go-policy-template[projet de stratégie Go template] que vous pouvez utiliser pour créer des stratégies Go {short-project-name}.
+
+== Obtenir les dépendances de TinyGo
+
+Le moyen le plus simple d'obtenir TinyGo est d'utiliser les images de conteneur en amont.
+Les versions officielles sont https://hub.docker.com/r/tinygo/tinygo[ici], tandis que les builds de la branche de développement sont automatiquement poussés https://hub.docker.com/r/tinygo/tinygo-dev[ici].
+
+Si nécessaire, consultez la page de https://tinygo.org/getting-started/[prise en main] de TinyGo pour plus d'informations.
+
+== Prérequis du tutoriel
+
+Au cours de ce tutoriel, vous aurez besoin de ces outils sur votre machine de développement :
+
+* docker ou un autre moteur de conteneurs : utilisé pour construire la stratégie WebAssembly.
+Vous utiliserez le compilateur fourni avec l'image de conteneur officielle TinyGo.
+* https://github.com/bats-core/bats-core[bats] : utilisé pour écrire les tests et automatiser leur exécution.
+* https://github.com/kubewarden/kwctl/releases[`kwctl`] :
+Outil CLI fourni par {short-project-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions.
+C'est couvert dans xref:tutorials/testing-policies/index.adoc[cette section] de la documentation.

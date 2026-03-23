@@ -1,0 +1,166 @@
+include::partial$variables.adoc[]
+= Políticas conscientes del contexto
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Explora las capacidades de políticas contextuales en el control de admisión, incluyendo el acceso a recursos y la caché, para optimizar la evaluación de políticas.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "context-aware-policies"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "policy specification", "context aware policies"]
+:sidebar_label: Políticas conscientes del contexto
+:current-version: {page-origin-branch}
+
+El `policy-server` tiene la capacidad de exponer información del clúster a las políticas, de modo que puedan tomar decisiones basadas en otros recursos existentes, y no solo en los detalles proporcionados por la solicitud de admisión.
+
+El servidor de políticas que aloja la política recupera recursos de Kubernetes. Las reglas de RBAC aplicadas a la cuenta de servicio del servidor de políticas regulan el acceso a Kubernetes.
+
+El `default` servidor de políticas desplegado por {project-name} gráficos de Helm tiene acceso a los siguientes recursos de Kubernetes:
+
+* Espacios de nombres
+* Servicios
+* Ingress
+
+[CAUTION]
+====
+
+El servidor de políticas realiza la caché de los resultados obtenidos del servidor API de Kubernetes para reducir la carga en esta parte central de Kubernetes. Eso significa que la información puede estar desactualizada o faltar.
+
+====
+
+
+== Matriz de soporte
+
+[cols=",^,"]
+|===
+| Tipo de política | Asistencia | Notas
+
+| Lenguajes de programación tradicionales
+| ✅
+| -
+
+| Rego
+| ✅
+| Desde la versión {short-project-name} 1.9
+
+| WASI
+| ✅
+| Desde la versión {short-project-name} 1.10.0, solo para el SDK de Go
+|===
+
+== Restricciones
+
+La prioridad de {short-project-name} es reducir el número de consultas contra el servidor API de Kubernetes. {short-project-name} considera dos restricciones:
+
+* Utilización de la memoria: El proceso del servidor de políticas almacena en caché los datos obtenidos de Kubernetes en memoria. Cuantos más datos se obtienen, más memoria consumen los Pods del Servidor de Políticas.
+* Consistencia: La caché mantenida por el Servidor de Políticas podría contener datos obsoletos. Recursos nuevos podrían estar ausentes, recursos eliminados podrían seguir disponibles y los cambiados podrían tener datos antiguos. Esto podría afectar la evaluación de políticas.
+
+=== Listando múltiples recursos
+
+Las políticas {short-project-name} pueden obtener múltiples recursos al mismo tiempo. Por ejemplo, pueden hacer una consulta como "obtener todos los Pods definidos dentro del espacio de nombres `default` que tienen la etiqueta `color` establecida en ``green``."
+
+Con tal consulta, el Servidor de Políticas obtiene todos los recursos que coinciden con los criterios del usuario. La obtención de recursos se realiza en lotes para reducir la carga en el servidor API de Kubernetes. Antes de almacenar los recursos en memoria, el Servidor de Políticas elimina el atributo `managedFields` de cada recurso para reducir la cantidad de memoria consumida. Este atributo no es útil para las políticas y consume una cantidad significativa de memoria.
+
+El Servidor de Políticas luego crea un https://kubernetes.io/docs/reference/using-api/api-concepts/#efficient-detection-of-changes[Kubernetes watch] para mantener actualizada la lista de objetos en caché. El Servidor de Políticas no controla la velocidad a la que el Servidor API de Kubernetes envía notificaciones sobre cambios en los recursos. Esto depende de diferentes factores externos, como el número de watches creados contra el servidor API de Kubernetes y su carga.
+
+Finalmente, el código actual tiene la siguiente limitación. Dadas estas dos consultas:
+
+* `kubectl get pods -n default`
+* `kubectl get pods -n default -l color=green`
+
+El Servidor de Políticas crea dos watches y duplica todos los Pods de la segunda consulta. Esta limitación se eliminará en futuras versiones de {short-project-name}.
+
+=== Obteniendo un recurso específico
+
+Las {short-project-name} políticas pueden obtener un recurso específico definido dentro del clúster.
+Por ejemplo, pueden hacer una consulta como "obtener el Pod llamado `psql-0` definido dentro del espacio de nombres `db`."
+
+Por defecto, esta consulta recupera el objeto y lo almacena en una caché en memoria durante cinco segundos. Durante estos cinco segundos, las políticas reciben datos en caché.
+
+El autor de la política también puede decidir hacer una consulta directa, omitiendo la caché.
+Siempre se sirven datos frescos. Esto causa más carga en el servidor API de Kubernetes (dependiendo de la frecuencia de activación de la política) e introduce más latencia al evaluar una solicitud de admisión.
+
+El comportamiento de consulta directa o en caché se configura a nivel de cada consulta por el autor de la política utilizando los SDKs {short-project-name}.
+
+== ClusterAdmissionPolicies
+
+Las ClusterAdmissionPolicies tienen el campo https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/ClusterAdmissionPolicy/v1#spec-contextAwareResources[spec.contextAwareResources].
+Este campo proporciona una lista de recursos `GroupVersionKind` a los que la política necesita acceder. Esto permite a los autores de políticas enviar los "permisos" que la política necesita junto con la política. Además, esto permite a los operadores de políticas revisar los "permisos" necesarios por la política en el momento de la ampliación.
+
+=== Pruebas locales de políticas contextuales
+
+Además de ejecutar políticas en un clúster para pruebas de extremo a extremo, puedes usar la utilidad CLI `kwctl` para ejecutar políticas y solicitudes simuladas contra el clúster.
+
+Para esto, `kwctl run` puede primero grabar todas las interacciones con el clúster en un archivo:
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --record-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+lo que crea el siguiente archivo `replay-session.yml`:
+
+[subs="+attributes",yaml]
+----
+# replay-session.yml
+---
+- type: Exchange
+  request: |
+    !KubernetesGetResource
+    api_version: /v1
+    kind: Pod
+    name: p-testing
+    namespace: local
+    disable_cache: true
+  response:
+    type: Success
+    payload: '{"apiVersion":"","kind":"Pod", <snipped> }'
+----
+
+Usando la sesión de reproducción, ahora puedes simular las interacciones del clúster sin necesidad de un clúster, lo cual es ideal para CI y pruebas de extremo a extremo:
+
+[subs="+attributes",console]
+----
+kwctl run \
+    --allow-context-aware \
+    -r request.json \
+    --replay-host-capabilities-interactions replay-session.yml \
+    annotated-policy.wasm
+----
+
+== SDKs de lenguaje
+
+Los SDKs de lenguaje que soportan el contexto del clúster exponen funciones que permiten a las políticas recuperar el estado actual del clúster.
+
+[TIP]
+====
+
+Si deseas más información sobre la función waPC utilizada por los SDKs, consulta la documentación de referencia xref:reference/spec/host-capabilities/06-kubernetes.adoc[Kubernetes capacidades].
+
+====
+
+
+=== Rust
+
+Consulta las funciones que exponen esta funcionalidad en la https://docs.rs/kubewarden-policy-sdk/0.8.7/kubewarden_policy_sdk[documentación de referencia del SDK de Rust].
+
+=== Ir
+
+Consulta las funciones que exponen esta funcionalidad en la https://pkg.go.dev/github.com/kubewarden/policy-sdk-go[documentación de referencia del SDK de Go].
+
+== Políticas de Rego
+
+=== Gatekeeper
+
+La exposición de información contextual está bajo la clave `data.inventory`, como Gatekeeper.
+
+La población del inventario se realiza con los recursos a los que la política tiene acceso a través del campo `spec.contextAwareResources`.
+
+=== Agente de Políticas Abiertas
+
+La exposición de información contextual está bajo la clave `data.kubernetes`, como https://github.com/open-policy-agent/kube-mgmt[`kube-mgmt`] hace por defecto.
+
+La población del inventario se realiza con los recursos a los que la política tiene acceso a través del campo `spec.contextAwareResources`.

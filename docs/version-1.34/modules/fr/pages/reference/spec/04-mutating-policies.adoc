@@ -1,0 +1,165 @@
+include::partial$variables.adoc[]
+= Stratégies de modification
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurer les stratégies de modification en implémentant des fonctions de validation (validate et validate_settings) dans un waPC (Configurateur de Stratégies Whatever-After) pour proposer des mutations d'objets dans des clusters Kubernetes.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction de stratégies", "spécification", "stratégies de modification"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "spécification de stratégie", "stratégies de modification"]
+:sidebar_label: Stratégies de modification
+:current-version: {page-origin-branch}
+
+La structure des stratégies de modification est la même que celle des stratégies de validation :
+
+* Elles doivent enregistrer les fonctions waPC `validate` et `validate_settings`.
+* L'API de communication utilisée entre l'hôte et la stratégie est la même que celle utilisée par les stratégies de validation.
+
+Les stratégies de modification acceptent une requête et peuvent proposer une mutation de l'objet entrant en retournant un objet `ValidationResponse` qui ressemble à ceci :
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": <object to be created>
+}
+----
+
+Le champ `mutated_object` contient l'objet que la stratégie souhaite créer dans le cluster Kubernetes, sérialisé en JSON.
+
+== Un exemple concret
+
+Supposons que la stratégie ait reçu ce `ValidationRequest` :
+
+[subs="+attributes",json]
+----
+{
+  "settings": {},
+  "request": {
+    "operation": "CREATE",
+    "object": {
+      "apiVersion": "v1",
+      "kind": "Pod",
+      "metadata": {
+        "name": "security-context-demo-4"
+      },
+      "spec": {
+        "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": ["NET_ADMIN", "SYS_TIME"]
+            }
+          }
+        }
+        ]
+      }
+    }
+  }
+}
+----
+
+[NOTE]
+====
+
+Seuls les champs importants sont dans l'objet `request` pour cet exemple.
+
+====
+
+
+Cette génération de requête se produit parce que quelqu'un a essayé de créer un Pod qui ressemblerait à ceci :
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+----
+
+Supposons que la stratégie réponde avec le `ValidationResponse` suivant :
+
+[subs="+attributes",json]
+----
+{
+  "accepted": true,
+  "mutated_object": {
+    "apiVersion": "v1",
+    "kind": "Pod",
+    "metadata": {
+      "name": "security-context-demo-4"
+    },
+    "spec": {
+      "containers": [
+        {
+          "name": "sec-ctx-4",
+          "image": "gcr.io/google-samples/node-hello:1.0",
+          "securityContext": {
+            "capabilities": {
+              "add": [
+                "NET_ADMIN",
+                "SYS_TIME"
+              ],
+              "drop": [
+                "BPF"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+----
+
+Cela conduirait à l'acceptation de la requête, mais le Pod final ressemblerait à ceci :
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: security-context-demo-4
+spec:
+  containers:
+  - name: sec-ctx-4
+    image: gcr.io/google-samples/node-hello:1.0
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+        - SYS_TIME
+        drop:
+        - BPF
+----
+
+Comme vous pouvez le voir, la stratégie a modifié la section `securityContext.capabilities.drop` du seul conteneur déclaré dans le Pod.
+
+Le conteneur abandonne maintenant la capacité `BPF` en raison de la stratégie.
+
+== Récapitulatif
+
+Voici les fonctions qu'une stratégie de modification doit implémenter :
+
+|===
+| *nom de la fonction waPC* | *Charge utile d'entrée* | *Charge utile de sortie*
+
+| `validate`
+| `\{  "request": \{    // AdmissionReview.request data  \},  "settings": \{    // your policy configuration  \}\}`
+| `\{  **// mandatory**  "accepted": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,  // optional, ignored if accepted  "code": integer,   // JSON Object to be created  // Can be used only when the  // request is accepted  "mutated_object": object\}`
+
+| `validate_settings`
+| `\{  // your policy configuration\}`
+| `\{  **// mandatory**  "validate": boolean,  // optional, ignored if accepted  // recommended for rejections  "message": string,\}`
+|===

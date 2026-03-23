@@ -1,0 +1,157 @@
+include::partial$variables.adoc[]
+= Distribution des stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Distribuez les stratégies de manière sécurisée via un registre conforme à l'OCI en utilisant des outils comme kwctl, et assurez la sécurité du cluster grâce à {project-name} la gestion des stratégies.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["distributing-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:current-version: {page-origin-branch}
+
+Les stratégies {project-name} sont des binaires WebAssembly (Wasm) évalués par le serveur de stratégie {short-project-name}.
+
+Le {short-project-name} serveur de stratégie charge les stratégies à partir de ces sources :
+
+* Système de fichiers local
+* Serveur HTTP(s)
+* Registres conformes à l'OCI :
+ ** https://github.com/distribution/distribution[Distribution]
+ ** https://ghcr.io[Registre de conteneurs GitHub]
+ ** https://azure.microsoft.com/en-us/products/container-registry/[Registre de conteneurs Azure]
+ ** https://aws.amazon.com/ecr/[Amazon ECR]
+ ** https://cloud.google.com/artifact-registry/[Registre de conteneurs Google]
+
+{short-project-name} recommande de distribuer les stratégies {short-project-name} via un registre conforme à l'OCI. Les registres de conteneurs sont une exigence obligatoire pour tout cluster Kubernetes. Avoir un seul endroit pour stocker et sécuriser tous les artefacts requis par un cluster est bénéfique.
+
+== Pousser les stratégies vers un registre conforme à l'OCI
+
+La spécification du format d'image https://github.com/opencontainers/image-spec[OCI] permet de stocker tout blob binaire à l'intérieur d'un registre de conteneurs conforme à l'OCI.
+
+Le registre conforme à l'OCI *doit prendre en charge les artefacts* pour pouvoir y pousser avec succès une {short-project-name} stratégie.
+
+Vous pouvez utiliser https://github.com/kubewarden/kwctl[`kwctl`] CLI pour pousser une {short-project-name} stratégie vers un registre conforme à l'OCI.
+
+== Annotation de la stratégie
+
+Vous annotez également une stratégie avec `kwctl`. L'annotation d'une stratégie {short-project-name} se fait en ajoutant des sections personnalisées Wasm au binaire de la stratégie. Cela signifie que la stratégie emballe ses propres métadonnées.
+
+La commande `kwctl annotate` nécessite deux entrées :
+
+* la stratégie {short-project-name} à annoter, un fichier local dans le système de fichiers.
+* le fichier d'annotations, un fichier contenant une description YAML des métadonnées de la stratégie.
+Ce fichier se trouve généralement dans le répertoire racine du projet de votre stratégie.
+
+Par exemple, vous pouvez enregistrer ce fichier sous le nom `metadata.yml` dans le répertoire courant :
+
+[subs="+attributes",yaml]
+----
+rules:
+- apiGroups: ["*"]
+  apiVersions: ["*"]
+  resources: ["*"]
+  operations: ["*"]
+mutating: false
+annotations:
+  io.kubewarden.policy.title: palindromify
+  io.kubewarden.policy.version: 0.1.0
+  io.kubewarden.policy.description: Allows you to reject palindrome names in resources and namespace names, or to only accept palindrome names
+  io.kubewarden.policy.author: Name Surname <name.surname@example.com>
+  io.kubewarden.policy.url: https://github.com/<org>/palindromify
+  io.kubewarden.policy.source: https://github.com/<org>/palindromify
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.usage: |
+    This is markdown text and as such allows you to define a free form usage text.
+
+    This policy allows you to reject requests if:
+    - The name of the resource is a palindrome name.
+    - The namespace name where this resource is created has a palindrome name.
+
+    This policy accepts the following settings:
+
+    - `+invert_behavior+`: bool that inverts the policy behavior. If enabled, only palindrome names will be accepted.
+----
+
+Maintenant, annotons la stratégie :
+
+[subs="+attributes",shell]
+----
+$ kwctl annotate policy.wasm \
+    --metadata-path metadata.yml \
+    --output-path annotated-policy.wasm
+----
+
+Le processus d'annotation effectue certaines optimisations sur la stratégie, donc souvent la stratégie annotée est plus petite que l'originale. Cela dépend considérablement de l'outil utilisé pour produire l'objet Wasm original.
+
+[IMPORTANT]
+====
+
+.Utilisez kwctl inspect pour vérifier votre stratégie
+[%collapsible]
+======
+
+[subs="+attributes",shell]
+----
+$ kwctl inspect annotated-policy.wasm
+2023-08-24T12:06:27.986401Z  INFO sigstore::cosign::client_builder: Rekor public key not provided. Rekor integration disabled
+2023-08-24T12:06:27.986449Z  INFO sigstore::cosign::client_builder: No Fulcio cert has been provided. Fulcio integration disabled
+Details
+title:                    palindromify
+description:              Allows you to reject palindrome names in resources and namespace names, or to only accept palindrome names
+author:                   Name Surname <name.surname@example.com>
+url:                      https://github.com/<org>/palindromify
+source:                   https://github.com/<org>/palindromify
+license:                  Apache-2.0
+mutating:                 false
+background audit support: true
+context aware:            false
+execution mode:           kubewarden-wapc
+protocol version:         1
+
+Annotations
+io.kubewarden.kwctl       1.7.0-rc2
+
+Rules
+────────────────────
+- apiGroups:
+  - '*'
+  apiVersions:
+  - '*'
+  resources:
+  - '*'
+  operations:
+  - '*'
+────────────────────
+
+Usage
+This is markdown text and as such allows you to define a free form usage text.
+
+This policy allows you to reject requests if:
+
+• The name of the resource is a palindrome name.
+• The namespace name where this resource is created has a palindrome name.
+
+This policy accepts the following settings:
+
+• invert_behavior: bool that inverts the policy behavior. If enabled, only palindrome names will be accepted.
+
+Cannot determine if the policy has been signed. There was an error while attempting to fetch its signatures from the remote registry: invalid uri
+----
+
+======
+====
+
+
+== Pousser la stratégie
+
+Vous pouvez pousser une stratégie annotée comme ceci :
+
+[subs="+attributes",shell]
+----
+$ kwctl push annotated-policy.wasm \
+     <oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1
+----
+
+Il est déconseillé de pousser des stratégies non annotées. Le serveur de stratégie utilise les métadonnées fournies par les annotations pour exécuter correctement une stratégie. Par défaut, `kwctl push` refuse de pousser une telle stratégie vers un registre OCI. Si vous avez besoin d'une stratégie non annotée, utilisez l'option `-&#x200D;-&#x200D;force` de `kwctl push`.
+
+Vous pouvez faire référence à une stratégie depuis le {short-project-name} serveur de stratégie ou `kwctl` en tant que `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

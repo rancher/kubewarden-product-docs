@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= Registro
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura las capacidades de registro para tu directiva utilizando la integración de {project-name} con la biblioteca SLOG e inicializando.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
+:doc-type: ["tutorial"]
+:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
+:sidebar_label: Registro
+:current-version: {page-origin-branch}
+
+Puedes hacer que tu directiva realice registros.
+El `policy-server` o `kwctl` reenvía esas entradas de registro con la información apropiada.
+
+La biblioteca de registro elegida para el SDK de Rust es
+https://github.com/slog-rs/slog[`slog`].
+Es un crate popular y bien conocido que se integra de manera limpia con {project-name}.
+
+== Inicializa el registrador
+
+El proyecto recomienda que crees un sumidero global al que puedas registrar, desde donde sea necesario en tu directiva.
+Para esto, utiliza el crate `lazy_static`:
+
+[subs="+attributes",rust]
+----
+use slog::{o, Logger};
+
+lazy_static! {
+    static ref LOG_DRAIN: Logger = Logger::root(
+        logging::KubewardenDrain::new(),
+        o!("policy" => "sample-policy")
+    );
+}
+----
+
+== Consumiendo el registrador
+
+Ahora, desde dentro de las funciones `validate` o `validate_settings`,
+puedes registrar utilizando las macros exportadas por `slog` que coinciden con cada nivel de registro soportado:
+
+[subs="+attributes",rust]
+----
+use slog::{info, o, warn, Logger};
+
+fn validate(payload: &[u8]) -> CallResult {
+    // ...
+    info!(LOG_DRAIN, "starting validation");
+    // ...
+    warn!(
+        LOG_DRAIN, "structured log";
+        "some_resource_name" => &some_resource_name
+    );
+    // ...
+}
+----
+
+La biblioteca `slog` envía todos los registros al sumidero inicializado en la variable global.
+Esto se sincroniza con el evaluador de directivas que ejecuta la directiva.
+Esto es `kwctl` o el `policy-server`.
+Luego, el evaluador de directivas registra esta información,
+agregando más información contextual conocida,
+como la solicitud de Kubernetes `uid`.
+
+Más información sobre los
+https://docs.rs/slog/2.7.0/slog/macro.log.html[macros de registro]
+ofrecidos por slog se encuentra en su
+https://docs.rs/slog/2.7.0/slog/index.html[documentación].

@@ -1,0 +1,184 @@
+include::partial$variables.adoc[]
+= 变更策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 根据预定义设置，在ClusterAdmissionPolicy中配置并管理变更策略以重建请求。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["mutating-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "变更策略", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
+:sidebar_label: 变更策略
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+变更策略接收一个对象请求并将其重建（变更）为一个新请求。这根据策略设置中预定义的值执行。请求通过Kubernetes API进行，可能会被其他策略评估。
+
+要允许变更请求行为，请将`ClusterAdmissionPolicy.mutating`字段设置为`true`。
+
+然而，如果将`ClusterAdmissionPolicy.mutating`字段设置为`false`，变更请求将被拒绝。
+
+== 为什么变更策略可能是危险的
+
+=== 未经审查的变更策略可能引入漏洞
+
+[WARNING]
+====
+
+为了防止系统滥用，{project-name}管理员应审查变更策略。变更策略可能会修改工作负载，从而允许特权容器的创建。
+
+====
+
+
+==== 解决方案
+
+如果有疑问，应将策略分为变更策略和验证策略，而不是编写或部署同时验证和变更的策略。在使用DSL（如Rego）构建复杂策略时，这一点尤其重要。
+
+=== 配置错误的变更策略与第三方Kubernetes控制器一起可能会陷入无限循环。
+
+[WARNING]
+====
+
+变更策略返回通过Kubernetes API进行的请求。如果有其他Kubernetes控制器侦听这些相同的资源，它们可能会在后续请求中将其变更回去。这可能导致变更的无限反馈循环。
+
+====
+
+
+==== 解决方案
+
+对以下内容执行变更：
+
+. 较低类型的资源（例如：Pod）。
+. 最高类型的资源（例如：部署）。注意：这仍可能导致循环，如果控制器正在管理这些资源。例如，GitOps 解决方案的控制器（如 fleet、flux、argo、...）或其他将自己的 CRD 转换为部署对象的第三方控制器。
+
+== 示例
+
+您可以看到变更策略的实际应用。创建以下`ClusterAdmissionPolicy`，并将`mutating`字段设置为`true`：
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-user-group
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/user-group-psp:v0.1.5"
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: true
+  settings:
+    run_as_user:
+      rule: "MustRunAs"
+      ranges:
+        - min: 1000
+          max: 2000
+        - min: 3000
+          max: 4000
+    run_as_group:
+      rule: "RunAsAny"
+    supplemental_groups:
+      rule: "RunAsAny"
+EOF
+
+# Output
+clusteradmissionpolicy.policies.kubewarden.io/psp-user-group created
+----
+
+您使用https://github.com/kubewarden/user-group-psp-policy[`psp-user-group`]策略来控制容器中的用户和组，并可以变更请求。在前面的示例中，您设置了`runAsUser`字段，并将其添加到容器`securityContext`部分。
+
+由于`mutating`字段是`true`，以下请求成功：
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause-user-group
+spec:
+  containers:
+    - name: pause
+      image: registry.k8s.io/pause
+EOF
+
+# Output
+pod/pause-user-group created
+----
+
+您可以看到容器的`securityContext`结果：
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl get pods pause-user-group -o jsonpath='{ .spec.containers[].securityContext }'
+
+# Output
+{"runAsUser":1000}
+----
+
+现在，通过将字段`mutating`设置为`false`来修改`ClusterAdmissionPolicy`：
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1alpha2
+kind: ClusterAdmissionPolicy
+metadata:
+  name: psp-user-group
+spec:
+  module: "registry://ghcr.io/kubewarden/policies/user-group-psp:v0.1.5"
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+  settings:
+    run_as_user:
+      rule: "MustRunAs"
+      ranges:
+        - min: 1000
+          max: 2000
+        - min: 3000
+          max: 4000
+    run_as_group:
+      rule: "RunAsAny"
+    supplemental_groups:
+      rule: "RunAsAny"
+EOF
+
+# Output
+clusteradmissionpolicy.policies.kubewarden.io/psp-user-group configured
+----
+
+由于`mutating`字段是`false`，以下请求失败：
+
+[subs="+attributes",bash]
+----
+# Command
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pause-user-group
+spec:
+  containers:
+    - name: pause
+      image: registry.k8s.io/pause
+EOF
+
+# Output
+Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
+----
+
+总之，您可以看到{short-project-name}复制了已弃用的 Kubernetes Pod 安全策略（PSP）的相同行为。

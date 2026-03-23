@@ -1,0 +1,54 @@
+include::partial$variables.adoc[]
+= Fonctionnalités réseau
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez les fonctionnalités réseau et comment utiliser les fonctions hôtes pour les recherches DNS, ainsi que les protocoles de communication.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-de-stratégies", "spécification", "capacités-hôtes", "fonctionnalités réseau"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "spécification de stratégie", "fonctionnalités réseau"]
+:sidebar_label: Fonctionnalités réseau
+:current-version: {page-origin-branch}
+
+{project-name} les stratégies ne peuvent pas effectuer de requêtes réseau depuis le contexte d'exécution WebAssembly.
+
+Les opérations réseau peuvent être effectuées en tirant parti d'une série de capacités exposées par l'hôte.
+
+== Recherche DNS de l'hôte
+
+Cette fonction effectue une recherche DNS à partir du FQDN donné par la stratégie.
+
+=== Caching
+
+Les résultats de recherche sont mis en cache pendant 1 minute.
+
+=== Protocole de communication
+
+Voici la description du protocole waPC utilisé pour exposer cette capacité :
+
+==== Fonction waPC - `v1/dns_lookup_host` entrée
+
+[,hcl]
+----
+# hostname - JSON encoded string
+string
+----
+
+==== Fonction waPC - `v1/dns_lookup_host` sortie
+
+[,hcl]
+----
+
+{
+  # list of IPs
+  "ips": [string]
+}
+----
+
+Toutes les adresses IP associées au FQDN donné seront retournées sous forme de chaînes dans la réponse.
+Les entrées IPv4 et IPv6 sont retournées dans la même réponse.
+
+Par exemple, lors de la demande du digest du manifeste de `busybox:latest`l'image, les charges utiles seraient :
+
+* Charge utile d'entrée : `"google.com"`
+* Charge utile de sortie : `{ "ips": ["127.0.0.1"]}`

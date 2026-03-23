@@ -1,0 +1,77 @@
+include::partial$variables.adoc[]
+= 什么是 {project-name}？
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解{project-name}在Kubernetes策略管理中的角色，包括强制执行合规性和优化资源。
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["introduction"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "cncf", "cncf sandbox", "kubernetes", "admission policy manager"]
+:sidebar_label: 简介
+:sidebar_position: 1 
+:slug: /
+:current-version: {page-origin-branch}
+
+{project-name}是Kubernetes策略引擎。
+它旨在成为Kubernetes的通用策略引擎。
+
+{intro-paragraph}
+
+== {project-name}如何提供帮助？
+
+{short-project-name}在Kubernetes环境中提供策略准入和执行的灵活性。
+
+=== 好处和价值
+
+- 使用任何生成https://webassembly.org[WebAssembly]二进制文件的编程语言来编写您的策略。
+- WebAssembly使策略在处理器和操作系统之间兼容。
+- 可以重用来自其他策略引擎的策略，而无需重写它们。
+- 使用标准和安全的机制分发策略，例如https://opencontainers.org[OCI]兼容的注册表。
+- 在准入时强制执行策略，确保只有合规的工作负载运行。
+- {short-project-name}审计扫描器主动并持续地检查策略执行情况。
+- 使用https://slsa.dev[SLSA]（软件工件供应链级别）工具和实践验证策略。
+- {project-name}提供全面的准入策略管理方法。
+- CNCF会员资格以及不断增长的开源社区和生态系统帮助{short-project-name}实现透明、协作和改进。
+
+=== 使用案例
+
+- 安全强化。例如，强制执行限制容器权限的策略，强制执行网络策略，或阻止不安全的镜像注册表。
+- 合规审计。确保工作负载符合组织或监管标准和最佳实践。
+- 资源优化。强制执行资源限制和配额。
+
+在xref:use-cases.adoc[用例]页面上有进一步的使用案例文档。
+
+== 刚接触{short-project-name}？
+
+如果您是{short-project-name}项目的新手，请从xref:quick-start.adoc[快速入门指南]和xref:explanations/architecture.adoc[架构]页面开始。
+然后这取决于您的兴趣所在。对于策略开发者，教程中有特定语言的部分。对于集成者和管理员，有一个“操作指南”部分。解释部分包含有用的背景材料。还有一个xref:glossary.adoc[术语表]。
+
+== 什么是WebAssembly？
+
+正如在https://webassembly.org/[WebAssembly的官方网站]上所述：
+
+____
+WebAssembly（缩写为Wasm）是一种用于基于栈的虚拟机的二进制指令格式。Wasm被设计为编程语言的可移植编译目标，使其能够在客户端和服务器应用程序的Web上部署。
+____
+
+Wasm最初被构思为浏览器的“扩展”。然而，WebAssembly社区正在努力允许在浏览器外执行Wasm代码。
+
+== 为什么使用WebAssembly？
+
+用户可以使用他们喜欢的编程语言编写Kubernetes策略，只要其工具链能够生成Wasm二进制文件。
+
+Wasm模块是可移植的，一旦构建，它们可以在任何类型的处理器架构和操作系统上运行。例如，在Apple Silicon上开发和构建的策略可以在AMD64/Intel64 Linux上运行，而无需转换。
+
+策略作者可以重用他们的技能、工具和最佳实践。策略是可以包含可重用块（常规库）的“传统”程序。您可以对它们进行 lint 检查和测试，并将它们集成到当前的 CI 和 CD 工作流中。
+
+== 策略分发
+
+您可以使用标准网络服务器提供{short-project-name}策略，或者更好的是，您可以将它们发布到符合 OCI 标准的注册表中，作为https://github.com/opencontainers/artifacts[OCI 工件]。
+
+ifeval::["{build-type}" == "community"]
+
+== 供应商中立性
+
+{short-project-name} 是一个链接：https://contribute.cncf.io/maintainers/community/vendor-neutrality/[供应商中立] 项目，按照 CNCF 的定义。
+
+endif::[]

@@ -1,0 +1,111 @@
+include::partial$variables.adoc[]
+= Definiendo ajustes de la directiva
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Define los ajustes y la estructura de la directiva en tu código para establecer una base para validar la integridad de la directiva mediante una gestión eficiente de los ajustes. Asegúrate de que todos los cambios estén registrados, como quién hizo el cambio, cuándo y qué se cambió.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "policy-settings"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "escribiendo directivas", "ajustes de la directiva", "rust"]
+:sidebar_label: Definiendo ajustes de la directiva
+:current-version: {page-origin-branch}
+
+== La estructura de los ajustes de la directiva
+
+Primero, define la estructura que contiene los ajustes de la directiva.
+
+Abre el archivo `demo/src/settings.rs` y cambia la definición de `Settings`
+`struct` para que se vea así:
+
+[subs="+attributes",rust]
+----
+pub(crate) struct Settings {
+    pub invalid_names: HashSet<String>,
+}
+----
+
+Esto coloca automáticamente la lista de nombres inválidos en una colección Set.
+
+== La función de validación de ajustes
+
+A continuación, escribe una función de validación de ajustes para asegurarte de que la directiva siempre se ejecute con al menos un nombre inválido.
+
+Haces esto cambiando la implementación del trait `Validatable`.
+
+Cambia la implementación del andamiaje definida en `src/settings.rs` para que se vea así:
+
+[subs="+attributes",rust]
+----
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        if self.invalid_names.is_empty() {
+            Err(String::from("No invalid name specified. Specify at least one invalid name to match"))
+        } else {
+            Ok(())
+        }
+    }
+}
+----
+
+== Añadir pruebas de unidad
+
+Ahora puedes escribir una prueba de unidad para asegurarte de que la validación de ajustes está funcionando.
+Puedes hacer esto de la https://doc.rust-lang.org/stable/book/ch11-00-testing.html[manera habitual de Rust].
+
+Ya hay algunas pruebas predeterminadas al final del archivo `src/settings.rs`. Reemplaza el código generado automáticamente para que se vea así:
+
+[subs="+attributes",rust]
+----
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use kubewarden_policy_sdk::settings::Validatable;
+
+    #[test]
+    fn accept_settings_with_a_list_of_invalid_names() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("bad_name1"));
+        invalid_names.insert(String::from("bad_name2"));
+
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn reject_settings_without_a_list_of_invalid_names() -> Result<(), ()> {
+        let invalid_names = HashSet::<String>::new();
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_err());
+        Ok(())
+    }
+}
+----
+
+Ahora puedes ejecutar las pruebas de unidad haciendo lo siguiente:
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+Esto produce una salida similar a la siguiente:
+
+[subs="+attributes",console]
+----
+   Compiling demo v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src/lib.rs (target/debug/deps/demo-bea8e11b21717093)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

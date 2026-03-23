@@ -1,0 +1,34 @@
+include::partial$variables.adoc[]
+= Für wen ist dieses Projekt gedacht? Die Personas.
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: Für wen ist dieses Projekt gedacht? Die Personas.
+:keywords: ["{project-name}", Kubewarden, Dokumentation, personas]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [explanation]
+
+## {project-name} personas
+
+[cols="1,2", options="header"]
+|===
+|Persona |Beschreibung
+
+|**Richtliniennutzer**
+|Jemand, der eine Richtlinie übernimmt und sie in einem Cluster verwendet. Sie stellen Richtlinien bereit und beobachten die Ergebnisse. Sie konfigurieren die Richtlinieneinstellungen, schreiben jedoch nicht den internen Code der Richtlinie (sofern vorhanden).
+
+|**Operator**
+|Jemand, der {short-project-name} in einem Cluster betreibt. Installiert und wartet {short-project-name}.
+
+|**Richtliniendistributor**
+|Jemand, der eine Richtlinie geschrieben hat und sie mit anderen teilen möchte. Sie möchten, dass die Richtlinie von der Rolle "Richtliniennutzer" verwendet wird. Ein Richtliniendistributor von {short-project-name} Richtlinien, an Orte wie ArtifactHub oder private OCI-Repositories.
+
+|**Richtlinienentwickler**
+|Eine Person, die Richtlinien für {short-project-name} entwirft und schreibt, damit andere sie verwenden können.
+
+|**Integrator**
+|Arbeitet mit, verwendet oder baut auf {short-project-name} auf. Vielleicht eine benutzerdefinierte Benutzeroberfläche oder ein Hilfswerkzeug zur Erstellung von Richtlinien.
+
+|**Entwickler**
+|Eine Person, die an dem {short-project-name} Produktset arbeitet. Baut {short-project-name} selbst.
+|===

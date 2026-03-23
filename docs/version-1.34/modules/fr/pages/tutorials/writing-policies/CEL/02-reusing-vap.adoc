@@ -1,0 +1,238 @@
+include::partial$variables.adoc[]
+= Réutilisation des ValidatingAdmissionPolicies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez comment réutiliser et valider des stratégies d'admission dans Kubernetes en utilisant {project-name} (cel-policy).
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "cel", "ValidatingAdmissionPolicies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction de stratégies", "ValidatingAdmissionPolicies"]
+:sidebar_label: Réutilisation des VAPs
+:current-version: {page-origin-branch}
+
+Les politiques vanilla de Kubernetes https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy [Validating policies] se composent des ressources suivantes :
+
+* ValidatingAdmissionPolicy : décrit la logique en CEL. Elle accepte également en option des paramètres dans `spec.paramKind`.
+* ValidatingAdmissionPolicyBinding : délimite la portée de la stratégie.
+
+Voyons un exemple concret. Celles-ci et d'autres peuvent être réutilisées avec {project-name} `cel-policy` avec peu d'effort.
+
+== ValidatingAdmissionPolicy
+
+La stratégie ValidatingAdmissionPolicy suivante est adaptée des https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/#creating-a-validatingadmissionpolicy[Kubernetes docs].
+
+Cette stratégie vérifie si le nombre de Réplicas dans les Déploiements est inférieur ou égal à la valeur par défaut spécifiée dans `maxreplicas` (5). Les utilisateurs peuvent remplacer cette valeur par défaut pour chaque espace de noms ou déploiement et choisir un nombre inférieur à l'aide d'un paramètre.
+
+Elle est liée à un `ValidatingAdmissionPolicyBinding`. Ainsi, elle n'affecte que les espaces de noms qui ont une étiquette `environment` définie sur `test`.
+
+../vap-policy-example.yaml
+[,yaml]
+----
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "replicalimit-policy.example.com"
+spec:
+  failurePolicy: Fail # (1)
+  matchConstraints: # (2)
+    resourceRules:
+      - apiGroups: ["apps"]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["deployments"]
+  variables: # (3)
+    - name: maxReplicas # hardcoded global default
+      expression: int(5)
+  paramKind: # (4)
+    apiVersion: v1
+    kind: ConfigMap # user-provided override
+  validations: # (5)
+    - expression: |
+        object.spec.replicas <= (
+          has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+          ? int(params.data.overrideReplicas)
+          : variables.maxReplicas
+        )
+      messageExpression: |
+        'The number of replicas must be less than or equal to ' +
+        string( has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+          ? int(params.data.overrideReplicas)
+          : variables.maxReplicas)
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "replicalimit-binding-test.example.com"
+spec:
+  policyName: "replicalimit-policy.example.com"
+  validationActions: [Deny] # (7)
+  matchResources: # (8)
+    namespaceSelector:
+      matchLabels:
+        environment: test
+  paramRef: # (4)
+    name: "replica-limit-override"
+    namespace: "test"
+    parameterNotFoundAction: Deny
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replica-limit-override
+  namespace: test
+data:
+  overrideReplicas: "3"
+----
+
+Ici, nous avons une stratégie équivalente {short-project-name} :
+
+### {short-project-name} de `cel-policy`
+
+../cel-policy-example.yaml
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation # (9)
+    io.kubewarden.policy.severity: low # (9)
+  name: "cel-policy-replica-example"
+spec:
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:v1.4.0
+  failurePolicy: Fail # (6). Webhook behavior. Defaults to "Fail"
+  mode: protect # (7). Defaults to "protect"
+  rules: # (2)
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+  contextAwareResources: # (10). Fine-grained perms for accessing resources
+    - apiVersion: v1
+      kind: ConfigMap
+  settings:
+    failurePolicy: Fail # (1). CEL behavior. Defaults to "Fail"
+    variables: # (3)
+      - name: "replicas"
+        expression: "object.spec.replicas"
+      - name: maxReplicas
+        expression: int(5)
+    paramKind: # (4)
+      apiVersion: v1
+      kind: ConfigMap # user-provided override
+    paramRef: # (4)
+      name: "replica-limit-override"
+      namespace: "test"
+      parameterNotFoundAction: Deny
+    validations: # (5)
+      - expression: |
+          object.spec.replicas <= (
+            has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+            ? int(params.data.overrideReplicas)
+            : variables.maxReplicas
+          )
+        messageExpression: |
+          'The number of replicas must be less than or equal to ' +
+          string( has(params.data.overrideReplicas) && int(params.data.overrideReplicas) < variables.maxReplicas
+            ? int(params.data.overrideReplicas)
+            : variables.maxReplicas)
+  backgroundAudit: true # (9). Defaults to "true"
+  namespaceSelector: # (8)
+    matchLabels:
+      environment: test
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replica-limit-override
+  namespace: test
+data:
+  overrideReplicas: "3"
+----
+
+Remarquez les numéros commentés sur les deux manifestes YAML. Développons-les :
+
+[cols="1,1,1,3", options="header"]
+|===
+| #   | Champ VAP                         | `cel-policy` Champ                       | Description
+
+| 1   | `failurePolicy`                   | `settings.failurePolicy`                 | Comportement CEL, pour lorsque l'expression CEL évalue à faux, il y a des erreurs d'exécution CEL, ou il y a des CEL invalides ou mal configurés. Par exemple, une expression CEL retournant faux, des paramètres manquants, ou des variables manquantes. À ne pas confondre avec (6).
+| 2   | `matchConstraints`                | `rules`                                  | Les deux acceptent le même https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#rulewithoperations-v1-admissionregistration[RuleWithOperations] qui informe sur le type de Ressource auquel la stratégie s'applique.
+| 3   | `variables`                       | `settings.variables`                     | Dans {short-project-name} de `cel-policy`, les expressions qui définissent des variables sont dans `settings.variables`. À part cela, elles sont équivalentes.
+| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | Dans {short-project-name} de `cel-policy`, les définitions de paramètres sont dans `settings.paramKind`, `settings.paramRef`. À part cela, elles sont équivalentes.
+| 5   | `validations`                     | `settings.validations`                   | Dans {short-project-name} de `cel-policy`, les expressions qui définissent des validations sont dans `settings.validations`. À part cela, elles sont équivalentes.
+| 6   | `---`                             | `failurePolicy`                          | Comportement du Webhook, pour l'erreur ou le délai d'attente de l'API Kubernetes Webhook, ou pour l'évaluation des matchConditions. À ne pas confondre avec (1).
+| 7   | `validationActions`               | `mode`                                   | `mode` a comme options `protect` et `monitor`. L'audit est plus complet dans {short-project-name}, voir (9).
+| 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Définir des moyens de contrainte en utilisant des sélecteurs. {short-project-name}'s policies have them as `namespaceSelector` and `objectSelector`.
+| 9   | `auditAnnotations` (non illustré) | `backgroundAudit`, annotations           | Utilisez les champs {short-project-name} à la place pour définir l'utilisation de la stratégie dans xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], ainsi que sa catégorie et sa gravité pour OpenReports.
+|10|`---`|`contextAwareResources` autorisations|Les stratégies de {short-project-name} ont des autorisations granulaires pour la lecture des ressources du cluster. Ici, il est utilisé pour lire les paramètres.
+|     | `matchConditions`                 | `matchConditions`                        | Les stratégies de {short-project-name} ont `matchConditions` (non illustré dans cet exemple).
+|     | `---`                             | {short-project-name}Fonctionnalités réservées à                 | Pour d'autres fonctionnalités, consultez le reste des exemples de tutoriel CEL.
+|===
+
+[TIP]
+====
+
+Vous pouvez utiliser l'outil `kwctl` pour migrer une stratégie VAP vers {short-project-name}.
+
+Ce xref:howtos/vap-migration.adoc[procédure de migration VAP] décrit comment procéder.
+
+====
+
+
+=== Équivalences encore à mettre en œuvre
+
+Il existe certaines fonctionnalités VAP qui ne sont pas encore mises en œuvre. Si vous les attendez avec impatience, veuillez nous contacter. Il s'agit des suivants :
+
+* VAP https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz[bibliothèque d'autorisation].
+* VAP https://kubernetes.io/docs/reference/labels-annotations-taints/audit-annotations/[Annotations d'audit] (ValidatingAdmissionPolicy `spec.auditAnnotations` lorsque ValidatingAdmissionPolicyBinding `spec.validationActions` est défini sur "Audit").
+Cela est couvert par {short-project-name} et xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] ainsi que par PolicyReports, qui permettent d'auditer les ressources déjà dans le cluster.
+* CEL https://kubernetes.io/docs/reference/using-api/cel/#resource-constraints[contraintes de ressources et limite de coût estimée].
+Cela est couvert par la protection générale de {short-project-name}, avec xref:reference/policy-evaluation-timeout.adoc[délai d'expiration de la stratégie].
+
+== Application de la stratégie
+
+Comme d'habitude, nous pouvons déployer notre stratégie en instanciant son manifeste :
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f ./cel-policy-example.yaml
+----
+
+Et ensuite, testez-le en instanciant un déploiement :
+
+[subs="+attributes",console]
+----
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test
+  labels:
+    environment: test
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: test
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+EOF
+
+namespace/test created
+Error from server: error when creating "STDIN":
+  admission webhook "clusterwide-cel-policy-replica-example.kubewarden.admission" denied the request:
+  The number of replicas must be less than or equal to 5
+----

@@ -1,0 +1,73 @@
+include::partial$variables.adoc[]
+= 暗号機能
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Wasmホストの暗号機能とPKI証明書の評価に関する機能について学びます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "cryptographic-capabilities"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "ポリシー仕様", "暗号機能"]
+:sidebar_label: 暗号機能
+:current-version: {page-origin-branch}
+
+執筆時のWasmの制約により、一部の暗号ライブラリはWasmにコンパイルできません。その間、{project-name}ポリシーで、これらのライブラリを必要とするものは、ホスト側で暗号機能を評価するためにコールバックを実行できます。彼らは結果を受け取り、タスクを続行します。
+
+== 動作
+
+Wasmホストは、x.509およびPKI証明書の実装にあたり、`rustls-wepki`に依存しています。つまり：
+
+- キーの使用法：私たちは、さまざまなユースケースをカバーするために、任意のキーの使用法を受け入れることを選択しました（通常通り、異なるアプローチについて話し合いたい場合はご連絡ください）。
+- 証明書チェーン：中間CAが期限切れの場合、その証明書は信頼されないと見なされます。
+- 証明書の有効期限：証明書チェーンが提供される場合、常に証明書の有効期間全体を検証します。WepkiはルートCAの有効期限を確認しません。
+- 私たちは常に証明書を検証し、チェーンが提供されない場合はMozillaのCAが使用されます。
+
+== WaPCプロトコル契約
+
+独自の言語SDKを実装している場合、ホストによって公開される暗号チェックを実行する関数は次のとおりです：
+
+=== waPC関数 - `v1/is_certificate_trusted` 入力
+
+[,hcl]
+----
+# Certificate:
+{
+  # **mandatory**: Which encoding is used by the certificate
+  # Either the string "Pem" or "Der".
+  "encoding": string,
+  # Actual certificate
+  # The certificate is UTF-8 encoded.
+  # It's an array of bytes of the unicode code pointers of a PEM/DER encoded
+  # certificate string.
+  "data": [byte(int), ..., byte(int)]
+}
+
+{
+  # **mandatory**: PEM-encoded certificate to verify
+  "cert": Certificate,
+  # optional:
+  "cert_chain": [
+      # list of certs, ordered by trust
+      # usage (intermediates first, root last)
+      # If not provided, Mozilla's CA is used.
+      Certificate,
+      ...
+      Certificate,
+    ],
+  # RFC 3339 time format string, to check expiration
+  # against.
+  # If missing, time is now.
+  "not_after": string
+}
+----
+
+=== waPC関数 - `v1/is_certificate_trusted` 出力
+
+[,hcl]
+----
+{
+   # true if certificate verified:
+   "trusted": boolean,
+   # empty if trusted == true:
+   "reason": string
+}
+----

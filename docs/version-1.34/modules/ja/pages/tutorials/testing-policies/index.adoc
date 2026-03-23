@@ -1,0 +1,22 @@
+include::partial$variables.adoc[]
+= ポリシーのテスト
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}を使用して、{project-name}ポリシーを作成し、テストするハウツーを学び、セキュアなクラスター管理を行います。
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "persons", "policy author", "cluster operator"]
+:sidebar_label: ポリシーのテスト
+:current-version: {page-origin-branch}
+
+== ポリシーのテストのペルソナ
+
+このセクションでは、{project-name}ポリシーのテストに関するトピックを扱います。
+ポリシーのテストに関心のある2つのペルソナがあります：
+
+* *ポリシー開発者*：あなたは{short-project-name}ポリシーを作成しており、コードが期待通りに動作することを確認したいと考えています。
+* *クラスターオペレーター*：あなたは{short-project-name}ポリシーを見つけ、そのポリシー設定をデプロイする前にテストし、調整したいと考えています。
+これらの設定をCI/CDパイプラインやその他の管理タスクでテストし続けたいと考えています。
+
+ドキュメントの次のセクションでは、これらのペルソナがどのようにして{short-project-name}ポリシーをテストできるかを示します。

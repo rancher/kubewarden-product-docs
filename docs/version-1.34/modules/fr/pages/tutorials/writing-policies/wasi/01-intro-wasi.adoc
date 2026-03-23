@@ -1,0 +1,135 @@
+include::partial$variables.adoc[]
+= WASI
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Rédigez des stratégies WASI qui interagissent avec les primitives système lorsqu’une limitation du compilateur Go empêche d'utiliser le mécanisme de communication waPC.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "wasi"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "wasi"]
+:sidebar_label: WASI
+:current-version: {page-origin-branch}
+
+L'https://wasi.dev/[Interface Système WebAssembly (WASI)] est une norme WebAssembly fournissant un ensemble d'interfaces permettant l'exécution de WebAssembly en dehors du navigateur.
+
+[CAUTION]
+====
+
+Les auteurs rédigeant des stratégies classiques ne devraient jamais utiliser les interfaces système WASI pour rédiger des stratégies.
+
+Cette page est destinée aux {project-name} mainteneurs ou aux auteurs de stratégies de bas niveau qui souhaitent expérimenter avec des plateformes WASM à la pointe de la technologie.
+====
+
+
+En utilisant WASI, vous pouvez avoir un module WebAssembly qui interagit avec des primitives système telles que STDOUT, STDERR, STDIN, les variables d'environnement et plus encore.
+
+Beaucoup des compilateurs utilisés pour compiler des stratégies {short-project-name} produisent des modules WebAssembly qui ciblent les interfaces WASI.
+Cependant, les stratégies {short-project-name} utilisent le projet https://github.com/wapc[waPC] pour mettre en œuvre une communication bidirectionnelle entre la stratégie et le composant d'exécution de la stratégie (`kwctl` ou `policy-server`). L'utilisation du protocole de communication est décrite xref:reference/spec/01-intro-spec.adoc[ici].
+
+Il existe des cas particuliers où le projet waPC ne peut pas encore être utilisé.
+Dans ces circonstances, vous pouvez rédiger une stratégie en utilisant les interfaces fournies par WASI.
+
+[IMPORTANT]
+====
+
+{short-project-name} prend en charge les stratégies WASI à partir de la version {short-project-name} 1.7.0.
+====
+
+
+== limites
+
+Vous ne devriez pas utiliser les stratégies WASI dans des circonstances normales car elles ont des performances inférieures au moment de l'évaluation par rapport à celles de waPC/Rego.
+
+[NOTE]
+====
+
+Une communication bidirectionnelle entre la stratégie et l'hôte peut être réalisée, mais nécessite des modifications à apporter à l'intérieur du SDK de langage. Ceci est nécessaire pour utiliser les xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[capacités de l'hôte] et pour rédiger des stratégies xref:/explanations/context-aware-policies.adoc[conscientes du contexte].
+
+Actuellement, seuls les SDK Go et JavaScript/TypeScript de {short-project-name} les exposent aux stratégies WASI.
+
+Si cela vous intéresse, veuillez nous contacter. Nous pourrons alors prioriser l'effort.
+
+====
+
+
+== Cas pratiques d'utilisation
+
+La seule raison de rédiger une stratégie "WASI simple" est lorsque vous ne pouvez pas utiliser le mécanisme de communication waPC.
+
+Actuellement, (en juin 2023), la seule bonne raison de faire cela est d'utiliser le compilateur Go officiel pour produire un module WebAssembly.
+
+À partir de la version 1.21, le compilateur Go officiel est capable de produire des modules WebAssembly ciblant l'interface WASI.
+Cependant, ces modules ne peuvent pas encore exporter des fonctions vers le composant d'exécution WebAssembly.
+Cette limitation, suivie par https://github.com/golang/go/issues/42372[ce problème dédié], empêche l'adoption du protocole waPC.
+
+L'équipe du projet {short-project-name} conseille d'écrire {short-project-name} des stratégies Go en utilisant le compilateur TinyGo, comme décrit xref:tutorials/writing-policies/go/01-intro-go.adoc[ici].
+
+Cependant, certaines bases de code Go complexes ne peuvent pas être compilées avec le compilateur TinyGo.
+Cela inclut, par exemple, des bases de code comme https://github.com/google/cel-go[CEL-go] ou https://github.com/kyverno/kyverno/[Kyverno].
+Dans ces circonstances, l'utilisation du compilateur Go officiel peut être utile.
+
+== Protocole de communication
+
+Cette section décrit comment écrire une stratégie WASI simple.
+
+Vous devez écrire le code comme un programme CLI classique.
+Le programme doit prendre les sous-commandes suivantes :
+
+* `validate` : cette commande est invoquée par le moteur de stratégie pour évaluer une demande d'admission.
+* `validate-settings` : cette commande est invoquée par le moteur de stratégie pour valider les paramètres de la stratégie.
+
+Dans les deux cas, les données à valider sont fournies via STDIN.
+La stratégie doit fournir la réponse via STDOUT.
+Vous pouvez utiliser STDERR pour des messages de débogage ou d'erreur.
+
+=== Validation
+
+La validation d'une demande se produit lors de l'invocation du programme CLI de stratégie en utilisant la sous-commande `validate`.
+
+STDIN doit contenir un document JSON décrivant un objet `ValidationRequest`.
+La stratégie doit écrire sur STDOUT un document JSON contenant un objet `ValidationResponse`.
+
+Les objets `ValidationRequest` et `ValidationResponse` sont décrits xref:reference/spec/03-validating-policies.adoc[ici].
+
+=== Mutation
+
+Les stratégies de mutation fonctionnent de la même manière que celles de validation.
+Le programme CLI de la stratégie est invoqué en utilisant la sous-commande `validate`.
+
+STDIN doit contenir un document JSON décrivant un objet `ValidationRequest`.
+La stratégie doit écrire sur STDOUT un document JSON contenant un objet `ValidationResponse`.
+
+Les objets `ValidationRequest` et `ValidationResponse` sont décrits xref:reference/spec/03-validating-policies.adoc[ici].
+
+Lorsqu'une mutation est nécessaire, l'objet `ValidationResponse` doit avoir une clé, `mutated_object`, contenant l'objet à créer.
+Ce processus est décrit xref:reference/spec/04-mutating-policies.adoc[ici].
+
+== Context-aware
+
+Pour l'instant, uniquement pris en charge via le SDK Go. Le SDK Go expose les capacités conscientes du contexte comme d'habitude, pour plus d'informations, voir xref:explanations/context-aware-policies.adoc[ici].
+
+À titre d'exemple d'une politique consciente du contexte WASI Go, voir le https://github.com/kubewarden/go-wasi-context-aware-test-policy[test-de-politique-consciente-du-contexte-go].
+
+=== Validation des paramètres
+
+La stratégie doit fournir une sous-commande nommée `validate-settings`.
+Cette commande est utilisée pour valider les paramètres fournis par l'utilisateur.
+
+Le programme doit recevoir sur STDIN un objet JSON contenant les paramètres fournis par l'utilisateur.
+Il valide ensuite ces paramètres et écrit un objet `SettingsValidationResponse` sur STDOUT.
+
+Le format de l'objet `SettingsValidationResponse` et le processus de validation des paramètres sont décrits xref:reference/spec/02-settings.adoc[ici].
+
+== Métadonnées de la stratégie
+
+Chaque stratégie {short-project-name} doit être annotée via la commande `kwctl annotate`.
+Les métadonnées d'une stratégie WASI simple doivent avoir cette valeur :
+
+[subs="+attributes",yaml]
+----
+executionMode: wasi
+----
+
+== Projet modèle
+
+https://github.com/kubewarden/go-wasi-policy-template[Ce dépôt GitHub] contient un modèle d'une stratégie basée sur Go utilisant le protocole WASI.

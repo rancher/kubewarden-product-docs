@@ -1,0 +1,203 @@
+include::partial$variables.adoc[]
+
+= 审计扫描器 - 策略报告
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 在 Kubernetes 集群中使用 Report 或 ClusterReport 对象存储和查询审计扫描器策略扫描结果。
+:doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
+:doc-topic: [“解释”, “审计扫描器”, “策略报告”]
+:doc-type: [“解释”]
+:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “审计扫描器”, "策略报告"]
+:sidebar_label: 策略报告
+:current-version: {page-origin-branch}
+
+使用 {project-name} 审计扫描器时，您使用 https://openreports.io/[OpenReports] 自定义资源存储策略扫描结果。
+
+[CAUTION]
+====
+
+在 {project-name} 1.33 中，审计扫描器功能默认将报告保存到来自 [openreports.io](https://openreports.io) 的 OpenReports CRD。
+
+来自 K8s 政策工作组的 link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] CRD 默认未安装，标记为弃用，并将在未来版本中去除。
+
+希望继续使用弃用的 PolicyReports 的用户，即 1.33 之前的行为，需要：- 将 `kubewarden-crds` Helm 图表值的 `.Values.install.installPolicyReportCRDs` 更改为 `true`。- 将 `kubewarden-controller` Helm 图表值的 `.Values.auditScanner.reportCRDsKind` 从 `openreports` 更改为 `policyreport`。
+
+====
+
+
+这些 OpenReport CRD 提供了一种结构化的方式来存储和管理审计结果。
+
+您使用 `Report` 和 `ClusterReport` 存储审计扫描器策略扫描结果。
+审计扫描器为每个扫描的资源创建一个 `Report` 或 `ClusterReport`，具体取决于资源的范围。`Report` 对象在资源的名称空间中可用，而 `ClusterReport` 对象在集群范围内可用。
+
+扫描器生成的审计结果包括：
+
+* 评估的策略
+* 扫描的资源
+* 评估结果（通过、失败或跳过）
+* 指示评估发生时间的时间戳。
+
+您还可以为您的策略定义严重性和类别注释。
+
+操作员可以使用`kubectl`查询报告。他们还可以使用由https://kyverno.github.io/policy-reporter[policy-reporter]开源项目提供的可选用户界面来监控并实现 OpenReports CRD 的可观测性。
+
+== 查询报告
+
+使用kubectl CLI，可以查询扫描结果：
+
+列出默认名称空间中的报告：
+
+[source,console,subs="+attributes"]
+----
+$ kubectl get report -o wide
+NAME                                   KIND   NAME            PASS   FAIL   WARN   ERROR   SKIP   AGE
+44da974b-6057-4745-a92c-9dd8a1b01cc4   Pod    nginx-secrets   6      1      0      0       0      33m
+----
+
+列出集群范围内的报告：
+
+[source,console,subs="+attributes"]
+----
+$ kubectl get clusterreport -o wide
+NAME                                   KIND        NAME                 PASS   FAIL   WARN   ERROR   SKIP   AGE
+6c66175f-e15f-47e8-8c33-2c63d5ecde3e   Namespace   namespace1           3      1     0       0       0      1h
+d0ffbf4f-7348-4350-af7b-fdbfc079cc49   Namespace   namespace2           0      4     0       0       0      1h
+e48d9bbc-a9c4-4c36-8519-bc7390d9ec64   Namespace   namespace3           4      0     0       0       0      15h
+----
+
+获取特定报告的详细信息：
+
+[source,console,subs="+attributes"]
+----
+kubectl get report 44da974b-6057-4745-a92c-9dd8a1b01cc4 -o yaml
+----
+
+获取特定ClusterReport的详细信息：
+
+[source,console,subs="+attributes"]
+----
+kubectl get clusterreport e48d9bbc-a9c4-4c36-8519-bc7390d9ec64 -o yaml
+----
+
+== 报告示例
+
+以下示例显示了`Report`在`default`名称空间中的`Deployment`资源`deployment1`。报告表明`Pod`未通过`safe-labels` AdmissionPolicy。
+
+[source,yaml,subs="+attributes"]
+----
+apiVersion: wgpolicyk8s.io/v1beta1
+kind: PolicyReport
+metadata:
+  creationTimestamp: “2024-02-29T06:55:37Z”
+  generation: 6
+  labels:
+    app.kubernetes.io/managed-by: kubewarden
+    kubewarden.io/policyreport-version: v2
+  name: 009805e4-6e16-4b70-80c9-cb33b6734c82
+  namespace: default
+  ownerReferences:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: deployment1
+      uid: 009805e4-6e16-4b70-80c9-cb33b6734c82
+  resourceVersion: “2685996”
+  uid: c5a88847-d678-4733-8120-1b83fd6330cb
+results:
+  - category: Resource validation
+    message: “The following mandatory labels are missing: cost-center”
+    policy: namespaced-default-safe-labels
+    properties:
+      policy-resource-version: “2684810”
+      policy-uid: 826dd4ef-9db5-408e-9482-455f278bf9bf
+      policy-name: “safe-labels”
+      policy-namespace: “default”
+      validating: “true”
+    resourceSelector: {}
+    result: fail
+    scored: true
+    severity: low
+    source: kubewarden
+    timestamp:
+      nanos: 0
+      seconds: 1709294251
+scope:
+  apiVersion: apps/v1
+  kind: Deployment
+  name: deployment1
+  namespace: default
+  resourceVersion: “3”
+  uid: 009805e4-6e16-4b70-80c9-cb33b6734c82
+summary:
+  error: 0
+  fail: 1
+  pass: 0
+  skip: 0
+  warn: 0
+----
+
+== ClusterReport示例
+
+以下示例显示了`ClusterReport`的`Namespace`资源`default`。报告表明该资源未通过`safe-annotations` ClusterAdmissionPolicy验证。
+
+[source,yaml,subs="+attributes"]
+----
+apiVersion: wgpolicyk8s.io/v1beta1
+kind: ClusterPolicyReport
+metadata:
+  creationTimestamp: “2024-02-28T14:44:37Z”
+  generation: 3
+  labels:
+    app.kubernetes.io/managed-by: kubewarden
+    kubewarden.io/policyreport-version: v2
+  name: 261c9492-deec-4a09-8aa9-cd464bb4b8d1
+  ownerReferences:
+    - apiVersion: v1
+      kind: Namespace
+      name: default
+      uid: 261c9492-deec-4a09-8aa9-cd464bb4b8d1
+  resourceVersion: “2403034”
+  uid: 20a3d00e-e955-4f21-a887-317d40f3f052
+results:
+  - category: Resource validation
+    message: “The following mandatory annotations are not allowed: owner”
+    policy: clusterwide-safe-annotations
+    properties:
+      policy-resource-version: “2396437”
+      policy-uid: 46780d6e-e51a-4d65-8572-a6af01380aa7
+      policy-name: “safe-annotations”
+      validating: “true”
+    resourceSelector: {}
+    result: fail
+    scored: true
+    severity: low
+    source: kubewarden
+    timestamp:
+      nanos: 0
+      seconds: 1709294251
+scope:
+  apiVersion: v1
+  kind: Namespace
+  name: default
+  resourceVersion: “37”
+  uid: 261c9492-deec-4a09-8aa9-cd464bb4b8d1
+summary:
+  error: 0
+  fail: 1
+  pass: 0
+  skip: 0
+  warn: 0
+----
+
+== Policy Reporter 用户界面
+
+Policy Reporter 作为 `kubewarden-controller` 的子图表发布。请参考xref:howtos/audit-scanner.adoc[Audit Scanner Installation]页面以获取更多信息。
+
+Policy Reporter UI 提供了一个显示所有违规行为的仪表板。请参见下面的截图：
+
+image::policy-reporter_dashboard.png[Policy Reporter dashboard example]
+
+{short-project-name} 预装了一个过滤器的 Policy Reporter UI，仅显示 {short-project-name} 策略，并提供展开信息：
+
+image::policy-reporter_policyreports.png[Policy Reporter PolicyReports 示例]
+
+Policy Reporter 的其他功能包括将结果转发到不同的客户端（如 Grafana Loki、Elasticsearch、聊天应用程序）、指标端点等。请查看 https://kyverno.github.io/policy-reporter[Policy Reporter 的社区文档] 以获取更多信息。

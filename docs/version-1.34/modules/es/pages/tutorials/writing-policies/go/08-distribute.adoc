@@ -1,0 +1,21 @@
+include::partial$variables.adoc[]
+= Distribuir directiva
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a distribuir directivas y acceder a información relacionada para {project-name}, incluyendo detalles de configuración.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "distributing kubewarden policies"]
+:sidebar_label: Distribuir directiva
+:sidebar_position: 080
+:current-version: {page-origin-branch}
+
+Ha sido un largo y, con suerte, agradable recorrido a través del tutorial de Go, ¡felicitaciones por haber llegado hasta aquí! 🎉
+
+Durante este tutorial has recreado el https://github.com/kubewarden/safe-labels-policy[safe-labels-policy].
+
+No hay nada especial que hacer en lo que respecta a distribuir una directiva.
+Si seguiste esta guía, ya has publicado tu directiva utilizando la acción de GitHub `release.yml` definida en el último capítulo.
+
+El tema de la distribución de directivas se cubre con mayor profundidad en la sección xref:/explanations/distributing-policies.adoc["distribuyendo directivas"] de la documentación de {project-name}.

@@ -1,0 +1,102 @@
+include::partial$variables.adoc[]
+= Rego
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Découvrez les bases du langage Rego, y compris son utilisation en conjonction avec Open Policy Agent et les frameworks Gatekeeper pour mettre en œuvre des stratégies sous forme de code.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-de-stratégies", "rego", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rédaction-de-stratégies", "rego"]
+:sidebar_label: Rego
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Le support de Rego est disponible à partir de ces versions :
+
+* kwctl : v0.2.0
+* serveur de stratégie : v0.2.0
+
+Les stratégies Rego prennent en charge des données contextuelles à partir de la version {project-name} 1.9.
+====
+
+
+Le langage Rego est un langage spécifique à un domaine permettant de mettre en œuvre des stratégies sous forme de code.
+https://www.openpolicyagent.org/docs/latest/policy-language/[Rego]
+est un langage inspiré par https://en.wikipedia.org/wiki/Datalog[Datalog].
+
+Il existe deux manières de rédiger des stratégies Rego pour mettre en œuvre des stratégies sous forme de code dans Kubernetes,
+Open Policy Agent et Gatekeeper.
+
+Les deux sections suivantes montrent comment les deux frameworks diffèrent,
+même s'ils utilisent le même langage.
+Si vous êtes plus intéressé par l'implémentation {short-project-name},
+vous pouvez directement consulter la documentation spécifique au framework liée ci-dessous.
+
+* xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
+* xref:tutorials/writing-policies/rego/gatekeeper/01-intro.adoc[Gatekeeper]
+
+== Un langage, deux frameworks
+
+=== Open Policy Agent (OPA)
+
+Open Policy Agent est un projet qui vous permet de mettre en œuvre des stratégies sous forme de code dans n'importe quel projet.
+Vous pouvez utiliser OPA pour toute vérification basée sur des stratégies dont votre application a besoin.
+
+Dans ce contexte, rédiger des stratégies pour Kubernetes revient simplement à utiliser OPA.
+En utilisant les webhooks d'admission de Kubernetes,
+il est possible d'évaluer les demandes en utilisant OPA,
+qui exécute les stratégies écrites en Rego.
+
+OPA a une intégration optionnelle avec Kubernetes via son `kube-mgmt` sidecar.
+Lorsqu'il est déployé sur Kubernetes, et avec le serveur OPA évaluant les stratégies Rego,
+il est capable de répliquer les ressources Kubernetes configurées en Rego.
+Ainsi, ces ressources Kubernetes sont visibles pour toutes les stratégies.
+Avec OPA, vous pouvez définir des stratégies à l'intérieur des objets ConfigMap de Kubernetes.
+Vous pouvez en lire davantage sur
+https://github.com/open-policy-agent/kube-mgmt[sa page de projet].
+
+=== Gatekeeper
+
+Gatekeeper se concentre uniquement sur l'utilisation dans Kubernetes,
+et en tire parti autant que possible,
+rendant les flux de travail Kubernetes plus faciles que ceux d'OPA dans certains cas.
+
+== En examinant les différences
+
+Les stratégies OPA et Gatekeeper utilisent toutes deux Rego pour décrire les stratégies sous forme de code.
+Chaque solution présente des différences en ce qui concerne l'écriture de stratégies en Rego,
+comme le montrent les sections suivantes.
+
+== Point d'entrée
+
+Le point d'entrée est le nom d'une règle au sein d'un paquet,
+et c'est la règle invoquée par le composant d'exécution lorsque la stratégie s'exécute.
+
+== Limitations actuelles
+
+=== Stratégies sensibles au contexte
+
+Les stratégies sensibles au contexte sont des stratégies qui n'évaluent pas la demande d'entrée de manière isolée.
+Elles prennent d'autres facteurs en compte pour prendre une décision.
+Par exemple, une stratégie qui évalue des ressources d'espace de noms,
+et utilise une annotation,
+sur l'espace de noms parent pour configurer quelque chose dans la stratégie.
+Un autre exemple serait une stratégie qui évalue des ressources `Ingress`,
+mais pour prendre une décision, elle a également la liste des ressources `Ingress` existantes.
+
+L'idée des stratégies sensibles au contexte peut également s'étendre aux ressources personnalisées,
+donc votre stratégie pourrait vouloir évaluer une demande en fonction des ressources personnalisées actuellement utilisées.
+
+Les deux OPA et Gatekeeper prennent en charge les stratégies sensibles au contexte,
+à partir de la version {short-project-name} 1.9.
+
+Plus de détails sur les stratégies sensibles au contexte sont
+xref:reference/spec/05-context-aware-policies.adoc[ici].
+
+=== Stratégies de mutation
+
+Gatekeeper prend en charge les stratégies de mutation,
+mais {short-project-name} n'a pas encore mis en œuvre de stratégies de mutation avec la compatibilité Gatekeeper.
+Vous pouvez utiliser des stratégies qui utilisent le SDK {short-project-name} pour écrire des stratégies de mutation,
+mais actuellement, vous ne pouvez pas exécuter des stratégies de mutation Gatekeeper dans {short-project-name}.

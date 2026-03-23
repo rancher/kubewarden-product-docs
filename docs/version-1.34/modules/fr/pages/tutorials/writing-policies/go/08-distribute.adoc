@@ -1,0 +1,21 @@
+include::partial$variables.adoc[]
+= Distribution de la stratégie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à distribuer des stratégies et à accéder aux informations connexes pour {project-name}, y compris les détails de configuration.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "distribution des stratégies Kubewarden"]
+:sidebar_label: Distribution de la stratégie
+:sidebar_position: 080
+:current-version: {page-origin-branch}
+
+Ce fut un long parcours et, espérons-le, une expérience agréable à travers le tutoriel Go, félicitations d'être parvenu jusqu'ici 🎉.
+
+Au cours de ce tutoriel, vous avez recréé le https://github.com/kubewarden/safe-labels-policy[safe-labels-policy].
+
+Il n'y a rien de spécial à faire en ce qui concerne la distribution d'une stratégie.
+Si vous avez suivi ce guide, vous avez déjà publié votre stratégie en utilisant l'Action GitHub `release.yml` définie dans le dernier chapitre.
+
+Le sujet de la distribution des stratégies est traité plus en profondeur dans la section xref:/explanations/distributing-policies.adoc["distribution des stratégies"] de la documentation de {project-name}.

@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= Configuración de la directiva
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura la configuración de la directiva utilizando {project-name} para la validación y serialización de los datos de la directiva.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "settings"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "policy specification", "policy settings"]
+:sidebar_label: Configuración de la directiva
+:current-version: {page-origin-branch}
+
+El comportamiento de la directiva no es rígido, puedes configurarlo proporcionando detalles de configuración a la directiva en tiempo de ejecución. El autor de la directiva tiene la libertad de definir la estructura de la configuración de la directiva.
+
+{project-name} se encarga de serializar la configuración de la directiva en JSON y la proporciona a la directiva cada vez que se invoca.
+
+== Validación de la configuración de la directiva
+
+Las directivas deben validar la configuración que proporciona un usuario para comprobar su corrección.
+
+Cada directiva registra una función waPC llamada `validate_settings` que valida la configuración de la directiva.
+
+La función `validate_settings` recibe como entrada una representación JSON de la configuración proporcionada por el usuario. Esta función la valida y devuelve como respuesta un objeto `SettingsValidationResponse`.
+
+La estructura del objeto `SettingsValidationResponse` es:
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "valid": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+}
+----
+
+Si la configuración proporcionada por el usuario es `valid`, `validate_settings` ignora el contenido de `message`. De lo contrario, `validate_settings` muestra el contenido de `message`.
+
+[NOTE]
+====
+
+El {short-project-name}https://github.com/chimera-kube/policy-server[policy-server] de valida toda la configuración de la directiva proporcionada por los usuarios al inicio. El policy-server sale inmediatamente con un error si al menos una de sus directivas recibió parámetros de configuración incorrectos.
+
+====
+
+
+== Ejemplo
+
+Como ejemplo, considera la directiva https://github.com/kubewarden/psp-capabilities[psp-capabilities] que tiene el siguiente formato de configuración:
+
+[subs="+attributes",yaml]
+----
+allowed_capabilities:
+- CHOWN
+
+required_drop_capabilities:
+- NET_ADMIN
+
+default_add_capabilities:
+- KILL
+----
+
+La función `validate_settings` recibe como entrada el siguiente documento JSON:
+
+[subs="+attributes",json]
+----
+{
+  "allowed_capabilities": [
+    "CHOWN"
+  ],
+  "required_drop_capabilities": [
+    "NET_ADMIN"
+  ],
+  "default_add_capabilities": [
+    "KILL"
+  ]
+}
+----
+
+== Recapitulación
+
+Cada directiva debe registrar una función waPC, `validate_settings`.

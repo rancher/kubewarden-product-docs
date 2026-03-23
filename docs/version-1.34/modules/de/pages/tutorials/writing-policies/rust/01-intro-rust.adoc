@@ -1,0 +1,43 @@
+include::partial$variables.adoc[]
+= Rust
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie Admission-Controller-Richtlinien in Rust mithilfe des vereinfachten SDKs und der Vorlagenprojekte von SUSE für Sicherheitsadmission-Controller schreiben.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "richtlinien schreiben", "rust", "einführung"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "richtlinien schreiben", "einführung"]
+:sidebar_label: Rust
+:current-version: {page-origin-branch}
+
+https://www.rust-lang.org/[Rust] ist die ausgereifteste Programmiersprache, die WebAssembly-Module generieren kann.
+WebAssembly ist in der Rust-Welt ein erstklassiger Bürger, weshalb viele Werkzeuge und Crates aus dem Rust-Ökosystem sofort einsatzbereit sind.
+
+{project-name} bietet ein https://crates.io/crates/kubewarden-policy-sdk[Rust SDK], das den Prozess des Richtlinien-Schreibens vereinfacht.
+Es gibt auch ein https://github.com/kubewarden/rust-policy-template[Vorlagenprojekt], das eine Struktur für ein Richtlinienprojekt unter Verwendung des https://github.com/cargo-generate/cargo-generate[`cargo-generate`] Dienstprogramms bereitstellt.
+
+Diese Dokumentation zeigt, wie Sie diese Projekte verwenden, um {short-project-name} Richtlinien mit Rust zu schreiben.
+Es behandelt nicht die Einzelheiten des {short-project-name}Rust SDK von.
+Die Einzelheiten finden Sie in der https://docs.rs/kubewarden-policy-sdk/0.1.0[Crate-Dokumentation].
+
+== Die Rust-Abhängigkeiten beschaffen
+
+Installieren Sie den Rust-Compiler und seine Werkzeuge mit https://github.com/rust-lang/rustup[rustup].
+Konsultieren Sie die rustup https://rust-lang.github.io/rustup/installation/index.html[Installationsdokumentation].
+
+Sobald Sie `rustup` installiert haben, fügen Sie das WebAssembly System Interface (WASI)-Ziel hinzu:
+
+[subs="+attributes",console]
+----
+rustup target add wasm32-wasip1
+----
+
+== OSX-Abhängigkeiten
+
+Um `cargo-generate` zu verwenden, müssen Sie das Xcode-Toolset hinzufügen.
+Wenn es nicht über Xcode installiert ist, gibt Ihnen der folgende Befehl die benötigten Abhängigkeiten:
+
+[subs="+attributes",console]
+----
+xcode-select --install
+----

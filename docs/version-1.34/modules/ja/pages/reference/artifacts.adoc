@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+:title: {project-name} アーティファクト
+:description: {project-name} アーティファクトを確認し、関連するバイナリやHelmチャートにアクセスして、効率的なセキュリティ管理を行います。
+:keywords: [アーティファクト, サポート, エアギャップ, 画像]
+:doc-persona: [kubewarden-operator]
+:doc-type: [リファレンス]
+:doc-topic: [オペレーターマニュアル, アーティファクト, レジストリ, 画像]
+
+= {title}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+== {project-name} 確認中
+
+xref:/tutorials/verifying-kubewarden.adoc[verifying
+{short-project-name}]を示すチュートリアルがあり、{short-project-name} アーティファクトを確認する方法を説明しています。
+
+== バイナリ
+
+私たちの`kwctl` CLIツールは、https://github.com/kubewarden/kwctl/releases[GitHubリリース]を通じて公開されています。
+
+== OCIアーティファクト
+
+Open Container Initiative (OCI) アーティファクトについて、プロジェクトは、`ghcr.io` 内の https://github.com/orgs/kubewarden/packages. 配下にすべてを公開しています。
+
+- https://github.com/orgs/kubewarden/packages/policies[`kubewarden/packages/policies/*`]はポリシーWasm OCIアーティファクトです。
+- https://github.com/orgs/kubewarden/packages/charts[`kubewarden/packages/charts/*`]はHelmチャートとしてのOCIアーティファクトです。SLSA基準に準拠しています。
+- OCIイメージとして公開されたコンテナイメージ: `kubewarden-controller`, `policy-server`, `audit-scanner`, `kubectl`。
+- e2eテストで使用されるアーティファクトを含む`packages/tests/*`もあります。
+
+== HTTPS経由のHelmチャート
+
+{short-project-name}は、https://charts.kubewarden.io.のHelmチャートHTTPSリポジトリにHelmチャートを公開します。SLSAや署名はありませんが、このタイプのHelmリポジトリは検索機能を提供します。

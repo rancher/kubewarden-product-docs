@@ -1,0 +1,29 @@
+include::partial$variables.adoc[]
+= 策略服务器证书轮换问题，适用于版本≤ v1.16.0
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 解决 {project-name} 中的策略服务器证书轮换问题，从版本 1.16 开始。
+:doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["howto", "变通方法", "策略服务器证书"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "策略服务器证书"]
+:sidebar_label: 证书轮换
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+.适用于 {project-name} v1.16.0 及更早版本的变通方法
+====
+
+此变通方法仅适用于 {short-project-name} v1.16.0 及更早版本。
+从 v1.17.0 开始，控制器会自动续订策略服务器证书。
+
+====
+
+在 v1.14 的发布过程中，{short-project-name} 发现了与策略服务器证书轮换相关的错误。根 CA 配置的有效期为 10 年，但每个 policy-server 证书 Secret 的有效期为 1 年。然而，控制器目前无法自动续订它们。
+
+在 v1.14 发布中，{short-project-name} 确保策略服务器证书 Secret 的有效期为 10 年。
+
+对于版本 ≥ v1.16.0，已建立自动续订流程。
+
+在此之前，用户可以手动删除过期的策略服务器证书 Secret（policy-server-default），并触发控制器的协调。您可以通过添加、删除或更新策略，或调整 PolicyServer 的副本数量来实现此操作。

@@ -1,0 +1,96 @@
+:sidebar_label: Référence CLI du serveur de stratégie
+:sidebar_position: 121
+:title: CLI du serveur de stratégie
+:description: Explorez l'aide et les options de la ligne de commande du serveur de stratégie pour personnaliser et exécuter le programme \`policy-server`.
+:keywords: [cli, référence, serveur-de-stratégie]
+:doc-persona: [kubewarden-operator]
+:doc-type: [référence]
+:doc-topic: [operator-manual]
+include::partial$variables.adoc[]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+= {title}
+
+== Aide en ligne de commande pour `policy-server`
+
+Ce document contient le contenu d'aide pour le programme de ligne de commande `policy-server`.
+
+*Vue d'ensemble de la commande :*
+
+* link:#policy-server[`policy-server`]
+* link:#policy-server-docs[`policy-server docs`]
+
+=== `policy-server`
+
+*Utilisation :* `policy-server ++[+OPTIONS+]++ ++[+COMMAND+]++`
+
+==== *Sous-commandes :*
+
+* `docs` — Génère la documentation markdown pour les commandes du serveur de stratégie
+
+==== *Options :*
+
+* `--addr ++<+BIND_ADDRESS+>++` — Lier à l'ADRESSE
++
+Valeur par défaut : `0.0.0.0`
+* `--always-accept-admission-reviews-on-namespace ++<+NAMESPACE+>++` — Accepter toujours les AdmissionReviews qui ciblent l'espace de noms donné
+* `--cert-file ++<+CERT_FILE+>++` — Chemin vers un fichier de certificat X.509 pour HTTPS
+* `--client-ca-file ++<+CLIENT_CA_FILE+>++` — Chemin vers un fichier de certificat CA qui a émis le certificat client. Nécessaire pour activer mTLS
+* `--daemon` — Si défini, exécute le serveur de stratégie en mode détaché en tant que daemon
+* `--daemon-pid-file ++<+DAEMON-PID-FILE+>++` — Chemin vers le fichier PID, utilisé uniquement lors de l'exécution en mode daemon
++
+Valeur par défaut : `policy-server.pid`
+* `--daemon-stderr-file ++<+DAEMON-STDERR-FILE+>++` — Chemin vers le fichier contenant stderr, utilisé uniquement lors de l'exécution en mode daemon
+* `--daemon-stdout-file ++<+DAEMON-STDOUT-FILE+>++` — Chemin vers le fichier contenant stdout, utilisé uniquement lors de l'exécution en mode daemon
+* `--disable-timeout-protection` — Désactiver la protection contre le dépassement de délai de la stratégie
+* `--docker-config-json-path ++<+DOCKER_CONFIG+>++` — Chemin de type config.json de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
+* `--enable-metrics` — Activer les métriques
+* `--enable-pprof` — Activer le profilage pprof
+* `--ignore-kubernetes-connection-failure` — Ne pas quitter avec une erreur si la connexion Kubernetes échoue. Cela provoquera la rupture des stratégies contextuelles lorsqu'il n'y a pas de connexion avec Kubernetes.
+* `--key-file ++<+KEY_FILE+>++` — Chemin vers un fichier de clé privée X.509 pour HTTPS
+* `--log-fmt ++<+LOG_FMT+>++` — Format de sortie des journaux
++
+Valeur par défaut : `text`
++
+Valeurs possibles : `text`, `json`, `otlp`
+* `--log-level ++<+LOG_LEVEL+>++` — Niveau de journalisation
++
+Valeur par défaut : `info`
++
+Valeurs possibles : `trace`, `debug`, `info`, `warn`, `error`
+* `--log-no-color` — Désactiver la sortie colorée pour les journaux
+* `--policies ++<+POLICIES_FILE+>++` — Fichier YAML contenant les stratégies à charger et leurs paramètres
++
+Valeur par défaut : `policies.yml`
+* `--policies-download-dir ++<+POLICIES_DOWNLOAD_DIR+>++` — Chemin de téléchargement pour les stratégies
++
+Valeur par défaut : `.`
+* `--policy-timeout ++<+MAXIMUM_EXECUTION_TIME_SECONDS+>++` — Interrompre l'évaluation de la stratégie après le temps donné
++
+Valeur par défaut : `2`
+* `--port ++<+PORT+>++` — Écouter sur le PORT
++
+Valeur par défaut : `3000`
+* `--readiness-probe-port ++<+READINESS_PROBE_PORT+>++` —
+Expose readiness endpoint on READINESS+_PROBE_+PORT
++
+Valeur par défaut : `8081`
+* `--sigstore-cache-dir ++<+SIGSTORE_CACHE_DIR+>++` — Répertoire utilisé pour mettre en cache les données de sigstore
++
+Valeur par défaut : `sigstore-data`
+* `--sources-path ++<+SOURCES_PATH+>++` — Fichier YAML contenant des informations sources (https, hôtes de registre non sécurisés, CA personnalisées…) 
+* `--verification-path ++<+VERIFICATION_CONFIG_PATH+>++` — Fichier YAML contenant des informations de vérification (URI, clés, annotations…)
+* `--workers ++<+WORKERS_NUMBER+>++` — Nombre de threads de travail à créer
+
+=== `policy-server docs`
+
+Génère la documentation markdown pour les commandes du serveur de stratégie
+
+*Utilisation :* `policy-server docs --output ++<+FILE+>++`
+
+==== *Options :*
+
+* `-o`, `--output ++<+FILE+>++` — chemin où le fichier de documentation sera stocké
+
+Ce document a été généré automatiquement par clap-markdown.

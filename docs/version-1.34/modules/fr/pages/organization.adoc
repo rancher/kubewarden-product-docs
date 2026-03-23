@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= Organisation de la documentation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Organisation
+:sidebar_position: 75
+:description: Accédez à une documentation complète organisée en tutoriels, explications, procédures et documents de référence pour le {project-name}.
+:keywords: ["gestionnaire de stratégie d'admission", "{project-name}", documentation, organisation]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [explanation]
+
+{project-name} organise la documentation du projet comme suit :
+
+* xref:/introduction.adoc[Introduction]
+* xref:/quick-start.adoc[Actions de]
+* _Tutoriels_—apprendre par des exemples.
+* _Explications_—concepts sous-jacents.
+* _Procédures_—réaliser des tâches {short-project-name}.
+* _Référence_
+* Organisation—cette page
+* xref:/personas.adoc[Personas]—pour qui est {short-project-name} ?
+* xref:/disclosure.adoc[Sécurité]
+* xref:/glossary.adoc[Glossaire]
+
+La plupart du matériel se trouve dans les quatre sections, _Tutoriels_, _Explications_, _Procédures_, et _Référence_. Il peut y avoir des chevauchements car les sections ne sont pas mutuellement exclusives. Le projet {short-project-name} essaie de suivre le cadre de documentation link:https://diataxis.fr/[Diátaxis].
+
+== Navigation
+
+Le menu de contenu à gauche indique toujours votre emplacement actuel dans le document.
+Le menu des sections à droite montre les sections de la page actuelle. Il y a aussi une fonctionnalité de 'fil d'Ariane' en haut du panneau de contenu principal de chaque page.
+
+== Rechercher
+
+Une fonction de boîte de recherche se trouve dans le panneau d'en-tête de chaque page.
+
+== Modification
+
+Un lien vers la source de la page sur GitHub se trouve en bas de chaque page.
+
+== Autres ressources
+
+Sont également maintenus :
+
+* link:https://github.com/kubewarden/rfc[RFCs] pour le projet.
+* Une série de link:https://www.kubewarden.io/blog/[billets de blog] liés aux versions de {community-name}.
+* Éléments liés à la gestion de link:https://github.com/kubewarden/community[la communauté] de {community-name}.

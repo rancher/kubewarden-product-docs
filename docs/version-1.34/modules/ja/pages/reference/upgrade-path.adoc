@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= アップグレードパス
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: サポートされているバージョニング戦略とそのコンポーネント間の互換性ルールを使用して、{project-name}スタックをアップグレードします。
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["operator-manual", "upgrade-path"]
+:doc-type: ["reference"]
+:keywords: ["アップグレードパス", "support"]
+:sidebar_label: アップグレードパス
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {project-name}スタックのバージョニング
+
+{short-project-name}プロジェクトは、https://semver.org/[セマンティックバージョニング]を使用して、すべてのコンポーネントの「スタック」バージョンを定義します：バージョンは`MAJOR.MINOR.PATCH`パターンに従います。サポートされているバージョンは最新のリリースです。
+
+「スタック」バージョンのルールに従う{short-project-name}コンポーネントは次のとおりです：
+
+* `kubewarden-crds`チャートのappVersionフィールド。
+
+* `kubewarden-controller`チャートのappVersionフィールド。
+
+* `kubewarden-defaults`チャートのappVersionフィールド。
+
+* 手動でデプロイされたものの`policy-server`イメージタグ。デフォルトのリソースはすでに`kubewarden-defaults`チャートによって管理されています。
+
+* `kwctl`バイナリ。
+
+== コンポーネント間のスタックバージョンの互換性
+
+`kubewarden-crds`チャート、`kubewarden-controller`チャート、`kubewarden-defaults`チャート、手動でデプロイされた`policy-server`イメージ、および`kwctl`は同じ`MAJOR`.`MINOR`.`PATCH`バージョンで実行する必要があります。
+
+したがって、実行中の`kubewarden-controller`バージョンが`1.1.2`の場合、使用中の``policy-server``s および `kwctl`バージョンも`1.1.2`である必要があります。
+
+== Helmチャートのバージョン
+
+Helmチャートは、`version`フィールドと`appVersion`フィールドを定義します。`appVersion`フィールドは、前述の{short-project-name}「スタック」バージョンを通知します。`version`フィールドはhttps://semver.org/[セマンティックバージョニング]に従い、チャートテンプレートおよび`values.yaml`の後方互換性のある変更を説明します。
+
+== アップグレードパス
+
+コンポーネントをアップグレードする際には、単一の操作で複数の`PATCH`スタックバージョンをアップグレードできます。ただし、単一のアップグレードで複数の`MAJOR`または`MINOR`スタックバージョンのアップグレードは*サポートされていません*。
+
+例えば、バージョン`1.1.10`から`1.1.nn`に単一のアップグレードでコンポーネントをアップグレードできます。しかし、`1.1.10`から`1.5.0`へのアップグレードはサポートされていません。これらの場合、2つのバージョンの間の各`MAJOR`/`MINOR`バージョンに個別にアップグレードする必要があります。したがって、`1.1.10`を`1.2.0`に、次に`1.3.0`、その後`1.4.0`、最後に`1.5.0`にアップグレードする必要があります。1つの`MAJOR`バージョンを別のバージョンにアップグレードするには、2つの`MAJOR`バージョンの間のすべての`MINOR`更新を適用する必要があります。
+
+.例のアップグレードパスサポートグラフ
+[mermaid]
+....
+%%{init: "theme": "neutral"}%% +
+フローチャートLR; accTitle:アップグレードパスサポートグラフ accDescr:{short-project-name}のための推奨およびサポートされているアップグレードパスを示す図。
+  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|推奨されていません|1.2.0(1.2.0); 1.0.2-->|サポートされていません|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray:3 5 linkStyle 7 color:red,stroke-width:2px,stroke-dasharray:3 5
+....
+
+== アップグレードの順序
+
+{short-project-name}ユーザーは`kubewarden-crds`チャートから始めてスタックをアップグレードし、その後`kubewarden-controller`チャートをアップグレードする必要があります。その後、`policy-server`をアップグレードします（`kubewarden-defaults`チャートを介してまたはカスタムのイメージをバンプして）および`kwctl`。
+
+== ダウングレード
+
+ダウングレードは*サポートされていません*、{short-project-name}はそれらをテストしません。それにもかかわらず、ダウングレードが機能することに対する合理的な期待があります。
+
+== SDK、ポリシー
+
+異なる言語とポリシーのためのポリシーSDKは、{short-project-name}チームによって維持されており、それぞれ独自のセマンティックバージョニングに従います。{short-project-name}は最新のリリースをサポートしています。彼らのためのアップグレードパスは必要なく、最新のリリースにバンプするだけです。
+
+{short-project-name}スタックへの変更は、ポリシーとSDKが最新の{short-project-name}機能を使用するために更新されることを意味するかもしれません。{short-project-name}は、これらの更新を後方互換性を保つ形で行うよう注意しています。
+
+例えば、{short-project-name}のマイナーバージョンで監査スキャナー（`v1.7.0`）のサポートが追加される場合、ポリシーに新しい`spec.backgroundAudit`フィールドが追加されたことを意味します。これはオプションであり、後方互換性があり、デフォルトで`true`に設定されています。

@@ -1,0 +1,217 @@
+include::partial$variables.adoc[]
+= Teste de ponta a ponta
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Descubra como escrever e automatizar testes de ponta a ponta executando o binário WebAssembly produzido pelo TinyGo com bats e kwctl.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "end-to-end-testing"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "procedimentos", "teste de ponta a ponta", "golang", "go"]
+:sidebar_label: Teste de ponta a ponta
+:sidebar_position: 40
+:current-version: {page-origin-branch}
+
+Até agora, você testou a política usando um conjunto de testes unitários em Go.
+Esta seção mostra como você pode escrever testes de ponta a ponta executando o binário WebAssembly real produzido pelo TinyGo.
+
+== Pré-requisitos
+
+Lembre-se, você precisa dessas ferramentas em sua máquina de desenvolvimento:
+
+* Docker, ou outro mecanismo de contêiner: Usado para construir a política WebAssembly.
+Você usará o compilador fornecido na imagem oficial do contêiner TinyGo.
+* https://github.com/bats-core/bats-core[bats]:
+Usado para escrever os testes e automatizar sua execução.
+* https://github.com/kubewarden/kwctl/releases[`kwctl`]:
+Ferramenta CLI fornecida por {project-name} para executar suas políticas fora do Kubernetes, entre outras ações.
+Isso é abordado na xref:tutorials/testing-policies/index.adoc[esta seção] da documentação.
+
+== Escrevendo testes
+
+Você estará usando
+https://github.com/bats-core/bats-core[bats]
+para escrever e automatizar seus testes.
+Cada teste tem os seguintes passos:
+
+. Execute a política usando `kwctl`.
+. Realize afirmações contra a saída produzida pelo `kwctl`.
+
+Todos os testes de ponta a ponta vão em um arquivo chamado `e2e.bats`.
+O scaffolding do projeto já inclui um exemplo `e2e.bats`.
+Você precisa alterar seu conteúdo para refletir como sua política se comporta.
+Você pode remover o conteúdo do arquivo de estruturação e substituí-lo pelo conteúdo abaixo enquanto trabalha neste tutorial.
+
+Para os testes de ponta a ponta, você usa os mesmos arquivos de fixtures de teste que usou nos testes unitários em Go.
+
+O primeiro teste garante a aprovação da solicitação quando não há configurações fornecidas:
+
+[,bash]
+----
+@test "accept when no settings are provided" {
+  run kwctl run -r test_data/pod.json policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request is accepted
+  [ $(expr "$output" : '.*"allowed":true.*') -ne 0 ]
+}
+----
+
+Você executa os testes de ponta a ponta usando este comando:
+
+[subs="+attributes",console]
+----
+make e2e-tests
+----
+
+Isso produz a seguinte saída:
+
+[subs="+attributes",console]
+----
+bats e2e.bats
+ ✓ accept when no settings are provided
+
+1 test, 0 failures
+----
+
+Você deve escrever um teste garantindo a aprovação da solicitação ao respeitar uma restrição definida pelo usuário:
+
+[,bash]
+----
+@test "accept because label is satisfying a constraint" {
+  run kwctl run annotated-policy.wasm \
+    -r test_data/pod.json \
+    --settings-json '{"constrained_labels": {"cc-center": "\\d+"}}'
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Em seguida, você pode escrever um teste verificando a aceitação da solicitação quando nenhuma das etiquetas está na lista de negação:
+
+[,bash]
+----
+@test "accept labels are not on deny list" {
+  run kwctl run \
+    -r test_data/pod.json \
+    --settings-json '{"denied_labels": ["foo", "bar"]}' \
+    policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  [ $(expr "$output" : '.*"allowed":true.*') -ne 0 ]
+}
+----
+
+Você pode melhorar a cobertura do teste adicionando um teste que rejeita uma solicitação porque uma das etiquetas está na lista de negação:
+
+[,bash]
+----
+@test "reject because label is on deny list" {
+  run kwctl run annotated-policy.wasm \
+    -r test_data/pod.json \
+    --settings-json '{"denied_labels": ["foo", "owner"]}'
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Label owner is on the deny list.*") -ne 0 ]
+}
+----
+
+O seguinte teste garante a rejeição de uma solicitação quando uma de suas etiquetas não satisfaz a restrição fornecida pelo usuário.
+
+[,bash]
+----
+@test "reject because label is not satisfying a constraint" {
+  run kwctl run annotated-policy.wasm \
+    -r test_data/pod.json \
+    --settings-json '{"constrained_labels": {"cc-center": "team-\\d+"}}'
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*The value of cc-center doesn't pass user-defined constraint.*") -ne 0 ]
+}
+----
+
+Agora você pode garantir que a validação falhe se uma das etiquetas restritas não for encontrada:
+
+[,bash]
+----
+@test "reject because constrained label is missing" {
+  run kwctl run annotated-policy.wasm \
+    -r test_data/pod.json \
+    --settings-json '{"constrained_labels": {"organization": "\\d+"}}'
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Constrained label organization not found inside of Pod.*") -ne 0 ]
+}
+----
+
+Você quer verificar se a validação das configurações está funcionando corretamente.
+Você pode fazer isso com os seguintes testes:
+
+[,bash]
+----
+@test "fail settings validation because of conflicting labels" {
+  run kwctl run \
+    -r test_data/pod.json \
+    --settings-json '{"denied_labels": ["foo", "cc-center"], "constrained_labels": {"cc-center": "^cc-\\d+$"}}' \
+    policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # settings validation failed
+  [ $(expr "$output" : ".*Provided settings are not valid: These labels cannot be constrained and denied at the same time: Set{cc-center}.*") -ne 0 ]
+}
+
+@test "fail settings validation because of invalid constraint" {
+  run kwctl run \
+    -r test_data/pod.json \
+    --settings-json '{"constrained_labels": {"cc-center": "^cc-[12$"}}' \
+    policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # settings validation failed
+  [ $(expr "$output" : ".*Provided settings are not valid: error parsing regexp.*") -ne 0 ]
+}
+----
+
+== Conclusão
+
+Os oito testes de ponta a ponta agora oferecem um bom nível de cobertura, você pode executá-los todos:
+
+[subs="+attributes",shell]
+----
+$ make e2e-tests
+bats e2e.bats
+e2e.bats
+ ✓ accept when no settings are provided
+ ✓ accept because label is satisfying a constraint
+ ✓ accept labels are not on deny list
+ ✓ reject because label is on deny list
+ ✓ reject because label is not satisfying a constraint
+ ✓ reject because constrained label is missing
+ ✓ fail settings validation because of conflicting labels
+ ✓ fail settings validation because of invalid constraint
+
+8 tests, 0 failures
+----

@@ -1,0 +1,47 @@
+include::partial$variables.adoc[]
+= Dokumentationsorganisation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Organisation
+:sidebar_position: 75
+:description: Zugriff auf umfassende Dokumentation, die in Tutorials, Erklärungen, Anleitungen und Referenzmaterialien für {project-name} organisiert ist.
+:keywords: ["Zulassungsrichtlinien-Manager", "{project-name}", Dokumentation, Organisation]
+:doc-persona: [kubewarden-all]
+:doc-type: [explanation]
+:doc-topic: [explanation]
+
+{project-name} organisiert die Projektdokumentation wie folgt:
+
+* xref:/introduction.adoc[Einführung]
+* xref:/quick-start.adoc[Schnelleinführung]
+* _Tutorials_—Lernen durch Beispiele.
+* _Erklärungen_—Grundlegende Konzepte.
+* _Anleitungen_—{short-project-name} Aufgaben erledigen.
+* _Kurz nachgeschlagen_
+* Organisation—diese Seite
+* xref:/personas.adoc[Personas]—Für wen ist {short-project-name} gedacht?
+* xref:/disclosure.adoc[Sicherheit]
+* xref:/glossary.adoc[Glossar]
+
+Der Großteil des Materials befindet sich in den vier Abschnitten _Tutorials_, _Erklärungen_, _Anleitungen_ und _Referenz_. Es kann Überschneidungen geben, da sich die Abschnitte nicht gegenseitig ausschließen. Das {short-project-name} Projekt versucht, dem link:https://diataxis.fr/[Diátaxis] Dokumentationsrahmen zu folgen.
+
+== Navigation
+
+Das Inhaltsmenü auf der linken Seite zeigt immer Ihren aktuellen Dokumentstandort an.
+Das Abschnittsmenü auf der rechten Seite zeigt die aktuellen Seitenabschnitte an. Es gibt auch eine 'Breadcrumbs'-Funktion oben im Hauptinhaltsbereich jeder Seite.
+
+== Suche
+
+Eine Suchfeldfunktion befindet sich im Kopfbereich jeder Seite.
+
+== Bearbeiten
+
+Ein Link zur Quellseite auf GitHub befindet sich am Ende jeder Seite.
+
+== Weitere Ressourcen
+
+Es werden auch folgende Ressourcen gepflegt:
+
+* link:https://github.com/kubewarden/rfc[RFCs] für das Projekt.
+* Eine Reihe von link:https://www.kubewarden.io/blog/[Blogbeiträgen], die sich auf {community-name} Veröffentlichungen beziehen.
+* Artikel, die sich mit dem link:https://github.com/kubewarden/community[Community]-Management von {community-name} befassen.

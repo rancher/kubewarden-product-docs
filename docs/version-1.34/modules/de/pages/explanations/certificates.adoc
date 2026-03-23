@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Zertifikatsrotation
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie Zertifikate in Ihrem {project-name} rotieren können, ohne Ausfallzeit zu verursachen.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["Erklärungen", "Zertifikate"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "Zertifikat", "Controller", "Abgleich"]
+:sidebar_label: Zertifikatsrotation
+:sidebar_position: 21
+
+{project-name} v1.17.0 hat die Abhängigkeit von cert-manager entfernt. Der Controller kann alle Zertifikate verwalten, die von allen Komponenten verwendet werden. Jetzt hat der Controller eine neue Abgleichschleife, die sicherstellt, dass die Zertifikate immer aktuell sind und die Webhook-Konfiguration korrekt ist.
+
+Die Helm-Chart-Installation führt die erste Zertifikatserstellung durch. Es generiert die Root-CA mit einer Gültigkeit von zehn Jahren. Die Helm-Chart-Installation generiert auch das Webserver-Zertifikat des Controller-Webhooks, das von der Root-CA signiert ist. Der API-Server verwendet dies, um mit dem {short-project-name} Controller zu kommunizieren, um die CRDs zu validieren. Es hat eine Laufzeit von einem Jahr.
+
+Sobald der Controller startet, erneuert sein Abgleicher die Zertifikate automatisch, wenn sie kurz vor dem Ablauf stehen. Er aktualisiert auch alle Zertifikate und Webhook-Konfigurationen, die vom gesamten {short-project-name} Stack verwendet werden.
+
+[NOTE]
+====
+Alle Zertifikate, die von der Helm-Chart und später vom Controller generiert werden, verwenden ECDSA P256 Schlüssel.
+====
+
+Die Abgleichschleife erneuert Zertifikate 60 Tage vor Ablauf.
+Zertifikate rotieren ohne Ausfallzeit. Die Abgleichschleife kümmert sich auch um die Erneuerung der Root-CA.
+
+Der Controller generiert eine neue Root-CA 60 Tage vor dem Ablauf. Der Controller aktualisiert das CA-Bundle, das von allen Webhooks verwendet wird, um sowohl die neue Root-CA als auch die alte einzuschließen.
+
+Die Änderung der Root-CA führt dazu, dass der Reconciler die an die Webhooks ausgestellten Zertifikate neu erstellt. Die Verbreitung der neuen Zertifikate erfordert einen Zeitraum. Während dieser Zeit ermöglicht das aktualisierte CA-Bundle dem API-Server jedoch, weiterhin ohne Ausfallzeit mit allen Webhooks zu kommunizieren.
+
+Wenn ein neues Zertifikat bereit ist und das alte ungültig ist, aktualisiert der Controller das CA-Bundle, das von den Webhooks verwendet wird, um nur die neueste Root-CA einzuschließen.
+
+Wenn das Zertifikat des Policy-Servers oder des Controller-Webservers erneuert wird, aktualisiert der Controller das Secret mit dem neuen, von der Root-CA signierten Zertifikat. Aufgrund dieser Reload-Funktion verwenden der Controller und der Policy-Server das neue Zertifikat, ohne Prozesse neu starten zu müssen, wodurch keine Ausfallzeit entsteht.

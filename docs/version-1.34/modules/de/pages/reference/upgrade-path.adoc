@@ -1,0 +1,81 @@
+include::partial$variables.adoc[]
+= Upgrade-Pfad
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Führen Sie ein Upgrade Ihres {project-name} Stacks unter Verwendung unterstützter Versionierungsstrategien und Kompatibilitätsregeln zwischen seinen Komponenten durch.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["operator-handbuch", "Upgrade-Pfad"]
+:doc-type: ["reference"]
+:keywords: ["Upgrade-Pfad", "support"]
+:sidebar_label: Upgrade-Pfad
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {project-name} Stack-Versionierung
+
+Das {short-project-name} Projekt verwendet https://semver.org/[Semantische Versionierung], um die "Stack"-Version aller seiner Komponenten zu definieren: die Version folgt dem `MAJOR.MINOR.PATCH` Schema. Die unterstützte Version ist die neueste Veröffentlichung.
+
+Die {short-project-name} Komponenten, die die Regeln für die "Stack"-Version befolgen, sind:
+
+* `kubewarden-crds` Chart, in ihrem appVersion-Feld.
+
+* `kubewarden-controller` Chart, in ihrem appVersion-Feld.
+
+* `kubewarden-defaults` Chart, in ihrem appVersion-Feld.
+
+* `policy-server` Bild-Tag für manuell bereitgestellte. Die Ressource für die Standardversion wird bereits vom `kubewarden-defaults` Chart verwaltet.
+
+* `kwctl` Binär.
+
+== Kompatibilität der Stack-Versionen zwischen Komponenten
+
+Das `kubewarden-crds` Chart, `kubewarden-controller` Chart, `kubewarden-defaults` Chart, jedes manuell bereitgestellte `policy-server` Bild und `kwctl` sollten die gleiche `MAJOR`.`MINOR`.`PATCH` Version verwenden.
+
+Daher, wenn die `kubewarden-controller` Version, die läuft, `1.1.2` ist, sollte die ``policy-server``s und die `kwctl` Version ebenfalls `1.1.2` sein.
+
+== Helm-Chart-Versionen
+
+Helm-Charts definieren das `version` Feld und das `appVersion` Feld. Das `appVersion` Feld informiert über die {short-project-name} "Stack"-Version, wie zuvor erwähnt. Das `version` Feld folgt ebenfalls https://semver.org/[semantische Versionierung] und beschreibt rückwärtskompatible Änderungen in den Diagrammvorlagen und `values.yaml`.
+
+== Upgrade-Möglichkeiten
+
+Beim Upgrade von Komponenten können Sie mehrere `PATCH` Stack-Versionen in einem einzigen Vorgang upgraden. Das Upgrade mehrerer `MAJOR` oder `MINOR` Stack-Versionen in einem einzigen Upgrade wird *nicht* unterstützt.
+
+Zum Beispiel können Sie Komponenten von Version `1.1.10` auf `1.1.nn` in einem einzigen Upgrade upgraden. Aber das Upgrade von `1.1.10` auf `1.5.0` wird nicht unterstützt. In diesen Fällen müssen Sie individuell auf jede `MAJOR`/`MINOR` Version zwischen den beiden Versionen upgraden. Daher ist es notwendig, `1.1.10` auf `1.2.0`, dann auf `1.3.0`, dann auf `1.4.0` und schließlich auf `1.5.0` zu upgraden. Um eine `MAJOR` Version auf eine andere zu aktualisieren, müssen Sie alle `MINOR` Aktualisierungen zwischen den beiden `MAJOR` Versionen anwenden.
+
+.Beispiel für unterstützte Upgrade-Pfade-Grafik
+[mermaid]
+....
+%%{init: "theme": "neutral"}%%
+Flussdiagramm LR;
+  accTitle: Upgrade-Pfad-Unterstützungsdiagramm
+  accDescr: Ein Diagramm, das empfohlene und unterstützte Upgrade-Pfade für {short-project-name} zeigt.
+  1.0.0(1.0.0)-->1.0.1(1.0.1);
+  1.0.1-->1.0.2(1.0.2);
+  1.0.2-->1.1.0(1.1.0);
+  1.1.0-->1.1.2(1.1.2);
+  1.1.0-->1.1.1;
+  1.1.1-->1.1.2;
+  1.1.2-->|Nicht empfohlen|1.2.0(1.2.0);
+  1.0.2-->|Nicht unterstützt|1.2.0(1.2.0);
+  1.1.2-->1.2.1(1.2.1);
+  1.2.0-->1.2.1;
+  linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray: 3 5
+  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
+....
+
+== Upgrade-Reihenfolge
+
+{short-project-name} Benutzer sollten den Stack upgraden, beginnend mit dem `kubewarden-crds` Chart, dann mit dem `kubewarden-controller` Chart. Danach upgraden Sie das `policy-server` (über das `kubewarden-defaults` Chart oder durch Erhöhen der Bilder von benutzerdefinierten) und `kwctl`.
+
+== Downgrades
+
+Downgrades werden *nicht* unterstützt, und {short-project-name} testet sie nicht. Dennoch gibt es eine angemessene Erwartung, dass sie funktionieren sollten.
+
+== SDKs, Richtlinien
+
+Die Richtlinien-SDKs für die verschiedenen Sprachen und Richtlinien, die vom {short-project-name} Team verwaltet werden, folgen ihrer eigenen semantischen Versionierung. {short-project-name} unterstützt die neueste Version. Es besteht keine Notwendigkeit für einen Upgrade-Pfad für sie, nur eine Aktualisierung auf die neueste Version.
+
+Änderungen am {short-project-name} Stack können bedeuten, dass Richtlinien und SDKs Updates erhalten, um die neuesten {short-project-name} Funktionen zu nutzen. {short-project-name} sorgt dafür, dass diese Updates auf eine rückwärtskompatible Weise durchgeführt werden.
+
+Zum Beispiel bedeutet eine {short-project-name} Minor-Version, die Unterstützung für den Audit Scanner (`v1.7.0`) hinzufügt, dass Richtlinien ein neues `spec.backgroundAudit` Feld erhalten haben. Dies ist optional, rückwärtskompatibel und standardmäßig auf `true` gesetzt.

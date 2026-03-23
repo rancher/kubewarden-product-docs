@@ -1,0 +1,193 @@
+include::partial$variables.adoc[]
+= Proteção contra tempo limite de avaliação de políticas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configure os tempos limite de avaliação de políticas para garantir a conclusão oportuna e evitar a exaustão de recursos com o recurso de proteção incorporado do Servidor de Políticas.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-evaluation-timeout"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "proteção contra tempo limite de políticas"]
+:current-version: {page-origin-branch}
+
+[IMPORTANT]
+====
+
+Este recurso está disponível a partir da versão {project-name} v1.5.0 para tempo limite por Servidor de Políticas e a partir da v1.29.0 para tempo limite por política.
+
+====
+
+A proteção contra tempo limite de avaliação de políticas é um recurso de segurança das Políticas e do Servidor de Políticas. Seu objetivo é limitar a quantidade de tempo que uma avaliação de solicitação pode levar.
+
+== de finalidade
+
+Você pode escrever {short-project-name} políticas usando tanto linguagens de programação tradicionais (como xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] e xref:../tutorials/writing-policies/index.adoc[outras]) ou usando a linguagem de consulta especial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Ambas as abordagens têm méritos, portanto, um objetivo de {short-project-name} é permitir que os autores de políticas escolham a melhor ferramenta para suas necessidades.
+
+Ao usar uma linguagem tradicional https://en.wikipedia.org/wiki/Turing_completeness[Turing-completa], podem ocorrer problemas como:
+
+* https://en.wikipedia.org/wiki/Infinite_loop[Laços infinitos]
+* https://en.wikipedia.org/wiki/Deadlock[Interbloqueios]
+* Código lento sem otimizações
+* Operações computacionalmente intensas
+
+O recurso de proteção contra tempo limite de avaliação de políticas encerra a avaliação de uma solicitação após um período de tempo predefinido. Isso garante que o Servidor de Políticas tenha sempre recursos computacionais disponíveis para processar solicitações recebidas.
+
+== Limitações
+
+Atualmente, a proteção contra tempo limite de avaliação de políticas é capaz de interromper a maioria das avaliações de longa duração. Existem certos casos extremos que ainda não foram tratados.
+Isso inclui invocar uma instrução `sleep` de dentro de uma política e interbloqueios.
+
+Uma futura versão do Policy Server abordará esses cenários.
+
+Por fim, o tempo limite de avaliação de políticas afeta todas as políticas hospedadas por uma instância do Policy Server. Atualmente, não há como ajustar o tempo limite de avaliação de políticas de forma individual.
+
+== Configuração
+
+Todos os valores dos tempos limites de avaliação por política, o tempo limite de avaliação por Policy Server e os tempos limites de webhook são validados para que todos estejam dentro de valores aceitáveis entre si. Por exemplo, não é possível definir um valor de tempo limite de avaliação de política que seja maior do que o tempo limite de webhook do Kubernetes.
+
+### Por Política
+
+A partir da versão {short-project-name} v1.29.0, cada Política {short-project-name} pode definir seu próprio valor de tempo limite através de seu atributo `spec.timeoutEvalSeconds`. Isso não deve ser confundido com `spec.timeoutSeconds`, usado para o tempo limite de Webhook (veja a seção [abaixo](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+
+O `spec.timeoutEvalSeconds` é granular, permitindo o ajuste do tempo limite de avaliação por política.
+
+Essa configuração tem precedência sobre a configuração global de tempo limite de avaliação do Servidor de Políticas.
+
+Por exemplo, para definir um tempo limite de avaliação mais longo para uma política específica:
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Secrets
+    io.kubewarden.policy.severity: medium
+  name: env-variable-secrets-scanner
+spec:
+  module: registry://ghcr.io/kubewarden/policies/env-variable-secrets-scanner:v1.0.6
+  settings: {}
+  timeoutEvalSeconds: 10 // Set evaluation timeout
+  mutating: false
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations: ["CREATE"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["replicationcontrollers"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployments", "replicasets", "statefulsets", "daemonsets"]
+      operations: ["CREATE", "UPDATE"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      resources: ["jobs", "cronjobs"]
+      operations: ["CREATE", "UPDATE"]
+----
+
+=== Por Servidor de Políticas
+
+A partir da versão {short-project-name} v1.5.0, os Servidores de Políticas vêm com uma configuração de tempo limite de avaliação, habilitada por padrão. A interrupção da avaliação de uma solicitação ocorre após 2 segundos. Essa configuração afeta todas as políticas agendadas naquele Servidor de Políticas. O tempo limite configurável por política `spec.timeoutEvalSeconds` tem precedência sobre essa configuração do Servidor de Políticas.
+
+Você pode ajustar esse comportamento usando essas variáveis de ambiente:
+
+* `KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION`: Isso desabilita completamente a avaliação de política. Qualquer valor atribuído desativa o recurso.
+* `KUBEWARDEN_POLICY_TIMEOUT`: Isso define um valor de tempo limite diferente. O valor está em segundos com um valor padrão de `2`.
+
+Ao usar a https://doc.crds.dev/github.com/kubewarden/kubewarden-controller/policies.kubewarden.io/PolicyServer/v1@v1.4.2[`PolicyServer`] Definição de Recurso Personalizado do Kubernetes, você pode definir essas variáveis de ambiente da seguinte forma:
+
+[source,yaml]
+----
+# A Policy Server that has policy evaluation timeout disabled
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: no-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_DISABLE_TIMEOUT_PROTECTION
+      value: "true"
+---
+
+# A Policy Server that has policy evaluation timeout enabled,
+# with a 3 seconds timeout value
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: custom-policy-timeout
+spec:
+  env:
+    - name: KUBEWARDEN_POLICY_TIMEOUT
+      value: "3"
+----
+
+== Comparação com o tempo limite do Controlador de Admissão Dinâmico do Kubernetes
+
+{short-project-name} é uma implementação de https://en.wikipedia.org/wiki/Webhook[webhook] do https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Controlador de Admissão Dinâmico do Kubernetes].
+
+Internamente, o servidor de API do Kubernetes faz uma solicitação HTTP para o Servidor de Políticas do {short-project-name} descrevendo um evento que está prestes a acontecer. Após a solicitação HTTP, o Servidor de API do Kubernetes aguarda uma resposta. No entanto, o servidor de API do Kubernetes não espera para sempre. Após um certo período de tempo, considera que a solicitação expirou.
+
+Citando a https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[documentação oficial do Kubernetes]:
+
+____
+Como os webhooks aumentam a latência das solicitações de API, eles devem ser avaliados o mais rápido possível. `timeoutSeconds` permite configurar quanto tempo o servidor de API deve esperar por uma resposta de webhook antes de tratar a chamada como uma falha.
+
+Se o tempo limite expirar antes que o webhook responda, a chamada do webhook será ignorada ou a chamada da API será rejeitada com base na https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#failure-policy[política de falha].
+
+O valor do tempo limite deve estar entre 1 e 30 segundos.
+
+O tempo limite para um webhook de admissão é de 10 segundos por padrão.
+____
+
+Isso significa que, independentemente do recurso de tempo limite de avaliação de política, cada solicitação de admissão do Kubernetes está sujeita a um tempo limite.
+
+Cada Política {short-project-name} pode definir seu próprio valor de tempo limite por meio do atributo `timeoutSeconds` dos recursos personalizados `ClusterAdmissionPolicy` e `AdmissionPolicy`.
+Por padrão, o valor do tempo limite é de 10 segundos.
+
+[IMPORTANT]
+====
+
+Todas as solicitações de admissão do Kubernetes feitas a um Servidor de Políticas estão sujeitas a dois tempos limites diferentes:
+
+* O valor do tempo limite do servidor de API do Kubernetes. Definido para 10 segundos por padrão, ajustável por política via o atributo dedicado `spec.timeoutSeconds` no Recurso Personalizado de Política.
+* O tempo limite de avaliação de política. Definido no Servidor de Políticas via variáveis de ambiente ou por Política através do atributo `spec.timeoutEvalSeconds` no Recurso Personalizado de Política.
+
+====
+
+Agora você pode examinar os seguintes cenários para entender melhor as diferenças entre o tempo limite do Webhook do Kubernetes e o tempo limite de avaliação de política do {short-project-name}.
+
+
+=== O tempo limite de avaliação de política do {short-project-name} está desativado.
+
+Suponha que você tenha um Servidor de Políticas que tem o recurso de tempo limite de avaliação de política desativado, e nenhuma política agendada nele definiu seu campo `spec.timeoutEvalSeconds`. Este Servidor de Políticas está hospedando uma política afetada por um bug que faz com que entre em um loop infinito durante a avaliação.
+
+O servidor de API do Kubernetes envia uma solicitação de admissão para avaliação por esta política com bug. Como resultado, a avaliação da política entra em um loop infinito.
+Enquanto isso, o servidor de API do Kubernetes está aguardando uma resposta.
+
+Após 10 segundos, ocorre o tempo limite do webhook do Kubernetes, e a solicitação é tratada de acordo com a política de falha do webhook.
+
+Agora o Servidor de Políticas tem recursos computacionais presos neste loop infinito.
+Com o tempo, com mais solicitações de admissão acionando a política com bug, o Servidor de Políticas fica sem recursos computacionais. Ele não consegue responder ao servidor de API do Kubernetes. Isso é equivalente a um ataque de Negação de Serviço (DOS) ao Servidor de Políticas.
+
+=== O tempo limite de avaliação de política do {short-project-name} está ativado.
+
+Suponha um cenário onde o mesmo Servidor de Políticas agora tem o recurso de tempo limite de avaliação de política ativado, seja globalmente no Servidor de Políticas, ou na Política, via o campo `spec.timeoutEvalSeconds`, e o tempo limite de avaliação de política é de 2 segundos.
+
+O servidor de API do Kubernetes envia uma solicitação de admissão para avaliação por esta política com bug. Como resultado, a avaliação da política entra em um loop infinito.
+Enquanto isso, o servidor de API do Kubernetes está aguardando uma resposta.
+
+Após dois segundos, o recurso de tempo limite de avaliação de política do {short-project-name} interrompe a avaliação da política e produz uma resposta de rejeição. A resposta contém uma mensagem explicando que a rejeição ocorreu porque a avaliação da política não foi concluída a tempo.
+
+[NOTE]
+====
+
+Definir o tempo limite de avaliação de política do {short-project-name} para um valor tão alto quanto o tempo limite do webhook do Kubernetes não é uma boa escolha.
+
+Embora a avaliação da política ainda seja interrompida, reduzindo as chances de um ataque DOS, a resposta final de rejeição não é produzida pelo Servidor de Políticas. A rejeição vem do servidor de API do Kubernetes com o tempo limite do webhook.
+
+Como resultado, é mais difícil para os usuários e operadores do Kubernetes detectarem essas políticas lentas ou com erro. A única prova da interrupção da avaliação da política está nos logs do Servidor de Políticas e nos eventos de rastreamento.
+
+====
+

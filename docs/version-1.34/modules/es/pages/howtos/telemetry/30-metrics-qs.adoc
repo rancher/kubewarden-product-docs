@@ -1,0 +1,220 @@
+include::partial$variables.adoc[]
+= Inicio rápido de métricas
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura la generación de métricas en el Servidor de Políticas utilizando Prometheus y {project-name} habilitado a través de gráficos de Helm para la recolección de datos.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "metrics quickstart"]
+:sidebar_label: Métricas
+:current-version: {page-origin-branch}
+
+Esta sección documenta cómo habilitar la generación de métricas en el Servidor de Políticas.
+
+[NOTE]
+====
+
+Antes de continuar, asegúrate de haber completado la sección anterior
+xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry]
+de este libro. Lo necesitas para que esta sección funcione correctamente.
+
+====
+
+Utilizas https://prometheus.io/[Prometheus] para recolectar métricas expuestas por el
+Servidor de Políticas.
+
+== Instala Prometheus
+
+Utilizas https://github.com/prometheus-operator/prometheus-operator[Operador de Prometheus], que nos permite definir los objetivos de Prometheus.
+
+Hay muchas maneras de instalar y configurar Prometheus. Para facilitar el despliegue,
+deberías utilizar el gráfico de Helm de la comunidad de Prometheus.
+
+El Operador de Prometheus desplegado con este gráfico de Helm utiliza
+https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md#servicemonitor[Monitores de Servicio], para definir qué servicios monitorea Prometheus.
+
+En tu caso, estás añadiendo un ServiceMonitor que apunta al espacio de nombres `kubewarden` para servicios que coinciden con las etiquetas `app=kubewarden-policy-server-default` y `app.kubernetes.io/name: kubewarden-controller`. Esto configura el
+Operador de Prometheus para inspeccionar qué Endpoints de Kubernetes pertenecen a servicios
+que coinciden con estas condiciones.
+
+Puedes crear los dos ServiceMonitors llamados `kubewarden-controller` y
+`kubewarden-policy-server` para ser utilizados por la instancia predeterminada de Prometheus instalada
+por el gráfico de Helm.
+
+Para hacer eso, deberías crear el siguiente archivo de valores:
+
+[subs="+attributes",console]
+----
+cat <<EOF > kube-prometheus-stack-values.yaml
+prometheus:
+  additionalServiceMonitors:
+    - name: kubewarden
+      selector:
+        matchLabels:
+          app: kubewarden-policy-server-default
+      namespaceSelector:
+        matchNames:
+          - kubewarden
+      endpoints:
+        - port: metrics
+          interval: 10s
+    - name: kubewarden-controller
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: kubewarden-controller
+      namespaceSelector:
+        matchNames:
+          - kubewarden
+      endpoints:
+        - port: metrics
+          interval: 10s
+EOF
+----
+
+Deberías instalar el gráfico de Helm de la pila de Prometheus:
+
+[NOTE]
+====
+En el momento de escribir esto (2023-11-17) la última versión del gráfico es `51.5.3`
+====
+
+
+[subs="+attributes",console]
+----
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm install --wait --create-namespace \
+  --namespace prometheus \
+  --version 51.5.3 \
+  --values kube-prometheus-stack-values.yaml \
+  prometheus prometheus-community/kube-prometheus-stack
+----
+
+== Instalar {short-project-name}
+
+Ahora puedes instalar {short-project-name}, de la manera recomendada con gráficos de Helm.
+
+[NOTE]
+====
+
+El `cert-manager` es un requisito de OpenTelemetry, pero ya lo has instalado en una sección anterior de esta documentación.
+
+====
+
+
+Primero, deberías añadir el repositorio de Helm que contiene {short-project-name}:
+
+[subs="+attributes",console]
+----
+helm repo add kubewarden https://charts.kubewarden.io
+----
+
+Luego, instalas las Definiciones de Recursos Personalizados (CRDs) definidas por {short-project-name}:
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden --create-namespace \
+  kubewarden-crds kubewarden/kubewarden-crds
+----
+
+Ahora puedes desplegar el resto de la pila de {short-project-name}. El chart oficial de Helm crea un PolicyServer llamado `default`.
+
+Deberías configurar el chart de Helm para que tengas métricas habilitadas en {short-project-name}. El archivo `kubewarden-values.yaml` debería tener el siguiente contenido:
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  mode: sidecar
+  metrics: True
+  sidecar:
+    metrics:
+      port: 8080
+----
+
+Ahora, instala los charts de Helm:
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  --values kubewarden-values.yaml \
+  kubewarden-controller kubewarden/kubewarden-controller
+
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=monitor
+----
+
+Esto crea la instancia de `default` de `PolicyServer`:
+
+[subs="+attributes",console]
+----
+kubectl get policyservers.policies.kubewarden.io
+NAME      AGE
+default   3m7s
+----
+
+Por defecto, este servidor de políticas no tiene métricas habilitadas.
+
+== Accediendo a Prometheus
+
+Prometheus expone una interfaz de usuario que puedes usar para inspeccionar las métricas expuestas por diferentes componentes dentro de tu clúster de Kubernetes.
+
+Puedes redirigir el puerto de Prometheus para que puedas acceder a él.
+
+[subs="+attributes",console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-operated 9090
+----
+
+Ahora, puedes visitar Prometheus en el puerto `9090` y realizar una consulta, por ejemplo: `kubewarden_policy_evaluations_total`. Puedes ver que el número de evaluaciones crece con el tiempo a medida que más solicitudes pasan por la directiva.
+
+== Accediendo a Grafana
+
+Puedes redirigir el servicio de Grafana para que puedas acceder a él.
+
+[subs="+attributes",console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
+----
+
+Ahora puedes iniciar sesión con el nombre de usuario por defecto `admin` y la contraseña `prom-operator`.
+
+=== Usando el {short-project-name}panel de Grafana
+
+{short-project-name} tiene un panel de Grafana con métricas básicas que ofrecen una visión general de cómo se comporta {short-project-name} en el clúster. Este panel de control está disponible en las versiones de GitHub del repositorio de {short-project-name} policy-server como un https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[archivo JSON] o en el https://grafana.com/grafana/dashboards/15314[sitio web de Grafana].
+
+Para importar el panel de control en tu entorno, puedes descargar el archivo JSON desde el sitio web de Grafana o desde el repositorio:
+
+[subs="+attributes",console]
+----
+curl https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json
+----
+
+Una vez que tengas el archivo, deberías acceder al panel de control de Grafana y https://grafana.com/docs/grafana/latest/dashboards/export-import/#import-dashboard[importarlo]. Visita `/dashboard/import` en el panel de control de Grafana y sigue estos pasos:
+
+. Copia y pega el contenido del archivo JSON en el cuadro `Import via panel json` en la interfaz de usuario de Grafana.
+. Haz clic en el botón `Load`.
+. Elige `Prometheus` como la fuente.
+. Haz clic en el botón `Import`.
+
+Otra opción es importarlo directamente desde el sitio web grafana.com. Para esto:
+
+. Copia el ID del panel de control de la https://grafana.com/grafana/dashboards/15314[página del panel de control],
+. Pégalo en el campo `Import via grafana.com`.
+. Haz clic en el botón `load`.
+. Después de importar el panel de control, define la fuente de datos de Prometheus que vas a utilizar y termina el proceso de importación.
+
+El panel de Grafana tiene paneles que muestran el estado de todas las directivas gestionadas por {short-project-name}. También tiene paneles específicos de directivas.
+
+Puedes obtener métricas detalladas para una directiva específica cambiando el valor de la variable `policy_name` para que coincida con el nombre de la directiva requerida.
+
+Deberías poder ver un panel de control similar a este:
+
+image::grafana_dashboard.png[Panel de control]

@@ -1,0 +1,221 @@
+include::partial$variables.adoc[]
+= Creando una nueva política de mutación
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura una nueva {project-name} política de mutación para mutar objetos entrantes con anotaciones personalizadas, y luego pruébala.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "creating a new mutation policy", "mutation policy", "rust"]
+:sidebar_label: Creando una nueva política de mutación
+:current-version: {page-origin-branch}
+
+Las políticas de mutación son similares a las de validación, pero también tienen la capacidad de mutar un objeto entrante.
+
+Pueden:
+
+* Rechazar una solicitud
+* Aceptar una solicitud sin cambiar el objeto entrante
+* Mutar el objeto entrante según sea necesario y aceptar la solicitud
+
+Escribir una {project-name} política de mutación es sencillo.
+Utilizarás la política de validación creada en las secciones anteriores, y con algunos cambios, la convertirás en una política de mutación.
+
+Tu política utiliza la misma lógica de validación definida anteriormente, pero también añade una anotación a todos los Pods que tienen un nombre válido.
+
+Intentando crear un Pod como este:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+Conduce a la creación de este Pod:
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  annotations:
+    kubewarden.policy.demo/inspected: true
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== Escribe el código de mutación
+
+El código de mutación está en la `validate` función.
+Deberías cambiar esta función para aprobar la solicitud utilizando https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.mutate_request.html[`mutate_request`] en lugar de https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.accept_request.html[`accept_request`].
+
+Así es como debería verse la función `validate` en `lib.rs`:
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?;
+
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        // NOTE 1
+        Ok(mut pod) => {
+            let pod_name = pod.metadata.name.clone().unwrap_or_default();
+            if validation_request
+                .settings
+                .invalid_names
+                .contains(&pod_name)
+            {
+                kubewarden::reject_request(
+                    Some(format!("pod name {:?} is not accepted", pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                // NOTE 2
+                let mut new_annotations = pod.metadata.annotations.clone().unwrap_or_default();
+                new_annotations.insert(
+                    String::from("kubewarden.policy.demo/inspected"),
+                    String::from("true"),
+                );
+                pod.metadata.annotations = Some(new_annotations);
+
+                // NOTE 3
+                let mutated_object = serde_json::to_value(pod)?;
+                kubewarden::mutate_request(mutated_object)
+            }
+        }
+        Err(_) => {
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            kubewarden::accept_request()
+        }
+    }
+}
+----
+
+Comparado con el código anterior, has realizado tres cambios:
+
+. Definimos el objeto `pod` como mutable, observa la palabra clave `mut`. Esto es necesario porque vamos a extender su atributo `metadata.annotations`.
+// TODO: How best to describe the use of clone().
+. Este es el código que toma el `annotations` existente, añade el nuevo y finalmente coloca el objeto `annotations` actualizado de nuevo en la instancia original `pod`.
+. Serializa el objeto `pod` en un `serde_json::Value` genérico y luego devuelve una respuesta de mutación.
+
+Habiendo realizado estos cambios, es hora de ejecutar de nuevo las pruebas unitarias:
+
+[subs="+attributes",console]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.95s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... FAILED
+
+failures:
+
+---- tests::accept_pod_with_valid_name stdout ----
+{"column":5,"file":"src/lib.rs","level":"info","line":34,"message":"starting validation","policy":"sample-policy"}
+thread 'tests::accept_pod_with_valid_name' panicked at src/lib.rs:98:9:
+Something mutated with test case: Pod creation with valid name
+note: run with `+RUST_BACKTRACE=1+` environment variable to display a backtrace
+
+
+failures:
+    tests::accept_pod_with_valid_name
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+Como puedes ver, el `accept_pod_with_valid_name` falla porque la respuesta contiene un objeto mutado.
+Parece que nuestro código está funcionando.
+
+== Actualiza las pruebas unitarias
+
+Puedes actualizar el `accept_pod_with_valid_name` en `lib.rs` para que se vea así:
+
+[subs="+attributes",rust]
+----
+#[test]
+fn accept_pod_with_valid_name() -> Result<(), ()> {
+    let mut invalid_names = HashSet::new();
+    invalid_names.insert(String::from("bad_name1"));
+    let settings = Settings { invalid_names };
+
+    let request_file = "test_data/pod_creation.json";
+    let tc = Testcase {
+        name: String::from("Pod creation with valid name"),
+        fixture_file: String::from(request_file),
+        expected_validation_result: true,
+        settings,
+    };
+
+    let res = tc.eval(validate).unwrap();
+    // NOTE 1
+    assert!(
+        res.mutated_object.is_some(),
+        "Expected accepted object to be mutated",
+    );
+
+    // NOTE 2
+    let final_pod =
+        serde_json::from_value::<apicore::Pod>(res.mutated_object.unwrap()).unwrap();
+    let final_annotations = final_pod.metadata.annotations.unwrap();
+    assert_eq!(
+        final_annotations.get_key_value("kubewarden.policy.demo/inspected"),
+        Some((
+            &String::from("kubewarden.policy.demo/inspected"),
+            &String::from("true")
+        )),
+    );
+
+    Ok(())
+}
+----
+
+En comparación con la primera prueba, hay dos cambios:
+
+. Cambia la declaración `assert!` para que la solicitud siga siendo aceptada, pero también incluya un objeto mutado.
+. Se creó una instancia de `Pod` a partir del objeto mutado que forma parte de la respuesta.
+Asegúrate de que el objeto Pod mutado tiene el `metadata.annotations` correcto.
+
+Ejecuta las pruebas de nuevo, esta vez todas deben pasar:
+
+[subs="+attributes",shell]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 1.25s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+Como puedes ver, la creación de una política de mutación es sencilla.

@@ -1,0 +1,188 @@
+include::partial$variables.adoc[]
+= Sichern Sie Webhooks mit mutual Transport Layer Security (mTLS) mit K3s.
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:sidebar_label: Aktivieren Sie mutual Transport Layer Security (mTLS) mit K3s.
+:description: Implementieren Sie mutual Transport Layer Security (mTLS)-Protokolle für sichere Webhooks mit K3s in Ihrer SUSE Kubernetes-Distribution.
+:keywords: ["{project-name}", Kubewarden, Kubernetes, Sicherheit]
+:doc-persona: Kubewarden-Operator, Kubewarden-Integrator
+:doc-type: howto
+:doc-topic: Operator-Handbuch, Sicherheit
+
+Diese Anleitung zeigt Ihnen, wie Sie die gegenseitige Transport Layer Security (mTLS) für
+Webhooks des {project-name}-Stacks aktivieren, wenn Sie https://k3s.io/[K3s] als Ihre
+Kubernetes-Distribution verwenden.
+
+Für weitere Informationen zur Absicherung der Webhooks, siehe die
+xref:/reference/security-hardening/webhooks-hardening.adoc[Referenzseite].
+
+== Voraussetzungen
+
+Bevor Sie K3s installieren, müssen Sie eine Zertifizierungsstelle (CA) und ein
+Client-Zertifikat erstellen. Sie verwenden es, um die Kommunikation zwischen den
+Webhooks des {short-project-name} und dem Kubernetes API-Server abzusichern.
+
+Als ersten Schritt erstellen Sie das `/etc/rancher/k3s/admission/certs`-Verzeichnis:
+
+[source,console]
+----
+sudo mkdir -p /etc/rancher/k3s/admission/certs
+----
+
+=== Erstellen Sie eine Root-CA und das Client-Zertifikat
+
+Als `root`-Benutzer wechseln Sie in das `/etc/rancher/k3s/admission/certs`-Verzeichnis und erstellen alle benötigten Zertifikate:
+
+[source,console]
+----
+export FQDN=mtls.kubewarden.io
+
+# Create openssl config file
+cat > openssl.cnf <<EOL
+[ req ]
+default_keyfile     = rootCA.key
+distinguished_name  = req_distinguished_name
+x509_extensions     = v3_ca
+string_mask         = utf8only
+
+[ req_distinguished_name ]
+countryName         = Country Name (2 letter code)
+countryName_default = US
+stateOrProvinceName = State or Province Name (full name)
+localityName        = Locality Name (eg, city)
+organizationName    = Organization Name (eg, company)
+commonName          = Common Name (eg, your domain or your CA name)
+
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:1
+keyUsage = critical, keyCertSign, cRLSign
+EOL
+
+# Create CA
+openssl req -nodes -batch -x509 -sha256 -days 3650 -newkey rsa:4096 -keyout rootCA.key -out rootCA.crt \
+  -config openssl.cnf
+
+# Create CSR
+openssl req -nodes -batch -newkey rsa:4096 -keyout client.key -out client.csr \
+    -addext "subjectAltName = DNS:$FQDN"  -config openssl.cnf
+
+# Create CRT
+openssl x509 -req -CA rootCA.crt -CAkey rootCA.key -in client.csr -out client.crt -days 3650 -CAcreateserial \
+    -extfile <(echo "subjectAltName=DNS:$FQDN")
+
+# Print CRT
+
+openssl x509 -text -noout -in client.crt
+----
+
+Dies erstellt die folgenden Dateien:
+
+* `client.crt`
+* `client.csr`
+* `client.key`
+* `rootCA.crt`
+* `rootCA.key`
+* `rootCA.srl`
+
+=== Erstellen Sie die Kubernetes-Konfigurationsdatei
+
+Erstellen Sie die `/etc/rancher/k3s/admission/admission.yaml`-Datei mit dem folgenden Inhalt:
+
+[source,yaml]
+----
+# /etc/rancher/k3s/admission/admission.yaml
+apiVersion: apiserver.config.k8s.io/v1
+kind: AdmissionConfiguration
+plugins:
+- name: ValidatingAdmissionWebhook
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: WebhookAdmissionConfiguration
+    kubeConfigFile: "/etc/rancher/k3s/admission/kubeconfig"
+- name: MutatingAdmissionWebhook
+  configuration:
+    apiVersion: apiserver.config.k8s.io/v1
+    kind: WebhookAdmissionConfiguration
+    kubeConfigFile: "/etc/rancher/k3s/admission/kubeconfig"
+----
+
+Erstellen Sie schließlich eine `kubeconfig`-Datei unter `/etc/rancher/k3s/admission/kubeconfig`:
+
+[source,yaml]
+----
+# /etc/rancher/admission/kubeconfig
+apiVersion: v1
+kind: Config
+users:
+- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+  user:
+    client-certificate: /etc/rancher/k3s/admission/certs/client.crt
+    client-key: /etc/rancher/k3s/admission/certs/client.key
+----
+
+=== Erstellen Sie eine K3s-Konfigurationsdatei
+
+Erstellen Sie eine K3s-Konfigurationsdatei unter `/etc/rancher/k3s/config.yaml`:
+
+[source,yaml]
+----
+# /etc/rancher/k3s/config.yaml
+kube-apiserver-arg:
+- admission-control-config-file=/etc/rancher/k3s/admission/admission.yaml
+----
+
+== Installieren Sie K3s
+
+Installieren Sie K3s mit dem folgenden Befehl:
+
+[source,console]
+----
+curl -sfL https://get.k3s.io | sh -
+----
+
+Warten Sie ab, bis die Installation abgeschlossen ist.
+
+== Installieren Sie den {short-project-name} Stack
+
+=== Voraussetzungen
+
+Das Zertifikat der Root-CA, die das Kubernetes-Client-Zertifikat ausgestellt hat, muss dem {short-project-name} Stack zur Verfügung stehen.
+
+Die Root-CA ist unter `/etc/rancher/k3s/admission/certs/rootCA.crt` auf dem Kubernetes-Knoten verfügbar. Sie benötigen den Inhalt in einer `ConfigMap` im Namespace `kubewarden`. Sie speichern den Inhalt der `rootCA.crt`-Datei im Schlüssel mit dem Namen `client-ca.crt`.
+
+Zuerst erstellen Sie den `kubewarden` Namespace:
+
+[source,console]
+----
+kubectl create namespace kubewarden
+----
+
+Dann erstellen Sie den `ConfigMap` darin. Der folgende Befehl, der auf dem Kubernetes-Knoten ausgeführt wird, erledigt das:
+
+[source,console]
+----
+kubectl create configmap -n kubewarden api-server-mtls \
+    --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
+----
+
+Der Name des resultierenden `ConfigMap` ist `api-server-mtls`.
+
+=== Installieren Sie den {short-project-name} Stack
+
+Installieren Sie den {short-project-name} Stack wie im xref:/quick-start.adoc[Schnellstartleitfaden] beschrieben. Befolgen Sie alle Schritte, aber stellen Sie beim Installieren des `kubewarden-controller` Helm-Charts sicher, dass Sie die folgenden Werte aktivieren:
+
+* `mTLS.enable`: muss `true` sein.
+* `mTLS.configMapName`: muss der Name des zuvor erstellten `ConfigMap` sein.
+
+Der `ConfigMap` Name ist `api-server-mtls`. Der Helm-Befehl zur Installation des `kubewarden-controller` lautet:
+
+[source,console]
+----
+helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+    --set mTLS.enable=true \
+    --set mTLS.configMapName=api-server-mtls
+----
+
+Sobald dieser Befehl abgeschlossen ist, sichert mTLS die Installation des {short-project-name} Stacks und seiner Webhooks.

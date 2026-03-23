@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= Was ist der Kubewarden audit scanner?
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie mehr über die Rolle des Kubewarden audit scanners bei der kontinuierlichen Überprüfung der Clusterkonformität mit den Richtlinien des Admission Controllers in Ihren Clustern.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "audit scanner", "kubernetes"]
+:sidebar_label: Audit-Scanner
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+
+Die Funktion des Kubewarden audit scanner ist ab der Version {project-name} 1.7.0 verfügbar.
+
+====
+
+
+Die `audit-scanner`-Komponente überprüft ständig die Ressourcen im Cluster. Sie kennzeichnet die Ressourcen, die nicht den im Cluster bereitgestellten {short-project-name}-Richtlinien entsprechen.
+
+Richtlinien entwickeln sich im Laufe der Zeit weiter. Es gibt neue Richtlinienbereitstellungen und Richtlinienaktualisierungen.
+Versionen und Konfigurationseinstellungen ändern sich. Dies kann zu Situationen führen, in denen Ressourcen, die sich bereits im Cluster befinden, nicht mehr konform sind. Die Funktion zur Audit-Überprüfung bietet Kubernetes-Administratoren ein Werkzeug, das ständig den Konformitätsstatus ihrer Cluster überprüft.
+
+Um die Verwendung des Kubewarden audit scanners in {short-project-name} zu erklären, betrachten Sie das folgende Szenario.
+
+Angenommen, Bob stellt ein WordPress-Pod im Cluster bereit. Bob ist neu bei Kubernetes, macht einen Fehler und stellt den Pod als privilegierten Container bereit. Zu diesem Zeitpunkt gibt es keine Richtlinie, die dies verhindert, sodass den Pod erfolgreich im Cluster erstellt wird.
+
+Einige Tage später setzt Alice, die Kubernetes-Administratorin, eine {short-project-name}-Richtlinie durch, die die Erstellung privilegierter Container verbietet. Der von Bob bereitgestellte Pod läuft weiterhin im Cluster, da er bereits existiert.
+
+Ein Bericht, der vom Kubewarden audit scanner erstellt wurde, ermöglicht es Alice, alle Workloads zu identifizieren, die gegen die Erstellungsrichtlinien verstoßen. Dies umfasst das von Bob erstellte WordPress-Pod.
+
+Der Kubewarden audit scanner funktioniert folgendermaßen:
+
+* Er identifiziert alle Ressourcen, die auditiert werden sollen.
+* Für jede Ressource erstellt er eine synthetische Zulassungsanfrage mit den Daten der Ressource.
+* Er sendet jede Zulassungsanfrage an einen Policy-Server-Endpunkt, der nur für Audit-Anfragen vorgesehen ist.
+
+Für die Richtlinie, die die Anfrage bewertet, gibt es keine Unterschiede zwischen echten oder Audit-Anfragen. Dieser Audit-Policy-Server-Endpunkt verfügt über Instrumentierung, um Daten über die Bewertung zu sammeln. So können Benutzer ihre Überwachungstools verwenden, um die Daten des Kubewarden audit scanner zu analysieren.
+
+== Kubewarden audit scanner aktivieren
+
+Sie können den Kubewarden audit scanner ab der Version {short-project-name} 1.7.0 aktivieren.
+
+Detaillierte Installationsanweisungen finden Sie in der xref:howtos/audit-scanner.adoc[Kubewarden audit scanner Anleitung].
+
+== Richtlinien
+
+Standardmäßig bewertet der Kubewarden audit scanner jede Richtlinie. Operatoren, die eine Richtlinienbewertung im Kubewarden audit scanner überspringen möchten, müssen das `spec.backgroundAudit` Feld in der Richtliniendefinition auf `false` setzen.
+
+Außerdem unterstützen Richtlinien in {short-project-name} jetzt zwei optionale Annotationen:
+
+* Die `io.kubewarden.policy.severity` Annotation ermöglicht es Ihnen, das Schweregradniveau des Richtlinienverstoßes anzugeben, wie `critical`, `high`, `medium`, `low` oder `info`.
+* Die `io.kubewarden.policy.category` Annotation ermöglicht es Ihnen, die Richtlinie basierend auf einem bestimmten Bereich oder Zweck zu kategorisieren, wie `PSP`, `compliance` oder `performance`.
+
+Siehe die xref:tutorials/writing-policies/index.adoc[Richtlinienautoren-Dokumentation] für weitere Informationen.
+
+== Berechtigungen und Servicekonten
+
+Der Kubewarden audit scanner in {short-project-name} erfordert spezifische rollenbasierte Zugriffskontrolle (RBAC)-Konfigurationen, um Kubernetes-Ressourcen scannen und die Ergebnisse speichern zu können. Die Installation erstellt ein korrektes Standard-Servicekonto mit diesen Berechtigungen. Der Benutzer kann sein eigenes Servicekonto erstellen, um den Zugriff auf Ressourcen zu konfigurieren.
+
+Der standardmäßige Kubewarden audit scanner `ServiceAccount` bindet an die `view` `ClusterRole`, die von Kubernetes bereitgestellt wird. Dieses `ClusterRole` erlaubt den schreibgeschützten Zugriff auf eine Vielzahl von Kubernetes-Ressourcen innerhalb eines Namespace. Sie können weitere Details zu dieser Rolle in der https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles[Kubernetes-Dokumentation] finden.
+
+Der Kubewarden audit scanner bindet an ein `ClusterRole`, das Lesezugriff auf {short-project-name} Ressourcentypen und Lese- und Schreibzugriff auf die `PolicyReport` CRDs gewährt.  Diese Berechtigungen ermöglichen es dem Scanner, Ressourcen abzurufen, um Auditbewertungen durchzuführen und Richtlinienberichte basierend auf den Bewertungsergebnissen zu erstellen.

@@ -1,0 +1,110 @@
+include::partial$variables.adoc[]
+= 监控
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过与{project-name}和 Prometheus 集成，为Rancher环境配置监控。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "metrics-and-monitoring"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "user interface extension", "metrics", "monitoring"]
+:current-version: {page-origin-branch}
+
+Rancher有一个用于监控的集群工具，使用Grafana和Prometheus。您可以使用此工具，将其与{project-name}集成，以查看策略服务器的整体指标或特定策略的指标。
+
+[CAUTION]
+====
+
+您需要一个至少有4个核心的集群来安装监控工具。
+
+====
+
+
+== 先决条件
+
+您需要Prometheus Operator。请按照xref:howtos/telemetry/30-metrics-qs.adoc#_install_prometheus[这些指示]进行安装。
+
+== 安装
+
+=== 创建ServiceMonitors
+
+* 导入清单以创建ServiceMonitors。
+* 您需要指定{short-project-name}安装名称空间
+
+这些步骤是从xref:howtos/telemetry/30-metrics-qs.adoc[遥测指标说明]的改编。
+
+[subs="+attributes",yaml]
+----
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubewarden-controller
+  namespace: cattle-kubewarden-system
+spec:
+  endpoints:
+    - interval: 10s
+      port: metrics
+  namespaceSelector:
+    matchNames:
+      - cattle-kubewarden-system
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kubewarden-controller
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kubewarden-policy-server
+  namespace: cattle-kubewarden-system
+spec:
+  endpoints:
+    - interval: 10s
+      port: metrics
+  namespaceSelector:
+    matchNames:
+      - cattle-kubewarden-system
+  selector:
+    matchLabels:
+      app: kubewarden-policy-server-default
+----
+
+=== 为您的`rancher-kubewarden-controller`资源启用遥测
+
+* 导航到应用程序与市场 → 已安装的应用。
+* 为您的`rancher-kubewarden-controller`资源选择`Edit/Upgrade`操作。
+* 编辑`telemetry`的YAML为`enabled: "true"`，并验证指标端口是否正确。
+
+[,yml]
+----
+telemetry:
+  metrics: true
+  mode: sidecar
+  sidecar:
+    metrics:
+      port: 8080
+----
+
+[NOTE]
+====
+
+您可能需要重新部署您的监控资源，以便新的ConfigMap加载。您可以从工作负载 → 部署中执行此操作。选择`cattle-monitoring-system`名称空间中的所有资源，并选择`Redeploy`操作。
+
+====
+
+
+=== 为策略和策略服务器创建Grafana仪表板ConfigMap。
+
+[NOTE]
+====
+此方法适用于隔离的安装。
+====
+
+
+仪表板在策略服务器和策略之间是独特的，因此您需要分开创建。
+
+在策略服务器或特定策略的详细视图中：
+
+* 导航到“指标”选项卡。
+* 按照提示创建ConfigMap。
+* 重新加载页面以更新Grafana视图（Grafana可能需要较长时间来确认新的仪表板）。
+
+您应该能够在每个相应资源的详细页面上查看策略服务器或任何给定策略的指标。您还可以在Grafana UI中查看{short-project-name}仪表板，或在Prometheus UI中查看事件。

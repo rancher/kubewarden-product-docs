@@ -1,0 +1,39 @@
+include::partial$variables.adoc[]
+= 主机能力规范
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 在评估期间，了解环境为{project-name}策略提供的主机能力。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "introduction"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "策略规范", "主机能力"]
+:sidebar_label: 主机能力规范
+:current-version: {page-origin-branch}
+
+在评估期间，{project-name}策略可以访问主机环境提供的额外能力。
+该机制采用类似于传统的https://en.wikipedia.org/wiki/Remote_procedure_call[RPC]的方法。
+
+当{short-project-name}策略发出请求时，会发生以下情况：
+
+* {short-project-name}策略：
+ ** 调用主机环境提供的能力。
+ ** 调用是一个阻塞操作，因此策略代码将等待主机提供答案。
+* 主机环境：
+ ** 接收到能力调用。
+ ** 主机执行操作。
+ ** 主机向策略提供答案，可能是成功或故障。
+* {short-project-name}策略：
+ ** 代码从主机接收答案并恢复执行。
+ ** 主机响应会得到相应处理。
+
+主机能力特性是使用https://wapc.io/[waPC]实现的。
+每个能力使用以下细节：
+
+* waPC函数名称：主机暴露的能力名称。
+* 输入负载：策略所做请求的主体。
+这始终以JSON格式编码。
+* 输出负载：来自主机的响应主体。这始终以JSON格式编码。
+
+当出现问题时，主机会回复一个错误。
+这是使用策略所用编程语言的错误类型来完成的。
+错误是一个UTF-8字符串，包含解释消息。

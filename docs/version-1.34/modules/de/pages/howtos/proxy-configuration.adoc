@@ -1,0 +1,44 @@
+include::partial$variables.adoc[]
+
+= Proxy-Konfiguration
+:description: Proxies mit {project-name} verwenden.
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "proxy", "proxies"]
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "proxy"]
+
+Für sowohl `kwctl` als auch `policy-server` können Sie HTTP- und HTTPS-Proxies konfigurieren sowie Domains von dieser Proxy-Konfiguration ausnehmen.
+
+Sie können dies auf zwei Arten tun: * Indem Sie die Umgebungsvariablen `HTTP_PROXY`, `HTTPS_PROXY` und `NO_PROXY` (sowie deren Kleinbuchstaben-Entsprechungen) entweder für `kwctl` oder für `policy-server` setzen.
+  Um ein PolicyServer CR zu konfigurieren, setzen Sie sein `spec.env`-Array. * Durch Bereitstellung einer `sources.yaml`-Datei über das `--sources-path`-Argument.
+  Eine `sources.yaml`-Datei hat Vorrang vor den Umgebungsvariablen.
+  Der Zugriff auf diese Konfiguration über das `spec`-Feld ist in PolicyServer CRs noch nicht verfügbar.
+
+Das Setzen einer Proxy-Konfiguration beeinflusst:
+
+* Richtlinien-Pull, -Push und -Pull-and-Run von und zur OCI-Registry.
+* Hostfähigkeiten aus kontextbewussten Aufrufen, wie:
+** Container-Registry, wie das Abrufen eines OCI-Manifests oder Manifest-Digests.
+   Anstatt direkt auf die OCI-Registry zuzugreifen, wird der Datenverkehr über die konfigurierten Proxies geleitet.
+** Sigstore-Fähigkeiten, wie die Überprüfung einer schlüssellosen Signatur.
+   Anstatt auf die von Sigstore definierten Dienste zuzugreifen, wird der Datenverkehr über die konfigurierten Proxies geleitet.
+
+== Beispiel
+
+Sie können die folgenden Umgebungsvariablen entweder für `kwctl` oder für `policy-server` (über den PolicyServer `spec.env`) setzen:
+
+[source,bash]
+----
+HTTP_PROXY="http://proxy.corp:3128"
+https_proxy="http://proxy.corp:3129"
+NO_PROXY="localhost,.corp"
+----
+
+Mit dieser Konfiguration: * Unverschlüsselter Datenverkehr über HTTP, wie der zu und von einer unsicheren OCI-Registry, wird über `\http://proxy.corp:3128` geleitet.
+  Dies betrifft das Abrufen von Richtlinien sowie solche Richtlinien, die kontextbewusste Fähigkeiten aufrufen und OCI-Image-Manifest-Digests für Container in diesem Repository aufweisen. * Verschlüsselter Datenverkehr über HTTPS wird über `\https://proxy.corp:3129` geleitet.
+  Zum Beispiel umfasst dies das Abrufen und Pushen von Richtlinien zu jeder sicheren OCI-Registry und die erwähnten kontextbewussten Fähigkeiten von Richtlinien. * Datenverkehr zu und von localhost oder einer Domain unter `.corp` ist von den vorherigen Konfigurationen ausgenommen.
+
+
+== Die `sources.yaml`-Datei
+
+Für weitere Details überprüfen Sie die xref:/reference/sources_yaml.adoc[`sources.yaml`]-Referenz.

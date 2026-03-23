@@ -1,0 +1,78 @@
+include::partial$variables.adoc[]
+= Registro
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configura la inicialización del registrador para el registro estructurado en tu política utilizando la integración del SDK de Go del proyecto oneLog.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "golang", "logging"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "writing policies", "golang", "go", "logging"]
+:current-version: {page-origin-branch}
+
+El SDK de Go se integra con el
+https://github.com/francoispqt/onelog[`onelog`]
+proyecto, casi listo para usar.
+// TODO: Last release 2019. Still good?
+
+El proyecto ha elegido esta biblioteca como:
+
+* Funciona con binarios de WebAssembly.
+Otras soluciones de registro populares no pueden compilar para WebAssembly.
+* Proporciona https://github.com/francoispqt/onelog#benchmarks[buen rendimiento].
+* Admite el registro estructurado.
+
+== Inicializa el registrador
+
+Necesitas inicializar una estructura de registrador.
+Al realizar esta inicialización en una variable global,
+puedes registrar desde los dos principales puntos de entrada de la política: `validate` y
+`validate_settings`.
+
+En el paquete principal, `main.go` hay inicialización para el registrador:
+
+[,go]
+----
+var (
+    logWriter = kubewarden.KubewardenLogWriter{}
+    logger    = onelog.New(
+        &logWriter,
+        onelog.ALL, // shortcut for onelog.DEBUG|onelog.INFO|onelog.WARN|onelog.ERROR|onelog.FATAL
+    )
+)
+----
+
+== Consumiendo el registrador
+
+Ahora, puedes usar el objeto `logger` para registrar desde donde sea necesario en tu política:
+
+[,go]
+----
+func validate(payload []byte) ([]byte, error) {
+    // ...
+    logger.Info("validating request")
+    // ...
+}
+----
+
+Puedes añadir registro estructurado:
+
+[,go]
+----
+func validate(payload []byte) ([]byte, error) {
+    // ...
+    logger.WarnWithFields("logging something important", func(e onelog.Entry) {
+        e.String("one_field", "a value")
+        e.String("another_field", "another value")
+    })
+    // ...
+}
+----
+
+Puedes consultar la
+https://pkg.go.dev/github.com/francoispqt/onelog?utm_source=godoc[`onelog` documentación]
+para más información.
+
+El registro de políticas va al evaluador de políticas
+(por ejemplo, `kwctl` o `policy-server`),
+y ellos registran en nombre de la política.
+Utilizan mecanismos que son interoperables con otros componentes que permiten el trazado distribuido, como https://www.jaegertracing.io/[Jaeger].

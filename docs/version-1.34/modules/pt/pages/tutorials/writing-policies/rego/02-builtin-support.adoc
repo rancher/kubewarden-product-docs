@@ -1,0 +1,33 @@
+include::partial$variables.adoc[]
+= Suporte incorporado
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Determine quais funções incorporadas estão disponíveis para módulos WebAssembly e entenda sua implementação e uso no desenvolvimento de políticas Rego.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "built-in-support"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "suporte wasm incorporado"]
+:sidebar_label: Suporte incorporado
+:current-version: {page-origin-branch}
+
+Além de construir uma política para o alvo `wasm`, é necessário executá-la.
+
+A equipe do Open Policy Agent (OPA) tem uma página que você pode verificar para https://www.openpolicyagent.org/docs/latest/policy-reference/#built-in-functions[suporte incorporado].
+
+Ao construir uma política Rego em um módulo WebAssembly, certas dessas funções incorporadas estão no próprio arquivo Wasm.
+São os incorporados marcados com uma marca verde na página de incorporados vinculada.
+O runtime do WebAssembly que avalia o módulo fornece os outros.
+
+Os incorporados marcados como `SDK-dependent` são aqueles que o host deve implementar, neste caso, {project-name}.
+OPA e Gatekeeper podem usá-los dependendo das necessidades da política.
+Em qualquer caso, esses incorporados são expostos à política e qualquer nova ou existente pode depender deles.
+
+Ainda existem certos incorporados que ainda não são fornecidos por {short-project-name}, no entanto, com base nas políticas vistas em aberto, os já suportados devem ser suficientes para a maioria dos usuários do Kubernetes.
+
+https://github.com/kubewarden/policy-evaluator/issues/56[Esta questão do GitHub] acompanha os incorporados Rego que ainda precisamos implementar.
+Sinta-se à vontade para comentar lá para ajudar a priorizar nosso trabalho.
+
+== Executando políticas com incorporados ausentes
+
+Quando uma política é executada com `kwctl` ou com `policy-server`, a lista de incorporados usados pela política é inspecionada.
+Se algum dos incorporados usados estiver ausente, o programa para a execução registrando um erro fatal relatando os incorporados ausentes.

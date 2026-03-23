@@ -1,0 +1,139 @@
+include::partial$variables.adoc[]
+
+= Scanner de Auditoria
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Verifique o estado de conformidade de seus clusters usando o recurso Scanner de Auditoria dentro de {project-name}, para garantir sua configuração adequada.
+:doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-topic: ["howto", "audit-scanner-installation"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:sidebar_label: Scanner de Auditoria
+:sidebar_position: 70
+:current-version: {page-origin-branch}
+
+A partir da versão `v1.7.0`, {project-name} possui um novo recurso chamado "Scanner de Auditoria". Um novo componente, chamado "Scanner de Auditoria", verifica constantemente os recursos declarados no cluster, sinalizando aqueles que não estão em conformidade com as políticas {project-name} implantadas e salvando esses resultados em recursos customizados de relatório específicos.
+
+As políticas evoluem ao longo do tempo: você implanta novas políticas e atualiza as políticas existentes. Tanto a versão quanto as configurações mudam. Isso pode levar a situações em que recursos já no cluster não estão mais em conformidade.
+
+O recurso scanner de auditoria fornece aos administradores do Kubernetes uma ferramenta para verificar consistentemente o estado de conformidade de seus clusters.
+
+O Scanner de Auditoria pode salvar seus resultados tanto em definições de recursos personalizados (CRDs) OpenReports de link:https://openreports.io[openreports.io] (a configuração padrão desde a v1.33) ou PolicyReports do link:https://github.com/kubernetes-sigs/wg-policy-prototypes[grupo de trabalho de políticas do Kubernetes] (marcado como descontinuado desde a v1.30, não instalado nem criado por padrão desde a v1.30, programado para remoção em uma versão futura).
+
+== Instalação
+
+O componente Scanner de Auditoria está disponível desde {short-project-name} `v1.7.0`.
+Portanto, certifique-se de que está instalando o gráfico do Helm com a versão do app `v1.7.0` ou superior.
+
+. Instale o gráfico do Helm `kubewarden-crds`. O gráfico instala os CRDs necessários `PolicyReport` por padrão.
++
+[subs="+attributes",console]
+----
+helm install kubewarden-crds kubewarden/kubewarden-crds
+----
++
+
+[NOTE]
+====
+Com o Kubewarden 1.33, o recurso Scanner de Auditoria salva os relatórios em CRDs OpenReports de [openreports.io](https://openreports.io) por padrão.
+
+Os CRDs link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] do grupo de trabalho de políticas do K8s não são instalados por padrão, estão marcados como descontinuados e serão removidos em uma versão futura.
+
+Usuários que desejam continuar usando os PolicyReports descontinuados, ou seja, o comportamento anterior à 1.33, precisam: - Alterar o valor do gráfico do Helm `kubewarden-crds` de `.Values.install.installPolicyReportCRDs` para `true`. - Alterar o valor do gráfico do Helm `kubewarden-controller` de `.Values.auditScanner.reportCRDsKind` de `openreports` para `policyreport`.
+====
++
+[CAUTION]
+====
+Para armazenar os resultados dos relatórios de políticas, você precisa ter as definições de recursos personalizados (CRDs) do PolicyReport disponíveis. Se os CRDs do PolicyReport necessários já estiverem no cluster, você não pode instalá-los usando o gráfico kubewarden-crds. Nesse caso, você pode desabilitar a instalação dos CRDs do OpenReport definindo `installOpenReportCRDs` como `false` no gráfico (ou `installPolicyReportCRDs` como `false` se estiver usando os PolicyReports descontinuados).
+Isso significa que a pilha Kubewarden não gerenciará esses CRDs, e a responsabilidade é dos administradores.
+
+Veja mais informações sobre os CRDs no repositório do link:https://github.com/kubernetes-sigs/wg-policy-prototypes[grupo de trabalho de políticas].
+
+====
+
+
+. Instale o gráfico do Helm `kubewarden-controller`.
++
+[subs="+attributes",console]
+----
+helm install kubewarden-controller kubewarden/kubewarden-controller
+----
++
+
+[NOTE]
+====
+O Scanner de Auditoria está habilitado por padrão. Para desabilitá-lo, defina o `auditScanner.enable=false`.
+====
++
+[NOTE]
+====
+Se você quiser que o Scanner de Auditoria salve seus relatórios nos CRDs do PolicyReports (marcados como descontinuados) em vez dos CRDs padrão do OpenReports, defina `auditScanner.reportCRDsKind="policyreport"`.
+====
+
+Para mais informações sobre a instalação de {short-project-name}, consulte o xref:quick-start.adoc[Guia de Início Rápido].
+
+Por padrão, a implementação do Scanner de Auditoria é como um https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob] acionado a cada 60 minutos. Você pode ajustar isso e outras configurações do Scanner de Auditoria alterando o gráfico do kubewarden-controller https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml].
+
+Veja xref:explanations/audit-scanner/audit-scanner.adoc[aqui] mais informações sobre o Scanner de Auditoria.
+
+=== Interface do Usuário do Policy Reporter (opcional)
+
+O gráfico `kubewarden-controller` vem com um subgráfico do https://kyverno.github.io/policy-reporter[Policy Reporter]. Está desabilitado por padrão e pode ser habilitado definindo `auditScanner.policyReporter=true`. Os valores do subgráfico do Policy Reporter estão sob a chave `policyReporter` dos valores `kubewarden-controller`.
+
+Isso instala apenas parte do gráfico upstream do Policy Reporter, a UI, que fornece uma visualização dos PolicyReports e ClusterPolicyReports em um cluster. Veja xref:explanations/audit-scanner/audit-scanner.adoc[Scanner de Auditoria] para mais informações sobre a UI do Policy Reporter.
+
+Por padrão, a UI do Policy Reporter é exposta apenas como um serviço ClusterIP com o nome `kubewarden-controller-ui` no namespace de instalação de
+
+O gráfico `kubewarden-controller` foi instalado.
+
+==== Ingress
+
+Os usuários podem fornecer sua própria configuração de Ingress ou habilitar um Ingress através da configuração do subgráfico https://github.com/kyverno/policy-reporter/blob/policy-reporter-2.19.4/charts/policy-reporter/charts/ui/values.yaml#L172-L189[aqui].
+
+Veja este exemplo de configuração de Ingress via o subgráfico:
+
+[subs="+attributes",yaml]
+----
+auditScanner:
+  policyReporter: true
+policy-reporter: # subchart values settings
+  ui:
+    enabled: true
+    ingress:
+      enabled: true
+      hosts:
+        - host: "*.local" # change this to your appropriate domain
+          paths:
+            - path: /
+              pathType: ImplementationSpecific
+----
+
+==== Encaminhamento de porta
+
+Para uma visão rápida ou depuração, pode-se configurar um encaminhamento de porta para o serviço com:
+
+[subs="+attributes",console]
+----
+kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
+----
+
+O que torna a interface do Policy Reporter disponível em `\http://localhost:8082`.
+
+== Acionar execução manual
+
+A implementação do Scanner de Auditoria é como um Cronjob que roda a cada 60 minutos por padrão. É possível acionar uma execução manual rodando o seguinte comando:
+
+[subs="+attributes",bash]
+----
+kubectl create job \
+    --namespace kubewarden \
+    --from cronjob/audit-scanner \
+    audit-scanner-manual-$(date +%Y-%m-%d-%H-%M-%S)
+----
+
+Você pode verificar o status do trabalho com:
+
+[subs="+attributes",console]
+----
+kubectl get -n kubewarden jobs
+----

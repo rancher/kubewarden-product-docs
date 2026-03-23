@@ -1,0 +1,22 @@
+include::partial$variables.adoc[]
+= Test des stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à créer et à tester des stratégies {project-name} avec {project-name} pour une gestion sécurisée des clusters.
+:doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "personnes", "auteur de stratégie", "opérateur de cluster"]
+:sidebar_label: Test des stratégies
+:current-version: {page-origin-branch}
+
+== Personas de test des stratégies
+
+Cette section traite du sujet des tests des stratégies {project-name}.
+Il y a deux personas intéressés par le test des stratégies :
+
+* *Développeur de stratégie* : vous rédigez une stratégie {short-project-name} et vous souhaitez vous assurer que votre code se comporte comme vous l'attendez.
+* *Opérateur de cluster* : vous avez trouvé une stratégie {short-project-name} et vous souhaitez tester et ajuster les paramètres de la stratégie avant de la déployer.
+Vous souhaitez continuer à tester ces paramètres dans vos pipelines CI/CD et d'autres tâches administratives.
+
+Les sections suivantes de la documentation montrent comment ces personas peuvent tester des stratégies {short-project-name}.

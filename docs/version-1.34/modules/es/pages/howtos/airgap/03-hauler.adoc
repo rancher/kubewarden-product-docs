@@ -1,0 +1,195 @@
+include::partial$variables.adoc[]
+
+= Instalación en entorno aislado con Hauler
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Utiliza Hauler para instalar {project-name} en entornos aislados.
+:keywords: ["{project-name}", kubewarden, kubernetes, instalación en entorno aislado, hauler]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manual-del-operador, entorno aislado, instalación, hauler
+
+Esta guía te muestra cómo instalar {project-name} en entornos aislados utilizando link:https://docs.hauler.dev/docs/intro[Hauler]. Hauler es una herramienta que ayuda a los usuarios a ejecutar cargas de trabajo en entornos aislados. Mueve los recursos necesarios para las aplicaciones a esos entornos aislados.
+
+{short-project-name} proporciona un archivo de manifiesto con todos los recursos necesarios para ejecutar {short-project-name} en un entorno privado. Esta documentación describe cómo puedes utilizarlo. Consulta la documentación de Hauler para aprender más sobre ello.
+
+El flujo de trabajo básico utilizando el manifiesto de Hauler es:
+
+. Consíguelo desde una página de lanzamiento de {short-project-name}
+. Carga todos los recursos necesarios para ejecutar {short-project-name} en un almacén local
+. Expórtalos a un archivo
+. Mueve el archivo al entorno privado.
+. Carga los recursos en Hauler ejecutándose dentro del entorno privado.
+. Copia todo en un registro, para ser utilizado en el proceso de instalación, en tu entorno aislado.
+
+== Descarga el manifiesto de Hauler desde la página de lanzamiento del gráfico de Helm
+
+Descarga `hauler_manifest.yml` desde la {short-project-name}link:https://github.com/kubewarden/helm-charts/releases/[página de lanzamiento].
+
+Sincroniza los recursos definidos en el manifiesto a tu almacén de Hauler:
+
+[source,shell]
+----
+hauler store sync --filename hauler_manifest.yaml
+----
+
+Hauler descarga todos los recursos del manifiesto al almacén local. Este proceso tarda unos minutos. Cuando se complete, podrás ver los recursos sincronizados con el comando `hauler store info`.
+
+== Genera el archivo tarball con todos los recursos de {short-project-name}.
+
+Ejecuta el comando Hauler para exportar todos los recursos previamente cargados en el almacén a un archivo:
+
+[source,shell]
+----
+hauler store save --filename kubewarden-resources.tar.zst
+----
+
+[NOTE]
+====
+
+Las imágenes de contenedor de {short-project-name} son compatibles con arquitecturas x86_64 y de la familia de arquitecturas ARM. Por lo tanto, cuando guardes el recurso en el archivo, podrás ver mensajes de advertencia como este:
+
+[source,shell]
+----
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter:3.3.3]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter-ui:2.4.1]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/policy-server:v1.27.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/audit-scanner:v1.27.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/rancher/kuberlr-kubectl:v5.0.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/kubewarden-controller:v1.27.0]
+----
+
+Para evitar este mensaje de advertencia, puedes establecer la bandera CLI `--platform` para definir qué arquitectura de plataforma deseas guardar en el archivo.
+
+====
+
+== Transfiere el tarball a tu entorno aislado.
+
+Ahora que tienes todos los recursos de {short-project-name} en `kubewarden-resources.tar.zst`, cópialo en tu entorno aislado y cárgalo en el almacén de Hauler allí:
+
+[source,shell]
+----
+hauler store load --filename kubewarden-resources.tar.zst
+# Check if the resources are loaded
+hauler store info
+----
+
+Ahora todos los recursos necesarios para instalar {short-project-name} están en el almacén de Hauler en tu entorno aislado.
+
+== Poblar el registro privado
+
+Para utilizar los recursos de tu almacén de Hauler, es necesario hacerlos disponibles en un registro interno. Puedes usar comandos de Hauler para copiarlos en tu registro privado.
+
+[source,shell]
+----
+hauler store copy registry://localhost:5000
+----
+
+También puedes ejecutar Hauler para iniciar un registro con todos los recursos del almacén. Este registro no es seguro, y necesitas adaptar la configuración del clúster:
+
+[source,shell]
+----
+# Find IP address of your host
+# hostname -I
+
+# Update registries.yaml for k3s based cluster to allow insecure access
+# mirrors:
+#   "<HOST_IP>:5000":
+#     endpoint:
+#       - "http://<HOST_IP>:5000"
+# configs:
+#   "<HOST_IP>:5000":
+#     tls:
+#       insecure_skip_verify: true
+
+# Configure policy-server to allow pulling policies from insecure sources
+# helm install .. kubewarden-defaults .. --set policyServer.insecureSources[0]=<HOST_IP:5000>
+
+hauler store serve registry
+----
+
+Esto inicia un registro en la dirección `localhost:5000`. A partir de este momento, puedes usar otros comandos como Skopeo para copiar todas las imágenes de contenedor, módulos de directiva y gráficos de Helm utilizados por {short-project-name} en tu registro privado.
+
+== Instalar {short-project-name}
+
+Ahora que tu registro privado tiene todo lo necesario, puedes instalar {short-project-name}. La diferencia con una instalación estándar de {short-project-name} es que necesitas cambiar el registro en las imágenes de contenedor y directivas para que sea el registro privado. Además, necesitas instalar los gráficos de Helm de los artefactos OCI.
+
+Instala el {short-project-name}stack:
+
+[source,shell]
+----
+helm install --wait -n kubewarden kubewarden-crds --create-namespace \
+    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-crds
+helm install --wait -n kubewarden kubewarden-controller \
+    --set "global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>" \
+    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-controller
+----
+
+[CAUTION]
+====
+
+Para usar el subgráfico Policy Reporter disponible en el `kubewarden-controller` gráfico, necesitas definir otros valores específicos para el subgráfico en un entorno aislado. Consulta un ejemplo a continuación:
+
+[source,shell]
+----
+helm install --wait -n kubewarden kubewarden-controller oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-controller \
+    --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set auditScanner.policyReporter=true \
+    --set policy-reporter.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.image.repository=kyverno/policy-reporter \
+    --set policy-reporter.ui.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set policy-reporter.ui.image.repository=kyverno/policy-reporter-ui
+----
+
+Es necesario definir `auditScanner.policyReporter` y otros cuatro valores para habilitar el subgráfico y configurar el registro y el repositorio con la ubicación del almacén de imágenes de Policy Reporter. Para más información sobre los valores del subgráfico de informes de directivas, consulta la \link:https://kyverno.github.io/policy-reporter-docs/getting-started/helm.html[documentación de Policy Reporter].
+
+====
+
+[source,shell]
+----
+helm install --wait -n kubewarden \
+  kubewarden-defaults oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/kubewarden-defaults \
+  --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>
+----
+
+Finalmente, configura cada Servidor de Directivas para obtener directivas de tu registro privado. Consulta la xref:/howtos/policy-servers/02-private-registry.adoc[sección usando registro privado] de la documentación.
+
+Ahora crea {short-project-name} directivas en tu clúster. Las directivas deben estar disponibles en tu registro privado.
+
+[source,yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: privileged-pods
+spec:
+  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v0.2.2
+  rules:
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+    operations:
+    - CREATE
+  mutating: false
+EOF
+----
+
+[CAUTION]
+====
+
+Los `PolicyServer`recursos deben utilizar la imagen disponible en tu registro privado.
+Por ejemplo:
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: reserved-instance-for-tenant-a
+spec:
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
+  replicas:
+----
+
+====

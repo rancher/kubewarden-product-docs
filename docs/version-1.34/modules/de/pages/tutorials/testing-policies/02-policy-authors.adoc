@@ -1,0 +1,100 @@
+include::partial$variables.adoc[]
+= Testen für Richtlinienautoren
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Erfahren Sie, wie Sie Richtlinienautoren mit kwctl testen, entweder mit bats oder Standardtests, speziell für {project-name} Richtlinien in Wasm.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["testing-policies", "policy-authors"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "Richtlinientests", "Richtlinienautoren", "Rust", "Go", "AssemblyScript", "Entwicklungsumgebung"]
+:current-version: {page-origin-branch}
+
+{project-name} Richtlinien sind reguläre Programme, die als WebAssembly (Wasm) kompiliert werden.
+Wie bei jeder Art von Programm ist eine gute Testabdeckung wichtig.
+
+Richtlinienautoren können ihre bevorzugten Entwicklungsumgebungen verwenden.
+Sie können vertraute Werkzeuge und Testframeworks verwenden, um die Entwicklung zu überprüfen.
+
+Diese {short-project-name} Richtlinien sind Beispiele, die in xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] und xref:tutorials/writing-policies/go/01-intro-go.adoc[Go] geschrieben sind:
+
+* https://github.com/kubewarden/psp-apparmor[psp-apparmor]
+* https://github.com/kubewarden/ingress-policy[ingress-policy]
+
+Sie haben Testsuiten, die Standardtests für ihre Entwicklungsumgebungen verwenden.
+
+Die Richtlinien verwenden GitHub Actions für ihre CI-Pipelines.
+
+== End-to-End-Tests
+
+Sie können auch Tests schreiben, die gegen die Wasm-Binärdatei ausgeführt werden, die Ihre Richtlinie enthält.
+Um dies zu tun, ohne einen Kubernetes-Cluster bereitstellen zu müssen, können Sie diese Werkzeuge verwenden:
+
+* https://github.com/bats-core/bats-core[bats]: ist dazu da, Tests zu schreiben und deren Ausführung zu automatisieren.
+* https://github.com/kubewarden/kwctl[`kwctl`]: {short-project-name}'s Standard-Kommandozeilenschnittstelle, die Ihnen bei richtlinienbezogenen Operationen hilft; pull, inspect, annotate, push und run.
+
+Um `kwctl run` zu verwenden, benötigen Sie Folgendes:
+
+. Die Wasm-Binärdatei-Referenz der auszuführenden Richtlinie.
+Die {short-project-name}-Richtlinie kann geladen werden von:
+ ** dem lokalen Dateisystem (`file://`)
+ ** einem HTTP(s)-Server (`https://`)
+ ** einer OCI-Registry (`registry://`).
+. Das Zulassungsanfrageobjekt zum Testen.
+Sie geben es über das `--request-path`-Argument an, oder auf `stdin`, indem Sie `--request-path` auf `-` setzen.
+. Die Richtlinieneinstellungen für die Laufzeit als Inline-JSON über das `--settings-json`-Flag.
+Oder eine JSON- oder YAML-Datei, die vom Dateisystem über `--settings-path` geladen wird.
+
+Nach dem Test `kwctl` wird das `ValidationResponse`-Objekt auf der Standardausgabe ausgegeben.
+
+So verwenden Sie `kwctl`, um die Wasm-Binärdatei der zuvor erwähnten https://github.com/kubewarden/ingress-policy[`ingress-policy`] zu testen:
+
+[subs="+attributes",console]
+----
+$ curl https://raw.githubusercontent.com/kubewarden/ingress-policy/v0.1.8/test_data/ingress-wildcard.json 2> /dev/null | \
+    kwctl run \
+        --settings-json '{"allowPorts": [80], "denyPorts": [3000]}' \
+        --request-path - \
+        registry://ghcr.io/kubewarden/policies/ingress:v0.1.8 | jq
+----
+
+Sie können vorgefertigte Binärdateien von `kwctl`
+https://github.com/kubewarden/kwctl/releases[hier] herunterladen.
+
+Mit `bats` können Sie einen Test schreiben, der diesen Befehl ausführt und nach den erwarteten Ausgaben sucht:
+
+.Ein Bats-Test
+[%collapsible]
+======
+
+[,bash]
+----
+@test "all is good" {
+  run kwctl run \
+    --request-path test_data/ingress-wildcard.json \
+    --settings-json '{"allowPorts": [80], "denyPorts": [3000]}' \
+    ingress-policy.wasm
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # settings validation passed
+  [[ "$output" == *"valid: true"* ]]
+
+  # request accepted
+  [[ "$output" == *"allowed: true"* ]]
+}
+----
+
+======
+
+Sie können den Code zum Beispiel in eine Datei, `e2e.bats`, einfügen und dann `bats` wie folgt aufrufen:
+
+[subs="+attributes",console]
+----
+$ bats e2e.bats
+ ✓ all is good
+
+1 tests, 0 failures
+----
+
+xref:tutorials/writing-policies/go/05-e2e-tests.adoc[Dieser] Abschnitt der Dokumentation enthält weitere Informationen zum Schreiben von End-to-End-Tests Ihrer Richtlinien.

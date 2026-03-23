@@ -1,0 +1,68 @@
+include::partial$variables.adoc[]
+= 升级路径
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用支持的版本策略和组件之间的兼容性规则来升级您的{project-name}堆栈。
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["operator-manual", "upgrade-path"]
+:doc-type: ["reference"]
+:keywords: ["upgrade path", "support"]
+:sidebar_label: 升级路径
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {project-name}堆栈版本控制
+
+{short-project-name}项目使用https://semver.org/[语义版本控制]来定义所有组件的"堆栈"版本：版本遵循`MAJOR.MINOR.PATCH`模式。支持的版本是最新发布的版本。
+
+遵循"堆栈"版本规则的{short-project-name}组件有：
+
+* `kubewarden-crds`图表，在其appVersion字段中。
+
+* `kubewarden-controller`图表，在其appVersion字段中。
+
+* `kubewarden-defaults`图表，在其appVersion字段中。
+
+* `policy-server`手动部署的镜像标签。默认资源已由`kubewarden-defaults`图表管理。
+
+* `kwctl`二进制文件。
+
+== 组件之间的堆栈版本兼容性
+
+`kubewarden-crds`图表、`kubewarden-controller`图表、`kubewarden-defaults`图表、任何手动部署的`policy-server`镜像，以及`kwctl`应运行相同的`MAJOR`.`MINOR`.`PATCH`版本。
+
+因此，如果运行的`kubewarden-controller`版本是`1.1.2`，则使用的``policy-server``s和`kwctl`版本也应为`1.1.2`。
+
+== Helm 图表版本
+
+Helm 图表定义了`version`字段和`appVersion`字段。`appVersion`字段指示了{short-project-name}中提到的"堆栈"版本。`version`字段也遵循https://semver.org/[语义版本控制]，并描述图表模板和`values.yaml`中的向后兼容更改。
+
+== 升级路径
+
+在升级组件时，您可以在一次操作中升级多个`PATCH`堆栈版本。但是，在一次升级中升级多个`MAJOR`或`MINOR`堆栈版本是*不*支持的。
+
+例如，您可以在一次升级中将组件从版本`1.1.10`升级到`1.1.nn`。但是，不支持从`1.1.10`升级到`1.5.0`。在这些情况下，您必须逐个升级到两个版本之间的每个`MAJOR`/`MINOR`版本。因此，有必要依次升级`1.1.10`到`1.2.0`，然后是`1.3.0`，再到`1.4.0`，最后到`1.5.0`。要将一个`MAJOR`版本升级到另一个版本，您需要应用两个`MINOR`版本之间的所有`MAJOR`更新。
+
+.示例升级路径支持图
+[mermaid]
+....
+%%{init: "theme": "neutral"}%% 流程图 LR; accTitle:升级路径支持图 accDescr:一个图表，显示{short-project-name}的推荐和支持的升级路径。
+  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|不推荐|1.2.0(1.2.0); 1.0.2-->|不支持|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray:3 5
+  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray:3 5
+....
+
+== 升级顺序
+
+{short-project-name}用户应从`kubewarden-crds`图表开始升级堆栈，然后是`kubewarden-controller`图表。之后，升级`policy-server`（通过`kubewarden-defaults`图表或更新自定义图像）和`kwctl`。
+
+== 降级
+
+降级是*不*支持的，并且{short-project-name}不会对它们进行测试。然而，合理预期它们应该可以工作。
+
+== SDK，策略
+
+不同语言和策略的策略 SDK 由 {short-project-name} 团队维护，遵循各自的语义版本控制。{short-project-name} 支持最新版本。它们不需要升级路径，只需更新到最新版本。
+
+对 {short-project-name} 堆栈的更改可能意味着策略和 SDK 收到更新，以使用最新的 {short-project-name} 功能。{short-project-name} 负责以向后兼容的方式执行这些更新。
+
+例如，添加对审计扫描器（`v1.7.0`）支持的 {short-project-name} 次要版本意味着策略获得了一个新的 `spec.backgroundAudit` 字段。这是可选的，向后兼容，并默认设置为 `true`。

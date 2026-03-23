@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= Matriz de dependencias
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende sobre las dependencias del {project-name}, incluyendo sus restricciones de versión.
+:doc-persona: [“kubewarden-all”]
+:doc-topic: [“manual-del-operador”, “dependencias”]
+:doc-type: [“referencia”]
+:keywords: [“dependency”, “dependencies”, “CRD”, “charts”, “matrix”]
+:sidebar_label: Matriz de dependencias
+:sidebar_position: 10
+:current-version: {page-origin-branch}
+
+Esta página lista las dependencias de {project-name}, con sus restricciones de versión relevantes. Las versiones fuera de los rangos proporcionados pueden funcionar pero no están probadas.
+
+== OpenTelemetry, métricas y dependencias de trazado
+
+En el momento de escribir, el stack de https://opentelemetry.io[OpenTelemetry] sigue mejorando. Sin embargo, aún no es estable, y cambios incompatibles hacia atrás no anunciados todavía ocurren. Los desarrolladores de {short-project-name} se esfuerzan por rastrear los cambios en el stack de OpenTelemetry y ajustarse a ellos. El proyecto se prueba contra un rango funcional conocido del stack de OpenTelemetry, métricas y trazado.
+
+== Dependencias opcionales
+
+Necesarias para características específicas.
+
+[cols=”,^,^,^"]
+|===
+| Dependencia del gráfico | Gráfico de Helm `appVersion` | Gráfico de Helm `version` | Función
+
+| `open-telemetry/opentelemetry-operator` gráfico
+| `≥ 0.104`
+| Ejemplo: `0.97.1`
+| OTEL
+
+| `prometheus-community/kube-prometheus-stack` gráfico
+| `≥ v0.69`
+| Ejemplo: `77.13.0`
+| Métricas
+
+| `jaegertracing/jaeger-operator` gráfico
+| `≥ 1.49 < 2`
+| Ejemplo: `2.57.0`
+| Seguimiento
+
+| `kyverno/policy-reporter` gráfico
+| `≥ 2 < 4`
+| En `kubewarden-controller` gráfico como subgráfico
+| Interfaz de Informes de Directivas
+|===
+
+[cols=",^,^,^"]
+|===
+| Dependencia de CRD | Versión | Gráfico de Helm `version` | Función
+
+| (obsoleto, eliminación programada) `policyreports.wgpolicyk8s.io` CRDs
+| `v1beta1`
+| En `kubewarden-defaults` gráfico o instalado manualmente
+| Escáner de Auditoría
+
+| `openreports.io` CRDs
+| `v1alpha2`
+| En `kubewarden-defaults` gráfico o instalado manualmente
+| Escáner de Auditoría
+|===
+
+== Rancher
+
+{short-project-name} pruebas contra los gráficos de Helm de monitoreo y trazado proporcionados en el repositorio de gráficos de Rancher.

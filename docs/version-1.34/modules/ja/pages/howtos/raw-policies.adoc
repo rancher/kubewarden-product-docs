@@ -1,0 +1,303 @@
+include::partial$variables.adoc[]
+= 生のポリシー
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: {project-name}を使用して、一般的なポリシー評価エンジンとして生ポリシーを構成します。
+:doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "raw policies"]
+:sidebar_label: 生のポリシー
+:sidebar_position: 60
+:current-version: {page-origin-branch}
+
+`v1.9.0`以降、{project-name}はKubernetesクラスターの外部で、一般的なポリシー評価エンジンとしてポリシーを記述および実行する機能をサポートします。
+ポリシーサーバーは、任意のJSONドキュメントを{short-project-name}ポリシーに対して検証するために使用できる`/validate_raw`エンドポイントを公開します。
+
+このガイドでは、次の生ポリシーを使用します：
+
+* https://github.com/kubewarden/raw-validation-policy[raw-validation-policy]
+* https://github.com/kubewarden/raw-mutation-policy[raw-mutation-policy]
+
+[NOTE]
+====
+ポリシーの著者がメタデータでポリシーを`policyType: raw`としてマークしていることを確認してください。
+`kwctl`を使用してメタデータを確認できます。
+
+[subs="+attributes",bash]
+----
+kwctl inspect ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+----
+====
+
+
+== Kubernetesの外部でポリシーサーバーを実行する
+
+ポリシーサーバーは、Kubernetesの外部でスタンドアロンコンテナとして実行できます。
+
+次の内容が含まれる`policies.yml`ファイルを作成します：
+
+[subs="+attributes",yaml]
+----
+raw-validation:
+  module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+  settings:
+    validUsers:
+      - alice
+      - bob
+    validActions:
+      - read
+      - write
+    validResources:
+      - orders
+      - products
+
+raw-mutation:
+  module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+  allowedToMutate: true
+  settings:
+    forbiddenResources:
+      - privateResource
+      - secretResource
+    defaultResource: publicResource
+----
+
+ポリシーサーバーを起動するには：
+
+[subs="+attributes",bash]
+----
+# Create a docker volume to store the policies
+docker volume create --driver local \
+                --opt type=tmpfs \
+                --opt device=tmpfs \
+                --opt o=ui=65533 \
+                policy-store
+
+# Start the policy server
+docker run --rm -it \
+    -p 3000:3000 \
+    -v $(pwd)/policies.yml:/policies.yml \
+    -v policy-store:/registry \
+    ghcr.io/kubewarden/policy-server:1.9.0 \
+    --ignore-kubernetes-connection-failure=true
+----
+
+NOTE: Kubernetesなしでポリシーサーバーを起動するには、フラグ`--ignore-kubernetes-connection-failure=true`が必要です。
+ただし、Kubernetes内でポリシーサーバーを起動し、生の検証エンドポイントを使用することも可能です。
+生ポリシーは、標準ポリシーと同様に、コンテキストに応じたxref:../explanations/context-aware-policies.adoc[機能]にアクセスできます。
+
+== {short-project-name}コントローラーなしでKubernetes内でポリシーサーバーを実行する
+
+{short-project-name}コントローラーによって管理されているポリシーサーバーインスタンスを使用して生ポリシーをホストすることはできません。
+コントローラーは、ユーザーが生ポリシーを追加するためにPolicy Server ConfigMapを変更することを許可しません。なぜなら、変更を元に戻すように調整を試みるからです。
+そのため、専用のPolicy Serverを起動する必要があります。
+
+次の内容が含まれる`policy-server.yaml`ファイルを作成します：
+
+[subs="+attributes",yaml]
+----
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-server
+  template:
+    metadata:
+      labels:
+        app: policy-server
+    spec:
+      containers:
+        - name: policy-server
+          image: ghcr.io/kubewarden/policy-server:v1.9.0
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: policy-store
+              mountPath: /registry
+            - name: policies-config
+              mountPath: /policies.yml
+              subPath: policies.yml
+      volumes:
+        - name: policy-store
+          emptyDir: {}
+        - name: policies-config
+          configMap:
+            name: policies-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-server-service
+spec:
+  selector:
+    app: policy-server
+  ports:
+    - protocol: TCP
+      port: 3000
+      targetPort: 3000
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: policies-configmap
+data:
+  policies.yml: |
+    raw-validation:
+      module: ghcr.io/kubewarden/tests/raw-validation-policy:v0.1.0
+      settings:
+        validUsers:
+          - alice
+          - bob
+        validActions:
+          - read
+          - write
+        validResources:
+          - orders
+          - products
+    raw-mutation:
+      module: ghcr.io/kubewarden/tests/raw-mutation-policy:v0.1.0
+      allowedToMutate: true
+      settings:
+        forbiddenResources:
+          - privateResource
+          - secretResource
+        defaultResource: publicResource
+----
+
+設定を適用します。
+
+[subs="+attributes",bash]
+----
+kubectl apply -f policy-server.yaml
+----
+
+[IMPORTANT]
+====
+デプロイされたPolicy Serverインスタンスは、コンテキストに応じたポリシーで使用されるKubernetesリソースにアクセスできます。
+Kubernetesリソースへのアクセスレベルは、Policy Serverワークロードを実行するために使用されるService Accountによって決まります。
+
+前の例では、デプロイメント仕様内にService Accountが定義されていないため、`default` Service Accountが使用されます。
+====
+
+
+== validate_rawエンドポイントを使用する
+
+=== 検証
+
+生の検証エンドポイントは`/validate_raw`で公開され、`POST`リクエストを受け入れます。
+サービスをデプロイしたので、`kubectl port-forward service/policy-server-service 3000:3000 -n default`を使ってポートフォワードを設定できます。
+
+`raw-validation`ポリシーに従ってJSONドキュメントを検証してみましょう：
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-validation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "customers"
+  }
+}'
+----
+
+リクエストは受け入れられません。なぜなら、`alice`に`customers`リソースへのアクセスが付与されていないからです：
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": false,
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+有効なリソースで再試行してみましょう：
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-validation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "orders"
+  }
+}'
+----
+
+今回は、リクエストが受け入れられます：
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": true,
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+[NOTE]
+====
+リクエストペイロードに`uid`フィールドが提供されている場合、それはレスポンスの一部として返されます。
+====
+
+
+=== ミューテーション
+
+では、`raw-mutation`ポリシーに従ってJSONドキュメントを変更してみましょう：
+
+[subs="+attributes",bash]
+----
+curl -X POST \
+  http://localhost:3000/validate_raw/raw-mutation \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "request": {
+    "user": "alice",
+    "action": "read",
+    "resource": "privateResource"
+  }
+}'
+----
+
+リクエストは変更され、レスポンスにはJSONPatchが含まれます：
+
+[subs="+attributes",json]
+----
+{
+  "response": {
+    "uid": "",
+    "allowed": true,
+    "patchType": "JSONPatch",
+    "patch": "W3sib3AiOiJyZXBsYWNlIiwicGF0aCI6Ii9yZXNvdXJjZSIsInZhbHVlIjoicHVibGljUmVzb3VyY2UifV0=",
+    "auditAnnotations": null,
+    "warnings": null
+  }
+}
+----
+
+== 生のポリシーを書く
+
+Kubernetesリソースを検証するポリシーと同様に、生ポリシーは{short-project-name} SDKを使用してWebAssemblyで記述されます。
+生ポリシーの作成に興味がある場合は、詳細について言語固有のドキュメントを参照してください：
+
+* xref:../tutorials/writing-policies/go/10-raw-policies.adoc[実行]
+* xref:../tutorials/writing-policies/rust/08-raw-policies.adoc[Rust]
+* xref:../tutorials/writing-policies/rego/open-policy-agent/05-raw-policies.adoc[OPA]
+* xref:../tutorials/writing-policies/wasi/02-raw-policies.adoc[WASI]

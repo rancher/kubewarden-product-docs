@@ -1,0 +1,350 @@
+include::partial$variables.adoc[]
+= 为生产配置{project-name}堆栈
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 为 Kubernetes 集群中的{project-name}堆栈配置容忍和亲和性规则，以实现最佳调度和可靠性。
+:keywords: ["{project-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: HOWTO
+:doc-topic: operator-manual, policy-servers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass
+
+{project-name}提供了在Kubernetes集群中确保其组件可靠性和正确调度的功能。本页面上的一些提示来自于大规模使用{short-project-name}的{short-project-name}社区成员。
+
+[IMPORTANT]
+====
+如果您想查看在大规模环境中运行{short-project-name}的真实示例，请查看xref:/howtos/deploy-at-scale.adoc[{short-project-name}文档页面]。
+
+====
+
+== 配置容忍和亲和性/反亲和性
+
+通过使用`tolerations`和`affinity`字段，操作员可以微调{short-project-name}堆栈的调度和可靠性，以满足其特定的部署需求和约束。有关确切字段及其配置的更多详细信息，请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/[Kubernetes关于污点和容忍的文档]和https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[亲和性和反亲和性]。
+
+从{short-project-name}堆栈的1.15版本开始，{short-project-name} Helm图表附带两个新值：
+
+* `.global.tolerations`
+* `.global.affinity`
+
+这些Helm图表值允许用户为{short-project-name}堆栈定义Kubernetes容忍和亲和性/反亲和性设置，包括控制器部署、审计扫描器定时任务和默认的`PolicyServer`自定义资源。
+
+=== 容忍
+
+`tolerations`值是一个数组，用户可以在其中为{short-project-name}组件指定Kubernetes容忍。容忍允许在具有匹配污点的节点上调度Pod。这对于管理Pod的调度位置非常有用，特别是在涉及节点维护、专用工作负载或特定硬件要求的场景中：
+
+[source,yaml]
+----
+global:
+  tolerations:
+    - key: "key1"
+      operator: "Equal"
+      value: "value1"
+      effect: "NoSchedule"
+    - key: "key2"
+      operator: "Equal"
+      value: "value2"
+      effect: "NoExecute"
+----
+
+在此示例中，定义的容忍适用于控制器部署、审计扫描器定时任务和默认的`PolicyServer`自定义资源。
+
+=== 亲和性/反亲和性
+
+`affinity`值允许用户为{short-project-name}组件定义Kubernetes亲和性和反亲和性规则。亲和性规则将Pod限制在特定节点上，而反亲和性规则则防止Pod在某些节点上或与其他Pod靠近调度。这些设置对于确保集群的高可用性、容错性和优化资源使用非常有用。
+
+[source,yaml]
+----
+global:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: security
+                operator: In
+                values:
+                  - S1
+          topologyKey: topology.kubernetes.io/zone
+    podAntiAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 100
+          podAffinityTerm:
+            labelSelector:
+              matchExpressions:
+                - key: security
+                  operator: In
+                  values:
+                    - S2
+            topologyKey: topology.kubernetes.io/zone
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                  - linux
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+              - key: label-1
+                operator: In
+                values:
+                  - key-1
+        - weight: 50
+          preference:
+            matchExpressions:
+              - key: label-2
+                operator: In
+                values:
+                  - key-2
+----
+
+在这个例子中，亲和性规则将应用于控制器部署、审计扫描器定时任务和默认的`PolicyServer`自定义资源。
+
+在`kubewarden-default` Helm图表中，此前用于为`PolicyServer`定义亲和性配置的选项现已被移除，取而代之的是全局的`affinity`值。此更改通过提供一种单一的方法来定义所有{short-project-name}组件的亲和性和反亲和性规则，从而简化了配置过程。
+
+[WARNING]
+====
+`affinity`配置在`kubewarden-default` Helm图表中已被去除。用户现在应使用`.global.affinity`字段来配置整个{short-project-name}堆栈的亲和性和反亲和性设置。
+====
+
+== 配置优先级类
+
+通过使用优先级类，操作员可以为{short-project-name}堆栈的工作负载Pod强制执行调度优先级。这确保了{short-project-name}工作负载在其他工作负载之上可用，防止驱逐并确保服务可靠性。有关更多信息，请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes关于优先级类的文档]。
+
+从{short-project-name}堆栈的版本1.25开始，{short-project-name} Helm图表附带一个新值：
+
+* `.global.priorityClassName`
+
+在此值中按名称定义的优先级类应用于控制器部署Pod和默认`PolicyServer`自定义资源的Pod。
+
+`.global.priorityClassName`值期望一个现有优先级类的名称。作为一个例子，我们可以使用：
+
+[source,yaml]
+----
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: kubewarden-high-priority
+value: 1000000
+globalDefault: false
+description: "This priority class should be used for XYZ service pods only."
+----
+
+Kubernetes已经附带了两个优先级类，它们是不错的候选者：`system-cluster-critical`和`system-node-critical`。这些是常见的类，用于https://kubernetes.io/docs/tasks/administer-cluster/guaranteed-scheduling-critical-addon-pods/[确保关键组件始终优先调度]。
+
+[WARNING]
+====
+如果您删除一个优先级类，使用已删除优先级类名称的现有Pod将保持不变，但后续使用已删除优先级类名称的Pod将不会被Kubernetes创建。
+====
+
+== `PolicyServer`生产配置
+
+`PolicyServers`对集群至关重要。它们的可靠性非常重要，因为它们处理通过验证和变更Webhook发送到Kubernetes API的准入请求。
+
+与其他动态准入控制器一样，此过程发生在请求到达Kubernetes API服务器之前。动态准入控制器的延迟或服务延迟可能会导致集群不一致、拒绝服务或死锁。
+
+{short-project-name}提供了几种方法来提高`PolicyServers`的可靠性。生产部署可能差异很大，具体配置取决于操作员的需求。
+
+=== PodDisruptionBudgets
+
+{short-project-name}控制器可以为`PolicyServer` Pods创建一个https://kubernetes.io/docs/tasks/run-application/configure-pdb/[PodDisruptionBudget]（PDB）。这控制与`PolicyServer`相关的`PolicyServer` Pod副本的范围，确保高可用性，并在节点维护、扩展操作或集群升级时进行受控驱逐。
+
+通过设置`spec.minAvailable`或`spec.maxUnavailable`字段来配置`PolicyServer`资源，从而实现这一目标：
+
+* `minAvailable`：指定必须始终可用的`PolicyServer` Pods的最小数量。可以是整数或百分比。
+
+  Useful for maintaining the operational integrity of the `PolicyServer`,
+  ensuring that policies are continuously enforced without interruption.
+
+* `maxUnavailable`：指定在任何给定时间内可以不可用的`PolicyServer` Pods的最大数量。可以是整数或百分比。
+
+  Useful for performing rolling updates or partial maintenance without
+  fully halting the policy enforcement mechanism.
+
+[NOTE]
+====
+您只能指定`maxUnavailable`和`minAvailable`中的一个。
+====
+
+==== 配置minAvailable或maxUnavailable
+
+.示例：设置minAvailable
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: your-policy-server
+spec:
+  # Other configuration fields
+  minAvailable: 2 # ensure at least two policy-server Pods are available at all times
+----
+
+.示例：设置maxUnavailable
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: your-policy-server
+spec:
+  # Other configuration fields
+  maxUnavailable: "30%" # ensure no more than 30% of policy-server Pods are unavailable at all times
+----
+
+=== 亲和性/反亲和性
+
+{short-project-name}控制器可以设置`PolicyServer` Pods的亲和性。这允许将Pods约束到特定节点，或将Pods与其他Pods进行约束。有关亲和性的更多信息，请参见https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[Kubernetes文档]。
+
+Kubernetes亲和性配置允许将 Pod 约束到节点（通过`spec.affinity.nodeAffinity`）或将 Pod 与其他 Pod 进行约束（通过`spec.affinity.podAffinity`）。亲和性可以设置为软约束（使用`preferredDuringSchedulingIgnoredDuringExecution`）或硬约束（使用`requiredDuringSchedulingIgnoredDuringExecution`）。
+
+亲和性/反亲和性匹配特定标签，无论是节点的标签（例如：`topology.kubernetes.io/zone` 设置为 `antarctica-east1`）还是 Pod 标签。从 `PolicyServer` 定义创建的 Pod 具有一个标签 `kubewarden/policy-server`，该标签设置为 `PolicyServer` 的名称。（例如：`kubewarden/policy-server: default`）。
+
+[NOTE]
+====
+跨 Pod 的亲和性/反亲和性需要大量处理，并且不建议在超过几百个节点的集群中使用。
+====
+
+要为 `PolicyServer` 配置亲和性，请设置其 `spec.affinity` 字段。该字段接受与 Pod 的 `spec.affinity` 内容匹配的 YAML 对象。
+
+==== 配置亲和性/反亲和性
+
+.示例：在区域和主机名之间分散 `PolicyServer` Pod
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: your-policy-server
+spec:
+  # Other configuration fields
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: kubewarden/policy-server
+                operator: In
+                values:
+                  - your-policy-server
+          topologyKey: topology.kubernetes.io/zone
+        - labelSelector:
+            matchExpressions:
+              - key: kubewarden/policy-server
+                operator: In
+                values:
+                  - your-policy-server
+          topologyKey: kubernetes.io/hostname
+----
+
+.示例：仅在控制平面节点中调度 `PolicyServer` Pod
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: your-policy-server
+spec:
+  # Other configuration fields
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: kubewarden/policy-server
+                operator: In
+                values:
+                  - your-policy-server
+          topologyKey: node-role.kubernetes.io/control-plane
+----
+
+=== 限制和请求
+
+{short-project-name} 控制器可以设置 `PolicyServer` Pod 的资源限制和请求。这指定了与 `PolicyServer` Pod 相关的每个容器需要多少每种资源。对于 `PolicyServers`，只有 `cpu` 和 `memory` 资源是相关的。有关资源单位的更多信息，请参见 https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes[Kubernetes 文档]。
+
+通过设置以下 `PolicyServer` 资源字段来实现：
+
+* `spec.limits`：对资源的限制，由容器运行时强制执行。不同的运行时可以有不同的方式来实施限制。
+* `spec.requests`：为每个容器保留的资源量。容器使用超过其 `request` 的资源是可能且允许的。
+
+  If omitted, it defaults to `spec.limits` if that is set (unless
+  `spec.requests` of containers is set to some defaults via an admission
+  mechanism).
+
+[NOTE]
+====
+对 `PolicyServers` 资源承诺不足可能会导致集群内的可靠性问题。
+====
+
+==== 配置限制和请求
+
+.示例：为每个`PolicyServer`容器设置严格的限制
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: your-policy-server
+spec:
+  # Other configuration fields
+  limits:
+    cpu: 500m
+    memory: 1Gi
+----
+
+=== PriorityClasses
+
+{short-project-name} 控制器可以为 `PolicyServers` 的 Pod 设置 PriorityClass。这意味着 `PolicyServer` 工作负载将优先调度，防止驱逐并确保服务可靠性。请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes文档以获取更多信息]。
+
+[WARNING]
+====
+如果您删除一个 PriorityClass，使用已删除 PriorityClass 名称的现有 Pod 将保持不变，但后续使用已删除 PriorityClass 名称的 Pod 将不会被 Kubernetes 创建。
+====
+
+==== 配置优先级类
+
+.示例：使用默认的`system-cluster-critical`优先级类：
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: PolicyServer
+metadata:
+  name: your-policy-server
+spec:
+  # Other configuration fields
+  priorityClassName: system-cluster-critical
+----
+
+=== 隔离策略工作负载
+
+为了确保稳定性和高性能，用户可以运行单独的*`PolicyServer`*部署以隔离不同的工作负载。
+
+* *将一个`PolicyServer`专用于上下文感知策略：*这些策略更消耗资源，因为它们查询Kubernetes API服务器或其他外部服务，如Sigstore、OCI注册表等。隔离它们可以防止慢策略为其他更快的策略造成瓶颈。
+* *为所有其他策略使用另一个`PolicyServer`：*在单独的服务器上运行常规且自包含的策略，以确保最常见的准入请求保持低延迟。
+
+您还可以考虑进一步拆分工作负载。例如，如果您有一些慢的策略并且需要更长的执行超时，请考虑将它们移到专用的`PolicyServer`中。这样可以确保策略不会阻塞工作器评估其他请求。
+
+=== 资源分配和扩展
+
+为了处理高流量并确保可用性，请提供足够的资源并扩展您的副本。
+
+* *分配足够的资源：*在高流量环境中，为每个副本分配充足的资源。不要让`PolicyServers`处于资源不足的状态，因为处理器或内存不足是请求超时的主要原因。请记住，`PolicyServers`将接收来自控制平面和{short-project-name}审计扫描器的请求。
+* *为高可用性进行扩展：*对于处理每秒数百个请求的部署，运行大量副本。这有效地分配了负载，并确保少数几个Pod的故障不会影响集群的操作。
+
+从3-5个副本的基线开始，并监控处理器和内存使用情况。根据需要扩展副本数量。
+
+=== 有效的规模审计
+
+为了在大型集群上高效地运行审计，请针对性能和并行性对审计扫描器进行微调。
+
+* *定期安排审计：*频繁运行扫描可以在捕捉配置漂移和最小化API服务器负载之间取得良好的平衡。
+* *积极调整并行性：*快速审计的关键是并行化。在高并行设置下，您可以将大型集群的审计时间缩短到一个多小时。
+
+[WARNING]
+====
+重要的是要记住，审计扫描器会向`PolicyServers`发送请求。因此，它的并行性可能会影响`PolicyServer`的性能。如果您希望在大型集群中实现积极的并行性以减少扫描时间，您可能需要增加可用的策略服务器资源，以避免影响准入控制器的性能。
+====
+
+如果您从日志中消耗审计结果，并且不需要集群中的策略`disableStore: true`或自定义资源，请设置`Reports``ClusterReports`以减少负载。

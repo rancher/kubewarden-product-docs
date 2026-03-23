@@ -1,0 +1,54 @@
+include::partial$variables.adoc[]
+= 网络能力
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解网络能力以及如何使用主机功能进行DNS查找和通信协议。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "host-capabilities", "network-capabilities"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "策略规范", "网络能力"]
+:sidebar_label: 网络能力
+:current-version: {page-origin-branch}
+
+{project-name} 策略无法在WebAssembly执行上下文中发起网络请求。
+
+网络操作可以通过利用主机暴露的一系列能力来完成。
+
+== DNS主机查找
+
+此功能从策略给定的FQDN开始执行DNS查找。
+
+=== 缓存
+
+查找结果缓存1分钟。
+
+=== 通信协议
+
+这是用于暴露此能力的waPC协议的描述：
+
+==== waPC功能 - `v1/dns_lookup_host` 输入
+
+[,hcl]
+----
+# hostname - JSON encoded string
+string
+----
+
+==== waPC功能 - `v1/dns_lookup_host` 输出
+
+[,hcl]
+----
+
+{
+  # list of IPs
+  "ips": [string]
+}
+----
+
+与给定FQDN相关的所有IP地址将作为字符串在响应中返回。
+IPv4和IPv6条目将作为同一响应的一部分返回。
+
+例如，当请求`busybox:latest`镜像的清单摘要时，负载将是：
+
+* 输入负载：`"google.com"`
+* 输出负载：`{ "ips": ["127.0.0.1"]}`

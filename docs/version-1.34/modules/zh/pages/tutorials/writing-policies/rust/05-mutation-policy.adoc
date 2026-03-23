@@ -1,0 +1,221 @@
+include::partial$variables.adoc[]
+= 创建新的变异策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置一个新的 {project-name} 变异策略，以变更带有自定义注释的传入对象，然后进行测试。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "创建新的变异策略", "变异策略", "rust"]
+:sidebar_label: 创建新的变异策略
+:current-version: {page-origin-branch}
+
+变异策略类似于验证策略，但还具有对传入对象进行变异的能力。
+
+它们可以：
+
+* 拒绝请求
+* 接受请求而不更改传入对象
+* 根据需要变更传入对象并接受请求
+
+编写一个 {project-name} 变异策略并不复杂。
+您将使用前面章节中创建的验证策略，并通过一些更改将其转变为变异策略。
+
+您的策略使用之前定义的相同验证逻辑，但还会为所有具有有效名称的 Pod 添加注释。
+
+尝试创建一个这样的 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+导致创建这个 Pod：
+
+[subs="+attributes",yaml]
+----
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  annotations:
+    kubewarden.policy.demo/inspected: true
+spec:
+  containers:
+    - name: nginx
+      image: nginx:latest
+----
+
+== 编写变异代码
+
+变异代码在 `validate` 函数中。
+您应该更改此函数以使用 https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.mutate_request.html[`mutate_request`] 来批准请求，而不是 https://docs.rs/kubewarden-policy-sdk/0.1.0/kubewarden_policy_sdk/fn.accept_request.html[`accept_request`]。
+
+这就是 `lib.rs` 中的 `validate` 函数应该是的样子：
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?;
+
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        // NOTE 1
+        Ok(mut pod) => {
+            let pod_name = pod.metadata.name.clone().unwrap_or_default();
+            if validation_request
+                .settings
+                .invalid_names
+                .contains(&pod_name)
+            {
+                kubewarden::reject_request(
+                    Some(format!("pod name {:?} is not accepted", pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                // NOTE 2
+                let mut new_annotations = pod.metadata.annotations.clone().unwrap_or_default();
+                new_annotations.insert(
+                    String::from("kubewarden.policy.demo/inspected"),
+                    String::from("true"),
+                );
+                pod.metadata.annotations = Some(new_annotations);
+
+                // NOTE 3
+                let mutated_object = serde_json::to_value(pod)?;
+                kubewarden::mutate_request(mutated_object)
+            }
+        }
+        Err(_) => {
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            kubewarden::accept_request()
+        }
+    }
+}
+----
+
+与之前的代码相比，您进行了三处更改：
+
+. 我们将 `pod` 对象定义为可变，参见 `mut` 关键字。这是必要的，因为我们将扩展其`metadata.annotations`属性。
+// TODO: How best to describe the use of clone().
+. 这是将现有的`annotations`添加新的，并最终将更新后的`annotations`对象放回原始`pod`实例的代码。
+. 将`pod`对象序列化为通用`serde_json::Value`，然后返回一个变异响应。
+
+完成这些更改后，是时候再次运行单元测试了：
+
+[subs="+attributes",console]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.95s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... FAILED
+
+failures:
+
+---- tests::accept_pod_with_valid_name stdout ----
+{"column":5,"file":"src/lib.rs","level":"info","line":34,"message":"starting validation","policy":"sample-policy"}
+thread 'tests::accept_pod_with_valid_name' panicked at src/lib.rs:98:9:
+Something mutated with test case: Pod creation with valid name
+note: run with `+RUST_BACKTRACE=1+` environment variable to display a backtrace
+
+
+failures:
+    tests::accept_pod_with_valid_name
+
+test result: FAILED. 4 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+正如您所看到的，`accept_pod_with_valid_name`失败了，因为响应包含一个变异的对象。
+看起来我们的代码正在正常工作。
+
+== 更新单元测试
+
+您可以将`accept_pod_with_valid_name`中的`lib.rs`更新为如下所示：
+
+[subs="+attributes",rust]
+----
+#[test]
+fn accept_pod_with_valid_name() -> Result<(), ()> {
+    let mut invalid_names = HashSet::new();
+    invalid_names.insert(String::from("bad_name1"));
+    let settings = Settings { invalid_names };
+
+    let request_file = "test_data/pod_creation.json";
+    let tc = Testcase {
+        name: String::from("Pod creation with valid name"),
+        fixture_file: String::from(request_file),
+        expected_validation_result: true,
+        settings,
+    };
+
+    let res = tc.eval(validate).unwrap();
+    // NOTE 1
+    assert!(
+        res.mutated_object.is_some(),
+        "Expected accepted object to be mutated",
+    );
+
+    // NOTE 2
+    let final_pod =
+        serde_json::from_value::<apicore::Pod>(res.mutated_object.unwrap()).unwrap();
+    let final_annotations = final_pod.metadata.annotations.unwrap();
+    assert_eq!(
+        final_annotations.get_key_value("kubewarden.policy.demo/inspected"),
+        Some((
+            &String::from("kubewarden.policy.demo/inspected"),
+            &String::from("true")
+        )),
+    );
+
+    Ok(())
+}
+----
+
+与第一次测试相比，有两个更改：
+
+. 更改`assert!`语句，以便请求仍然被接受，但它也包括一个变异的对象。
+. 从响应中变异的对象创建了一个`Pod`实例。
+断言变异后的Pod对象具有正确的`metadata.annotations`。
+
+再次运行测试，这次所有测试都应通过：
+
+[subs="+attributes",shell]
+----
+$ cargo test
+   Compiling demo-a v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 1.25s
+     Running unittests src/lib.rs (target/debug/deps/demo_a-634b88b0dcb6e707)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+正如您所看到的，创建变异策略是简单明了的。

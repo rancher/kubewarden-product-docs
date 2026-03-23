@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= Paramètres de la stratégie
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez les paramètres de la stratégie en utilisant {project-name} pour la validation et la sérialisation des données de la stratégie.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-des-stratégies", "spécification", "paramètres"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "spécification de la stratégie", "paramètres de la stratégie"]
+:sidebar_label: Paramètres de la stratégie
+:current-version: {page-origin-branch}
+
+Le comportement de la stratégie n'est pas rigide, vous pouvez le configurer en fournissant les détails de configuration à la stratégie via le composant d'exécution. L'auteur de la stratégie a la liberté de définir la structure des paramètres de la stratégie.
+
+{project-name} s'occupe de sérialiser les paramètres de la stratégie en JSON et les fournit à la stratégie chaque fois qu'elle est invoquée.
+
+== Validation des paramètres
+
+Les stratégies doivent valider les paramètres fournis par un utilisateur pour vérifier leur exactitude.
+
+Chaque stratégie enregistre une fonction waPC appelée `validate_settings` qui valide les paramètres de la stratégie.
+
+La fonction `validate_settings` reçoit en entrée une représentation JSON des paramètres fournis par l'utilisateur. Cette fonction les valide et renvoie en réponse un objet `SettingsValidationResponse`.
+
+La structure de l'objet `SettingsValidationResponse` est :
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "valid": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+}
+----
+
+Si les paramètres fournis par l'utilisateur sont `valid`, `validate_settings` ignore le contenu de `message`. Sinon, `validate_settings` affiche le contenu de `message`.
+
+[NOTE]
+====
+
+Le {short-project-name} de https://github.com/chimera-kube/policy-server[serveur-de-stratégie] valide tous les paramètres de la stratégie fournis par les utilisateurs au démarrage. Le serveur de stratégie se termine immédiatement avec une erreur si au moins l'une de ses stratégies a reçu des paramètres de configuration incorrects.
+
+====
+
+
+== Par exemple :
+
+Par exemple, considérez la stratégie https://github.com/kubewarden/psp-capabilities[psp-capacités] qui a le format de configuration suivant :
+
+[subs="+attributes",yaml]
+----
+allowed_capabilities:
+- CHOWN
+
+required_drop_capabilities:
+- NET_ADMIN
+
+default_add_capabilities:
+- KILL
+----
+
+La fonction `validate_settings` reçoit en entrée le document JSON suivant :
+
+[subs="+attributes",json]
+----
+{
+  "allowed_capabilities": [
+    "CHOWN"
+  ],
+  "required_drop_capabilities": [
+    "NET_ADMIN"
+  ],
+  "default_add_capabilities": [
+    "KILL"
+  ]
+}
+----
+
+== Récapitulatif
+
+Chaque stratégie doit enregistrer une fonction waPC, `validate_settings`.

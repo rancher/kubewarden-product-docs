@@ -1,0 +1,35 @@
+include::partial$variables.adoc[]
+= ゲートキーパーのサポート
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 中央のゲートキーパーのポリシーにアクセスし、それらをKubernetesのアドミッションコントローラーと統合する方法を学びます。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "gatekeeper", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "rego", "gatekeeper"]
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+ゲートキーパーのサポートは、これらのリリースから始まります：
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+====
+
+
+ゲートキーパーは、Kubernetesとの統合にすぐに使える機能を備えたプロジェクトです。
+
+== 既存のポリシーとの互換性
+
+既存のすべてのゲートキーパーのポリシーは、この章で説明されているように{short-project-name}と互換性があるべきです。
+
+[IMPORTANT]
+====
+これが真実でない場合は、あなたのゲートキーパーのポリシーについて報告してください。私たちは、あなたのゲートキーパーのポリシーが{short-project-name}で動作するように努めます。
+====
+
+
+ポリシーは、`opa` CLIを使用して`wasm`ターゲットにコンパイルする必要があります。
+
+ポリシーの実行については、Open Policy Agentのxref:tutorials/writing-policies/rego/02-builtin-support.adoc[ビルトインサポート]について{short-project-name}でさらに読むことができます。

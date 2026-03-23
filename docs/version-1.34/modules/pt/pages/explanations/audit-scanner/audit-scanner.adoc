@@ -1,0 +1,66 @@
+include::partial$variables.adoc[]
+= O que é o Kubewarden audit scanner?
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Saiba mais sobre o papel do Kubewarden audit scanner em verificar continuamente a conformidade do cluster com as políticas do controlador de admissão em seus clusters.
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "audit-scanner"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "audit scanner", "kubernetes"]
+:sidebar_label: Scanner de Auditoria
+:sidebar_position: 50
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+
+O recurso Kubewarden audit scanner está disponível a partir da versão {project-name} 1.7.0
+
+====
+
+
+O componente `audit-scanner` verifica constantemente os recursos no cluster. Ele sinaliza aqueles que não estão aderindo às políticas {short-project-name} implantadas no cluster.
+
+As políticas evoluem ao longo do tempo. Existem novas implantações de políticas e atualizações de políticas.
+Versões e configurações mudam. Isso pode levar a situações em que recursos já dentro do cluster não estão mais em conformidade. O recurso Kubewarden audit scanner fornece aos administradores do Kubernetes uma ferramenta que verifica constantemente o estado de conformidade de seus clusters.
+
+Para explicar o uso do Kubewarden audit scanner em {short-project-name}, considere o seguinte cenário.
+
+Suponha que Bob esteja implantando um Pod WordPress no cluster. Bob é novo no Kubernetes, comete um erro e implanta o Pod executando como um contêiner privilegiado. Neste ponto, não há política impedindo isso, então o Pod é criado com sucesso no cluster.
+
+Alguns dias depois, Alice, a administradora do Kubernetes, aplica uma política {short-project-name} que proíbe a criação de contêineres privilegiados. O Pod implantado por Bob continua em execução no cluster, pois já existe.
+
+Um relatório gerado pelo Kubewarden audit scanner permite que Alice identifique todas as cargas de trabalho que estão violando as políticas de criação. Isso inclui o Pod WordPress criado por Bob.
+
+O Kubewarden audit scanner opera da seguinte forma:
+
+* identificando todos os recursos a serem auditados
+* para cada recurso, ele constrói uma solicitação de admissão sintética com os dados do recurso
+* ele envia cada solicitação de admissão para um endpoint de servidor de políticas que é exclusivo para solicitações de auditoria
+
+Para a política que avalia a solicitação, não há diferenças entre solicitações reais ou de auditoria. Este endpoint do servidor de políticas de auditoria possui instrumentação para coletar dados sobre a avaliação. Assim, os usuários podem usar suas ferramentas de monitoramento para analisar os dados do Kubewarden audit scanner.
+
+== Ativar Kubewarden audit scanner
+
+Você pode ativar o Kubewarden audit scanner a partir da versão {short-project-name} 1.7.0.
+
+Instruções detalhadas de instalação estão em xref:howtos/audit-scanner.adoc[procedimentos do Kubewarden audit scanner].
+
+== Políticas
+
+Por padrão, o Kubewarden audit scanner avalia todas as políticas. Operadores que desejam pular uma avaliação de política no Kubewarden audit scanner devem definir o campo `spec.backgroundAudit` como `false` na definição da política.
+
+Além disso, as políticas em {short-project-name} agora suportam duas anotações opcionais:
+
+* A anotação `io.kubewarden.policy.severity` permite especificar o nível de severidade da violação da política, como `critical`, `high`, `medium`, `low` ou `info`.
+* A anotação `io.kubewarden.policy.category` permite categorizar a política com base em um domínio ou propósito específico, como `PSP`, `compliance` ou `performance`.
+
+Consulte a xref:tutorials/writing-policies/index.adoc[documentação dos autores da política] para mais informações.
+
+== Permissões e ServiceAccounts
+
+O Kubewarden audit scanner em {short-project-name} requer configurações específicas de controle de acesso com base em função (RBAC) para poder escanear recursos do Kubernetes e salvar os resultados. A instalação cria uma Conta de Serviço padrão correta com essas permissões. O usuário pode criar sua própria ServiceAccount para configurar o acesso aos recursos.
+
+O Kubewarden audit scanner padrão `ServiceAccount` se vincula ao `view` `ClusterRole` fornecido pelo Kubernetes. Este `ClusterRole` permite acesso somente leitura a uma ampla gama de recursos do Kubernetes dentro de um namespace. Você pode encontrar mais detalhes sobre este papel na https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles[documentação do Kubernetes].
+
+O Kubewarden audit scanner se vincula a um `ClusterRole` que concede acesso de leitura a {short-project-name} tipos de recursos e acesso de leitura e gravação aos `PolicyReport` CRDs.  Essas permissões permitem que o Kubewarden audit scanner busque recursos para realizar avaliações de auditoria e criar relatórios de política com base nos resultados da avaliação.

@@ -1,0 +1,141 @@
+include::partial$variables.adoc[]
+= Início rápido de OpenTelemetry
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configure e implante o coletor OpenTelemetry em modo sidecar usando o gráfico Helm oficial do Kubernetes para uma implantação simples e aprimorada.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "opentelemetry", "quick-start"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "opentelemetry", "open telemetry", "quickstart"]
+:sidebar_label: OpenTelemetry
+:current-version: {page-origin-branch}
+
+https://opentelemetry.io/[OpenTelemetry] é um framework da Cloud Native Computing Foundation (CNCF) para observabilidade. Ele permite que seus microserviços forneçam métricas, logs e rastreamentos.
+
+Os componentes de {project-name}, usando o SDK OpenTelemetry, relatam dados a um coletor OpenTelemetry — chamado de agente.
+
+Este guia explica como implantar o coletor OpenTelemetry em modo `sidecar` usando o gráfico Helm oficial do Kubernetes.
+
+Este é um padrão de implantação simples usando OpenTelemetry. A configuração final fica assim:
+
+* Cada Pod da pilha {short-project-name} (PolicyServer, Controlador) possui um sidecar OpenTelemetry.
+* O sidecar recebe informações de rastreamento e monitoramento do componente {short-project-name} via o Protocolo OpenTelemetry (OTLP)
+* O coletor OpenTelemetry:
+ ** Envia os eventos de rastreamento para uma instância central do Jaeger
+ ** Expõe métricas do Prometheus em uma porta específica
+
+O gráfico Helm {short-project-name} não cobre todos os possíveis cenários de implantação do coletor OpenTelemetry. Também é possível configurar {short-project-name} para enviar dados a um coletor OpenTelemetry. A documentação para esse cenário está no xref:./40-custom-otel-collector.adoc[guia OpenTelemetry personalizado].
+
+Primeiro, você implanta o OpenTelemetry em um cluster Kubernetes, para que possa usá-lo nas seções seguintes que abordam especificamente rastreamento e métricas.
+
+== Configurando um cluster Kubernetes
+
+[NOTE]
+====
+Esta seção contém instruções passo a passo para criar um cluster Kubernetes para os inícios rápidos de telemetria.
+
+Sinta-se à vontade para pular esta seção se você já tiver um cluster Kubernetes disponível.
+====
+
+Você pode criar um cluster Kubernetes para testes usando https://minikube.sigs.k8s.io/docs/[minikube].
+
+O Minikube possui muitos backends; para este caso, você pode usar o driver https://minikube.sigs.k8s.io/docs/drivers/kvm2/[kvm2], que depende do libvirt.
+
+Assumindo que `libvirtd` está rodando corretamente em sua máquina, execute o seguinte comando:
+
+[subs="+attributes",console]
+----
+minikube start --driver=kvm2
+----
+
+O comando produz uma saída semelhante à seguinte:
+
+[subs="+attributes",console]
+----
+$ minikube start --driver=kvm2
+😄  minikube v1.23.2 on Opensuse-Leap 15.3
+✨  Using the kvm2 driver based on user configuration
+👍  Starting control plane node minikube in cluster minikube
+🔥  Creating kvm2 VM (CPUs=2, Memory=6000MB, Disk=20000MB) ...
+🐳  Preparing Kubernetes v1.22.2 on Docker 20.10.8 ...
+    ▪ Generating certificates and keys ...
+    ▪ Booting up control plane ...
+    ▪ Configuring RBAC rules ...
+🔎  Verifying Kubernetes components...
+    ▪ Using image gcr.io/k8s-minikube/storage-provisioner:v5
+🌟  Enabled addons: storage-provisioner, default-storageclass
+🏄  Done! kubectl is now configured to use "minikube" cluster and "default" namespace by default
+----
+
+Depois que o cluster estiver pronto, você pode continuar com o restante do guia.
+
+=== Instale o Traefik
+
+Os seguintes guias de telemetria usam https://traefik.io/traefik/[Traefik] como o controlador Ingress ao expor a interface do usuário do Jaeger com os recursos do Kubernetes `Ingress`.
+
+Instale o Traefik usando seu gráfico Helm:
+
+[,console]
+----
+helm repo add traefik https://traefik.github.io/charts
+helm repo update
+
+helm install --wait \
+  --namespace traefik \
+  --create-namespace \
+  traefik traefik/traefik
+----
+
+Os seguintes guias criam um Kubernetes padrão `Ingress` com `ingressClassName: traefik` e roteiam a interface do usuário de consulta do Jaeger através do serviço Traefik.
+
+Se você preferir não instalar o Traefik, os guias de rastreamento também mantêm `kubectl port-forward` como uma alternativa para acessar o Jaeger diretamente.
+
+[#install-opentelemetry]
+== Instale o OpenTelemetry
+
+[NOTE]
+====
+Consulte a xref:/reference/dependency-matrix.adoc[matriz de dependências] para as versões mais recentes dos componentes suportados.
+====
+
+Você usa o https://github.com/open-telemetry/opentelemetry-operator[Operador OpenTelemetry] para gerenciar a injeção automática do sidecar do coletor OpenTelemetry no pod PolicyServer.
+
+O Operador OpenTelemetry requer a instalação do https://cert-manager.io/docs/installation/[cert-manager] no cluster.
+
+
+[subs="+attributes",console]
+----
+helm repo add jetstack https://charts.jetstack.io
+
+helm install --wait \
+    --namespace cert-manager \
+    --create-namespace \
+    --set crds.enabled=true \
+    --version 1.18.2 \
+    cert-manager jetstack/cert-manager
+----
+
+Uma vez que o cert-manager esteja em execução, você pode instalar o gráfico Helm do operador OpenTelemetry:
+
+[NOTE]
+====
+
+No momento da redação (2024-11-11), a versão mais recente do gráfico do operador OpenTelemetry é `0.65.0`.
+
+====
+
+[subs="+attributes",console]
+----
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+
+helm install --wait \
+  --namespace open-telemetry \
+  --create-namespace \
+  --version 0.97.1 \
+  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
+  my-opentelemetry-operator open-telemetry/opentelemetry-operator
+----
+
+== Integração do OpenTelemetry
+
+Agora você pode passar para os próximos capítulos para habilitar métricas de aplicativo (via integração com Prometheus) e rastreamento de aplicativo (via integração com Jaeger).

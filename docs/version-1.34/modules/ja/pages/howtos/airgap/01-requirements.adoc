@@ -1,0 +1,16 @@
+include::partial$variables.adoc[]
+
+= {project-name}をエアギャップ(された)環境にインストールするための要件
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: エアギャップ(された)環境における{project-name}のインストール要件について学びます。サポートされているプライベートレジストリや互換性の詳細が含まれています。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "エアギャップ", "requirements"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "エアギャップインストール"]
+:sidebar_label: 要件
+:current-version: {page-origin-branch}
+
+. OCIアーティファクトをサポートするプライベートレジストリ。コンテナイメージとポリシーを保存するために必要です。サポートされているオープンコンテナイニシアティブ（OCI）レジストリのリストはxref:reference/oci-registries-support.adoc[こちら]にあります。
+. https://github.com/kubewarden/kwctl[`kwctl`] 1.3.1以上。
+. docker v20.10.6以上。

@@ -1,0 +1,479 @@
+include::partial$variables.adoc[]
+= Migration des stratégies de Gatekeeper vers {project-name}
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurez une stratégie {project-name} en migrant une stratégie Gatekeeper existante à travers deux étapes principales : compiler le code Rego en WebAssembly.
+:keywords: ["{project-name}", kubewarden, gatekeeper]
+:doc-persona:
+  [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
+:doc-type: [howto]
+:doc-topic: [operator-manual]
+
+Ce guide vous montre comment convertir une stratégie Gatekeeper existante en une stratégie {project-name}. Ce processus implique deux étapes principales :
+. Compilez le programme Rego en un module WebAssembly (Wasm).
+. Distribuez le module WebAssembly en tant que stratégie {short-project-name}.
+
+Le tutoriel xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[politiques Rego] couvre la plupart du processus de construction pour compiler le code Rego en un module WebAssembly. Ce guide se concentre sur le processus étape par étape d'extraction des définitions de ressources personnalisées (CRD) de Gatekeeper et de leur migration vers une stratégie {short-project-name} fonctionnelle. Il utilise une stratégie de démonstration de base de Gatekeeper.
+
+== Conditions préalables
+
+* link:https://github.com/open-policy-agent/opa/releases[opa] : vous utilisez cet outil pour compiler le code en wasm. Ce guide a été rédigé en utilisant la version `v1.5.1`.
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`] : outil que vous utilisez pour préparer et exécuter le module WebAssembly {short-project-name}.
+* link:https://github.com/bats-core/bats-core[`bats`] : outil utilisé pour exécuter des tests de bout en bout. Si vous avez décidé d'écrire ce type de tests
+* link:https://github.com/mikefarah/yq[`yq`] : outil utilisé pour extraire des données des fichiers yaml.
+
+== Avant de migrer vos stratégies
+
+Avant de commencer le processus de migration des stratégies de Gatekeeper, envisagez d'utiliser les stratégies déjà disponibles dans le {short-project-name} link:https://artifacthub.io/packages/search?kind=13[catalogue]. Certaines des link:https://github.com/kubewarden/rego-policies-library[stratégies] sont des stratégies OPA et Gatekeeper publiquement disponibles migrées vers {short-project-name}.
+
+De plus, jetez un œil à notre documentation xref:/explanations/comparisons/opa-comparison.adoc[comparaison] entre {short-project-name} et Gatekeeper.
+
+== Étape 1 : Initialisez votre projet de stratégie {short-project-name}
+
+Tout d'abord, utilisez le {short-project-name} Gatekeeper
+link:https://github.com/kubewarden/gatekeeper-policy-template[modèle] pour créer
+une structure de projet de stratégie de base. Cela fournit des cibles Makefile pour construire
+et tester votre stratégie. Après avoir créé le code de la stratégie à partir du modèle,
+exécutez les commandes Makefile pour vérifier que la construction de la stratégie et les tests s'exécutent
+avec succès :
+
+[source,console]
+----
+$ make policy.wasm test
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+tar xvf bundle.tar.gz /policy.wasm
+tar: Removing leading `/' from member names
+/policy.wasm
+rm bundle.tar.gz
+touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
+opa test *.rego
+PASS: 2/2
+----
+
+== Étape 2 : Migrez le code de stratégie Gatekeeper
+
+Maintenant, commencez à migrer la stratégie Gatekeeper. Cela implique de convertir un
+`ConstraintTemplate` et ses ressources associées `Constraint` en une stratégie {short-project-name}. Dans un contexte {short-project-name}, considérez le `ConstraintTemplate` comme le code de stratégie noyau, tandis que les instances `Constraint` se traduisent par des instances de stratégie
+fonctionnant au sein de {short-project-name}.
+
+Tout d'abord, copiez le code Rego de votre `ConstraintTemplate` dans le fichier `policy.rego`
+que le modèle {short-project-name} a généré. Pour cet exemple, vous devez utiliser la
+suivante link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[stratégie de démonstration]
+du dépôt Gatekeeper.
+
+[.details]
+.Stratégie YAML de Gatekeeper
+[%collapsible]
+====
+[source,yaml]
+----
+apiVersion: templates.gatekeeper.sh/v1
+kind: ConstraintTemplate
+metadata:
+  name: k8srequiredlabels
+spec:
+  crd:
+    spec:
+      names:
+        kind: K8sRequiredLabels
+      validation:
+        # Schema for the `+parameters+` field
+        openAPIV3Schema:
+          type: object
+          properties:
+            labels:
+              type: array
+              items:
+                type: string
+  targets:
+    - target: admission.k8s.gatekeeper.sh
+      rego: |
+        package k8srequiredlabels
+
+        violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+          provided := {label | input.review.object.metadata.labels[label]}
+          required := {label | label := input.parameters.labels[_]}
+          missing := required - provided
+          count(missing) > 0
+          msg := sprintf("you must provide labels: %v", [missing])
+        }
+----
+====
+
+Copiez le extrait de code Rego du champ `rego` dans votre fichier `policy.rego` :
+
+[source,console]
+----
+cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
+----
+
+=== Adaptez le code Rego pour {short-project-name}
+
+Vous devez vous assurer que le nom `package` utilisé à l'intérieur du code Rego est `policy`.
+C'est la valeur attendue à de nombreux endroits par le modèle Gatekeeper {short-project-name}.
+
+Si vous ne le changez pas, vous aurez des erreurs lors de la construction de la stratégie et de l'exécution de ses tests de bout en bout.
+
+Par exemple, la stratégie de démonstration que nous convertissons est définie à l'intérieur du paquet `k8srequiredlabels`, cette valeur doit être changée pour être `policy`.
+
+Voici comment le contenu du fichier `policy.rego` doit être :
+
+[source,rego]
+----
+package policy
+
+violation[{"msg": msg, "details": {"missing_labels": missing}}] {
+provided := {label | input.review.object.metadata.labels[label]}
+required := {label | label := input.parameters.labels[_]}
+missing := required - provided
+count(missing) > 0
+msg := sprintf("you must provide labels: %v", [missing])
+}
+----
+
+Essayer de construire le code après ce changement pourrait révéler de nouvelles erreurs de compilation :
+
+[source,console]
+----
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+error: load error: 2 errors occurred during loading:
+policy.rego:3: rego_parse_error: `+if+` keyword is required before rule body
+policy.rego:3: rego_parse_error: `+contains+` keyword is required for partial set rules
+make: *** [Makefile:4: policy.wasm] Error 1
+----
+
+L'auteur de la stratégie doit corriger ces erreurs pour permettre au CLI `opa` de construire le
+code avec succès. Les changements spécifiques peuvent varier en fonction de la version `opa` et du code de stratégie original. Comme nous migrons une stratégie rego antérieure à OPA v1, nous devons mettre à jour le code pour qu'il soit conforme à la v1. Le code final `policy.rego` ressemble à ceci :
+
+[source,rego]
+----
+package policy
+
+violation contains {"msg": msg, "details": {"missing_labels": missing}} if {
+  provided := {label | input.review.object.metadata.labels[label]}
+  required := {label | label := input.parameters.labels[_]}
+  missing := required - provided
+  count(missing) > 0
+  msg = sprintf("you must provide labels: %v", [missing])
+}
+----
+
+Après avoir ajusté le code, construisez la stratégie :
+
+[source,console]
+----
+$ make policy.wasm
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+tar xvf bundle.tar.gz /policy.wasm
+tar: Removing leading `/' from member names
+/policy.wasm
+rm bundle.tar.gz
+touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
+----
+
+Il y a plus d'informations sur la façon de construire des stratégies Gatekeeper dans notre xref:/tutorials/writing-policies/rego/gatekeeper/03-build-and-run.adoc[tutoriel].
+
+=== Code de stratégie Rego et compatibilité avec OPA v1.0.0
+
+Avec la sortie d'OPA (Open Policy Agent) link:https://github.com/open-policy-agent/opa/releases/tag/v1.0.0[v1.0.0] en décembre 2024, un changement majeur a été introduit concernant la syntaxe des stratégies Rego.
+
+Auparavant, `if` pour toutes les définitions de règles et `contains` pour les règles à valeurs multiples étaient optionnels ; maintenant, ils sont obligatoires. Ce changement affecte la plupart des anciennes stratégies.
+
+Voici un résumé de ce que vous devez savoir :
+
+* *Syntaxe OPA v1.0.0* : OPA v1.0.0 impose l'utilisation de `if` pour toutes les définitions de règles et `contains` pour les règles à valeurs multiples. Les stratégies qui ne respectent pas cette syntaxe cesseront de fonctionner.
+* *Compatibilité avec les versions précédentes* : Si vous devez construire des stratégies plus anciennes qui n'utilisent pas la nouvelle syntaxe v1.0.0, vous devez fournir le drapeau `--v0-compatible` à la commande `opa build`.
+* *Intégration de Gatekeeper* : Gatekeeper a mis à jour sa dépendance OPA à v1.0.0 dans sa link:https://github.com/open-policy-agent/gatekeeper/releases/tag/v3.19.0[version 3.19.0].
+* *Version Rego dans les modèles Gatekeeper* : Gatekeeper suppose que la syntaxe `v0` est utilisée à moins que le modèle ne spécifie explicitement `version: "v1"` dans le champ `source` sous `code.engine: Rego`.
+
+Voir link:https://open-policy-agent.github.io/gatekeeper/website/docs/constrainttemplates/#enable-opa-rego-v1-syntax-in-constrainttemplates[cette section] des documents de Gatekeeper pour plus de détails sur la façon dont les versions `v0` et `v1` de Rego sont gérées.
+
+Ce que cela signifie pour vous :
+
+* Si le CR de Gatekeeper ne spécifie pas de version de Rego, cela implique que `v0` sera utilisé. Vous devez construire la stratégie en utilisant la commande `OPA_V0_COMPATIBLE=true make`.
+* Si le CR de Gatekeeper spécifie explicitement `version: "v1"`, vous devez construire la stratégie sans aucune variable d'environnement définie.
+
+== Étape 3 : Mettez à jour et exécutez les tests
+
+Bien que fortement recommandé, les auteurs de stratégies peuvent omettre de créer des tests pour la version initiale d'une stratégie. Si cela vous concerne, vous devrez désactiver les cibles Makefile utilisées pour exécuter les tests. Vous ne pouvez pas supprimer ces cibles entièrement, car les travaux CI par défaut s'attendent à ce qu'elles soient définies. Au lieu de cela, vous devriez remplacer les commandes qui appellent `opa` et `bats` par une opération "no-op". Par exemple, vous pouvez utiliser une commande `echo` pour imprimer une explication sur pourquoi les tests ne sont pas exécutés.
+
+Le modèle Gatekeeper {short-project-name} inclut à la fois des tests unitaires Rego et des tests de bout en bout (e2e) utilisant Bats et `kwctl`. Si vous prévoyez d'inclure des tests, les deux ensembles doivent être adaptés à votre stratégie.
+
+Si votre stratégie Gatekeeper a déjà des tests Rego, vous pouvez les copier dans le fichier `policy_test.rego`. Ils s'exécutent automatiquement lorsque vous exécutez la commande `make test`.
+
+[CAUTION]
+====
+Gardez à l'esprit que tous les tests Rego que vous écrivez dans `policy_test.rego` sont soumis aux mêmes problèmes de compatibilité détaillés dans la section <<_rego_policy_code_and_opa_v1_0_0_compatibility,Code de stratégie Rego et compatibilité OPA v1.0.0>>.
+====
+
+La stratégie que vous migrez dans ce guide n'a pas de tests ; nous devons les ajouter nous-mêmes. Par conséquent, nous mettrons à jour le fichier de test `policy_test.rego` avec quelques tests de base :
+
+[source,rego]
+----
+package policy
+
+review_required_labels := {
+    "parameters": {"labels": ["test"]},
+    "review": {"object": {"metadata": {"labels": {"test": "value"}}}},
+}
+
+review_missing_labels := {
+    "parameters": {"labels": ["test"]},
+    "review": {"object": {"metadata": {"labels": {"other": "value"}}}},
+}
+
+test_accept if {
+    r = review_required_labels
+    res = violation with input as r
+    count(res) = 0
+}
+
+test_reject if {
+    r = review_missing_labels
+    res = violation with input as r
+    count(res) = 1
+}
+----
+
+Maintenant, l'exécution de `make test` devrait valider votre stratégie :
+
+[source,console]
+----
+$ make policy.wasm test
+opa build -t wasm -e policy/violation -o bundle.tar.gz policy.rego
+tar xvf bundle.tar.gz /policy.wasm
+tar: Removing leading `/' from member names
+/policy.wasm
+rm bundle.tar.gz
+touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
+opa test *.rego
+PASS: 2/2
+----
+
+Ensuite, mettez à jour le fichier de tests e2e (`e2e.bats`) :
+
+[source,bash]
+----
+#!/usr/bin/env bats
+
+@test "accept because required label is present" {
+  run kwctl run -e gatekeeper annotated-policy.wasm --settings-path test_data/settings.json --request-path test_data/accept_deploy_request.json
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+
+@test "reject because required label is missing" {
+run kwctl run -e gatekeeper annotated-policy.wasm --settings-path test_data/settings.json --request-path test_data/reject_deploy_request.json
+
+  # this prints the output when one the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : '.*message.*you must provide labels: \[test\]') -ne 0 ]
+}
+----
+
+Vous devrez créer les fichiers `test_data/settings.json`, `test_data/accept_deploy_request.json` et `test_data/reject_deploy_request.json` pour soutenir ces tests.
+
+[.details]
+.test_data/settings.json
+[%collapsible]
+====
+[source,json]
+----
+{
+  "labels": ["test"]
+}
+----
+====
+
+Nous n'inclurons pas le contenu complet de `accept_deploy_request.json` et `reject_deploy_request.json` ici, car `AdmissionRequest` JSON peut être assez long, et nous voulons garder ce guide concis. Cependant, vous pouvez utiliser la commande xref:/reference/kwctl-cli.adoc#_kwctl_scaffold_admission_request[`kwctl scaffold`] pour générer ces fichiers. La clé de ce guide est qu'une demande devrait manquer de l'étiquette requise, tandis que l'autre devrait avoir l'étiquette définie.
+
+Vérifiez si les tests e2e passent :
+
+[source,console]
+----
+$ make e2e-tests
+bats e2e.bats
+e2e.bats
+  ✓ accept because required label is present
+  ✓ reject because required label is missing
+----
+
+[IMPORTANT]
+====
+Les paramètres de la stratégie (par exemple, les étiquettes dans cet exemple) proviennent des paramètres de la stratégie. Cela vous permet de déployer plusieurs instances de la même stratégie avec des paramètres/réglages différents, similaire à la façon dont les contraintes fonctionnent dans Gatekeeper.
+====
+
+== Étape 4 : Préparez `metadata.yml` pour la distribution
+
+Maintenant que vous avez une stratégie fonctionnelle, préparez le fichier `metadata.yml` pour la distribution. Ce fichier définit des annotations avec la description de la stratégie, l'auteur, la licence et d'autres informations essentielles. Essentiellement, il définit le `rules` qui spécifie quelles ressources et verbes la stratégie peut valider. Cette information alimente la commande `kwctl scaffold` pour générer le manifeste pour déployer la stratégie dans votre cluster.
+
+Les CRD `Constraints` de Gatekeeper, qui sont des instances de stratégies définies dans `ConstraintTemplates`, spécifient quelles ressources une instance de stratégie évalue.
+Par conséquent, si vous avez des `Constraints` existants qui appliquent un `ConstraintTemplate`, ils offrent une bonne référence pour les ressources que vous devriez définir dans votre fichier `metadata.yml`. Par exemple, dans l'exemple de Gatekeeper utilisé précédemment, le `K8sRequiredLabels` `Constraint` créé à partir du `k8srequiredlabels` `ConstraintTemplate` s'applique à `Namespaces` :
+
+[source,yaml]
+----
+apiVersion: constraints.gatekeeper.sh/v1beta
+kind: K8sRequiredLabels
+metadata:
+  name: ns-must-have-gk
+spec:
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Namespace"]
+  parameters:
+    labels: ["gatekeeper"]
+----
+
+Sur cette base, mettez à jour la section `rules` de votre `metadata.yml` pour inclure un nouveau `rule` pour valider `namespaces` lors des opérations `CREATE` et `UPDATE` :
+
+[source,yaml]
+----
+rules:
+  - apiGroups: ["apps"]
+    apiVersions: ["v1"]
+    resources: ["deployments"]
+    operations: ["CREATE", "UPDATE"]
+  - apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["namespaces"]
+    operations: ["CREATE", "UPDATE"]
+mutating: false
+contextAware: false
+executionMode: gatekeeper
+backgroundAudit: true
+annotations:
+  io.artifacthub.displayName: Policy Name
+  io.artifacthub.resources: Pod
+  io.artifacthub.keywords: pod, cool policy, kubewarden
+  io.kubewarden.policy.ociUrl: ghcr.io/yourorg/policies/policy-name
+  io.kubewarden.policy.title: policy-name
+  io.kubewarden.policy.version: 0.0.1-unreleased
+  io.kubewarden.policy.description: Short description
+  io.kubewarden.policy.author: "Author name <author-email@example.com>"
+  io.kubewarden.policy.url: https://github.com/yourorg/policy-name
+  io.kubewarden.policy.source: https://github.com/yourorg/policy-name
+  io.kubewarden.policy.license: Apache-2.0
+  io.kubewarden.policy.severity: medium
+  io.kubewarden.policy.category: Resource validation
+----
+
+Maintenant, votre stratégie est prête pour la distribution et le déploiement. Référez-vous à la section xref:/tutorials/writing-policies/rego/gatekeeper/04-distribute.adoc#_pushing_the_policy[Publication de la stratégie] du tutoriel pour apprendre comment la pousser vers un registre distant.
+
+Vous pouvez créer le manifeste de la stratégie en utilisant `kwctl` :
+
+[source,console]
+----
+$ kwctl scaffold manifest --type ClusterAdmissionPolicy annotated-policy.wasm
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: medium
+  name: policy-name
+spec:
+  module: file:///home/jvanz/SUSE/mygatekeeperpolicy/annotated-policy.wasm
+  settings: {}
+  rules:
+  - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    resources:
+    - deployments
+    operations:
+    - CREATE
+    - UPDATE
+  - apiGroups:
+    - ''
+    apiVersions:
+    - v1
+    resources:
+    - namespaces
+    operations:
+    - CREATE
+    - UPDATE
+  mutating: false
+----
+
+=== Définir les paramètres de la stratégie
+
+Cette stratégie a des paramètres, que Gatekeeper définit dans le `Constraint`. Vous devez mettre à jour la section `settings` dans le manifeste de stratégie {short-project-name} généré pour inclure ces paramètres requis. Dans l'exemple suivant, au-delà de la définition des paramètres, vous pouvez tester la stratégie depuis le registre OCI :
+
+[source,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: medium
+  name: policy-name
+spec:
+  module: registry://ghcr.io/jvanz/policies/mygatekeeperpolicy:latest
+  settings:
+    labels:
+      - "gatekeeper"
+  rules:
+    - apiGroups:
+        - apps
+      apiVersions:
+        - v1
+      resources:
+        - deployments
+      operations:
+        - CREATE
+        - UPDATE
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - namespaces
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+----
+
+Essayez de déployer un espace de noms manquant l'étiquette requise `gatekeeper` :
+
+[source,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: your-namespace-name
+  labels:
+    purpose: demo
+EOF
+Error from server: error when creating "STDIN": admission webhook "clusterwide-policy-name.kubewarden.admission" denied the request: you must provide labels: [gatekeeper]
+----
+
+Et un autre espace de noms avec l'étiquette requise :
+
+[source,console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: your-namespace-name
+  labels:
+    purpose: demo
+    gatekeeper: test
+EOF
+
+namespace/your-namespace-name created
+----

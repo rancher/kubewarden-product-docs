@@ -1,0 +1,250 @@
+include::partial$variables.adoc[]
+= Groupes de stratégies
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Apprenez à créer des stratégies complexes en combinant des stratégies plus simples à travers des groupes de stratégies, en utilisant spécifiquement les définitions de AdmissionPolicyGroup et ClusterAdmissionPolicyGroup.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["explications", "groupe de stratégies"]
+:doc-type: ["explanation"]
+:doctype: book
+:keywords: ["{project-name}", "kubewarden", "groupes de stratégies", "groupe de stratégies d'admission de cluster", "groupe de stratégies d'admission"]
+:sidebar_label: Groupes de stratégies
+:sidebar_position: 21
+:current-version: {page-origin-branch}
+
+La fonctionnalité de groupe de stratégies permet aux utilisateurs de créer des stratégies complexes en combinant des stratégies plus simples. Elle introduit deux nouvelles définitions de ressources personnalisées (CRD) :
+
+* `AdmissionPolicyGroup` : pour les stratégies d'admission qui s'appliquent à des espaces de noms spécifiques.
+* `ClusterAdmissionPolicyGroup` : pour les stratégies d'admission qui s'appliquent à l'ensemble du cluster.
+
+Ces groupes de stratégies permettent aux utilisateurs d'utiliser des stratégies existantes, réduisant ainsi le besoin de création de stratégies personnalisées et améliorant la réutilisation. En évitant la duplication de la logique des stratégies, les utilisateurs peuvent simplifier la gestion et créer des stratégies personnalisées avec une configuration de type DSL.
+
+Les groupes de stratégies permettent l'évaluation combinée de plusieurs stratégies à l'aide d'opérateurs logiques. Cela permet la définition d'une logique complexe. Cependant, bien que les stratégies ordinaires puissent inclure une logique de mutation pour modifier les ressources lors de l'admission, les groupes de stratégies ne font que de la validation.
+
+La configuration des groupes de stratégies est similaire à celle des stratégies ordinaires. La différence réside dans l'ajout des champs `expression`, `message` et `policies`, et la déclaration de règles contextuelles à un emplacement différent.
+
+Voici un exemple de `ClusterAdmissionPolicyGroup` que vous pouvez utiliser dans les sections suivantes pour expliquer les différents champs :
+
+.Un `ClusterAdmissionPolicyGroup` qui rejette les Pods utilisant des images avec le tag `latest`, à moins que les images ne soient signées par deux parties de confiance : Alice et Bob.
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    signed_by_alice:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEyg65hiNHt8FXTamzCn34IE3qMGcV
+                yQz3gPlhoKq3yqa1GIofcgLjUZtcKlUSVAU2/S5gXqyDnsW6466Jx/ZVlg==
+                -----END PUBLIC KEY-----
+    signed_by_bob:
+      module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.3.0
+      settings:
+        modifyImagesWithDigest: false
+        signatures:
+          - image: "*"
+            pubKeys:
+              - |
+                -----BEGIN PUBLIC KEY-----
+                MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X
+                urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==
+                -----END PUBLIC KEY-----
+    reject_latest:
+      module: registry://ghcr.io/kubewarden/policies/trusted-repos:v0.2.0
+      settings:
+        tags:
+          reject:
+            - latest
+  expression: "reject_latest() || (signed_by_alice() && signed_by_bob())"
+  message: "the image is using the latest tag or is not signed by Alice and Bob"
+----
+======
+
+== Champs de configuration principaux
+
+Cette section couvre les principaux champs de configuration d'un groupe de stratégies.
+
+=== Attribut `policies`
+
+Le champ des stratégies est un mappage de stratégies ordinaires. {project-name} appelle les stratégies par le groupe de stratégies, pour déterminer s'il faut accepter ou rejeter la ressource en cours d'évaluation. Les définitions de ces stratégies sont une version simplifiée des stratégies ordinaires {short-project-name}, contenant uniquement les attributs `module`, `settings` et `contextAwareResources`. Ces éléments sont nécessaires au bon fonctionnement des stratégies au sein d'un groupe de stratégies.
+
+Un nom unique identifie chaque stratégie du groupe de stratégies. Par exemple, le snippet suivant définit trois stratégies : `signed_by_alice`, `signed_by_bob` et `reject_latest_tag`.
+
+[,yaml]
+----
+policies:
+  signed_by_alice:
+    module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.8
+    settings: {} # settings for the policy
+  signed_by_bob:
+    module: ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.8
+    settings: {} # settings for the policy
+  reject_latest_tag:
+    module: ghcr.io/kubewarden/policies/trusted-repos-policy:v0.2.0
+    settings: {} # settings for the policy
+----
+
+[TIP]
+====
+
+Un groupe de stratégies peut inclure la même stratégie plusieurs fois avec des paramètres différents.
+
+====
+
+
+=== Attribut `expression`
+
+L'attribut `expression` contient une déclaration composée des identifiants de stratégie reliés par des opérateurs logiques.
+
+L'évaluation de la déclaration `expression` doit aboutir à une valeur booléenne.
+
+La représentation des stratégies se fait sous la forme d'une fonction nommée d'après l'identifiant spécifié dans le mappage `.spec.policies`. Les résultats produits par l'évaluation des stratégies sont ensuite évalués à l'aide des opérateurs logiques fournis par l'utilisateur.
+
+Voici les opérateurs pris en charge :
+
+* `&&` : utilisé pour effectuer des opérations de `AND`
+* `||` : utilisé pour effectuer des opérations de `OR`
+* `!` : utilisé pour effectuer des opérations de `NOT`
+
+Vous pouvez utiliser des parenthèses `( )` pour définir les priorités d'évaluation.
+
+Par exemple, étant donné l'expression suivante :
+
+[,console]
+----
+reject_latest() || (signed_by_alice() && signed_by_bob())
+----
+
+La stratégie rejette les charges de travail qui ont des images utilisant le tag `latest`, à moins qu'Alice et Bob n'aient signé les images.
+
+=== L'attribut `message` et le format de réponse
+
+Le champ `message` spécifie le message renvoyé lorsque l'évaluation de `expression` aboutit à un rejet. La réponse inclut le message, ainsi que les résultats de l'évaluation des politiques individuelles.
+
+[IMPORTANT]
+====
+
+L'évaluation des politiques appartenant au groupe n'a lieu que si nécessaire.
+
+Par exemple, étant donné l'expression suivante :
+
+[,console]
+----
+reject_latest() || (signed_by_alice() && signed_by_bob())
+----
+
+Les stratégies `signed_by_bob` et `signed_by_alice` ne sont pas évaluées lorsque la stratégie `reject_latest` renvoie `true`.
+
+De la même manière, la stratégie `signed_by_bob` n'est pas évaluée si les stratégies `signed_by_alice` et `reject_latest` renvoient `false`.
+
+Cela évite des évaluations inutiles des stratégies dans le groupe et permet des réponses rapides aux demandes d'admission.
+
+====
+
+Le système envoie tous les détails d'évaluation des stratégies de groupe dans le cadre de la réponse d'admission `.status.details.causes` lorsqu'une stratégie de groupe effectue un rejet.
+
+Vous pouvez obtenir tous les détails d'une demande d'admission rejetée en augmentant le niveau de verbosité de `kubectl` :
+
+[,shell]
+----
+kubectl -v4 apply -f signed-pod.yml
+I0919 18:29:40.251332    4330 helpers.go:246] server response object: [{
+  "kind": "Status",
+  "apiVersion": "v1",
+  "metadata": {},
+  "status": "Failure",
+  "message": "error when creating \"signed-pod.yml\": admission webhook \"clusterwide-demo.kubewarden.admission\" denied the request: the image is using the latest tag or is not signed by Alice and Bob",
+  "details": {
+    "causes": [
+      {
+        "message": "Resource signed is not accepted: verification of image testing.registry.svc.lan/busybox:latest failed: Host error: Callback evaluation failure: Image verification failed: missing signatures\nThe following constraints were not satisfied:\nkind: pubKey\nowner: null\nkey: |\n  -----BEGIN PUBLIC KEY-----\n  MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEswA3Ec4w1ErOpeLPfCdkrh8jvk3X\n  urm8ZrXi4S3an70k8bf1OlGnI/aHCcGleewHbBk1iByySMwr8BabchXGSg==\n  -----END PUBLIC KEY-----\nannotations: null\n",
+        "field": "spec.policies.signed_by_bob"
+      },
+      {
+        "message": "not allowed, reported errors: tags not allowed: latest",
+        "field": "spec.policies.reject_latest"
+      }
+    ]
+  },
+  "code": 400
+}]
+Error from server: error when creating "signed-pod.yml": admission webhook "clusterwide-demo.kubewarden.admission" denied the request: the image is using the latest tag or is not signed by Alice and Bob
+----
+
+La réponse d'admission complète est disponible dans les journaux du serveur de stratégies lorsqu'il fonctionne en mode débogage. De plus, les détails d'évaluation font toujours partie des traces OpenTelemetry émises par le serveur de stratégies.
+
+== Stratégies sensibles au contexte
+
+Une autre distinction entre les groupes de stratégies et les stratégies ordinaires est l'emplacement de définition des règles de ressources sensibles au contexte. Chaque stratégie dans un groupe accepte un champ `contextAwareResources` optionnel pour spécifier les ressources auxquelles la stratégie peut accéder lors de l'évaluation. De manière similaire aux stratégies ordinaires, vous ne pouvez utiliser les capacités sensibles au contexte qu'en définissant un `ClusterAdmissionPolicyGroup`. C'est pour des raisons de sécurité, car seuls les utilisateurs non privilégiés peuvent déployer des ressources `AdmissionPolicyGroup`. Pour plus de détails, reportez-vous à la documentation des xref:explanations/context-aware-policies.adoc[stratégies sensibles au contexte].
+
+.Un exemple de groupe de stratégies qui utilise une stratégie sensible au contexte.
+[%collapsible]
+======
+[,yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup # or AdmissionPolicyGroup
+metadata:
+  name: demo-ctx-aware
+spec:
+  rules:
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      resources:
+        - services
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+    unique_service_selector:
+      module: registry://ghcr.io/kubewarden/policies/unique-service-selector-policy:v0.1.0
+      contextAwareResources:
+        - apiVersion: v1
+          kind: Service
+      settings:
+        app.kubernetes.io/name: MyApp
+    owned_by_foo_team:
+      module: registry://ghcr.io/kubewarden/policies/safe-annotations:v0.2.9
+      settings:
+        mandatory_annotations:
+          - owner
+        constrained_annotations:
+          owner: "foo-team"
+  expression: "unique_service_selector() || (!unique_service_selector() && owned_by_foo_team())"
+  message: "the service selector is not unique or the service is not owned by the foo team"
+----
+======
+
+Dans l'exemple précédent, la stratégie `unique_service_selector` peut accéder à la ressource `Service`. Cependant, le `owned_by_foo_team` n'a pas accès aux ressources Kubernetes.
+
+== Validation des paramètres
+
+Lorsque le serveur de stratégie démarre, il valide les paramètres des groupes de stratégies et des stratégies ordinaires. Cependant, les groupes de stratégies subissent une étape de validation supplémentaire pour vérifier que l'expression est valide et évalue à une valeur booléenne.
+
+== Scanner d'audit
+
+Comme pour les CRD AdmissionPolicy et ClusterAdmissionPolicy, le champ `backgroundAudit` indique s'il faut inclure le groupe de stratégies lors des xref:../explanations/audit-scanner/audit-scanner.adoc[audits].
+
+== Serveur de stratégies
+
+Vous pouvez étendre le fichier de paramètres `policies.yml` pour inclure des groupes de stratégies aux côtés des stratégies ordinaires. Comme pour les stratégies ordinaires, le téléchargement des modules a lieu une seule fois. Vous utilisez le même module de stratégie à la fois dans un groupe de stratégies et dans une stratégie ordinaire.

@@ -1,0 +1,216 @@
+include::partial$variables.adoc[]
+= 指标快速入门
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用 Prometheus 和通过 Helm 图表启用的 {project-name} 在策略服务器上配置指标报告以进行数据收集。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "kubernetes", "metrics quickstart"]
+:sidebar_label: 指标
+:current-version: {page-origin-branch}
+
+本节记录了如何在策略服务器上启用指标报告。
+
+[NOTE]
+====
+
+在继续之前，请确保您已完成本书的前一节
+xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTelemetry]。您需要它以确保本节正常工作。
+
+====
+
+您使用 https://prometheus.io/[Prometheus] 来收集策略服务器暴露的指标。
+
+== 安装 Prometheus
+
+您使用 https://github.com/prometheus-operator/prometheus-operator[Prometheus
+Operator]，它允许我们定义 Prometheus 的目标。
+
+有很多方法可以安装和设置 Prometheus。为了便于部署，您应该使用 Prometheus 社区 Helm 图表。
+
+使用此 Helm 图表部署的 Prometheus Operator 使用
+https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md#servicemonitor[Service
+Monitors]，以定义 Prometheus 监控哪些服务。
+
+在您的情况下，您正在添加一个 ServiceMonitor，目标是 `kubewarden`
+名称空间中与标签 `app=kubewarden-policy-server-default` 和 `app.kubernetes.io/name: kubewarden-controller` 匹配的服务。这配置了 Prometheus Operator，以检查哪些 Kubernetes 端点属于满足这些条件的服务。
+
+您可以创建两个名为 `kubewarden-controller` 和 `kubewarden-policy-server` 的 ServiceMonitors，以供 Helm 图表安装的默认 Prometheus 实例使用。
+
+为此，您应该创建以下值文件：
+
+[subs="+attributes",console]
+----
+cat <<EOF > kube-prometheus-stack-values.yaml
+prometheus:
+  additionalServiceMonitors:
+    - name: kubewarden
+      selector:
+        matchLabels:
+          app: kubewarden-policy-server-default
+      namespaceSelector:
+        matchNames:
+          - kubewarden
+      endpoints:
+        - port: metrics
+          interval: 10s
+    - name: kubewarden-controller
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: kubewarden-controller
+      namespaceSelector:
+        matchNames:
+          - kubewarden
+      endpoints:
+        - port: metrics
+          interval: 10s
+EOF
+----
+
+您应该安装 Prometheus 堆栈 Helm 图表：
+
+[NOTE]
+====
+在撰写本文时（2023-11-17），最新的图表版本是 `51.5.3`
+====
+
+
+[subs="+attributes",console]
+----
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+
+helm install --wait --create-namespace \
+  --namespace prometheus \
+  --version 51.5.3 \
+  --values kube-prometheus-stack-values.yaml \
+  prometheus prometheus-community/kube-prometheus-stack
+----
+
+== 安装 {short-project-name}
+
+您现在可以以推荐的方式使用 Helm 图表安装 {short-project-name}。
+
+[NOTE]
+====
+
+`cert-manager` 是 OpenTelemetry 的要求，但您已经在本文档的前一节中安装了它。
+
+====
+
+
+首先，您应该添加包含 {short-project-name} 的 Helm 储存库：
+
+[subs="+attributes",console]
+----
+helm repo add kubewarden https://charts.kubewarden.io
+----
+
+然后您安装由 {short-project-name} 定义的自定义资源定义（CRD）：
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden --create-namespace \
+  kubewarden-crds kubewarden/kubewarden-crds
+----
+
+现在您可以部署其余的 {short-project-name} 堆栈。官方 Helm 图表创建一个名为 `default` 的 PolicyServer。
+
+您应该配置 Helm 图表，以便在 {short-project-name} 中启用指标。`kubewarden-values.yaml` 文件应包含以下内容：
+
+[subs="+attributes",yaml]
+----
+telemetry:
+  mode: sidecar
+  metrics: True
+  sidecar:
+    metrics:
+      port: 8080
+----
+
+现在，安装 Helm 图表：
+
+[subs="+attributes",console]
+----
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  --values kubewarden-values.yaml \
+  kubewarden-controller kubewarden/kubewarden-controller
+
+helm install --wait \
+  --namespace kubewarden \
+  --create-namespace \
+  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set recommendedPolicies.enabled=True \
+  --set recommendedPolicies.defaultPolicyMode=monitor
+----
+
+这会创建 `default` 的 `PolicyServer` 实例：
+
+[subs="+attributes",console]
+----
+kubectl get policyservers.policies.kubewarden.io
+NAME      AGE
+default   3m7s
+----
+
+默认情况下，此策略服务器未启用指标。
+
+== 访问 Prometheus
+
+Prometheus 提供一个用户界面，您可以使用它来检查 Kubernetes 集群中不同组件暴露的指标。
+
+您可以转发 Prometheus 端口以便访问。
+
+[subs="+attributes",console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-operated 9090
+----
+
+现在，您可以在端口 `9090` 访问 Prometheus 并执行查询，例如：`kubewarden_policy_evaluations_total`。您可以看到，随着更多请求通过策略，评估的数量随时间增长。
+
+== 访问 Grafana
+
+您可以转发 Grafana 服务以便访问。
+
+[subs="+attributes",console]
+----
+kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
+----
+
+您现在可以使用默认用户名 `admin` 和密码 `prom-operator` 登录。
+
+=== 使用 {short-project-name} Grafana 仪表板
+
+{short-project-name} 拥有一个 Grafana 仪表板，提供基本指标，概述 {short-project-name} 在集群中的表现。该仪表板可在 {short-project-name} policy-server 储存库的 GitHub 发布中作为 https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSON 文件] 或在 https://grafana.com/grafana/dashboards/15314[Grafana 网站] 上获取。
+
+要将仪表板导入到您的环境中，您可以从 Grafana 网站或储存库下载 JSON 文件：
+
+[subs="+attributes",console]
+----
+curl https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json
+----
+
+一旦您拥有该文件，您应该访问 Grafana 仪表板并https://grafana.com/docs/grafana/latest/dashboards/export-import/#import-dashboard[导入它]。在 Grafana 仪表板中访问 `/dashboard/import` 并按照以下步骤操作：
+
+. 将 JSON 文件的内容复制并粘贴到 Grafana UI 中的 `Import via panel json` 框中。
+. 单击 `Load` 按钮。
+. 选择 `Prometheus` 作为数据源。
+. 单击 `Import` 按钮。
+
+另一个选项是直接从 grafana.com 网站导入。为此：
+
+. 从 https://grafana.com/grafana/dashboards/15314[仪表板页面] 复制仪表板 ID，
+. 将其粘贴到 `Import via grafana.com` 字段中。
+. 单击 `load` 按钮。
+. 导入仪表板后，定义要使用的 Prometheus 数据源并完成导入过程。
+
+Grafana 仪表板有面板显示由 {short-project-name} 管理的所有策略的状态。它还具有特定于策略的面板。
+
+您可以通过更改 `policy_name` 变量的值以匹配所需策略的名称来获取特定策略的详细指标。
+
+您应该能够看到类似于此的仪表板：
+
+image::grafana_dashboard.png[仪表板]

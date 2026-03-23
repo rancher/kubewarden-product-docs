@@ -1,0 +1,109 @@
+include::partial$variables.adoc[]
+= ポリシー設定の定義
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: src/types.tsおよびsrc/index.tsファイル内の{project-name}ポリシーを通じて、効果的なポリシー設定構造を定義し、実装します。
+:keywords: "{project-name}", kubewarden, kubernetes, ポリシー設定の定義, TypeScript
+:doc-type: チュートリアル
+:doc-topic: {project-name}, kubewarden, ポリシーの作成, typescript, ポリシー設定の定義
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+[WARNING]
+====
+重大:STDOUTにログ情報を書き込まないでください。
+
+STDOUTへの書き込みはポリシーが正しく動作しなくなります。代わりに、ログ記録にはSTDERRを使用するか、{project-name} SDKが提供するログ記録機能を使用してください。ポリシーのSTDOUTへの出力は、検証応答のみを含む必要があります。
+====
+
+まず、`src/types.ts`にポリシー設定を保持する構造を定義します：
+
+[source,javascript]
+----
+import type { PodSpec } from 'kubernetes-types/core/v1';
+import type { ObjectMeta } from 'kubernetes-types/meta/v1';
+
+/**
+ * Interface representing policy settings structure.
+ */
+export interface PolicySettings {
+  // List of hostnames that are denied by the policy.
+  denied_hostnames?: string[];
+}
+
+/**
+ * Generic Kubernetes resource interface
+ */
+export interface KubernetesResource {
+  apiVersion: string;
+  kind: string;
+  metadata: ObjectMeta;
+  spec?: PodSpec | any;
+}
+----
+
+== 設定インスタンスの構築
+
+{short-project-name}ポリシーは、設定を処理する2つの関数を使用します：
+
+* `validate`:オブジェクトの検証中に呼び出されます。
+* `validateSettings`:ポリシーの読み込み時に呼び出されます。
+
+`src/index.ts`では、`validate`関数は次のようになります：
+
+[source,javascript]
+----
+function validate(): void {
+  try {
+    const validationRequest = Validation.Validation.readValidationRequest();
+    const settings: PolicySettings = validationRequest.settings || {};
+
+    // Policy logic...
+  } catch (err) {
+    console.error('Validation error:', err);
+    writeOutput(Validation.Validation.rejectRequest(`+Validation failed: ${err}+`));
+  }
+}
+----
+
+== 設定の検証の実装
+
+[source,javascript]
+----
+function validateSettings(): void {
+  try {
+    const settingsInput = Validation.Validation.readValidationRequest();
+    const settings: PolicySettings = settingsInput as PolicySettings;
+
+    if (settings.denied_hostnames && !Array.isArray(settings.denied_hostnames)) {
+      const errorResponse = new Validation.Validation.SettingsValidationResponse(
+        false,
+        'denied_hostnames must be an array of strings',
+      );
+      writeOutput(errorResponse);
+      return;
+    }
+
+    for (const hostname of settings.denied_hostnames || []) {
+      if (typeof hostname !== 'string') {
+        const errorResponse = new Validation.Validation.SettingsValidationResponse(
+          false,
+          'All hostnames in denied_hostnames must be strings',
+        );
+        writeOutput(errorResponse);
+        return;
+      }
+    }
+
+    const response = new Validation.Validation.SettingsValidationResponse(true);
+    writeOutput(response);
+  } catch (err) {
+    console.error('Settings validation error:', err);
+    const errorResponse = new Validation.Validation.SettingsValidationResponse(
+      false,
+      `+Settings validation failed: ${err}+`,
+    );
+    writeOutput(errorResponse);
+  }
+}
+----

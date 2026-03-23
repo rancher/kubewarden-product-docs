@@ -1,0 +1,259 @@
+include::partial$variables.adoc[]
+= 端到端测试
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 学习如何使用 BATS 和 kwctl 编写和运行全面的端到端测试，以验证策略行为。
+:keywords: "{project-name}", kubewarden, kubernetes, 测试策略, typescript, 端到端测试
+:doc-type: 教程
+:doc-topic: {project-name}, kubewarden, 编写策略, typescript, 端到端测试
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+本节展示了如何编写针对 Javy 编译工具链生成的实际 WebAssembly 二进制文件的端到端测试。
+
+== 先决条件
+
+请记住，您需要在开发机器上安装这些工具：
+
+* `bats`：用于编写测试并自动化其执行。
+* `kwctl` >= v1.30：由 {project-name} 提供的 CLI 工具，用于在 Kubernetes 外部运行其策略，以及其他操作。在文档的 xref:/tutorials/testing-policies/index.adoc[测试策略部分] 中有介绍。
+
+== 编写测试
+
+您将使用 `bats` 来编写和自动化您的测试。每个测试都有以下步骤：
+
+. 直接使用 `kwctl run` 和 JSON 资源文件运行策略。
+. 对 `kwctl` 生成的输出进行断言。
+
+所有的端到端测试都放在一个名为 `e2e.bats` 的文件中。项目脚手架项目包括一个示例，`e2e.bats`。您需要扩展其内容，以提供全面的测试覆盖，以验证您的策略行为。
+
+== 测试数据文件
+
+端到端测试用例测试特定 Kubernetes 资源的创建。
+
+例如，在测试 Pod 资源的创建时：
+
+[source,json]
+----
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "test-pod"
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "nginx",
+        "image": "nginx:latest"
+      }
+    ]
+  }
+}
+----
+
+端到端测试用例使用包含 Kubernetes AdmissionReview 的 JSON 文件。这些 JSON 对象 AdmissionReviews 是发送到 Kubernetes API 以进行 xref:/reference/spec/03-validating-policies.adoc#an-example[验证] 的。
+
+您可以通过使用 `kwctl scaffold admission-request` 来获取 AdmissionReviews JSON 对象。
+查看 `test_data/pod.json` 以查看带有 Pod 的 AdmissionRequest JSON。
+
+== 基本测试用例
+
+模板已经提供了几个基本测试。完整的`e2e.bats`文件应如下所示：
+
+[source,bash]
+----
+#!/usr/bin/env bats
+----
+
+以下是现有测试及其说明：
+
+=== 测试1：拒绝在拒绝列表中的主机名
+
+[source,bash]
+----
+@test "reject because hostname is on deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host", "test-hostname"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+此测试确保当Pod的主机名在拒绝列表中时，策略会拒绝这些Pod。
+
+=== 测试2：接受允许的主机名
+
+[source,bash]
+----
+@test "accept because hostname is not on the deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+此测试验证当Pod的主机名不在拒绝列表中时，策略会接受这些Pod。
+
+=== 测试3：在未提供设置时接受
+
+[source,bash]
+----
+@test "accept because the deny list is empty" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+此测试确保当您未提供任何设置时，策略会接受请求。
+
+=== 测试 4：接受没有主机名的 Pod
+
+[source,bash]
+----
+@test "accept because pod has no hostname set" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (no hostname to check)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+此测试验证策略接受没有主机名的 Pod，无论拒绝列表如何。
+
+=== 测试 5：接受非 Pod 资源
+
+[source,bash]
+----
+@test "accept non-pod resources" {
+  run kwctl run annotated-policy.wasm -r test_data/service.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (not a pod)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+此测试确保策略接受不是 Pod 的资源，因为该策略仅验证 Pod 主机名。
+
+== 扩展测试覆盖范围
+
+您可以通过添加更多测试场景来扩展测试覆盖范围：
+
+=== 测试 6：设置验证
+
+您还可以添加测试以验证设置验证是否正常工作：
+
+[source,bash]
+----
+@test "accept valid settings" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["host1", "host2"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # settings are valid, request processed normally
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+=== 测试 7：边缘案例
+
+[source,bash]
+----
+@test "reject with multiple denied hostnames" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["bad-host", "test-hostname", "forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+[source,bash]
+----
+@test "accept with empty denied hostnames array" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": []}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+== 运行测试
+
+您可以使用此命令运行所有端到端测试：
+
+[source,console]
+----
+make e2e
+----
+
+这将产生类似于：
+
+[source,console]
+----
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+ ✓ accept valid settings
+ ✓ reject with multiple denied hostnames
+ ✓ accept with empty denied hostnames array
+
+8 tests, 0 failures
+----
+
+== 理解测试输出
+
+每个测试使用 `kwctl` 来运行策略并检查：
+
+* 退出状态：命令 `kwctl` 应该以状态 0 退出，以表示策略执行成功。
+* 允许的字段：JSON 输出包含一个 `allowed` 字段，指示请求是否被接受。
+* 消息内容：对于被拒绝的请求，输出包含描述性的错误信息。
+
+每个测试中的 `echo "output = $\{output}"` 语句通过在测试失败时显示实际的策略输出，帮助调试。
+
+== 结论
+
+端到端测试通过针对实际的 WebAssembly 二进制文件进行测试，提供了对策略行为的全面覆盖。这确保了策略在 {short-project-name} 中部署时能够正确工作，而不仅仅是在 TypeScript 开发环境中。
+
+[TIP]
+====
+有关端到端测试的更全面示例，您可以探索 https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js 源代码]，其中包括广泛的 e2e 测试，展示了 {short-project-name} 的每个主机功能。这些测试可以作为测试更高级策略功能的灵感，例如网络、加密操作和 OCI 注册表交互。
+====

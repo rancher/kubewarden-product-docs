@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= 使用自定义证书颁发机构
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 配置PolicyServer以使用自定义证书颁发机构或不安全源，并与指定的注册表结合使用。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "自定义证书颁发机构"]
+:sidebar_label: 使用自定义证书颁发机构
+:current-version: {page-origin-branch}
+
+== 用于策略注册表的自定义证书颁发机构
+
+可以指定和配置PolicyServer在从策略注册表提取ClusterAdmissionPolicy工件时使用的证书颁发机构。以下`spec`字段用于配置已部署的`policy-server`可执行文件以实现该效果。
+
+=== 不安全源
+
+[IMPORTANT]
+====
+
+`kwctl`和`policy-server`的默认行为是强制使用与系统CA存储匹配的受信任证书的HTTPS。通过使用`insecure_sources`设置，您可以与注册表交互，无论是使用不受信任的证书，还是完全不使用TLS。这种方法在接近生产的环境中*强烈不建议*。
+
+====
+
+要配置PolicyServer以接受对特定注册表的不安全连接，请使用PolicyServer的`spec.insecureSources`字段。该字段接受不安全URI的列表。例如：
+
+[subs="+attributes",yaml]
+----
+spec:
+  insecureSources:
+    - localhost:5000
+    - host.k3d.internal:5000
+----
+
+有关`policy-server`可执行文件如何处理不安全URI的更多信息，请参见xref:howtos/custom-certificate-authorities.adoc[自定义证书颁发机构]。
+
+=== 自定义证书颁发机构
+
+您可以为特定URI配置PolicyServer，使用一个或多个证书的自定义证书链。为此，您使用字段`spec.sourceAuthorities`。
+
+该字段是一个URI的映射，每个URI都有自己的字符串列表，包含隐私增强邮件（PEM）编码的证书。例如：
+
+[subs="+attributes",yaml]
+----
+spec:
+  sourceAuthorities:
+    "registry-pre.example.com":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-1 PEM cert
+        -----END CERTIFICATE-----
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-2 PEM cert
+        -----END CERTIFICATE-----
+    "registry-pre2.example.com:5500":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre2 PEM cert
+        -----END CERTIFICATE-----
+----
+
+有关`policy-server`可执行文件如何处理它们的更多信息，请参见xref:howtos/custom-certificate-authorities.adoc[自定义证书颁发机构]。

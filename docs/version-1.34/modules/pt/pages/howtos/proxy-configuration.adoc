@@ -1,0 +1,44 @@
+include::partial$variables.adoc[]
+
+= Configuração de proxy
+:description: Usando proxies com {project-name}.
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "proxy", "proxies"]
+:doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "proxy"]
+
+Para ambos `kwctl` e `policy-server`, você pode configurar proxies HTTP e HTTPS, assim como isentar domínios dessa configuração de proxies.
+
+Você pode fazer isso de duas maneiras: * Definindo as variáveis de ambiente `HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY` (e suas contrapartes em minúsculas) para `kwctl` ou `policy-server`.
+  Para configurar um CR do PolicyServer, defina seu array `spec.env`. * Fornecendo um arquivo `sources.yaml` através do argumento `--sources-path`.
+  Um arquivo `sources.yaml` tem precedência sobre as variáveis de ambiente.
+  Consumir essa configuração através do campo `spec` ainda não está exposto nos CRs do PolicyServer.
+
+Definir uma configuração de proxy influencia:
+
+* A recuperação, envio e recuperação-e-execução de políticas do e para o registro OCI.
+* Capacidades do host a partir de chamadas contextuais, como:
+** Registro de contêiner, como obter um manifesto OCI ou digest do manifesto.
+   Em vez de acessar diretamente o registro OCI, o tráfego será roteado através dos proxies configurados.
+** Capacidades do Sigstore, como verificar uma assinatura sem chave.
+   Em vez de acessar os serviços definidos pelo Sigstore, o tráfego será roteado através dos proxies configurados.
+
+== Exemplo
+
+Você pode definir as seguintes variáveis de ambiente, para `kwctl` ou `policy-server` (através do PolicyServer `spec.env`):
+
+[source,bash]
+----
+HTTP_PROXY="http://proxy.corp:3128"
+https_proxy="http://proxy.corp:3129"
+NO_PROXY="localhost,.corp"
+----
+
+Com essa configuração: * O tráfego não seguro via HTTP, como aquele de e para um registro OCI inseguro, é roteado através de `\http://proxy.corp:3128`.
+  Isso afeta a recuperação de políticas e políticas que chamam capacidades contextuais que têm digests de manifesto de imagem OCI para contêineres nesse repositório. * O tráfego criptografado via HTTPS é roteado através de `\https://proxy.corp:3129`.
+  Por exemplo, isso inclui a recuperação e envio de políticas para qualquer registro OCI seguro, e as mencionadas capacidades contextuais das políticas. * O tráfego de e para host local ou qualquer domínio sob `.corp` está isento das configurações anteriores.
+
+
+== O arquivo `sources.yaml`
+
+Para mais detalhes, consulte a referência xref:/reference/sources_yaml.adoc[`sources.yaml`].

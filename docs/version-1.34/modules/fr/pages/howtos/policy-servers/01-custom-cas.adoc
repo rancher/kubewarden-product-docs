@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= Utilisation des autorités de certification personnalisées
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurer PolicyServer pour utiliser soit des autorités de certification personnalisées, soit des sources non sécurisées en conjonction avec des registres spécifiés.
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["manuel-opérateur", "serveurs-de-politiques", "autorités-de-certification-personnalisées"]
+:doc-type: ["howto"]
+:keywords: ["{project-name}", "kubewarden", "kubernetes", "autorités de certification personnalisées"]
+:sidebar_label: Utilisation des CA personnalisées
+:current-version: {page-origin-branch}
+
+== Autorités de certification personnalisées pour les registres de politiques
+
+Il est possible de spécifier et de configurer les autorités de certification que PolicyServer utilise lors du téléchargement des artefacts ClusterAdmissionPolicy depuis le registre de politiques. Les champs suivants `spec` configurent l'exécutable déployé `policy-server` à cet effet.
+
+=== Sources non sécurisées
+
+[IMPORTANT]
+====
+
+Le comportement par défaut de `kwctl` et `policy-server` est d'imposer HTTPS avec des certificats de confiance correspondant au magasin CA du système. Vous pouvez interagir avec des registres utilisant des certificats non fiables ou même sans TLS, en utilisant le paramètre `insecure_sources`. Cette approche est *fortement déconseillée* pour les environnements proches de la production.
+
+====
+
+Pour configurer le PolicyServer afin d'accepter des connexions non sécurisées à des registres spécifiques, utilisez le champ `spec.insecureSources` de PolicyServer. Ce champ accepte une liste d'URIs non sécurisées. Par exemple :
+
+[subs="+attributes",yaml]
+----
+spec:
+  insecureSources:
+    - localhost:5000
+    - host.k3d.internal:5000
+----
+
+Voir xref:howtos/custom-certificate-authorities.adoc[Autorités de certification personnalisées] pour plus d'informations sur la façon dont l'exécutable `policy-server` traite les URIs non sécurisées.
+
+=== Autorités de certification personnalisées
+
+Vous pouvez configurer le PolicyServer avec une chaîne de certificats personnalisée de 1 ou plusieurs certificats pour une URI spécifique. Pour ce faire, vous utilisez le champ `spec.sourceAuthorities`.
+
+Ce champ est une table de correspondance d'URIs, chacune avec sa propre liste de chaînes contenant des certificats encodés en Privacy Enhanced Mail (PEM). Par exemple :
+
+[subs="+attributes",yaml]
+----
+spec:
+  sourceAuthorities:
+    "registry-pre.example.com":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-1 PEM cert
+        -----END CERTIFICATE-----
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre1-2 PEM cert
+        -----END CERTIFICATE-----
+    "registry-pre2.example.com:5500":
+      - |
+        -----BEGIN CERTIFICATE-----
+        ca-pre2 PEM cert
+        -----END CERTIFICATE-----
+----
+
+Voir xref:howtos/custom-certificate-authorities.adoc[Autorités de certification personnalisées] pour plus d'informations sur la façon dont l'exécutable `policy-server` les traite.

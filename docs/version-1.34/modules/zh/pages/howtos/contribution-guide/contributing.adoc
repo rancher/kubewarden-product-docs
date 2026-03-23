@@ -1,0 +1,46 @@
+include::partial$variables.adoc[]
+= 为 {short-project-name} 文档做贡献
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 通过改进现有内容、创建新主题和协助翻译来为 {project-name} 文档做贡献。
+:doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
+:doc-topic: ["contribution-guide", "docs-contribution"]
+:doc-type: ["howto"]
+:keywords: ["kubewarden", "documentation", "contributing"]
+:sidebar_label: 为文档做贡献
+:sidebar_position: 2
+:current-version: {page-origin-branch}
+
+_{short-project-name} 欢迎所有贡献者，无论是新手还是经验丰富者，提出改进建议。_
+
+您可以通过以下方式为 {short-project-name} 文档做贡献：
+
+* 改进现有内容
+* 创建新内容
+* (_即将推出_) 协助翻译文档
+
+== 入门
+
+ifeval::["{build-type}" == "community"]
+
+欢迎大家通过提交拉取请求来建议更改。您还可以通过 GitHub 问题报告错误或拼写错误，帮助 https://github.com/kubewarden/docs[`kubewarden/docs` 储存库]。
+
+要参与文档：
+
+* 熟悉 https://github.com/kubewarden/docs[文档储存库] 和 https://docusaurus.io/[静态网站生成器]。
+* Docusaurus 使用 Markdown 语法，并使用 https://mdxjs.com/[MDX] 作为解析器。
+* 了解如何 xref:howtos/contribution-guide/suggesting-an-improvement.adoc[建议改进] 并打开拉取请求。
+
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+
+欢迎大家通过提交拉取请求来建议更改。您还可以通过 GitHub 问题报告错误或拼写错误，帮助 https://github.com/rancher/kubewarden-product-docs[`rancher/kubewarden-product-docs` 储存库]。
+
+要参与文档：
+
+* 熟悉 https://github.com/rancher/kubewarden-product-docs[文档储存库] 和 https://antora.org/[静态网站生成器]。
+* Antora 使用 AsciiDoc 语法。
+* 了解如何 xref:howtos/contribution-guide/suggesting-an-improvement.adoc[建议改进] 并打开拉取请求。
+
+endif::[]

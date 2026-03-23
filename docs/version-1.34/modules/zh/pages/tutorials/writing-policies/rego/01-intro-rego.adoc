@@ -1,0 +1,81 @@
+include::partial$variables.adoc[]
+= Rego
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解 Rego 语言的基础知识，包括其与 Open Policy Agent 和 Gatekeeper 框架结合使用以实现代码中的策略。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "rego", "introduction"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "编写策略", "rego"]
+:sidebar_label: Rego
+:current-version: {page-origin-branch}
+
+[NOTE]
+====
+Rego 支持可从以下版本获得：
+
+* kwctl: v0.2.0
+* policy-server: v0.2.0
+
+Rego 策略支持来自 {project-name} 1.9 版本的上下文感知数据。
+====
+
+
+Rego 语言是一种领域特定语言，用于实现代码中的策略。https://www.openpolicyagent.org/docs/latest/policy-language/[Rego]是一种受https://en.wikipedia.org/wiki/Datalog[Datalog]启发的语言。
+
+有两种方法可以编写 Rego 策略以在 Kubernetes 中实现代码中的策略，Open Policy Agent 和 Gatekeeper。
+
+接下来的几个部分展示了这两个框架的不同之处，尽管使用的是相同的语言。
+如果您对 {short-project-name} 实现更感兴趣，您可以直接访问下面链接的框架特定文档。
+
+* xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[开放政策代理]
+* xref:tutorials/writing-policies/rego/gatekeeper/01-intro.adoc[Gatekeeper]
+
+== 一种语言，两种框架
+
+=== Open Policy Agent（OPA）
+
+Open Policy Agent 是一个允许您在任何项目中实现代码中的策略的项目。
+您可以使用 OPA 进行任何基于策略的检查，满足您的应用需求。
+
+在这种情况下，为 Kubernetes 编写策略就是在使用 OPA。
+通过使用 Kubernetes 入站 Webhook，可以使用 OPA 评估请求，执行用 Rego 编写的策略。
+
+OPA 通过其 `kube-mgmt` sidecar 容器与 Kubernetes 进行可选集成。
+在 Kubernetes 上部署时，OPA 服务器评估 Rego 策略，能够将配置的 Kubernetes 资源复制到 Rego 中。
+因此，这些 Kubernetes 资源对所有策略都是可见的。
+使用 OPA，您可以在 Kubernetes 的 ConfigMap 对象中定义策略。
+您可以在 https://github.com/open-policy-agent/kube-mgmt[其项目页面] 上阅读更多信息。
+
+=== Gatekeeper
+
+Gatekeeper 仅专注于在 Kubernetes 中的使用，尽可能利用这一点，使 Kubernetes 工作流在某些情况下比 OPA 更加简单。
+
+== 查看差异
+
+OPA 和 Gatekeeper 策略都使用 Rego 将策略描述为代码。
+在编写 Rego 策略时，每种解决方案都有其差异，如下节所示。
+
+== 入口点
+
+入口点是软件包内规则的名称，是运行时在策略运行时调用的规则。
+
+== 当前限制
+
+=== 上下文感知策略
+
+上下文感知策略是指不单独评估输入请求的策略。
+它们考虑其他因素来做出决策。
+例如，一个评估名称空间资源的策略，并使用父名称空间上的注释来配置策略中的某些内容。
+另一个例子是评估 `Ingress` 资源的策略，但在做出决策时还需要现有 `Ingress` 资源的列表。
+
+上下文感知策略的概念也可以扩展到自定义资源，因此您的策略可能还希望根据当前使用的自定义资源来评估请求。
+
+OPA 和 Gatekeeper 从 {short-project-name} 1.9 版本开始支持上下文感知策略。
+
+有关上下文感知策略的更多细节在xref:reference/spec/05-context-aware-policies.adoc[这里]。
+
+=== 变更策略
+
+Gatekeeper 支持变更策略，但 {short-project-name} 尚未实现与 Gatekeeper 兼容的变更策略。
+您可以使用 {short-project-name} SDK 编写变更策略，但目前无法在 {short-project-name} 中运行 Gatekeeper 变更策略。

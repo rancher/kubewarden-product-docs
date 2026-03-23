@@ -1,0 +1,14 @@
+include::partial$variables.adoc[]
+= 为生产配置策略服务器
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 为生产配置策略服务器。
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-topic: ["operator-manual", "policy-servers", "production", "poddisruptionbudget", "affinity", "limits", "priorityClass"]
+:doc-type: ["howto"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "policyservers", "production", "poddisruptionbudget", "affinity", "limits", "priorityClass"]
+:sidebar_label: 生产部署
+:current-version: {page-origin-branch}
+
+请参阅xref:/howtos/production-deployments.adoc#_policyserver_production_configuration[生产部署]文档中的`PolicyServer`配置部分。

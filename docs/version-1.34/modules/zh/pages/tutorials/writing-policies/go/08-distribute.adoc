@@ -1,0 +1,21 @@
+include::partial$variables.adoc[]
+= 分发策略
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 了解如何分发策略并获取与{project-name}相关的信息，包括配置细节。
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
+:doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "distributing kubewarden policies"]
+:sidebar_label: 分发策略
+:sidebar_position: 080
+:current-version: {page-origin-branch}
+
+你已经经历了一段既漫长又愉快的 Go 教程之旅，恭喜你走到这一步 🎉。
+
+在本教程中，你已经重新创建了https://github.com/kubewarden/safe-labels-policy[safe-labels-policy]。
+
+在分发策略时没有特别需要做的事情。
+如果你遵循本指南，你已经使用上一章中定义的 GitHub `release.yml` 操作发布了你的策略。
+
+分发策略的主题在{project-name}的文档的xref:/explanations/distributing-policies.adoc["分发策略"]部分中有更深入的讨论。

@@ -1,0 +1,69 @@
+include::partial$variables.adoc[]
+= {project-name} em um Ambiente de Grande Escala
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configure {project-name}s com {project-name} para garantir alta disponibilidade e desempenho em ambientes de grande escala exigentes.
+:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, produção]
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: operator-manual, policyservers, produção
+:sidebar_label: Implantação em escala
+:sidebar_position: 21
+
+Esta seção detalha uma implantação do mundo real de {project-name} em um ambiente de grande escala exigente. Ela ilustra como configurar {short-project-name} para alta disponibilidade e desempenho e o que esperar sob carga pesada.
+
+[IMPORTANT]
+====
+Se você quiser ver mais dicas sobre como executar {short-project-name} em produção, confira a documentação de xref:/howtos/production-deployments.adoc[Implantações em produção].
+====
+
+== Visão Geral do Ambiente
+
+A infraestrutura consiste em aproximadamente 20 clusters Kubernetes. Os maiores desses clusters são caracterizados por tamanho significativo e volume de recursos:
+
+* Nós: ~400
+* Namespaces: ~4.000
+* Recursos gerenciados:
+** Pods: 10,000
+** RoleBindings: 13.000
+** Ingresses: 12.000
+** Implantações: 8.000
+** Serviços: 13.000
+
+== {short-project-name} Configuração
+
+Para atender às demandas deste ambiente, {short-project-name} é configurado com foco no isolamento de carga de trabalho e alta disponibilidade.
+
+* Aplicação da Política: 22 `ClusterAdmissionPolicies` são aplicadas em todos os clusters, sem `AdmissionPolicies` específico de namespace.
+* Arquitetura do PolicyServer: Duas implantações `PolicyServer` separadas são usadas para isolar cargas de trabalho:
+** Uma `PolicyServer` é dedicada exclusivamente a políticas contextuais.
+** Uma segunda `PolicyServer` lida com todas as outras políticas não contextuais.
+* Escalabilidade e Recursos:
+** Réplicas: Cada implantação `PolicyServer` executa 15 réplicas para lidar com o alto volume de solicitações.
+** Alocação de Recursos: Cada réplica é alocada com 300 MB de memória e 4 núcleos de CPU.
+
+== Métricas de Desempenho
+
+Esta configuração gerencia com sucesso uma alta taxa de solicitações de admissão enquanto mantém um desempenho previsível.
+
+* Taxa de Processamento das Solicitações de Admissão: Os clusters lidam com até 300 solicitações de admissão por segundo (incluindo validações de webhook e varreduras de auditoria).
+* Latência da Política:
+** Latência Típica: Políticas contextuais geralmente levam cerca de 500ms para serem executadas.
+** Tempos de espera: Neste ambiente de alta capacidade, os tempos de espera do webhook estão configurados para 2,5 segundos, enquanto o tempo de espera `PolicyServer` está definido para 10 segundos. Embora a maioria das solicitações seja rápida, a infraestrutura é construída para lidar com operações ocasionalmente lentas sem comprometer a estabilidade do servidor da API.
+
+== Desempenho do Scanner de Auditoria
+
+O scanner de auditoria é utilizado para garantir conformidade contínua em um grande número de recursos.
+
+* Frequência: Uma auditoria em todo o cluster é realizada a cada 4 horas.
+* Configuração: O trabalho de auditoria é ajustado para máximo paralelismo a fim de reduzir o tempo de execução:
+
+[source,shell]
+----
+--parallel-namespaces: "10"
+--parallel-resources: "20"
+--parallel-policies: "20"
+--page-size: "1000"
+----
+
+* Duração da Auditoria: Mesmo no maior cluster com dezenas de milhares de recursos, um trabalho de auditoria completo é concluído em

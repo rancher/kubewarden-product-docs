@@ -1,0 +1,24 @@
+include::partial$variables.adoc[]
+
+= プロキシを使用したPolicyServersの構成
+:revdate: 2026-03-13
+:page-revdate: {revdate}
+:description: プロキシを使用したPolicyServersの構成
+:doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
+:doc-type: ["howto"]
+:doc-topic: ["operator-manual", "policy-servers", "production", "proxy", "proxies", "socks"]
+:doctype: book
+:keywords: ["kubewarden", "kubernetes", "policyservers", "本番", "プロキシ", "プロキシ", "ソックス"]
+:sidebar_label: プロキシの使用
+:current-version: {page-origin-branch}
+
+PolicyServersは、プロキシ設定に関する標準環境変数を尊重します。ポリシーサーバーは、ポリシーをダウンロードする際に設定されたプロキシを使用します。
+これには、ポリシーとイメージを検証する際のSigstore操作が含まれます。
+
+これらの変数は次のとおりです：
+
+* `HTTP_PROXY`または`http_proxy`：HTTPリクエスト用のプロキシサーバー
+* `HTTPS_PROXY`または`https_proxy`：HTTPSリクエスト用のプロキシサーバー
+* `NO_PROXY`または`no_proxy`：プロキシから除外するホストのカンマ区切りリスト
+
+これらの環境変数を設定するには、CRDリファレンスのxref:reference/CRDs.adoc#_policyserverspec[`PolicyServer.spec.env`]を参照してください。

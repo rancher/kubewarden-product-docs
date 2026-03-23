@@ -1,0 +1,96 @@
+:sidebar_label: Referência do CLI do Servidor de Política
+:sidebar_position: 121
+:title: CLI do Servidor de Política
+:description: Explore a ajuda e as opções da linha de comando do policy-server para personalizar e executar o programa \`policy-server`.
+:keywords: [cli, referência, policy-server]
+:doc-persona: [kubewarden-operator]
+:doc-type: [referência]
+:doc-topic: [operator-manual]
+include::partial$variables.adoc[]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+
+= {title}
+
+== Ajuda da Linha de Comando para `policy-server`
+
+Este documento contém o conteúdo de ajuda para o programa de linha de comando `policy-server`.
+
+*Visão Geral do Comando:*
+
+* link:#policy-server[`policy-server`]
+* link:#policy-server-docs[`policy-server docs`]
+
+=== `policy-server`
+
+*Uso:* `policy-server ++[+OPTIONS+]++ ++[+COMMAND+]++`
+
+==== *Subcomandos:*
+
+* `docs` — Gera a documentação em markdown para os comandos do policy-server
+
+==== *Opções:*
+
+* `--addr ++<+BIND_ADDRESS+>++` — Vincula ao ENDEREÇO
++
+Valor padrão: `0.0.0.0`
+* `--always-accept-admission-reviews-on-namespace ++<+NAMESPACE+>++` — Sempre aceita AdmissionReviews que visam o namespace dado
+* `--cert-file ++<+CERT_FILE+>++` — Caminho para um arquivo de certificado X.509 para HTTPS
+* `--client-ca-file ++<+CLIENT_CA_FILE+>++` — Caminho para um arquivo de certificado CA que emitiu o certificado do cliente. Necessário para habilitar mTLS
+* `--daemon` — Se definido, executa o policy-server em modo destacado como um daemon
+* `--daemon-pid-file ++<+DAEMON-PID-FILE+>++` — Caminho para o arquivo PID, usado apenas quando executando em modo daemon
++
+Valor padrão: `policy-server.pid`
+* `--daemon-stderr-file ++<+DAEMON-STDERR-FILE+>++` — Caminho para o arquivo que contém stderr, usado apenas quando executando em modo daemon
+* `--daemon-stdout-file ++<+DAEMON-STDOUT-FILE+>++` — Caminho para o arquivo que contém stdout, usado apenas quando executando em modo daemon
+* `--disable-timeout-protection` — Desativar a proteção de tempo limite da política
+* `--docker-config-json-path ++<+DOCKER_CONFIG+>++` — Caminho para um caminho semelhante ao config.json do Docker. Pode ser usado para indicar detalhes de autenticação do registro
+* `--enable-metrics` — Habilitar métricas
+* `--enable-pprof` — Habilitar perfil de pprof
+* `--ignore-kubernetes-connection-failure` — Não sair com um erro se a conexão com o Kubernetes falhar. Isso fará com que políticas cientes do contexto quebrem quando não houver conexão com o Kubernetes.
+* `--key-file ++<+KEY_FILE+>++` — Caminho para um arquivo de chave privada X.509 para HTTPS
+* `--log-fmt ++<+LOG_FMT+>++` — Formato de saída do log
++
+Valor padrão: `text`
++
+Valores possíveis: `text`, `json`, `otlp`
+* `--log-level ++<+LOG_LEVEL+>++` — Nível de log
++
+Valor padrão: `info`
++
+Valores possíveis: `trace`, `debug`, `info`, `warn`, `error`
+* `--log-no-color` — Desativar a saída colorida para logs
+* `--policies ++<+POLICIES_FILE+>++` — Arquivo YAML contendo as políticas a serem carregadas e suas configurações
++
+Valor padrão: `policies.yml`
+* `--policies-download-dir ++<+POLICIES_DOWNLOAD_DIR+>++` — Caminho de download para as políticas
++
+Valor padrão: `.`
+* `--policy-timeout ++<+MAXIMUM_EXECUTION_TIME_SECONDS+>++` — Interromper a avaliação da política após o tempo especificado
++
+Valor padrão: `2`
+* `--port ++<+PORT+>++` — Escutar na PORTA
++
+Valor padrão: `3000`
+* `--readiness-probe-port ++<+READINESS_PROBE_PORT+>++` —
+Expose readiness endpoint on READINESS+_PROBE_+PORT
++
+Valor padrão: `8081`
+* `--sigstore-cache-dir ++<+SIGSTORE_CACHE_DIR+>++` — Diretório usado para armazenar dados do sigstore em cache
++
+Valor padrão: `sigstore-data`
+* `--sources-path ++<+SOURCES_PATH+>++` — Arquivo YAML que contém informações de origem (https, hosts inseguros do registro, CAs personalizadas…)
+* `--verification-path ++<+VERIFICATION_CONFIG_PATH+>++` — Arquivo YAML que contém informações de verificação (URIs, chaves, anotações…)
+* `--workers ++<+WORKERS_NUMBER+>++` — Número de threads de trabalho a serem criadas
+
+=== `policy-server docs`
+
+Gera a documentação em markdown para os comandos do servidor de políticas.
+
+*Uso:* `policy-server docs --output ++<+FILE+>++`
+
+==== *Opções:*
+
+* `-o`, `--output ++<+FILE+>++` — caminho onde o arquivo de documentação será armazenado
+
+Este documento foi gerado automaticamente pelo clap-markdown.

@@ -1,0 +1,110 @@
+include::partial$variables.adoc[]
+= ポリシー設定の定義
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: ポリシーの整合性を効率的に管理するための基盤を確立するために、コード内でポリシー設定と構造を定義してください。すべての変更が確実に追跡されるようにしてください。具体的には、誰が変更を行ったのか、いつ行ったのか、そして何が変更されたのかが記録されている必要があります。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "policy-settings"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "ポリシーの作成", "ポリシー設定", "rust"]
+:sidebar_label: ポリシー設定の定義
+:current-version: {page-origin-branch}
+
+== ポリシー設定の構造
+
+まず、ポリシー設定を保持する構造を定義します。
+
+`demo/src/settings.rs`ファイルを開き、`Settings`の定義を次のように変更します：`struct`
+
+[subs="+attributes",rust]
+----
+pub(crate) struct Settings {
+    pub invalid_names: HashSet<String>,
+}
+----
+
+これにより、自動的に無効な名前のリストがSetコレクションに入ります。
+
+== 設定検証関数
+
+次に、ポリシーが常に少なくとも1つの無効な名前で実行されることを確認するための設定検証関数を作成します。
+
+これは、`Validatable`トレイトの実装を変更することで行います。
+
+`src/settings.rs`で定義されたスキャフォールディングの実装を次のように変更します：
+
+[subs="+attributes",rust]
+----
+impl kubewarden::settings::Validatable for Settings {
+    fn validate(&self) -> Result<(), String> {
+        if self.invalid_names.is_empty() {
+            Err(String::from("No invalid name specified. Specify at least one invalid name to match"))
+        } else {
+            Ok(())
+        }
+    }
+}
+----
+
+== ユニットテストを追加
+
+これで、設定検証が機能していることを確認するためのユニットテストを書くことができます。
+これは、https://doc.rust-lang.org/stable/book/ch11-00-testing.html[通常のRustの方法]で行うことができます。
+
+`src/settings.rs`ファイルの下部には、すでにいくつかのデフォルトテストがあります。自動生成されたコードを次のように置き換えます：
+
+[subs="+attributes",rust]
+----
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use kubewarden_policy_sdk::settings::Validatable;
+
+    #[test]
+    fn accept_settings_with_a_list_of_invalid_names() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("bad_name1"));
+        invalid_names.insert(String::from("bad_name2"));
+
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_ok());
+        Ok(())
+    }
+
+    #[test]
+    fn reject_settings_without_a_list_of_invalid_names() -> Result<(), ()> {
+        let invalid_names = HashSet::<String>::new();
+        let settings = Settings { invalid_names };
+
+        assert!(settings.validate().is_err());
+        Ok(())
+    }
+}
+----
+
+ユニットテストを実行するには、次のようにします：
+
+[subs="+attributes",console]
+----
+cargo test
+----
+
+これにより、以下のような出力が生成されます。
+
+[subs="+attributes",console]
+----
+   Compiling demo v0.1.0 (/home/jhk/projects/suse/tmp/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 0.59s
+     Running unittests src/lib.rs (target/debug/deps/demo-bea8e11b21717093)
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::reject_pod_with_invalid_name ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----

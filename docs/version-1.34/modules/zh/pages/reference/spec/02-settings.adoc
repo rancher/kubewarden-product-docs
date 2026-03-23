@@ -1,0 +1,83 @@
+include::partial$variables.adoc[]
+= 策略设置
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 使用{project-name}配置策略设置，以验证和序列化策略数据。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["writing-policies", "specification", "settings"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "策略规范", "策略设置"]
+:sidebar_label: 策略设置
+:current-version: {page-origin-branch}
+
+策略行为并不是固定的，您可以通过在运行时向策略提供配置细节来进行配置。策略作者可以自由地定义策略设置的结构。
+
+{project-name}负责将策略设置序列化为JSON，并在每次调用时将其提供给策略。
+
+== 设置验证
+
+策略应验证用户提供的设置以检查其正确性。
+
+每个策略注册一个名为`validate_settings`的waPC函数，该函数验证策略设置。
+
+`validate_settings`函数接收用户提供的设置的JSON表示作为输入。该函数验证这些设置，并作为响应返回一个`SettingsValidationResponse`对象。
+
+`SettingsValidationResponse`对象的结构是：
+
+[subs="+attributes",yaml]
+----
+{
+  # mandatory
+  "valid": <boolean>,
+
+  # optional, ignored if accepted - recommended for rejections
+  "message": <string>,
+}
+----
+
+如果用户提供的设置是`valid`，`validate_settings`将忽略`message`内容。否则，`validate_settings`将显示`message`内容。
+
+[NOTE]
+====
+
+{short-project-name}的https://github.com/chimera-kube/policy-server[policy-server]在启动时验证用户提供的所有策略设置。如果至少有一个策略接收到错误的配置参数，policy-server将立即退出并显示错误。
+
+====
+
+
+== 示例
+
+作为一个例子，考虑https://github.com/kubewarden/psp-capabilities[psp-capabilities]策略，其配置格式如下：
+
+[subs="+attributes",yaml]
+----
+allowed_capabilities:
+- CHOWN
+
+required_drop_capabilities:
+- NET_ADMIN
+
+default_add_capabilities:
+- KILL
+----
+
+`validate_settings`函数接收以下JSON文档作为输入：
+
+[subs="+attributes",json]
+----
+{
+  "allowed_capabilities": [
+    "CHOWN"
+  ],
+  "required_drop_capabilities": [
+    "NET_ADMIN"
+  ],
+  "default_add_capabilities": [
+    "KILL"
+  ]
+}
+----
+
+== 回顾
+
+每个策略必须注册一个 waPC 函数，`validate_settings`。

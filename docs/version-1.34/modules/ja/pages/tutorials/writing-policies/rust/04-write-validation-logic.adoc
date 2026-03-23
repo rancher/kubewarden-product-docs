@@ -1,0 +1,232 @@
+include::partial$variables.adoc[]
+= 検証ロジックの作成
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: 受信リクエストの有効性を確認するために、ペイロードを解析し、Podオブジェクトを検証する検証ロジックを作成します。
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["kubewarden", "writing-policies", "rust", "validation-logic"]
+:doc-type: ["tutorial"]
+:keywords: ["kubewarden", "kubernetes", "policy", "writing", "rust", "validation logic"]
+:sidebar_label: 検証ロジックの作成
+:current-version: {page-origin-branch}
+
+実際の検証コードを書く時が来ました。
+これは`src/lib.rs`ファイルに定義されています。
+このファイルには、`validate`という名前の関数があります。
+
+これは、ひな型として提供された関数です：
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?; <1>
+
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+    // TODO: you can unmarshal any Kubernetes API type you are interested in <2>
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        Ok(pod) => {
+            // TODO: your logic goes here <3>
+            if pod.metadata.name == Some("invalid-pod-name".to_string()) {
+                let pod_name = pod.metadata.name.unwrap();
+                info!(
+                    LOG_DRAIN,
+                    "rejecting pod";
+                    "pod_name" => &pod_name
+                );
+                kubewarden::reject_request(
+                    Some(format!("pod name {} is not accepted", &pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                info!(LOG_DRAIN, "accepting resource");
+                kubewarden::accept_request()
+            }
+        }
+        Err(_) => {
+            // TODO: handle as you wish
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            warn!(LOG_DRAIN, "cannot unmarshal resource: this policy does not know how to evaluate this resource; accept it");
+            kubewarden::accept_request() <4>
+        }
+    }
+}
+----
+
+
+コードリストを見ていきましょう：
+
+* ➀とマークされた行で。受信した`payload`を`ValidationRequest<Setting>`オブジェクトに解析します。
+これにより、ユーザーが提供したパラメータで`ValidationRequest`内の`Settings`インスタンスが自動的に設定されます。
+* ➁とマークされた行で。リクエストに埋め込まれたKubernetesの生JSONオブジェクトをhttps://arnavion.github.io/k8s-openapi/v0.25.x/k8s_openapi/api/core/v1/struct.Pod.html[Pod構造体]のインスタンスに変換します。
+* ➂とマークされた行で。リクエストにはPodオブジェクトがあり、コードは`metadata.name`がハードコーディングされた値`invalid-pod-name`と等しくないリクエストのみを承認します。
+* ➃とマークされた行で。リクエストにはPodオブジェクトが含まれていないため、ポリシーはリクエストを受け入れます。
+
+ご覧の通り、コードはすでに実装したい検証に似た検証を行っています。
+ハードコーディングされた値を削除し、ポリシー設定を通じてユーザーが提供した値を使用するだけです。
+
+`validate`にあるひな型`src/lib.rs`関数をこの関数に置き換えることで実行できます。
+
+[subs="+attributes",rust]
+----
+fn validate(payload: &[u8]) -> CallResult {
+    let validation_request: ValidationRequest<Settings> = ValidationRequest::new(payload)?;
+
+    info!(LOG_DRAIN, "starting validation");
+    if validation_request.request.kind.kind != apicore::Pod::KIND {
+        warn!(LOG_DRAIN, "Policy validates Pods only. Accepting resource"; "kind" => &validation_request.request.kind.kind);
+        return kubewarden::accept_request();
+    }
+
+    match serde_json::from_value::<apicore::Pod>(validation_request.request.object) {
+        Ok(pod) => {
+            let pod_name = pod.metadata.name.unwrap_or_default();
+            if validation_request
+                .settings
+                .invalid_names
+                .contains(&pod_name)
+            {
+                kubewarden::reject_request(
+                    Some(format!("pod name {:?} is not accepted", pod_name)),
+                    None,
+                    None,
+                    None,
+                )
+            } else {
+                kubewarden::accept_request()
+            }
+        }
+        Err(_) => {
+            // We were forwarded a request we cannot unmarshal or
+            // understand, just accept it
+            kubewarden::accept_request()
+        }
+    }
+}
+----
+
+== ユニットテスト
+
+最後に、検証コードが期待通りに動作するかを確認するためにユニットテストを作成できます。
+
+`lib.rs`ファイルの下部にはすでにテストが定義されており、{short-project-name}のRust SDKもテストヘルパーを提供していることがわかります。
+
+さらに、スキャフォールドプロジェクトには、`test_data`ディレクトリにデフォルトのhttps://en.wikipedia.org/wiki/Test_fixture#Software[テストフィクスチャ]が付属しています。これらの記録されたAdmissionリクエストを使用してユニットテストを作成します。
+
+`src/lib.rs`の最後にあるテストセクションの内容を次のように変更してください：
+
+[subs="+attributes",rust]
+----
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use kubewarden_policy_sdk::test::Testcase;
+    use std::collections::HashSet;
+
+    #[test]
+    fn accept_pod_with_valid_name() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("bad_name1"));
+        let settings = Settings { invalid_names };
+
+        let request_file = "test_data/pod_creation.json";
+        let tc = Testcase {
+            name: String::from("Pod creation with valid name"),
+            fixture_file: String::from(request_file),
+            expected_validation_result: true,
+            settings,
+        };
+
+        let res = tc.eval(validate).unwrap();
+        assert!(
+            res.mutated_object.is_none(),
+            "Something mutated with test case: {}",
+            tc.name,
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn reject_pod_with_invalid_name() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("nginx"));
+        let settings = Settings { invalid_names };
+
+        let request_file = "test_data/pod_creation.json";
+        let tc = Testcase {
+            name: String::from("Pod creation with invalid name"),
+            fixture_file: String::from(request_file),
+            expected_validation_result: false,
+            settings,
+        };
+
+        let res = tc.eval(validate).unwrap();
+        assert!(
+            res.mutated_object.is_none(),
+            "Something mutated with test case: {}",
+            tc.name,
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn accept_request_with_non_pod_resource() -> Result<(), ()> {
+        let mut invalid_names = HashSet::new();
+        invalid_names.insert(String::from("prod"));
+        let settings = Settings { invalid_names };
+
+        let request_file = "test_data/ingress_creation.json";
+        let tc = Testcase {
+            name: String::from("Ingress creation"),
+            fixture_file: String::from(request_file),
+            expected_validation_result: true,
+            settings,
+        };
+
+        let res = tc.eval(validate).unwrap();
+        assert!(
+            res.mutated_object.is_none(),
+            "Something mutated with test case: {}",
+            tc.name,
+        );
+
+        Ok(())
+    }
+}
+----
+
+現在、`lib.rs`に3つのユニットテストが定義されています：
+
+* `accept_pod_with_valid_name`: 有効な名前を持つPodを受け入れます
+* `reject_pod_with_invalid_name`: 無効な名前を持つPodを拒否します
+* `accept_request_with_non_pod_resource`: `Pod`をオブジェクトとして持たないリクエストを受け入れます
+
+ユニットテストを再度実行できます：
+
+[subs="+attributes",shell]
+----
+$ cargo test
+   Compiling demo v0.1.0 (/home/flavio/hacking/kubernetes/kubewarden/demo)
+    Finished test [unoptimized + debuginfo] target(s) in 3.45s
+     Running target/debug/deps/demo-24670dd6a538fd72
+
+running 5 tests
+test settings::tests::accept_settings_with_a_list_of_invalid_names ... ok
+test settings::tests::reject_settings_without_a_list_of_invalid_names ... ok
+test tests::accept_request_with_non_pod_resource ... ok
+test tests::accept_pod_with_valid_name ... ok
+test tests::reject_pod_with_invalid_name ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+----
+
+シンプルな検証ポリシーを書く必要がある場合は、これだけで十分です。

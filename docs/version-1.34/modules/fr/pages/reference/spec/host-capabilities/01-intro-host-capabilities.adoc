@@ -1,0 +1,39 @@
+include::partial$variables.adoc[]
+= Spécification des capacités de l'hôte
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Lors de l'évaluation, comprenez les capacités de l'hôte offertes par l'environnement pour les stratégies {project-name}.
+:doc-persona: ["kubewarden-policy-developer"]
+:doc-topic: ["rédaction-des-stratégies", "spécification", "capacités-de-l'hôte", "introduction"]
+:doc-type: ["reference"]
+:keywords: ["kubewarden", "kubernetes", "spécification de la stratégie", "capacités de l'hôte"]
+:sidebar_label: Spécification des capacités de l'hôte
+:current-version: {page-origin-branch}
+
+Lors de l'évaluation, les stratégies {project-name} peuvent accéder à des capacités supplémentaires offertes par l'environnement hôte.
+Ce mécanisme utilise une approche similaire à celle du traditionnel https://en.wikipedia.org/wiki/Remote_procedure_call[RPC].
+
+Voici ce qui se passe lorsqu'une demande est émise par une stratégie {short-project-name} :
+
+* Stratégie {short-project-name} :
+ ** Invoque la capacité offerte par l'environnement hôte.
+ ** L'invocation est une opération bloquante, donc le code de la stratégie attendra jusqu'à ce que l'hôte fournisse une réponse.
+* Environnement hôte :
+ ** Une invocation de capacité est reçue.
+ ** L'hôte effectue l'opération.
+ ** L'hôte fournit une réponse à la stratégie, qui peut être soit un succès, soit un échec.
+* Stratégie {short-project-name} :
+ ** Le code reçoit la réponse de l'hôte et reprend l'exécution.
+ ** La réponse de l'hôte est traitée en conséquence.
+
+La fonctionnalité des capacités de l'hôte est mise en œuvre en utilisant https://wapc.io/[waPC].
+Chaque capacité utilise ces détails :
+
+* nom de la fonction waPC : Le nom de la capacité exposée par l'hôte.
+* Charge utile d'entrée : Le corps de la requête faite par la stratégie.
+Ceci est toujours encodé au format JSON.
+* Charge utile de sortie : Le corps de la réponse provenant de l'hôte. Ceci est toujours encodé au format JSON.
+
+Lorsque quelque chose ne va pas, l'hôte répond avec une erreur.
+Cela se fait en utilisant le type d'erreur du langage de programmation utilisé par la stratégie.
+L'erreur est une chaîne UTF-8 qui contient un message d'explication.

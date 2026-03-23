@@ -1,0 +1,126 @@
+include::partial$variables.adoc[]
+
+= Sauvegarde et restauration avec Rancher Backup Operator
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Configurer et gérer les sauvegardes et les restaurations en utilisant l'opérateur rancher-backup sur n'importe quel cluster Kubernetes.
+:keywords: "{project-name}", kubernetes, kubewarden, Rancher Backup Operator, sauvegarde, restauration
+:doc-persona: kubewarden-operator, kubewarden-integrator
+:doc-type: howto
+:doc-topic: manuel de l'opérateur, rancher-backup-operator
+:current-version: {page-origin-branch}
+
+L'opérateur `rancher-backup` peut être utilisé pour sauvegarder et restaurer Rancher sur n'importe quel cluster Kubernetes.
+
+Depuis la version `v9.0.0`, `rancher-backup` prend en charge {project-name}. Cela inclut :
+
+- L'espace de noms par défaut de Rancher `cattle-kubewarden-system` (ou `cattle-kubewarden-*`), et l'espace de noms par défaut {short-project-name} `kubewarden`.
+- Les ressources nécessaires à {short-project-name} sont installées via les charts Helm.
+- Les CRD {short-project-name}, qui sont réconciliés après la restauration par le contrôleur {short-project-name}.
+- Le sous-chart `policy-reporter` du chart `kubewarden-controller`, pour leurs valeurs par défaut. Cela n'inclut pas l'intégration Grafana ni d'autres plugins.
+
+== Secrets utilisateur
+
+Le processus de sauvegarde n'inclut pas les Secrets créés par l'utilisateur, tels que ceux utilisés pour xref:/howtos/policy-servers/02-private-registry.adoc#_creating_the_secret[configurer les PolicyServers pour les registres privés], à moins qu'ils ne soient correctement étiquetés. Pour cela, étiquetez les secrets de l'une des manières suivantes. Soit :
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker app.kubernetes.io/part-of=kubewarden
+----
+
+Ou :
+
+[source,shell]
+----
+kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
+----
+
+== Installation de Rancher Backup Operator
+
+Suivez le lien : \https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html[documentation de Rancher Manager]. Pour une installation Minikube utilisant les PersistentVolumes de type `hostPath` nommés `standard` que Minikube prend en charge par défaut.
+
+Il faut indiquer à Rancher Backup Operator de sauvegarder également les CRs définis par l'utilisateur {short-project-name} en définissant la valeur `optionalResources.kubewarden.enabled` sur `true`.
+
+L'installation serait la suivante :
+
+[source,console]
+----
+helm repo add rancher-charts https://charts.rancher.io
+helm repo update
+helm install --wait --create-namespace -n cattle-resources-system \
+    rancher-backup-crd rancher-charts/rancher-backup-crd
+helm install --wait -n cattle-resources-system \
+    rancher-backup rancher-charts/rancher-backup \
+    --set persistence.enabled=true --set persistence.storageClass=standard \
+    --set optionalResources.kubewarden.enabled=true
+----
+
+== Sauvegarde
+
+Utilisez le `rancher-resource-set-full` pour sauvegarder les Secrets {short-project-name}.
+Cela inclut les Secrets TLS qui sont créés lors de l'installation de Helm.
+
+Si vous préférez utiliser le `rancher-resource-basic`, veuillez vous rappeler de sauvegarder ou de créer manuellement les Secrets TLS nécessaires.
+
+Voici un exemple de réalisation d'une sauvegarde non chiffrée à l'emplacement par défaut avec le `rancher-resource-set-full` :
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Backup
+metadata:
+  name: default-location-backup
+spec:
+  resourceSetName: rancher-resource-set-full
+EOF
+backup.resources.cattle.io/default-location-backup created
+----
+
+Les journaux du `rancher-backup` ou la sauvegarde montrent la création du fichier de sauvegarde :
+
+[source,shell]
+----
+kubectl logs -n cattle-resources-system -l app.kubernetes.io/name=rancher-backup -f
+...
+INFO[2025/06/26 10:07:48] Processing backup default-location-backup
+INFO[2025/06/26 10:07:48] For backup CR default-location-backup, filename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z
+...
+INFO[2025/06/26 10:07:49] Done with backup
+----
+
+Vous pouvez également voir son statut en décrivant la ressource :
+
+[source,shell]
+----
+kubectl get backups
+NAME                      LOCATION   TYPE       LATEST-BACKUP                                                                              RESOURCESET                 AGE    STATUS
+default-location-backup   PV         One-time   default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   rancher-resource-set-full   111s   Completed
+----
+
+Consultez la documentation de Rancher pour plus d'exemples de sauvegarde link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_backup[exemples de sauvegarde].
+
+== Restauration
+
+Pour restaurer la sauvegarde non chiffrée depuis l'emplacement par défaut, prenez le nom de fichier de la colonne LATEST-BACKUP lors de l'affichage de la ressource de sauvegarde pour créer une ressource de restauration :
+
+[source,shell]
+----
+kubectl apply -f - <<EOF
+apiVersion: resources.cattle.io/v1
+kind: Restore
+metadata:
+  name: restore-default
+spec:
+  backupFilename: default-location-backup-32d64f39-d3c7-4331-9101-8ca493bd9d2e-2025-06-26T10-07-48Z.tar.gz
+EOF
+restore.resources.cattle.io/restore-default created
+
+kubectl get restores
+NAME              BACKUP-SOURCE   BACKUP-FILE                                                                                AGE   STATUS
+restore-default   PV              default-location-backup-43f3ccb7-5624-4eed-9c3b-1c15d287080e-2025-06-26T15-53-27Z.tar.gz   6s    Completed
+----
+
+Consultez la documentation de Rancher pour plus d'exemples de restauration link:https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/configuration/examples.html#_restore[exemples de restauration].
+
+
