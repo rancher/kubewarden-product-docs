@@ -85,14 +85,7 @@ Der `kubewarden-controller` registriert die benötigten `MutatingWebhookConfigur
 xref:/explanations/audit-scanner/audit-scanner.adoc[Audit-Scanner] überprüft ständig die im Cluster deklarierten Ressourcen und kennzeichnet die, die nicht mehr den bereitgestellten {project-name} Richtlinien entsprechen.
 +
 .Architektur
-[mermaid]
-....
-%%{
-  init: {
-    "flowchart": {
-      "htmlLabels": false,
-    }  }  }%% graph LR accTitle: Architektur des Zulassungscontrollers accDescr: Ein Diagramm, das die Architektur der Komponenten des Zulassungscontrollers zeigt. subgraph " " direction LR subgraph " " direction LR k8s(("Kubernetes")) registry[("OCI-Registry")] end subgraph kw[&quot;`+**Admission Controller**+`&quot;] controller(&quot;`+**Controller**+`&quot;) subgraph policy-server[&quot;`+**policy-server**+`&quot;] direction LR kw-policy-1{{"Policy 1"}} kw-policy-2{{"Policy 2"}} kw-policy-3{{"Policy 3"}} end webhooks(["Validierungswebhooks und\nMutationswebhooks"]) audit-scanner["KW Audit-Scanner"] end end policy-server -->|"lädt\nRichtlinien von"| registry controller -->|"beobachtet\nEreignisse"| k8s controller -->|"erstellt"| webhooks controller -->|"erstellt\nPolicy-Server\nInstanzen"| policy-server k8s -. "sendet Zulassungsanfragen unter Verwendung von" .-> webhooks webhooks -. "sendet Zulassungsanfragen von K8s" .-> policy-server audit-scanner -->|"sendet Audit-Zulassungsanfragen"| policy-server
-....
+include::latest@shared:en:partial$architecture.adoc[]
 
 == Die Reise einer {project-name} Richtlinie
 

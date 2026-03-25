@@ -85,14 +85,7 @@ WebAssemblyはポータブルで効率的であり、ポリシーが異なる環
 xref:/explanations/audit-scanner/audit-scanner.adoc[監査スキャナー]は、クラスター内で宣言されたリソースを常にチェックし、デプロイされた{project-name}ポリシーにもはや従わないものにフラグを立てます。
 +
 .アーキテクチャ
-[mermaid]
-....
-%%{
-  init: {
-    "flowchart": {
-      "htmlLabels": false,
-    }　}　}%%　graph LR　　accTitle:アドミッションコントローラーアーキテクチャ　　accDescr:アドミッションコントローラーコンポーネントのアーキテクチャを示す図。　　subgraph " "　　direction LR　　subgraph " "　　direction LR　　k8s(("Kubernetes"))　　registry[("OCI registry")]　　end　　subgraph kw[&quot;`+**Admission Controller**+`&quot;]　　controller(&quot;`+**Controller**+`&quot;)　　subgraph policy-server[&quot;`+**policy-server**+`&quot;]　　direction LR　　kw-policy-1{{"Policy 1"}}　　kw-policy-2{{"Policy 2"}}　　kw-policy-3{{"Policy 3"}}　　end　　webhooks(["ValidationWebhooks and\nMutatingWebhooks"])　　audit-scanner["KW audit scanner"]　　end　　end　　policy-server -->|"downloads\npolicies from"| registry　　controller -->|"watches for\nevents"| k8s　　controller -->|"creates"| webhooks　　controller -->|"creates\npolicy-server\ninstances"| policy-server　　k8s -. "sends admission\nrequests using" .-> webhooks　　webhooks -. "sent admission\nrequests from K8s" .-> policy-server　　audit-scanner -->|"sends audit\nadmission requests"| policy-server
-....
+include::latest@shared:en:partial$architecture.adoc[]
 
 == {project-name}ポリシーの旅
 

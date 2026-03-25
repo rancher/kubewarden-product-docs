@@ -85,14 +85,7 @@ El `kubewarden-controller` registra los objetos necesarios `MutatingWebhookConfi
 xref:/explanations/audit-scanner/audit-scanner.adoc[Escáner de auditoría] verifica constantemente los recursos declarados en el clúster, señalando aquellos que ya no se adhieren a las directivas {project-name} desplegadas.
 +
 .Arquitectura
-[mermaid]
-....
-%%{
-  init: {
-    "flowchart": {
-      "htmlLabels": false,
-    }  } }%% graph LR accTitle: Arquitectura del Controlador de Admisión accDescr: Un diagrama que muestra la arquitectura de los componentes del Controlador de Admisión. subgraph " " direction LR subgraph " " direction LR k8s(("Kubernetes")) registry[("registro OCI")] end subgraph kw[&quot;`+**Admission Controller**+`&quot;] controller(&quot;`+**Controller**+`&quot;) subgraph policy-server[&quot;`+**policy-server**+`&quot;] direction LR kw-policy-1{{"Policy 1"}} kw-policy-2{{"Policy 2"}} kw-policy-3{{"Policy 3"}} end webhooks(["Webhooks de Validación y\nWebhooks de Mutación"]) audit-scanner["Escáner de auditoría KW"] end end policy-server -->|"descarga\npolíticas de"| registry controller -->|"observa\neventos"| k8s controller -->|"crea"| webhooks controller -->|"crea\ninstancias del servidor de políticas"| policy-server k8s -. "envía solicitudes de admisión\nutilizando" .-> webhooks webhooks -. "envía solicitudes de admisión desde K8s" .-> policy-server audit-scanner -->|"envía solicitudes de auditoría\nadmisión"| policy-server
-....
+include::latest@shared:en:partial$architecture.adoc[]
 
 == El viaje de una directiva de {project-name}.
 

@@ -85,45 +85,7 @@ Le `kubewarden-controller` enregistre les objets `MutatingWebhookConfiguration` 
 xref:/explanations/audit-scanner/audit-scanner.adoc[Scanner d'audit] vérifie constamment les ressources déclarées dans le cluster, signalant celles qui ne respectent plus les stratégies {project-name} déployées.
 +
 .Architecture
-[mermaid]
-....
-%%{
-  init: {
-    "flowchart": {
-      "htmlLabels": false,
-    }
-  }
-}%%
-graph LR
-    accTitle: Architecture du contrôleur d'admission
-    accDescr: Un diagramme montrant l'architecture des composants du contrôleur d'admission.
-    sous-graphe " "
-      direction LR
-      sous-graphe " "
-        direction LR
-          k8s(("Kubernetes"))
-          registry[("OCI registry")]
-        fin
-        sous-graphe kw[&quot;`+**Admission Controller**+`&quot;]
-          contrôleur(&quot;`+**Controller**+`&quot;)
-          sous-graphe PolicyServer[&quot;`+**policy-server**+`&quot;]
-            direction LR
-            kw-policy-1{{"Policy 1"}}
-            kw-policy-2{{"Policy 2"}}
-            kw-policy-3{{"Policy 3"}}
-        fin
-        webhooks(["ValidationWebhooks et\nMutatingWebhooks"])
-        audit-scanner(["Scanner d'audit KW"])
-      fin
-    fin
-    PolicyServer -->|"télécharge\nles politiques depuis"| registry
-    contrôleur -->|"surveille les\névénements"| k8s
-    contrôleur -->|"crée"| webhooks
-    contrôleur -->|"crée\ndes instances de\nPolicyServer"| PolicyServer
-    k8s -. "envoie des demandes d'admission\nutilisant" .-> webhooks
-    webhooks -. "demandes d'admission envoyées de K8s" .-> PolicyServer
-    audit-scanner -->|"envoie des demandes d'audit\nd'admission"| PolicyServer
-....
+include::latest@shared:en:partial$architecture.adoc[]
 
 == Le parcours d'une {project-name} stratégie
 

@@ -44,7 +44,35 @@ ifeval::["{build-type}" == "product"]
 :short-product-name: {short-project-name}
 :project-abbrev: {kw-product-abbrev}
 :product-abbrev: {project-abbrev}
-:intro-paragraph: {short-project-name} is derived from a vendor neutral, https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {project-name} may be shortened to {short-project-name} or abbreviated as {project-abbrev}. The name {community-name} refers to the open-source community project. The name {community-name} may also be used throughout this documentation in place of {project-name}, {short-project-name}, or {project-abbrev}.
+:intro-paragraph-en: {short-project-name} is derived from a vendor neutral, https://cncf.io[CNCF] Sandbox project, called link:https://kubewarden.io[{community-name}], originally created by https://www.rancher.com/[SUSE Rancher]. The name {project-name} may be shortened to {short-project-name} or abbreviated as {project-abbrev}. The name {community-name} refers to the open-source community project. The name {community-name} may also be used throughout this documentation in place of {project-name}, {short-project-name}, or {project-abbrev}.
+:intro-paragraph-de: {short-project-name} wird von einem herstellerneutralen https://cncf.io[CNCF] Sandbox-Projekt namens link:https://kubewarden.io[{community-name}] abgeleitet, das ursprünglich von https://www.rancher.com/[SUSE Rancher] erstellt wurde. Der Name {project-name} kann zu {short-project-name} gekürzt oder als {project-abbrev} abgekürzt werden. Der Name {community-name} bezieht sich auf das Open-Source-Gemeinschaftsprojekt. Der Name {community-name} kann auch in dieser Dokumentation an Stelle von {project-name}, {short-project-name} oder {project-abbrev} verwendet werden.
+:intro-paragraph-es: {short-project-name} se deriva de un proyecto neutral de proveedor https://cncf.io[CNCF] Sandbox, llamado link:https://kubewarden.io[{community-name}], creado originalmente por https://www.rancher.com/[SUSE Rancher]. El nombre {project-name} se puede abreviar a {short-project-name} o abreviarse como {project-abbrev}. El nombre {community-name} se refiere al proyecto de la comunidad de código abierto. El nombre {community-name} también puede usarse en toda esta documentación en lugar de {project-name}, {short-project-name} o {project-abbrev}.
+:intro-paragraph-fr: {short-project-name} est dérivé d'un projet neutre de fournisseur https://cncf.io[CNCF] Sandbox, appelé link:https://kubewarden.io[{community-name}], créé à l'origine par https://www.rancher.com/[SUSE Rancher]. Le nom {project-name} peut être raccourci en {short-project-name} ou abrégé en {project-abbrev}. Le nom {community-name} fait référence au projet communautaire open-source. Le nom {community-name} peut également être utilisé dans cette documentation à la place de {project-name}, {short-project-name} ou {project-abbrev}.
+:intro-paragraph-pt: {short-project-name} é derivado de um projeto neutro do fornecedor https://cncf.io[CNCF] Sandbox, chamado link:https://kubewarden.io[{community-name}], criado originalmente por https://www.rancher.com/[SUSE Rancher]. O nome {project-name} pode ser abreviado para {short-project-name} ou abreviado como {project-abbrev}. O nome {community-name} refere-se ao projeto de comunidade de código aberto. O nome {community-name} também pode ser usado em toda esta documentação no lugar de {project-name}, {short-project-name} ou {project-abbrev}.
+:intro-paragraph-ja: {short-project-name} は、もともと https://www.rancher.com/[SUSE Rancher] によって作成された link:https://kubewarden.io[{community-name}] というベンダー中立的な https://cncf.io[CNCF] サンドボックスプロジェクトから派生しています。名前 {project-name} は {short-project-name} に短縮することもできますし、{project-abbrev} と略することもできます。名前 {community-name} はオープンソースコミュニティプロジェクトを指します。名前 {community-name} はこのドキュメント全体で {project-name}、{short-project-name}、または {project-abbrev} の代わりに使用することもできます。
+:intro-paragraph-zh: {short-project-name} 源自一个厂商中立的 https://cncf.io[CNCF] 沙盒项目，称为 link:https://kubewarden.io[{community-name}]，最初由 https://www.rancher.com/[SUSE Rancher] 创建。名称 {project-name} 可能会缩短为 {short-project-name} 或缩写为 {project-abbrev}。名称 {community-name} 指的是开源社区项目。名称 {community-name} 在整个文档中也可能用于代替 {project-name}、{short-project-name} 或 {project-abbrev}。
+
+:intro-paragraph: {intro-paragraph-en}
+ifdef::page-lang_en[]
+:intro-paragraph: {intro-paragraph-en}
+endif::[]
+ifdef::page-lang_de[]
+:intro-paragraph: {intro-paragraph-de}
+endif::[]
+ifdef::page-lang_es[]
+:intro-paragraph: {intro-paragraph-es}
+endif::[]
+ifdef::page-lang_fr[]
+:intro-paragraph: {intro-paragraph-fr}
+endif::[]
+ifdef::page-lang_pt[]
+:intro-paragraph: {intro-paragraph-pt}
+endif::[]
+ifdef::page-lang_ja[]
+:intro-paragraph: {intro-paragraph-ja}
+endif::[]
+ifdef::page-lang_zh[]
+:intro-paragraph: {intro-paragraph-zh}
 endif::[]
 
 // Glossary terms start

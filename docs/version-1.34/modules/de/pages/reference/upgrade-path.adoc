@@ -45,25 +45,7 @@ Beim Upgrade von Komponenten können Sie mehrere `PATCH` Stack-Versionen in eine
 Zum Beispiel können Sie Komponenten von Version `1.1.10` auf `1.1.nn` in einem einzigen Upgrade upgraden. Aber das Upgrade von `1.1.10` auf `1.5.0` wird nicht unterstützt. In diesen Fällen müssen Sie individuell auf jede `MAJOR`/`MINOR` Version zwischen den beiden Versionen upgraden. Daher ist es notwendig, `1.1.10` auf `1.2.0`, dann auf `1.3.0`, dann auf `1.4.0` und schließlich auf `1.5.0` zu upgraden. Um eine `MAJOR` Version auf eine andere zu aktualisieren, müssen Sie alle `MINOR` Aktualisierungen zwischen den beiden `MAJOR` Versionen anwenden.
 
 .Beispiel für unterstützte Upgrade-Pfade-Grafik
-[mermaid]
-....
-%%{init: "theme": "neutral"}%%
-Flussdiagramm LR;
-  accTitle: Upgrade-Pfad-Unterstützungsdiagramm
-  accDescr: Ein Diagramm, das empfohlene und unterstützte Upgrade-Pfade für {short-project-name} zeigt.
-  1.0.0(1.0.0)-->1.0.1(1.0.1);
-  1.0.1-->1.0.2(1.0.2);
-  1.0.2-->1.1.0(1.1.0);
-  1.1.0-->1.1.2(1.1.2);
-  1.1.0-->1.1.1;
-  1.1.1-->1.1.2;
-  1.1.2-->|Nicht empfohlen|1.2.0(1.2.0);
-  1.0.2-->|Nicht unterstützt|1.2.0(1.2.0);
-  1.1.2-->1.2.1(1.2.1);
-  1.2.0-->1.2.1;
-  linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray: 3 5
-  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
-....
+include::latest@shared:en:partial$upg-path.adoc[]
 
 == Upgrade-Reihenfolge
 

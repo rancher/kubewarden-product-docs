@@ -5,3 +5,7 @@ display_version: '1.31'
 start_page: en:introduction.adoc
 nav:
 - modules/en/nav.adoc
+
+asciidoc:
+  attributes:
+    noindex: '@'

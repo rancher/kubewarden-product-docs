@@ -45,12 +45,7 @@ Helm 图表定义了`version`字段和`appVersion`字段。`appVersion`字段指
 例如，您可以在一次升级中将组件从版本`1.1.10`升级到`1.1.nn`。但是，不支持从`1.1.10`升级到`1.5.0`。在这些情况下，您必须逐个升级到两个版本之间的每个`MAJOR`/`MINOR`版本。因此，有必要依次升级`1.1.10`到`1.2.0`，然后是`1.3.0`，再到`1.4.0`，最后到`1.5.0`。要将一个`MAJOR`版本升级到另一个版本，您需要应用两个`MINOR`版本之间的所有`MAJOR`更新。
 
 .示例升级路径支持图
-[mermaid]
-....
-%%{init: "theme": "neutral"}%% 流程图 LR; accTitle:升级路径支持图 accDescr:一个图表，显示{short-project-name}的推荐和支持的升级路径。
-  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|不推荐|1.2.0(1.2.0); 1.0.2-->|不支持|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray:3 5
-  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray:3 5
-....
+include::latest@shared:en:partial$upg-path.adoc[]
 
 == 升级顺序
 

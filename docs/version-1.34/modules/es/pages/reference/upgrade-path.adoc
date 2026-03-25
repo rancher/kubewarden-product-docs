@@ -45,12 +45,7 @@ Al actualizar componentes, puedes actualizar múltiples `PATCH` versiones de la 
 Por ejemplo, puedes actualizar componentes de la versión `1.1.10` a la `1.1.nn` en una sola actualización. Pero la actualización de `1.1.10` a `1.5.0` no está soportada. En estos casos, debes actualizar individualmente a cada `MAJOR`/`MINOR` versión entre las dos versiones. Por lo tanto, es necesario actualizar `1.1.10` a `1.2.0`, luego `1.3.0`, luego `1.4.0` y finalmente a `1.5.0`. Para actualizar una `MAJOR` versión a otra, necesitas aplicar todas las actualizaciones `MINOR` entre las dos versiones `MAJOR`.
 
 .Gráfico de soporte de vía de actualizar versión de ejemplo
-[mermaid]
-....
-%%{init: "theme": "neutral"}%% diagrama de flujo LR; accTitle: Gráfico de soporte de vía de actualizar versión accDescr: Un diagrama que muestra las vías de actualizar versión recomendadas y soportadas para {short-project-name}.
-  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|No recomendado|1.2.0(1.2.0); 1.0.2-->|No soportado|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:marrón,stroke-width:2px,stroke-dasharray: 3 5
-  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
-....
+include::latest@shared:en:partial$upg-path.adoc[]
 
 == Orden de actualizar versión
 

@@ -45,12 +45,7 @@ Lors de la mise à niveau des composants, vous pouvez mettre à niveau plusieurs
 Par exemple, vous pouvez mettre à niveau les composants de la version `1.1.10` à `1.1.nn` dans une seule mise à niveau. Mais la mise à niveau de `1.1.10` à `1.5.0` n'est pas prise en charge. Dans ces cas, vous devez mettre à niveau individuellement chaque version `MAJOR`/`MINOR` entre les deux versions. Par conséquent, il est nécessaire de mettre à niveau `1.1.10` vers `1.2.0`, puis `1.3.0`, puis `1.4.0` et enfin vers `1.5.0`. Pour mettre à niveau une version `MAJOR` vers une autre, vous devez appliquer toutes les mises à jour `MINOR` entre les deux versions `MAJOR`.
 
 .Exemple de graphique de support de chemin de mise à niveau
-[mermaid]
-....
-%%{init: "theme": "neutral"}%% diagramme de flux LR; accTitle: Graphique de support de chemin de mise à niveau accDescr: Un diagramme montrant les chemins de mise à niveau recommandés et pris en charge pour {short-project-name}.
-  1.0.0(1.0.0)-->1.0.1(1.0.1); 1.0.1-->1.0.2(1.0.2); 1.0.2-->1.1.0(1.1.0); 1.1.0-->1.1.2(1.1.2); 1.1.0-->1.1.1; 1.1.1-->1.1.2; 1.1.2-->|Non recommandé|1.2.0(1.2.0); 1.0.2-->|Non pris en charge|1.2.0(1.2.0); 1.1.2-->1.2.1(1.2.1); 1.2.0-->1.2.1; linkStyle 6 color:brown,stroke-width:2px,stroke-dasharray : 3 5
-  linkStyle 7 color:red,stroke-width:2px,stroke-dasharray: 3 5
-....
+include::latest@shared:en:partial$upg-path.adoc[]
 
 == Ordre de mise à niveau
 
