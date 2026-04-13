@@ -1,6 +1,6 @@
 site:
   title: SUSE Security Admission Controller
-  start_page: 1.31@admission-controller:en:introduction.adoc
+  start_page: 1.33@admission-controller:en:introduction.adoc
 
 content:
   sources:
@@ -27,8 +27,9 @@ asciidoc:
 antora:
   extensions:
     - require: '@antora/lunr-extension'
-      languages: [en] # ko not supported by extension
-      index_latest_only: true
+      index_latest_only: false
+      index_by_heading: true
+      languages: [en, de, es, fr, pt, ja, zh]
     - require: '@sntke/antora-mermaid-extension' # <1>
       mermaid_library_url: https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs # <2>
       script_stem: header-scripts # <3>
