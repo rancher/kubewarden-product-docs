@@ -1,0 +1,104 @@
+include::partial$variables.adoc[]
+= Kontextabhängige Richtlinien
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Entwickler können kontextabhängige Richtlinien erstellen, die zur Laufzeit Informationen über Kubernetes-Cluster abrufen, um die Kriterien für die Akzeptanz von AdmissionRequest zu bestimmen.
+:doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
+:doc-topic: ["explanations", "context-aware-policies"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "kontextabhängige Richtlinie", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "clusteradministrator"]
+:sidebar_label: Kontextabhängige Richtlinien
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+Entwickler können Richtlinien erstellen, die zur Laufzeit Informationen aus einem Kubernetes-Cluster abrufen. Dies sind kontextabhängige Richtlinien. Kontextabhängige Richtlinien können bestimmen, ob ein `AdmissionRequest` akzeptabel ist, indem sie Informationen von Ressourcen verwenden, die im Cluster bereitgestellt sind.
+
+[NOTE]
+====
+Kontextabhängige Richtlinien sind nur in {project-name} Versionen ≥ v1.6.0 verfügbar.
+====
+
+Die Kontrolle darüber, auf welche Ressourcen eine Richtlinie im Cluster zugreifen kann, erfolgt über das https://kubernetes.io/docs/concepts/security/service-accounts/[Service-Konto] des Richtliniendienstes. Ein Clusteradministrator kontrolliert, auf was eine Richtlinie über Kubernetes RBAC-Regeln zugreifen kann. Kontextabhängige Richtlinien haben nur *Lesezugriff* auf die angeforderten Ressourcen.
+
+Aus Sicherheitsgründen können nur `ClusterAdmissionPolicy` Richtlinien Informationen aus dem Kubernetes-Cluster abrufen. Das liegt daran, dass unprivilegierte Benutzer `AdmissionPolicy` Ressourcen bereitstellen können.
+
+Wenn ein unprivilegierter Benutzer eine kontextabhängige Richtlinie als `AdmissionPolicy` bereitstellt, blockiert das System:
+
+- Blockiert alle Versuche, auf Kubernetes-Ressourcen zuzugreifen.
+- Meldet sie an den Clusteradministrator.
+
+Standardmäßig blockiert {short-project-name} alle Clusterressourcen. Ein {project-name} Administrator definiert, auf welche Kubernetes-Ressourcen jede kontextabhängige Richtlinie zugreifen kann. Dafür wird `contextAwareResources` verwendet.
+
+Das folgende Beispiel stellt eine Richtlinie bereit, die den Zugriff auf die `Deployment` und `Pod` Ressourcen erfordert:
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: context-aware-policy
+  namespace: default
+spec:
+  policyServer: default
+  module: "registry://ghcr.io/kubewarden/policies/context-aware-policy:v1.0.0"
+  settings: {}
+  contextAwareResources:
+    - apiVersion: "apps/v1"
+      kind: "deployment"
+    - apiVersion: "v1"
+      kind: "pod"
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployment"]
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+----
+
+Sobald die Richtlinie bereitgestellt ist, kann sie die Daten der `deployment` und `pod` Ressourcen lesen.
+
+Richtlinienautoren stellen Listen von Kubernetes-Ressourcen für ihre kontextabhängige Richtlinie bereit. Richtlinienautoren tun dies, indem sie die Richtlinie annotieren. {project-name} Administratoren sehen die Metadaten der Richtlinie mit dem `kwctl inspect` Befehl ein. Sie können eine Liste der Ressourcen abrufen, auf die die Richtlinie zugreifen muss. Ein Administrator verwendet diese Liste, um die `ClusterAdmissionPolicy` Definition auszufüllen.
+
+[WARNING]
+====
+
+Um Missbrauch des Systems zu verhindern, müssen {project-name} Administratoren die Ressourcen überprüfen, auf die die Richtlinie zugreift.
+
+Zum Beispiel hätte eine Richtlinie, die Ingress-Objekte bewertet, gute Gründe, die `Ingress` Ressourcen zu lesen, die im Cluster definiert sind. Die gleiche Richtlinie kann nicht rechtfertigen, Zugriff auf `Secret` Ressourcen zu haben.
+
+Richtlinien sollten den minimalen Zugriff haben, der erforderlich ist, um korrekt zu funktionieren.
+
+====
+
+
+[NOTE]
+====
+
+Die Identifizierung von Kubernetes-Ressourcen verwendet `apiVersion` und `kind`.
+
+In der Regel ist `apiVersion` eine Zeichenkette im Format `<api>/<version>`. Ressourcen aus der `core` API-Gruppe (Pod, Service und andere) sollten den Gruppennamen `<api>` nicht definieren. Sie sollten nur das `<version>` definieren (zum Beispiel `v1`).
+
+Für eine Kernel-Ressource funktioniert die erste nicht, die zweite schon.
+
+[subs="+attributes",console]
+----
+- apiVersion: "core/v1"
+  kind: "pod"
+----
+
+[subs="+attributes",console]
+----
+- apiVersion: "v1"
+  kind: "pod"
+----
+
+Alle anderen Kubernetes-Ressourcen benötigen die vollständige Definition: `<api>/<version>`.
+====
+
+
+== Weiterführende Literatur
+
+Sie finden detailliertere Informationen zu kontextabhängige Richtlinien in xref:../reference/spec/05-context-aware-policies.adoc[diesem Abschnitt] der Referenzdokumentation.

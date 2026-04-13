@@ -53,9 +53,16 @@ dprint "Processing directory '$1' with required languages '$required_lang_value'
 find "$1" -wholename '*modules/*/pages/*.adoc' | grep -v nav.adoc \
   | while read -r adf; do
       dprint "Processing $adf"
-      check=$(grep '^:page-languages:' "$adf" | cut -f3 -d':' | sed 's/ //'g)
+      check=$(grep -m1 '^:page-languages:' "$adf" | sed 's/^:page-languages:[[:space:]]*//')
       if [ "$check" != "" ]; then
-        dprint "Stopping for $adf, ':page-languages:' of value '$check' already present"
+        if [ "$check" = "$required_lang_value" ]; then
+          dprint "No change for $adf, ':page-languages:' already set to '$required_lang_value'"
+        elif [ $trial = false ]; then
+          dprint "Replacing ':page-languages:' in $adf from '$check' to '$required_lang_value'"
+          sed -i "s/^:page-languages:.*/:page-languages: $required_lang_value/" "$adf"
+        else
+          dprint "Would replace ':page-languages:' in $adf from '$check' to '$required_lang_value' if trial mode was false."
+        fi
         continue
       fi
       if [ $trial = false ]; then

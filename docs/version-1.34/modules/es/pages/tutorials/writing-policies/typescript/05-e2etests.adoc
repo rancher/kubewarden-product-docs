@@ -1,0 +1,260 @@
+include::partial$variables.adoc[]
+= Pruebas de extremo a extremo
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2026-03-18
+:page-revdate: {revdate}
+:description: Aprende a escribir y ejecutar pruebas de extremo a extremo completas para el comportamiento de la directiva utilizando BATS y kwctl.
+:keywords: "{project-name}", kubewarden, kubernetes, pruebas de políticas, typescript, pruebas e2e
+:doc-type: tutorial
+:doc-topic: {project-name}, kubewarden, escritura-de-políticas, typescript, pruebas-de-extremo-a-extremo
+:doc-persona: kubewarden-policy-developer
+:current-version: {page-origin-branch}
+
+Esta sección muestra cómo puedes escribir pruebas de extremo a extremo ejecutándose contra el binario de WebAssembly real producido por la cadena de herramientas de compilación de Javy.
+
+== Requisitos previos
+
+Recuerda, necesitas estas herramientas en tu máquina de desarrollo:
+
+* `bats`: Utilizado para escribir las pruebas y automatizar su ejecución.
+* `kwctl` >= v1.30: Herramienta CLI proporcionada por {project-name} para ejecutar su directiva fuera de Kubernetes, entre otras acciones. Está cubierto en xref:/tutorials/testing-policies/index.adoc[la sección de pruebas de directivas] de la documentación.
+
+== Escribiendo pruebas
+
+Utilizarás `bats` para escribir y automatizar tus pruebas. Cada prueba tiene los siguientes pasos:
+
+. Ejecuta la directiva utilizando `kwctl run` directamente con el archivo de recurso JSON.
+. Realiza afirmaciones sobre la salida producida por `kwctl`.
+
+Todas las pruebas de extremo a extremo van en un archivo llamado `e2e.bats`. El proyecto de andamiaje incluye un ejemplo, `e2e.bats`. Necesitas extender su contenido para proporcionar una cobertura de prueba completa del comportamiento de la directiva.
+
+== Archivos de datos de prueba
+
+Los casos de prueba de extremo a extremo prueban la creación de Recursos específicos de Kubernetes.
+
+Por ejemplo, al probar la creación de un recurso Pod:
+
+[source,json]
+----
+{
+  "apiVersion": "v1",
+  "kind": "Pod",
+  "metadata": {
+    "name": "test-pod"
+  },
+  "spec": {
+    "containers": [
+      {
+        "name": "nginx",
+        "image": "nginx:latest"
+      }
+    ]
+  }
+}
+----
+
+El caso de prueba de extremo a extremo utiliza un archivo JSON que contiene un Kubernetes AdmissionReview. Estos objetos JSON de AdmissionReviews son los que se envían contra la API de Kubernetes para que sean xref:/reference/spec/03-validating-policies.adoc#an-example[validados].
+
+Puedes obtener objetos JSON de AdmissionReviews utilizando `kwctl scaffold admission-request`.
+Echa un vistazo a `test_data/pod.json` para ver un JSON de AdmissionRequest con un Pod.
+
+== Casos de prueba básicos
+
+La plantilla ya proporciona varias pruebas básicas. Así es como debería verse el archivo completo `e2e.bats`:
+
+[source,bash]
+----
+#!/usr/bin/env bats
+----
+
+Aquí están las pruebas existentes con explicaciones:
+
+=== Prueba 1: Rechazar nombres de host denegados
+
+[source,bash]
+----
+@test "reject because hostname is on deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host", "test-hostname"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+Esta prueba asegura que la directiva rechaza Pods cuando su nombre de host está en la lista de denegación.
+
+=== Prueba 2: Aceptar nombres de host permitidos
+
+[source,bash]
+----
+@test "accept because hostname is not on the deny list" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Esta prueba verifica que la directiva acepta Pods cuando su nombre de host no está en la lista de denegación.
+
+=== Prueba 3: Aceptar cuando no se proporcionan configuraciones
+
+[source,bash]
+----
+@test "accept because the deny list is empty" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Esta prueba asegura que la directiva acepta solicitudes cuando no proporcionas configuraciones.
+
+=== Prueba 4: Aceptar Pods sin nombres de host
+
+[source,bash]
+----
+@test "accept because pod has no hostname set" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (no hostname to check)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Esta prueba verifica que la directiva acepta Pods sin nombres de host independientemente de la lista de denegación.
+
+=== Prueba 5: Aceptar recursos que no son Pods
+
+[source,bash]
+----
+@test "accept non-pod resources" {
+  run kwctl run annotated-policy.wasm -r test_data/service.json --settings-json '{"denied_hostnames": ["forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted (not a pod)
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+Esta prueba asegura que la directiva acepta recursos que no son Pods, ya que la directiva solo valida los nombres de host de Pods.
+
+== Cobertura de prueba extendida
+
+Puedes extender la cobertura de prueba añadiendo más escenarios de prueba:
+
+=== Prueba 6: Validación de la configuración de la directiva
+
+También puedes añadir pruebas para verificar que la validación de configuraciones funciona correctamente:
+
+[source,bash]
+----
+@test "accept valid settings" {
+  run kwctl run annotated-policy.wasm -r test_data/pod.json --settings-json '{"denied_hostnames": ["host1", "host2"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # settings are valid, request processed normally
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+=== Prueba 7: Casos límite
+
+[source,bash]
+----
+@test "reject with multiple denied hostnames" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": ["bad-host", "test-hostname", "forbidden-host"]}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request rejected
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*false') -ne 0 ]
+  [ $(expr "$output" : ".*Pod hostname 'test-hostname' is not allowed.*") -ne 0 ]
+}
+----
+
+[source,bash]
+----
+@test "accept with empty denied hostnames array" {
+  run kwctl run annotated-policy.wasm -r test_data/pod_with_hostname.json --settings-json '{"denied_hostnames": []}'
+
+  # this prints the output when one of the checks below fails
+  echo "output = ${output}"
+
+  # request accepted
+  [ "$status" -eq 0 ]
+  [ $(expr "$output" : '.*allowed.*true') -ne 0 ]
+}
+----
+
+== Ejecutando las pruebas
+
+Puedes ejecutar todas las pruebas de extremo a extremo utilizando este comando:
+
+[source,console]
+----
+make e2e
+----
+
+Esto produce una salida como:
+
+[source,console]
+----
+bats e2e.bats
+e2e.bats
+ ✓ reject because hostname is on the deny list
+ ✓ accept because hostname is not on the deny list
+ ✓ accept because the deny list is empty
+ ✓ accept because pod has no hostname set
+ ✓ accept non-pod resources
+ ✓ accept valid settings
+ ✓ reject with multiple denied hostnames
+ ✓ accept with empty denied hostnames array
+
+8 tests, 0 failures
+----
+
+== Entendiendo la salida de la prueba
+
+Cada prueba utiliza `kwctl` para ejecutar la directiva y verifica:
+
+* Estado de salida: El comando `kwctl` debería salir con el estado 0 para una ejecución de directiva exitosa.
+* Campo permitido: La salida JSON contiene un campo `allowed` que indica si la solicitud fue aceptada.
+* Contenido del mensaje: Para solicitudes rechazadas, la salida contiene un mensaje de error descriptivo.
+
+Las declaraciones `echo "output = $\{output}"` en cada prueba ayudan con la depuración al mostrar la salida real de la directiva cuando una prueba falla.
+
+== Conclusión
+
+Las pruebas de extremo a extremo proporcionan una cobertura completa del comportamiento de la directiva al probar contra el binario de WebAssembly real. Esto asegura que la directiva funcione correctamente cuando se despliega en {short-project-name}, no solo en el entorno de desarrollo de TypeScript.
+
+[TIP]
+====
+Para ejemplos más completos de pruebas de extremo a extremo, puedes explorar el https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[código fuente de policy-sdk-js], que incluye extensas pruebas e2e que demuestran cada una de las capacidades de host de {short-project-name}. Estas pruebas pueden servir de inspiración para probar características de directiva más avanzadas, como redes, operaciones criptográficas e interacciones con el registro OCI.
+====
