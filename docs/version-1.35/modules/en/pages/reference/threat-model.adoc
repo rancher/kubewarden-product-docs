@@ -1,4 +1,5 @@
 include::partial$variables.adoc[]
+
 = Threat Model
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-04-30
@@ -311,3 +312,72 @@ For example, by:
   air-gapped installations.
 . Use signed Helm charts, and verified digests instead of tags for {short-project-name}
   images in those Helm charts. This doesn't secure dependencies though.
+
+=== {short-project-name} threat 2 - Attacker uses namespaced policy to extract information
+
+==== Scenario
+
+A low-privileged user with RBAC rights to create `AdmissionPolicy` or
+`AdmissionPolicyGroup` resources deploys a policy onto a PolicyServer that
+exposes broad host capabilities. The policy uses those capabilities, such as
+`kubernetes/can_i`, OCI registry queries, or DNS lookups, to perform
+reconnaissance or exfiltrate information from the cluster, without needing
+any additional privileges beyond the ability to deploy a namespaced policy.
+
+==== Mitigation
+
+Cluster operators should apply one or more of the following mitigations:
+
+* If untrusted users must not deploy namespaced policies at all, restrict RBAC
+  rights to `AdmissionPolicy` and `AdmissionPolicyGroup` resources accordingly.
+* Deploy a dedicated PolicyServer for namespaced policies with a restricted
+  `spec.namespacedPoliciesCapabilities` field (for example, set it to `[]` to
+  deny all host capabilities).
+* Deploy the `ns-policyserver-mapper` policy to enforce that namespaced policies
+  always run on the PolicyServer designated for their Namespace, preventing users
+  from redirecting policies to more permissive PolicyServers.
+
+See xref:/howtos/policy-servers/06-namespaced-policies-capabilities.adoc[Controlling host capabilities for namespaced policies]
+for full configuration details.
+
+=== {short-project-name} threat 3 - PolicyServer compromise exposes all its mapped namespaces
+
+==== Scenario
+
+A PolicyServer is compromised somehow, for example by privilege escalation on
+the Wasm host and using an unvetted and unsigned policy. The PolicyServer is
+used for policies in several Namespaces, along with cluster-wide policies. All
+Namespaces mapped to it are at risk, especially if the PolicyServer has broad
+host capabilities.
+
+==== Mitigation
+
+* Apply the principle of least privilege to `spec.namespacedPoliciesCapabilities`
+  on every PolicyServer. Grant only the host capabilities that the policies
+  running on that instance actually require.
+* Isolate PolicyServers for sensitive Namespaces: do not co-locate high-trust
+  and low-trust namespaced policies on the same PolicyServer instance.
+* Regularly audit PolicyServer configurations and the list of policies scheduled
+  on each instance.
+* Use the `ns-policyserver-mapper` policy to ensure namespaced policies cannot
+  be rescheduled onto a different PolicyServer without a corresponding Namespace
+  label change, which requires cluster-operator-level access.
+
+=== {short-project-name} threat 4 - Stale or outdated Namespace-to-PolicyServer mapping
+
+==== Scenario
+
+A cluster operator deploys the `ns-policyserver-mapper` policy and labels
+Namespaces to map them to specific PolicyServers. Over time, PolicyServers or
+Namespaces are added, removed, or renamed, but the Namespace mapping labels are
+not updated. As a result, policies may become unschedulable (rejected because
+the target PolicyServer no longer exists) or be silently rescheduled on an
+unintended PolicyServer.
+
+==== Mitigation
+
+* Automate the update of `admission.kubewarden.io/policy-server` Namespace
+  labels as part of the PolicyServer and Namespace lifecycle management
+  processes (for example, in GitOps workflows or cluster provisioning tooling).
+* Wait for the `ns-policyserver-mapper` policy to be in `Active` state before
+  deploying namespaced policies in newly labeled Namespaces.

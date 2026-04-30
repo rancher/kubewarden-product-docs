@@ -1,4 +1,5 @@
 include::partial$variables.adoc[]
+
 = Policy metadata
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-04-30
@@ -58,6 +59,11 @@ annotations:
   # Category indicates policy category. See more here at docs.kubewarden.io
   io.kubewarden.policy.severity: medium
   io.kubewarden.policy.category: Resource validation
+  # The next annotation is a list of self-reported host capability calls that
+  # the policy can make. Used when annotating the policy.
+  hostCapabilities:
+    - kubernetes/get_resource
+    - oci/v2/*
   # artifacthub specific: (optional, to release in Artifact Hub)
   io.kubewarden.policy.ociUrl: ghcr.io/myorg/my-policy
   io.artifacthub.displayName: Policy Name
@@ -92,6 +98,44 @@ contextAwareResources:
   - apiVersion: v1 kind: Namespace
 [...]
 ----
+
+== Self-reporting which host capabilities calls the policies use
+
+Within the metadata file, using the `hostCapabilities` field,
+users can define which
+xref:/howtos/policy-servers/06-namespaced-policies-capabilities.adoc[host capability calls]
+the policy intends to use. For example:
+
+[subs="+attributes",yaml]
+----
+[...]
+hostCapabilities:
+  - kubernetes/list_resources_by_namespace
+  - kubernetes/list_resources_all
+  - kubernetes/get_resource
+[...]
+----
+
+This metadata is used when annotating the policy Wasm module with `kwctl
+annotate`. In addition, `kwctl annotate` performs an heuristic scan of the Wasm
+binary's data for known host-capability strings, and compares what it detects
+against the `hostCapabilities` list declared in `metadata.yml`. Any mismatch is
+reported as warnings on stderr.
+
+See the xref:/howtos/policy-servers/06-namespaced-policies-capabilities.adoc[host capability calls]
+documentation page for more info.
+
+[WARNING]
+====
+Both the self-reporting and the heuristic scan cannot be used as a
+security boundary. A policy publisher could embed any arbitrary
+`hostCapabilities` list in the metadata regardless of what the binary actually
+does at runtime.
+
+Use this information as one signal alongside other trust indicators (image
+signing, source code review, policy provenance, and so on), not as an
+authoritative proof of what capabilities a policy exercises.
+====
 
 == Specifying policies as mutating or non-mutating
 
