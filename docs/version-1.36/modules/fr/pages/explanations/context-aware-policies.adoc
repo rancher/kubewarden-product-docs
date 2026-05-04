@@ -1,0 +1,104 @@
+include::partial$variables.adoc[]
+= Stratégies conscientes du contexte
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2026-05-04
+:page-revdate: {revdate}
+:description: Les développeurs peuvent créer des stratégies conscientes du contexte qui récupèrent des informations sur le cluster Kubernetes à l'exécution pour déterminer les critères d'acceptation de la demande d'admission.
+:doc-persona: ["kubewarden-stratégie-développeur", "kubewarden-intégrateur"]
+:doc-topic: ["explications", "stratégies-conscientes-du-contexte"]
+:doc-type: ["explanation"]
+:keywords: ["{project-name}", "kubewarden", "stratégie consciente du contexte", "stratégie d'admission de cluster", "stratégie d'admission", "demande d'admission", "administrateur de cluster"]
+:sidebar_label: Stratégies conscientes du contexte
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+Les développeurs peuvent créer des stratégies qui récupèrent des informations d'un cluster Kubernetes à l'exécution. Ce sont des stratégies conscientes du contexte. Les stratégies conscientes du contexte peuvent déterminer si un `AdmissionRequest` est acceptable en utilisant des informations provenant des ressources déployées dans le cluster.
+
+[NOTE]
+====
+Les stratégies conscientes du contexte ne sont disponibles que dans les versions {project-name} ≥ v1.6.0.
+====
+
+Le contrôle des ressources auxquelles une stratégie peut accéder dans le cluster est assuré par le https://kubernetes.io/docs/concepts/security/service-accounts/[Compte de service] du serveur de stratégie. Un administrateur de cluster contrôle ce à quoi une stratégie peut accéder via les règles RBAC de Kubernetes. Les stratégies conscientes du contexte n'ont qu'un accès *lecture* aux ressources demandées.
+
+Pour des raisons de sécurité, seules les stratégies `ClusterAdmissionPolicy` peuvent récupérer des informations du cluster Kubernetes. C'est parce que les utilisateurs non privilégiés peuvent déployer des ressources `AdmissionPolicy`.
+
+Si un utilisateur non privilégié déploie une stratégie consciente du contexte en tant que `AdmissionPolicy`, le système :
+
+- Bloque toutes les tentatives d'accès aux ressources Kubernetes.
+- Les signale à l'administrateur de cluster.
+
+Par défaut, {short-project-name} bloque toutes les ressources du cluster. Un administrateur {project-name} définit quelles ressources Kubernetes chaque stratégie consciente du contexte peut lire. `contextAwareResources` pour ce faire.
+
+L'exemple suivant déploie une stratégie qui nécessite un accès aux ressources `Deployment` et `Pod` :
+
+[subs="+attributes",yaml]
+----
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  name: context-aware-policy
+  namespace: default
+spec:
+  policyServer: default
+  module: "registry://ghcr.io/kubewarden/policies/context-aware-policy:v1.0.0"
+  settings: {}
+  contextAwareResources:
+    - apiVersion: "apps/v1"
+      kind: "deployment"
+    - apiVersion: "v1"
+      kind: "pod"
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      resources: ["deployment"]
+      operations:
+        - CREATE
+        - UPDATE
+  mutating: false
+----
+
+Une fois déployée, cette stratégie peut lire les données des ressources `deployment` et `pod`.
+
+Les auteurs de stratégies fournissent des listes de ressources Kubernetes pour leur stratégie consciente du contexte. Les auteurs de stratégies le font en annotant la stratégie. Les administrateurs {project-name} consultent les métadonnées de la stratégie en utilisant la commande `kwctl inspect`. Ils peuvent obtenir une liste des ressources auxquelles la stratégie doit avoir accès. Un administrateur utilise cette liste pour remplir la définition `ClusterAdmissionPolicy`.
+
+[WARNING]
+====
+
+Pour prévenir les abus du système, les administrateurs {project-name} doivent examiner les ressources auxquelles la stratégie accède.
+
+Par exemple, une stratégie évaluant les objets d'ingress aurait de bonnes raisons de lire les ressources `Ingress` définies dans le cluster. La même stratégie ne peut pas justifier d'avoir accès aux ressources `Secret`.
+
+Les stratégies devraient avoir le minimum d'accès nécessaire pour fonctionner correctement.
+
+====
+
+
+[NOTE]
+====
+
+L'identification des ressources Kubernetes utilise `apiVersion` et `kind`.
+
+En général, `apiVersion` est une chaîne au format `<api>/<version>`. Les ressources du groupe d'API `core` (Pod, Service, et autres) ne devraient pas définir le nom du groupe, `<api>`. Elles devraient seulement définir le `<version>` (par exemple, `v1`).
+
+Pour une ressource noyau, le premier ne fonctionnera pas, le second fonctionnera.
+
+[subs="+attributes",console]
+----
+- apiVersion: "core/v1"
+  kind: "pod"
+----
+
+[subs="+attributes",console]
+----
+- apiVersion: "v1"
+  kind: "pod"
+----
+
+Toutes les autres ressources Kubernetes ont besoin de la définition complète : `<api>/<version>`.
+====
+
+
+== Lectures supplémentaires
+
+Vous pouvez trouver des informations plus détaillées sur les stratégies conscientes du contexte dans xref:../reference/spec/05-context-aware-policies.adoc[cette section] de la documentation de référence.
