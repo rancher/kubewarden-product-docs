@@ -256,8 +256,8 @@ kind: ClusterAdmissionPolicy
 metadata:
   name: psp-capabilities
 spec:
-  policyServer: reserved-instance-for-tenant-a
-  module: registry://ghcr.io/kubewarden/policies/psp-capabilities:v0.1.9
+  policyServer: default
+  module: registry://ghcr.io/kubewarden/policies/capabilities-psp:v1.0.10
   rules:
     - apiGroups: [""]
       apiVersions: ["v1"]
