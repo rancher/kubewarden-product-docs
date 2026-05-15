@@ -3,12 +3,12 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie {project-name}, um die Integrität von Artefaktsignaturen und Richtlinien zu überprüfen.
+:description: Konfigurieren Sie {admc-name}, um die Integrität von Artefaktsignaturen und Richtlinien zu überprüfen.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "secure-supply-chain"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "sichere Lieferkette", "infrastruktur"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "sichere Lieferkette", "infrastruktur"]
 :sidebar_label: Sichere Lieferkette
 :sidebar_position: 40
 :current-version: {page-origin-branch}
@@ -17,9 +17,9 @@ Eine Infrastruktur für eine sichere Lieferkette kann die Gültigkeit ihrer Best
 
 Das https://sigstore.dev/[Sigstore]-Projekt bietet Werkzeuge und Infrastruktur dafür. Es dient der Validierung der Integrität der Lieferkette von Artefakten.
 
-{short-project-name} verwendet https://github.com/sigstore/cosign[`cosign`] zusammen mit der https://github.com/SigStore/fulcio[fulcio] und https://github.com/sigstore/rekor[rekor] Infrastruktur, die vom Sigstore-Projekt angeboten wird.
+{admc-short-name} verwendet https://github.com/sigstore/cosign[`cosign`] zusammen mit der https://github.com/SigStore/fulcio[fulcio] und https://github.com/sigstore/rekor[rekor] Infrastruktur, die vom Sigstore-Projekt angeboten wird.
 
-Clusterbetreiber können {project-name} so konfigurieren, dass nur Richtlinien ausgeführt werden, die von vertrauenswürdigen Stellen signiert sind. Richtlinienentwickler können ihre Richtlinien signieren und in einem Register veröffentlichen.
+Clusterbetreiber können {admc-name} so konfigurieren, dass nur Richtlinien ausgeführt werden, die von vertrauenswürdigen Stellen signiert sind. Richtlinienentwickler können ihre Richtlinien signieren und in einem Register veröffentlichen.
 
 == Voraussetzungen
 
@@ -31,7 +31,7 @@ Keyless Signing verwendet die Standardinstanzen https://github.com/SigStore/fulc
 
 == Richtlinien signieren
 
-{short-project-name} empfiehlt die Verwendung des https://github.com/sigstore/cosign[cosign] Dienstprogramms von Sigstore zum Signieren von Richtlinien. Dieser Abschnitt zeigt eine schlüsselbasierte Methode zum Signieren von Richtlinien. Sie müssen ein Paar aus privatem und öffentlichem Schlüssel generieren. Die generierten Schlüssel helfen zu überprüfen, ob die signierten Artefakte vom erwarteten Benutzer stammen. Um dieses Schlüsselpaar zu generieren, verwenden Sie diesen `cosign generate-key-pair` Befehl:
+{admc-short-name} empfiehlt die Verwendung des https://github.com/sigstore/cosign[cosign] Dienstprogramms von Sigstore zum Signieren von Richtlinien. Dieser Abschnitt zeigt eine schlüsselbasierte Methode zum Signieren von Richtlinien. Sie müssen ein Paar aus privatem und öffentlichem Schlüssel generieren. Die generierten Schlüssel helfen zu überprüfen, ob die signierten Artefakte vom erwarteten Benutzer stammen. Um dieses Schlüsselpaar zu generieren, verwenden Sie diesen `cosign generate-key-pair` Befehl:
 
 [subs="+attributes",bash]
 ----
@@ -68,7 +68,7 @@ Enter password for private key: ●●●●●●●●
 Pushing signature to: ghcr.io/kubewarden/policies/user-group-psp
 ----
 
-Dieser Befehl signiert die Richtlinie, indem er ein neues Signaturobjekt erstellt. Das Signaturobjekt wird dann zusammen mit der Richtlinie in das Registry hochgeladen. Jetzt ist die Richtlinie bereit zur Verwendung in einer {short-project-name}-Installation mit Signaturüberprüfung.
+Dieser Befehl signiert die Richtlinie, indem er ein neues Signaturobjekt erstellt. Das Signaturobjekt wird dann zusammen mit der Richtlinie in das Registry hochgeladen. Jetzt ist die Richtlinie bereit zur Verwendung in einer {admc-short-name}-Installation mit Signaturüberprüfung.
 
 Die gleiche Richtlinie kann mehrfach von demselben Benutzer oder von verschiedenen Benutzern signiert werden. Diese Signaturen werden zusammen mit der ursprünglichen Signatur dem Signaturobjekt hinzugefügt.
 
@@ -109,9 +109,9 @@ Dies unterzeichnet die Richtlinie und schiebt sie in das Repository. Es werden k
 
 === Wie man Artefakte in GitHub-Workflows signiert
 
-Bei der Verwendung der schlüssellosen Unterzeichnung benötigt `cosign` in einer GitHub-Aktion nicht, dass der Benutzer sich bei einem OIDC-Anbieter anmeldet. Ein GitHub-Token ist während der Ausführung des GitHub-Workflows verfügbar. Es wird verwendet, um den Benutzer zu authentifizieren und die temporären Schlüssel zu generieren. Der Unterzeichnungsprozess ist derselbe, der im schlüssellosen Modus verwendet wird. Dies ist ein Beispiel dafür, wie das {short-project-name} Projekt seine Richtlinien signiert:
+Bei der Verwendung der schlüssellosen Unterzeichnung benötigt `cosign` in einer GitHub-Aktion nicht, dass der Benutzer sich bei einem OIDC-Anbieter anmeldet. Ein GitHub-Token ist während der Ausführung des GitHub-Workflows verfügbar. Es wird verwendet, um den Benutzer zu authentifizieren und die temporären Schlüssel zu generieren. Der Unterzeichnungsprozess ist derselbe, der im schlüssellosen Modus verwendet wird. Dies ist ein Beispiel dafür, wie das {admc-short-name} Projekt seine Richtlinien signiert:
 
-.YAML, das die Signierung der {short-project-name}-Richtlinie beschreibt.
+.YAML, das die Signierung der {admc-short-name}-Richtlinie beschreibt.
 [%collapsible]
 ======
 
@@ -153,7 +153,7 @@ jobs:
 [NOTE]
 ====
 
-Richtlinienentwickler können die {short-project-name} Richtlinienvorlagen verwenden. Sie haben GitHub-Aktionen, um Richtlinien zu erstellen, zu testen, zu signieren und zu veröffentlichen.
+Richtlinienentwickler können die {admc-short-name} Richtlinienvorlagen verwenden. Sie haben GitHub-Aktionen, um Richtlinien zu erstellen, zu testen, zu signieren und zu veröffentlichen.
 
 ====
 
@@ -273,9 +273,9 @@ The following checks were performed on each of these signatures:
 
 == Konfigurieren des Richtliniendienstes zur Überprüfung von Richtliniensignaturen
 
-Sie können {short-project-name} mit einem `ConfigMap` konfigurieren, um nur vertrauenswürdige Richtlinien auszuführen. Die `ConfigMap` Struktur wird in xref:reference/verification-config.adoc#_signature_configuration_reference[Signatur-Konfigurationsreferenz] beschrieben. Es wird verwendet, um eine Richtlinie mit `kwctl` zu überprüfen. Die `ConfigMap` sollte zulässige Konfigurationen im `verification-config`-Feld definieren.
+Sie können {admc-short-name} mit einem `ConfigMap` konfigurieren, um nur vertrauenswürdige Richtlinien auszuführen. Die `ConfigMap` Struktur wird in xref:reference/verification-config.adoc#_signature_configuration_reference[Signatur-Konfigurationsreferenz] beschrieben. Es wird verwendet, um eine Richtlinie mit `kwctl` zu überprüfen. Die `ConfigMap` sollte zulässige Konfigurationen im `verification-config`-Feld definieren.
 
-Zum Beispiel möchten Sie Richtlinien ausführen, die von der {short-project-name} GitHub-Organisation signiert sind. Ein Beispiel für `ConfigMap` in diesem Szenario wäre:
+Zum Beispiel möchten Sie Richtlinien ausführen, die von der {admc-short-name} GitHub-Organisation signiert sind. Ein Beispiel für `ConfigMap` in diesem Szenario wäre:
 
 .$ cat kubewarden_signatures.yaml
 [%collapsible]
@@ -326,9 +326,9 @@ $ kwctl scaffold verification-config > verification_config.yaml
 ----
 $ kwctl scaffold verification-config > verification_config.yaml
 $ cat verification_config.yaml
-# Default {short-project-name} verification config
+# Default {admc-short-name} verification config
 #
-# With this config, the only valid policies are those signed by {short-project-name}
+# With this config, the only valid policies are those signed by {admc-short-name}
 # infrastructure.
 #
 # This config can be saved to its default location (for this OS) with:
@@ -368,9 +368,9 @@ $ kubectl get configmap -o yaml my-signatures-configuration
 apiVersion: v1
 data:
   verification-config: |+
-    # Default {short-project-name} verification config
+    # Default {admc-short-name} verification config
     #
-    # With this config, the only valid policies are those signed by {short-project-name}
+    # With this config, the only valid policies are those signed by {admc-short-name}
     # infrastructure.
     #
     # This config can be saved to its default location (for this OS) with:
@@ -571,7 +571,7 @@ Zum Beispiel könnte der letzte Ausschnitt, der `genericIssuer` verwendet, wie f
 Alle Signaturtypen können andere optionale Validierungsfelder haben, `annotations`.
 Diese Felder sind Schlüssel/Wert-Daten, die während des Signierungsprozesses hinzugefügt werden.
 
-Mit {short-project-name} können Sie überprüfen, ob die Richtliniensignatur von vertrauenswürdigen Benutzern *und* stammt, die spezifische Annotationen haben.
+Mit {admc-short-name} können Sie überprüfen, ob die Richtliniensignatur von vertrauenswürdigen Benutzern *und* stammt, die spezifische Annotationen haben.
 
 Die nächste Validierung überprüft 2 Bedingungen für die Richtlinie:
 
@@ -611,7 +611,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-Dieses letzte Beispiel testet, ob eine gegebene Richtlinie von der {short-project-name} Organisation stammt:
+Dieses letzte Beispiel testet, ob eine gegebene Richtlinie von der {admc-short-name} Organisation stammt:
 
 [subs="+attributes",console]
 ----

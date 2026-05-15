@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurez les paramètres de la stratégie en utilisant {project-name} pour la validation et la sérialisation des données de la stratégie.
+:description: Configurez les paramètres de la stratégie en utilisant {admc-name} pour la validation et la sérialisation des données de la stratégie.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["rédaction-des-stratégies", "spécification", "paramètres"]
 :doc-type: ["reference"]
@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 
 Le comportement de la stratégie n'est pas rigide, vous pouvez le configurer en fournissant les détails de configuration à la stratégie via le composant d'exécution. L'auteur de la stratégie a la liberté de définir la structure des paramètres de la stratégie.
 
-{project-name} s'occupe de sérialiser les paramètres de la stratégie en JSON et les fournit à la stratégie chaque fois qu'elle est invoquée.
+{admc-name} s'occupe de sérialiser les paramètres de la stratégie en JSON et les fournit à la stratégie chaque fois qu'elle est invoquée.
 
 == Validation des paramètres
 
@@ -41,7 +41,7 @@ Si les paramètres fournis par l'utilisateur sont `valid`, `validate_settings` i
 [NOTE]
 ====
 
-Le {short-project-name} de https://github.com/chimera-kube/policy-server[serveur-de-stratégie] valide tous les paramètres de la stratégie fournis par les utilisateurs au démarrage. Le serveur de stratégie se termine immédiatement avec une erreur si au moins l'une de ses stratégies a reçu des paramètres de configuration incorrects.
+Le {admc-short-name} de https://github.com/chimera-kube/policy-server[serveur-de-stratégie] valide tous les paramètres de la stratégie fournis par les utilisateurs au démarrage. Le serveur de stratégie se termine immédiatement avec une erreur si au moins l'une de ses stratégies a reçu des paramètres de configuration incorrects.
 
 ====
 

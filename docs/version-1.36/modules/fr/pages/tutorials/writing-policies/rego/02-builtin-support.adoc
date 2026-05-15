@@ -19,11 +19,11 @@ Lors de la construction d'une stratégie Rego dans un module WebAssembly, certai
 Ce sont les intégrés marqués d'une coche verte sur la page des intégrés liée.
 Le composant d'exécution WebAssembly évaluant le module fournit les autres.
 
-Les intégrés marqués comme `SDK-dependent` sont ceux que l'hôte doit mettre en œuvre, dans ce cas, {project-name}.
+Les intégrés marqués comme `SDK-dependent` sont ceux que l'hôte doit mettre en œuvre, dans ce cas, {admc-name}.
 OPA et Gatekeeper peuvent les utiliser en fonction des besoins de la stratégie.
 Dans tous les cas, ces intégrés sont exposés à la stratégie et toute stratégie, qu'elle soit nouvelle ou existante, pourrait en dépendre.
 
-Il existe encore certains intégrés qui ne sont pas encore fournis par {short-project-name}, cependant, en fonction des stratégies observées publiquement, ceux déjà pris en charge devraient suffire pour la plupart des utilisateurs de Kubernetes.
+Il existe encore certains intégrés qui ne sont pas encore fournis par {admc-short-name}, cependant, en fonction des stratégies observées publiquement, ceux déjà pris en charge devraient suffire pour la plupart des utilisateurs de Kubernetes.
 
 https://github.com/kubewarden/policy-evaluator/issues/56[Ce problème GitHub] suit les intégrés Rego que nous devons encore mettre en œuvre.
 N'hésitez pas à commenter là-bas pour aider à prioriser notre travail.

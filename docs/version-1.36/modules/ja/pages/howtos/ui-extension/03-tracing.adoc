@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: ポリシー評価に関する詳細な情報を取得し、{project-name}のデプロイメントに関連する問題をデバッグするために、トレースを有効にします。
+:description: ポリシー評価に関する詳細な情報を取得し、{admc-name}のデプロイメントに関連する問題をデバッグするために、トレースを有効にします。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "tracing"]
 :doc-type: ["hosto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "tracing"]
 :current-version: {page-origin-branch}
 
 トレースによって、ポリシー評価に関する詳細な情報を収集できます。
-これは、{project-name}のデプロイメントやポリシーに関する問題をデバッグするのに便利なツールです。
+これは、{admc-name}のデプロイメントやポリシーに関する問題をデバッグするのに便利なツールです。
 
-{short-project-name}はhttps://www.jaegertracing.io/[Jaeger]を使用して、トレースイベントを受信、保存、視覚化します。
+{admc-short-name}はhttps://www.jaegertracing.io/[Jaeger]を使用して、トレースイベントを受信、保存、視覚化します。
 
 *_ポリシートレースログ_*image:ui_policy_tracing.png[UIポリシートレースログ]
 

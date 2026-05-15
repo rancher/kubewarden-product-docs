@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: ポリシーの動作に対する包括的なエンドツーエンドテストをBATSとkwctlを使用して作成し、実行する方法を学びます。
-:keywords: "{project-name}", kubewarden, kubernetes, ポリシーのテスト, typescript, e2eテスト
+:keywords: "{admc-name}", kubewarden, kubernetes, ポリシーのテスト, typescript, e2eテスト
 :doc-type: チュートリアル
-:doc-topic: {project-name}, kubewarden, ポリシーの作成, typescript, エンドツーエンドテスト
+:doc-topic: {admc-name}, kubewarden, ポリシーの作成, typescript, エンドツーエンドテスト
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ include::partial$variables.adoc[]
 これらのツールが開発マシンに必要であることを思い出してください：
 
 * `bats`:テストを書くために使用され、実行を自動化します。
-* `kwctl` >= v1.30:{project-name}が提供するCLIツールで、Kubernetesの外でポリシーを実行するなどの操作が可能です。これは、ドキュメントのxref:/tutorials/testing-policies/index.adoc[テストポリシーセクション]で説明されています。
+* `kwctl` >= v1.30:{admc-name}が提供するCLIツールで、Kubernetesの外でポリシーを実行するなどの操作が可能です。これは、ドキュメントのxref:/tutorials/testing-policies/index.adoc[テストポリシーセクション]で説明されています。
 
 == テストの作成
 
@@ -252,9 +252,9 @@ e2e.bats
 
 == 結論
 
-エンドツーエンドテストは、実際のWebAssemblyバイナリに対してテストすることによって、ポリシーの動作を包括的にカバーします。これにより、ポリシーが{short-project-name}にデプロイされたときに正しく機能することが保証され、TypeScript開発環境だけではありません。
+エンドツーエンドテストは、実際のWebAssemblyバイナリに対してテストすることによって、ポリシーの動作を包括的にカバーします。これにより、ポリシーが{admc-short-name}にデプロイされたときに正しく機能することが保証され、TypeScript開発環境だけではありません。
 
 [TIP]
 ====
-より包括的なエンドツーエンドテストの例については、https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-jsのソースコード]を参照してください。これは、各{short-project-name}のホスト機能を示す広範なe2eテストを含んでいます。これらのテストは、ネットワーキング、暗号操作、OCIレジストリとの相互作用など、より高度なポリシー機能をテストするためのインスピレーションとして役立ちます。
+より包括的なエンドツーエンドテストの例については、https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-jsのソースコード]を参照してください。これは、各{admc-short-name}のホスト機能を示す広範なe2eテストを含んでいます。これらのテストは、ネットワーキング、暗号操作、OCIレジストリとの相互作用など、より高度なポリシー機能をテストするためのインスピレーションとして役立ちます。
 ====

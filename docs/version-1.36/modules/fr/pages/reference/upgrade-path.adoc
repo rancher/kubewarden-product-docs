@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Mettez à niveau votre {project-name} pile en utilisant des stratégies de versionnement et des règles de compatibilité prises en charge parmi ses composants.
+:description: Mettez à niveau votre {admc-name} pile en utilisant des stratégies de versionnement et des règles de compatibilité prises en charge parmi ses composants.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["manuel-opérateur", "chemin-de-mise-à-niveau"]
 :doc-type: ["reference"]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== {project-name}Versionnement de la pile
+== {admc-name}Versionnement de la pile
 
-Le projet {short-project-name} utilise https://semver.org/[Versionnement sémantique] pour définir la version de la "pile" de tous ses composants : la version suit le modèle `MAJOR.MINOR.PATCH`. La version prise en charge est la dernière version publiée.
+Le projet {admc-short-name} utilise https://semver.org/[Versionnement sémantique] pour définir la version de la "pile" de tous ses composants : la version suit le modèle `MAJOR.MINOR.PATCH`. La version prise en charge est la dernière version publiée.
 
-Les composants {short-project-name} qui suivent les règles pour la version de la "pile" sont :
+Les composants {admc-short-name} qui suivent les règles pour la version de la "pile" sont :
 
 * le graphique `kubewarden-crds`, dans leur champ appVersion.
 
@@ -36,7 +36,7 @@ Par conséquent, si la version `kubewarden-controller` en cours d'exécution est
 
 == Versions des graphiques Helm
 
-Les graphiques Helm définissent le champ `version` et le champ `appVersion`. Le champ `appVersion` informe de la version de la "pile" {short-project-name} comme mentionné précédemment. Le champ `version` suit également https://semver.org/[versionnement sémantique] et décrit les changements compatibles avec les versions antérieures dans les modèles de graphiques et `values.yaml`.
+Les graphiques Helm définissent le champ `version` et le champ `appVersion`. Le champ `appVersion` informe de la version de la "pile" {admc-short-name} comme mentionné précédemment. Le champ `version` suit également https://semver.org/[versionnement sémantique] et décrit les changements compatibles avec les versions antérieures dans les modèles de graphiques et `values.yaml`.
 
 == Options de mise à jour
 
@@ -49,16 +49,16 @@ include::latest@shared:en:partial$upg-path.adoc[]
 
 == Ordre de mise à niveau
 
-Les utilisateurs de {short-project-name} doivent mettre à niveau la pile en commençant par le graphique `kubewarden-crds`, puis le graphique `kubewarden-controller`. Après cela, mettez à niveau le `policy-server` (via le graphique `kubewarden-defaults` ou en mettant à jour les images de ceux personnalisés) et `kwctl`.
+Les utilisateurs de {admc-short-name} doivent mettre à niveau la pile en commençant par le graphique `kubewarden-crds`, puis le graphique `kubewarden-controller`. Après cela, mettez à niveau le `policy-server` (via le graphique `kubewarden-defaults` ou en mettant à jour les images de ceux personnalisés) et `kwctl`.
 
 == Rétrogradations
 
-Les rétrogradations ne sont *pas* prises en charge, et {short-project-name} ne les teste pas. Néanmoins, on peut raisonnablement s'attendre à ce qu'elles fonctionnent.
+Les rétrogradations ne sont *pas* prises en charge, et {admc-short-name} ne les teste pas. Néanmoins, on peut raisonnablement s'attendre à ce qu'elles fonctionnent.
 
 == SDK, politiques
 
-Les SDK de stratégie pour les différentes langues et stratégies maintenues par l'équipe {short-project-name} suivent leur propre versionnement sémantique. {short-project-name} prend en charge la dernière version. Il n'est pas nécessaire de prévoir un chemin de mise à niveau pour eux, juste une mise à jour vers la dernière version.
+Les SDK de stratégie pour les différentes langues et stratégies maintenues par l'équipe {admc-short-name} suivent leur propre versionnement sémantique. {admc-short-name} prend en charge la dernière version. Il n'est pas nécessaire de prévoir un chemin de mise à niveau pour eux, juste une mise à jour vers la dernière version.
 
-Les modifications apportées à la pile {short-project-name} peuvent signifier que les stratégies et les SDK reçoivent des mises à jour pour utiliser les dernières fonctionnalités {short-project-name}. {short-project-name} veille à effectuer ces mises à jour de manière rétrocompatible.
+Les modifications apportées à la pile {admc-short-name} peuvent signifier que les stratégies et les SDK reçoivent des mises à jour pour utiliser les dernières fonctionnalités {admc-short-name}. {admc-short-name} veille à effectuer ces mises à jour de manière rétrocompatible.
 
-Par exemple, une version mineure {short-project-name} ajoutant la prise en charge d'Audit Scanner (`v1.7.0`) signifie que les stratégies disposent d'un nouveau champ `spec.backgroundAudit`. Ceci est optionnel, rétrocompatible et défini par défaut sur `true`.
+Par exemple, une version mineure {admc-short-name} ajoutant la prise en charge d'Audit Scanner (`v1.7.0`) signifie que les stratégies disposent d'un nouveau champ `spec.backgroundAudit`. Ceci est optionnel, rétrocompatible et défini par défaut sur `true`.

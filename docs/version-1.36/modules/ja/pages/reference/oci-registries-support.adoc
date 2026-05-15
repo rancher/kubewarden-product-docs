@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= OCIレジストリサポート（{short-project-name}）
+= OCIレジストリサポート（{admc-short-name}）
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 通常のOpen Container Initiative (OCI)レジストリを介して、{project-name}ポリシーをOCIアーティファクトとして配布します。
+:description: 通常のOpen Container Initiative (OCI)レジストリを介して、{admc-name}ポリシーをOCIアーティファクトとして配布します。
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-通常のOpen Container Initiative (OCI)レジストリを使用して、{project-name}ポリシーをhttps://opencontainers.org[OCIアーティファクト]として配布します。
+通常のOpen Container Initiative (OCI)レジストリを使用して、{admc-name}ポリシーをhttps://opencontainers.org[OCIアーティファクト]として配布します。
 
-{short-project-name}ポリシーのストレージはコンテナイメージと同様に配置されます。
+{admc-short-name}ポリシーのストレージはコンテナイメージと同様に配置されます。
 通常のコンテナイメージに必要なセットアップやメンテナンス以外に、追加のセットアップやメンテナンスは必要ありません。
 
 [NOTE]
 ====
-{short-project-name}と連携するレジストリを追加するか、ページの下部にある「このページを編集」ボタンを使用してレジストリの不正確さを修正できます。
+{admc-short-name}と連携するレジストリを追加するか、ページの下部にある「このページを編集」ボタンを使用してレジストリの不正確さを修正できます。
 ====
 
 
@@ -42,7 +42,7 @@ include::partial$variables.adoc[]
 
 == OCIレジストリと連携するツール
 
-{short-project-name}プロジェクトは次のことを推奨します:
+{admc-short-name}プロジェクトは次のことを推奨します:
 
 * https://github.com/kubewarden/kwctl[`kwctl`]（私たちのCLIツール）。
 * https://github.com/containers/skopeo[Skopeo]（https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]）。
@@ -52,7 +52,7 @@ include::partial$variables.adoc[]
 
 === Docker Hub
 
-現在、Docker HubはOCIアーティファクトをサポートしていないため、{short-project-name}ポリシーを保存することはできません。
+現在、Docker HubはOCIアーティファクトをサポートしていないため、{admc-short-name}ポリシーを保存することはできません。
 Docker Inc.は、Docker Hubがhttps://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[将来]OCIアーティファクトをサポートすることを発表しました。
 
 === JFrog

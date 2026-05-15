@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用{project-name}配置策略设置，以验证和序列化策略数据。
+:description: 使用{admc-name}配置策略设置，以验证和序列化策略数据。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "settings"]
 :doc-type: ["reference"]
@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 
 策略行为并不是固定的，您可以通过在运行时向策略提供配置细节来进行配置。策略作者可以自由地定义策略设置的结构。
 
-{project-name}负责将策略设置序列化为JSON，并在每次调用时将其提供给策略。
+{admc-name}负责将策略设置序列化为JSON，并在每次调用时将其提供给策略。
 
 == 设置验证
 
@@ -41,7 +41,7 @@ include::partial$variables.adoc[]
 [NOTE]
 ====
 
-{short-project-name}的https://github.com/chimera-kube/policy-server[policy-server]在启动时验证用户提供的所有策略设置。如果至少有一个策略接收到错误的配置参数，policy-server将立即退出并显示错误。
+{admc-short-name}的https://github.com/chimera-kube/policy-server[policy-server]在启动时验证用户提供的所有策略设置。如果至少有一个策略接收到错误的配置参数，policy-server将立即退出并显示错误。
 
 ====
 

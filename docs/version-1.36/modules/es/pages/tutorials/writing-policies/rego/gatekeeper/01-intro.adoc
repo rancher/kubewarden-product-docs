@@ -23,14 +23,14 @@ Gatekeeper es un proyecto dirigido a Kubernetes con características listas para
 
 == Compatibilidad con directivas existentes
 
-Todas las directivas existentes de Gatekeeper deberían ser compatibles con {short-project-name} como se explica en este capítulo.
+Todas las directivas existentes de Gatekeeper deberían ser compatibles con {admc-short-name} como se explica en este capítulo.
 
 [IMPORTANT]
 ====
-Si encuentras que esto no es cierto para tus directivas de Gatekeeper, infórmalo, y trabajaremos para asegurar que tu directiva de Gatekeeper funcione con {short-project-name}.
+Si encuentras que esto no es cierto para tus directivas de Gatekeeper, infórmalo, y trabajaremos para asegurar que tu directiva de Gatekeeper funcione con {admc-short-name}.
 ====
 
 
 Las directivas deben compilarse con la CLI de `opa` para el destino `wasm`.
 
-Para la ejecución de directivas, puedes leer más sobre el soporte xref:tutorials/writing-policies/rego/02-builtin-support.adoc[integrado] en {short-project-name}.
+Para la ejecución de directivas, puedes leer más sobre el soporte xref:tutorials/writing-policies/rego/02-builtin-support.adoc[integrado] en {admc-short-name}.

@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-type: ["howto"]
 :doc-topic: ["operator-manual", "policies"]
 
-默认情况下，Admission Controller 不允许策略在其自身名称空间中评估资源。这可以防止可能破坏 {short-project-name} 安装的错误配置。
+默认情况下，Admission Controller 不允许策略在其自身名称空间中评估资源。这可以防止可能破坏 {admc-short-name} 安装的错误配置。
 
 此安全措施分为两层实施。第一层由 `--always-accept-admission-reviews-on-deployments-namespace` CLI 标志控制。
 此标志在 Helm 图表中默认启用，使控制器在 PolicyServer 部署中配置 `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` 环境变量。此变量告诉策略服务器始终接受来自变量中定义的名称空间的入场审查。第二层是 Admission Controller 本身，默认情况下会向集群范围的策略添加名称空间选择器，以跳过控制器运行的名称空间。
@@ -19,7 +19,7 @@ include::partial$variables.adoc[]
 
 第一步是配置控制器，以便不在 PolicyServer 部署中设置 `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` 环境变量。
 
-为此，请升级您的 {short-project-name} 安装，并将 `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm 图表的 `kubewarden-controller` 值设置为 `false`：
+为此，请升级您的 {admc-short-name} 安装，并将 `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm 图表的 `kubewarden-controller` 值设置为 `false`：
 
 [source,console]
 ----
@@ -29,7 +29,7 @@ helm upgrade -n kubewarden
 ----
 
 此更改允许策略服务器评估来自任何名称空间的资源。
-完成后，可以配置策略以评估来自 {short-project-name} 名称空间的入场审查。
+完成后，可以配置策略以评估来自 {admc-short-name} 名称空间的入场审查。
 
 == 配置策略以在 Admission Controller 名称空间中评估资源
 
@@ -73,5 +73,5 @@ spec:
 [NOTE]
 .我的自定义名称空间选择器怎么办？
 ====
-策略 CRD 还允许用户定义自己的名称空间选择器。这些选择器没有改变。这意味着如果用户定义了一个跳过 {short-project-name} 名称空间的选择器，策略仍然会如预期那样忽略该名称空间。
+策略 CRD 还允许用户定义自己的名称空间选择器。这些选择器没有改变。这意味着如果用户定义了一个跳过 {admc-short-name} 名称空间的选择器，策略仍然会如预期那样忽略该名称空间。
 ====

@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}のコンテキストに基づくポリシーとwaPCプロトコルを使用して、クラスターリソースにアクセスするKubernetesの機能を探ります。
+:description: {admc-name}のコンテキストに基づくポリシーとwaPCプロトコルを使用して、クラスターリソースにアクセスするKubernetesの機能を探ります。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "kubernetes-capabilities"]
 :doc-type: ["reference"]
@@ -11,8 +11,8 @@ include::partial$variables.adoc[]
 :sidebar_label: Kubernetesの機能
 :current-version: {page-origin-branch}
 
-{project-name}のコンテキストに基づくポリシーは、実行されているKubernetesクラスターからリソースへのアクセスを必要とします。
-そのために、{short-project-name} SDKは、クラスターに関するデータを要求するためにwaPC通信プロトコルを使用する関数を公開しています。
+{admc-name}のコンテキストに基づくポリシーは、実行されているKubernetesクラスターからリソースへのアクセスを必要とします。
+そのために、{admc-short-name} SDKは、クラスターに関するデータを要求するためにwaPC通信プロトコルを使用する関数を公開しています。
 
 == waPCプロトコル契約
 

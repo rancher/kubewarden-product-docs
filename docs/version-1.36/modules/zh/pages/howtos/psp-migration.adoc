@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 :title: PodSecurityPolicy 迁移
-:description: 在您的 Kubernetes 集群中配置 {project-name} 策略，以实现对策略配置的细粒度控制，替代 PodSecurityPolicy (PSP)。
+:description: 在您的 Kubernetes 集群中配置 {admc-name} 策略，以实现对策略配置的细粒度控制，替代 PodSecurityPolicy (PSP)。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "appvia", "psp", "pod security policy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "appvia", "psp", "pod security policy"]
 :sidebar_label: PSP 迁移
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -15,13 +15,13 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 
 适用于 Kubernetes ≥ v1.25。
-https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy]（PSP）已被移除。现在您可以在您的 Kubernetes 集群中使用 {project-name} 进行准入控制。
+https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy]（PSP）已被移除。现在您可以在您的 Kubernetes 集群中使用 {admc-name} 进行准入控制。
 
-{short-project-name} 拥有单独的策略，以实现与单体 PSP 配置相同的目标。每个 {short-project-name} 策略定义在 PSP 的规范中作为不同的配置部分。PSP 配置字段与其各自的 {short-project-name} 策略的映射关系见下方 <<_mapping_kubewarden_policies_to_psp_fields,映射表>>。
+{admc-short-name} 拥有单独的策略，以实现与单体 PSP 配置相同的目标。每个 {admc-short-name} 策略定义在 PSP 的规范中作为不同的配置部分。PSP 配置字段与其各自的 {admc-short-name} 策略的映射关系见下方 <<_mapping_kubewarden_policies_to_psp_fields,映射表>>。
 
-使用 {short-project-name}，操作员可以在其集群中对策略配置进行细粒度控制。
+使用 {admc-short-name}，操作员可以在其集群中对策略配置进行细粒度控制。
 
-使用 {short-project-name} 实例，您可以部署策略以替代 `PodSecurityPolicy` 对象。我们在这个例子中考虑这些规则：
+使用 {admc-short-name} 实例，您可以部署策略以替代 `PodSecurityPolicy` 对象。我们在这个例子中考虑这些规则：
 
 * 禁用特权升级的 PSP
 * 特权容器
@@ -62,10 +62,10 @@ spec:
 
 ======
 
-== {short-project-name} 替换 PSP
+== {admc-short-name} 替换 PSP
 
-现在我们将创建 {short-project-name} 策略以实现相同的目标。
-您通过单独的 {short-project-name} 策略来强制执行每条规则。
+现在我们将创建 {admc-short-name} 策略以实现相同的目标。
+您通过单独的 {admc-short-name} 策略来强制执行每条规则。
 因此，在这个例子中，您需要为以下每项分别创建一个策略：
 
 * 特权升级
@@ -465,12 +465,12 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 ======
 
-== 将 {short-project-name} 策略映射到 PSP 字段
+== 将 {admc-short-name} 策略映射到 PSP 字段
 
-此表将 PSP 配置字段映射到相应的 {short-project-name} 策略。
+此表将 PSP 配置字段映射到相应的 {admc-short-name} 策略。
 
 |===
-| PSP 字段 | {short-project-name} 等效策略
+| PSP 字段 | {admc-short-name} 等效策略
 
 | https://kubernetes.io/docs/concepts/security/pod-security-policy/#privileged[特权]
 | https://github.com/kubewarden/pod-privileged-policy[pod-特权策略]
@@ -547,18 +547,18 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 == PSP 迁移脚本
 
-{short-project-name}团队开发了一个用于PSP迁移的脚本。它使用来自https://github.com/appvia/psp-migration[AppVia]的迁移工具。AppVia 工具读取 PSP YAML 配置。它会生成相应的策略。它为 {short-project-name} 和其他策略引擎执行此操作。
+{admc-short-name}团队开发了一个用于PSP迁移的脚本。它使用来自https://github.com/appvia/psp-migration[AppVia]的迁移工具。AppVia 工具读取 PSP YAML 配置。它会生成相应的策略。它为 {admc-short-name} 和其他策略引擎执行此操作。
 
 [CAUTION]
 ====
 
 AppVia 迁移工具不在 Kubewarden 维护者的控制之下。
-这意味着它可能会生成过时的 {short-project-name} 策略。请谨慎使用。我们需要一个AppVia的拉取请求，目前正在进行中。
+这意味着它可能会生成过时的 {admc-short-name} 策略。请谨慎使用。我们需要一个AppVia的拉取请求，目前正在进行中。
 如果需要更多信息，请与我们联系。
 ====
 
 
-该脚本可在{short-project-name}https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]储存库中获得。它将 AppVia 迁移工具下载到工作目录中以供使用。它处理在 `kubectl` 默认上下文中定义的 PSP。然后它在标准输出上打印 Kubewarden 策略定义。用户可以将内容重定向到文件或直接到`kubectl`。
+该脚本可在{admc-short-name}https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]储存库中获得。它将 AppVia 迁移工具下载到工作目录中以供使用。它处理在 `kubectl` 默认上下文中定义的 PSP。然后它在标准输出上打印 Kubewarden 策略定义。用户可以将内容重定向到文件或直接到`kubectl`。
 
 [NOTE]
 ====
@@ -636,7 +636,7 @@ spec:
 
 ======
 
-{short-project-name} 策略可以使用以下命令直接应用于集群：
+{admc-short-name} 策略可以使用以下命令直接应用于集群：
 
 [subs="+attributes",shell]
 ----

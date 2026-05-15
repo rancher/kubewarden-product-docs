@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: 学习如何使用 BATS 和 kwctl 编写和运行全面的端到端测试，以验证策略行为。
-:keywords: "{project-name}", kubewarden, kubernetes, 测试策略, typescript, 端到端测试
+:keywords: "{admc-name}", kubewarden, kubernetes, 测试策略, typescript, 端到端测试
 :doc-type: 教程
-:doc-topic: {project-name}, kubewarden, 编写策略, typescript, 端到端测试
+:doc-topic: {admc-name}, kubewarden, 编写策略, typescript, 端到端测试
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ include::partial$variables.adoc[]
 请记住，您需要在开发机器上安装这些工具：
 
 * `bats`：用于编写测试并自动化其执行。
-* `kwctl` >= v1.30：由 {project-name} 提供的 CLI 工具，用于在 Kubernetes 外部运行其策略，以及其他操作。在文档的 xref:/tutorials/testing-policies/index.adoc[测试策略部分] 中有介绍。
+* `kwctl` >= v1.30：由 {admc-name} 提供的 CLI 工具，用于在 Kubernetes 外部运行其策略，以及其他操作。在文档的 xref:/tutorials/testing-policies/index.adoc[测试策略部分] 中有介绍。
 
 == 编写测试
 
@@ -252,9 +252,9 @@ e2e.bats
 
 == 结论
 
-端到端测试通过针对实际的 WebAssembly 二进制文件进行测试，提供了对策略行为的全面覆盖。这确保了策略在 {short-project-name} 中部署时能够正确工作，而不仅仅是在 TypeScript 开发环境中。
+端到端测试通过针对实际的 WebAssembly 二进制文件进行测试，提供了对策略行为的全面覆盖。这确保了策略在 {admc-short-name} 中部署时能够正确工作，而不仅仅是在 TypeScript 开发环境中。
 
 [TIP]
 ====
-有关端到端测试的更全面示例，您可以探索 https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js 源代码]，其中包括广泛的 e2e 测试，展示了 {short-project-name} 的每个主机功能。这些测试可以作为测试更高级策略功能的灵感，例如网络、加密操作和 OCI 注册表交互。
+有关端到端测试的更全面示例，您可以探索 https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js 源代码]，其中包括广泛的 e2e 测试，展示了 {admc-short-name} 的每个主机功能。这些测试可以作为测试更高级策略功能的灵感，例如网络、加密操作和 OCI 注册表交互。
 ====

@@ -1,16 +1,16 @@
 include::partial$variables.adoc[]
-= 安装 kwctl ({project-name} CLI)
+= 安装 kwctl ({admc-name} CLI)
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: 安装 kwctl
-:description: 按照各种操作系统的安装说明安装 kwctl（{project-name} CLI），然后启用外壳补全。
-:keywords: ["{project-name}", kubewarden, kubernetes, 安装 kwctl, 安装, kwctl]
+:description: 按照各种操作系统的安装说明安装 kwctl（{admc-name} CLI），然后启用外壳补全。
+:keywords: ["{admc-name}", kubewarden, kubernetes, 安装 kwctl, 安装, kwctl]
 :doc-persona: kubewarden-all
 :doc-type: HOWTO
 :doc-topic: install-kwctl
 
-`kwctl` 是 {project-name} 的命令行界面（CLI）工具。以下是一些操作系统的安装说明。
+`kwctl` 是 {admc-name} 的命令行界面（CLI）工具。以下是一些操作系统的安装说明。
 
 [tabs]
 ====
@@ -178,7 +178,7 @@ Windows::
 在 Windows 上安装
 
 . 下载 `kwctl`：
-    .. 打开您的浏览器并访问 https://github.com/kubewarden/kwctl/releases/latest[{short-project-name} 发布页面]。
+    .. 打开您的浏览器并访问 https://github.com/kubewarden/kwctl/releases/latest[{admc-short-name} 发布页面]。
     .. 下载 `kwctl-windows-x86_64.zip` 文件。
 
 . 从下载的 zip 文件中提取文件。它将包含：

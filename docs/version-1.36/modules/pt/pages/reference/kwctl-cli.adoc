@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl CLI
-:description: Explore a ferramenta de linha de comando \`kwctl` para gerenciar {project-name} políticas e realizar tarefas como carregar políticas.
+:description: Explore a ferramenta de linha de comando \`kwctl` para gerenciar {admc-name} políticas e realizar tarefas como carregar políticas.
 :keywords: cli, referência, kwctl
 :doc-persona: kubewarden-operator
 :doc-type: referência
@@ -44,28 +44,28 @@ Este documento contém o conteúdo de ajuda para o programa de linha de comando 
 [[kwctl]]
 === `kwctl`
 
-Ferramenta para gerenciar {project-name} políticas
+Ferramenta para gerenciar {admc-name} políticas
 
 *Uso:* `kwctl [OPTIONS] <COMMAND>`
 
 ==== Subcomandos
 
-* `annotate` — Adiciona metadados {short-project-name} a um módulo WebAssembly
-* `bench` — Avalia uma política {short-project-name}
+* `annotate` — Adiciona metadados {admc-short-name} a um módulo WebAssembly
+* `bench` — Avalia uma política {admc-short-name}
 * `completions` — Gera autocompletação para o shell
 * `digest` — Busca o digest do manifesto OCI de uma política
 * `docs` — Gera a documentação em markdown para os comandos do kwctl
 * `info` — Exibe informações do sistema
-* `inspect` — Inspeciona a política {short-project-name}
+* `inspect` — Inspeciona a política {admc-short-name}
 * `load` — Carrega políticas de um arquivo tar.gz
 * `policies` — Lista todas as políticas baixadas
-* `pull` — Puxa uma política {short-project-name} de uma URI fornecida
-* `push` — Envia uma política {short-project-name} para um registro OCI
-* `rm` — Remover uma política {short-project-name} do armazenamento
-* `run` — Executa uma política {short-project-name} de uma URI fornecida
+* `pull` — Puxa uma política {admc-short-name} de uma URI fornecida
+* `push` — Envia uma política {admc-short-name} para um registro OCI
+* `rm` — Remover uma política {admc-short-name} do armazenamento
+* `run` — Executa uma política {admc-short-name} de uma URI fornecida
 * `save` — Salva políticas em um arquivo tar.gz
 * `scaffold` — Cria um recurso ou arquivo de configuração Kubernetes
-* `verify` — Verifica uma política {short-project-name} de uma URI fornecida usando Sigstore
+* `verify` — Verifica uma política {admc-short-name} de uma URI fornecida usando Sigstore
 
 ==== Opções
 
@@ -75,7 +75,7 @@ Ferramenta para gerenciar {project-name} políticas
 [[kwctl-annotate]]
 === `kwctl annotate`
 
-Adiciona {short-project-name} metadados a um módulo WebAssembly
+Adiciona {admc-short-name} metadados a um módulo WebAssembly
 
 *Uso:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
 
@@ -92,21 +92,21 @@ Adiciona {short-project-name} metadados a um módulo WebAssembly
 [[kwctl-bench]]
 === `kwctl bench`
 
-Avalia uma política {short-project-name}.
+Avalia uma política {admc-short-name}.
 
 A política pode ser especificada das seguintes maneiras:
 - URI: por exemplo, `registry://ghcr.io/kubewarden/policies/psp-policy:latest` ou `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - Prefixo SHA: por exemplo, `c3b80a10f9c3` (requer que a política já tenha sido puxada)
 - Arquivo WASM local: por exemplo, `file://home/tux/new-policy/psp-policy.wasm`
-- Arquivo YAML local: por exemplo, `file://home/tux/cluster-admission-policy.yaml` (contém declarações de Recursos Customizados {short-project-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Arquivo YAML local: por exemplo, `file://home/tux/cluster-admission-policy.yaml` (contém declarações de Recursos Customizados {admc-short-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Comportamento Padrão:
 Se o esquema for omitido, assume-se `file://`, enraizado no diretório atual.
 
-Notas sobre Recursos Customizados {short-project-name}:
+Notas sobre Recursos Customizados {admc-short-name}:
 - As flags `--request-path`, `--settings-path` e `--settings-json` são ignoradas; as configurações são lidas da definição do Recurso Customizado.
 - A flag `--execution-mode` se aplica a todas as políticas no arquivo YAML.
-- A flag `--raw` não pode ser usada, pois os Recursos Customizados de {short-project-name} não suportam políticas `raw`.
+- A flag `--raw` não pode ser usada, pois os Recursos Customizados de {admc-short-name} não suportam políticas `raw`.
 
 Apenas os seguintes atributos da Definição de Recurso Customizado (CRD) são avaliados:
 - Módulo de política
@@ -121,7 +121,7 @@ Um arquivo YAML pode conter múltiplas declarações de Recursos Customizados. N
 
 ==== Argumentos
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI da política, prefixo SHA ou arquivo YAML contendo recursos de política {short-project-name}. Esquemas suportados: registry://, https://, file://. Se o esquema for omitido, file:// é assumido, com base no diretório atual.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI da política, prefixo SHA ou arquivo YAML contendo recursos de política {admc-short-name}. Esquemas suportados: registry://, https://, file://. Se o esquema for omitido, file:// é assumido, com base no diretório atual.
 
 ==== Opções
 
@@ -201,7 +201,7 @@ Exibe informações do sistema
 [[kwctl-inspect]]
 === `kwctl inspect`
 
-Inspeciona {short-project-name} a política
+Inspeciona {admc-short-name} a política
 
 *Uso:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
 
@@ -238,7 +238,7 @@ Lista todas as políticas baixadas
 [[kwctl-pull]]
 === `kwctl pull`
 
-Puxa {short-project-name} uma política de uma URI dada
+Puxa {admc-short-name} uma política de uma URI dada
 
 *Uso:* `kwctl pull [OPTIONS] <uri>`
 
@@ -253,7 +253,7 @@ Puxa {short-project-name} uma política de uma URI dada
 * `--docker-config-json-path <DOCKER_CONFIG>` — Caminho para um diretório contendo o arquivo 'config.json' do Docker. Pode ser usado para indicar detalhes de autenticação do registro
 * `--github-owner <VALUE>` — Proprietário do GitHub esperado nos certificados gerados em pipelines de CD
 * `--github-repo <VALUE>` — Repositório do GitHub esperado nos certificados gerados em pipelines de CD
-* `-o`, `--output-path <PATH>` — Arquivo de saída. Se não fornecido, será baixado para a loja {short-project-name}
+* `-o`, `--output-path <PATH>` — Arquivo de saída. Se não fornecido, será baixado para a loja {admc-short-name}
 * `--sigstore-trust-config <PATH>` — Arquivo formatado em JSON que conforma à mensagem ClientTrustConfig nas especificações protobuf do Sigstore. Este arquivo configura todo o estado da instância do Sigstore, incluindo os URIs usados para acessar os serviços de CA e transparência de artefatos, bem como a raiz de confiança criptográfica em si
 * `--sources-path <PATH>` — Arquivo YAML contendo informações de origem (https, hosts inseguros do registro, CAs personalizadas...)
 * `-a`, `--verification-annotation <KEY=VALUE>` — Anotação no formato chave=valor. Pode ser repetido várias vezes
@@ -263,7 +263,7 @@ Puxa {short-project-name} uma política de uma URI dada
 [[kwctl-push]]
 === `kwctl push`
 
-Envia uma política {short-project-name} para um registro OCI
+Envia uma política {admc-short-name} para um registro OCI
 
 *Uso:* `kwctl push [OPTIONS] <policy> <uri>`
 
@@ -288,7 +288,7 @@ A anotação 'io.kubewarden.policy.source' é propagada como 'org.opencontainers
 [[kwctl-rm]]
 === `kwctl rm`
 
-Remove uma política {short-project-name} da loja
+Remove uma política {admc-short-name} da loja
 
 *Uso:* `kwctl rm <uri_or_sha_prefix>`
 
@@ -299,21 +299,21 @@ Remove uma política {short-project-name} da loja
 [[kwctl-run]]
 === `kwctl run`
 
-Execute uma ou mais políticas {short-project-name} localmente.
+Execute uma ou mais políticas {admc-short-name} localmente.
 
 A política pode ser especificada das seguintes maneiras:
 - URI: por exemplo, `registry://ghcr.io/kubewarden/policies/psp-policy:latest` ou `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - Prefixo SHA: por exemplo, `c3b80a10f9c3` (requer que a política já tenha sido puxada)
 - Arquivo WASM local: por exemplo, `file://home/tux/new-policy/psp-policy.wasm`
-- Arquivo YAML local: por exemplo, `file://home/tux/cluster-admission-policy.yaml` (contém declarações de Recursos Customizados {short-project-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Arquivo YAML local: por exemplo, `file://home/tux/cluster-admission-policy.yaml` (contém declarações de Recursos Customizados {admc-short-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Comportamento Padrão:
 Se o esquema for omitido, assume-se `file://`, enraizado no diretório atual.
 
-Notas sobre Recursos Customizados {short-project-name}:
+Notas sobre Recursos Customizados {admc-short-name}:
 - As flags `--request-path`, `--settings-path` e `--settings-json` são ignoradas; as configurações são lidas da definição do Recurso Customizado.
 - A flag `--execution-mode` se aplica a todas as políticas no arquivo YAML.
-- A flag `--raw` não pode ser usada, pois os Recursos Customizados de {short-project-name} não suportam políticas `raw`.
+- A flag `--raw` não pode ser usada, pois os Recursos Customizados de {admc-short-name} não suportam políticas `raw`.
 
 Apenas os seguintes atributos da Definição de Recurso Customizado (CRD) são avaliados:
 - Módulo de política
@@ -328,7 +328,7 @@ Um arquivo YAML pode conter múltiplas declarações de Recursos Customizados. N
 
 ==== Argumentos
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI da política, prefixo SHA ou arquivo YAML contendo recursos de política {short-project-name}. Esquemas suportados: registry://, https://, file://. Se o esquema for omitido, file:// é assumido, enraizado no diretório atual.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI da política, prefixo SHA ou arquivo YAML contendo recursos de política {admc-short-name}. Esquemas suportados: registry://, https://, file://. Se o esquema for omitido, file:// é assumido, enraizado no diretório atual.
 
 ==== Opções
 
@@ -381,7 +381,7 @@ Crie um recurso ou arquivo de configuração do Kubernetes
 * `admission-request` — Crie um objeto AdmissionRequest
 * `artifacthub` — Gere um arquivo artifacthub-pkg.yml a partir de um arquivo metadata.yml
 * `manifest` — Gere um manifesto de recurso do Kubernetes
-* `vap` — Converter um `ValidatingAdmissionPolicy` do Kubernetes em um {short-project-name} `ClusterAdmissionPolicy`
+* `vap` — Converter um `ValidatingAdmissionPolicy` do Kubernetes em um {admc-short-name} `ClusterAdmissionPolicy`
 * `verification-config` — Gerar um arquivo de configuração de verificação padrão do Sigstore
 
 [[kwctl-scaffold-admission-request]]
@@ -395,7 +395,7 @@ Crie um objeto AdmissionRequest
 
 * `--object <PATH>` — O arquivo contendo o novo objeto que está sendo admitido
 * `--old-object <PATH>` — O arquivo contendo o objeto existente
-* `-o`, `--operation <TYPE>` — Tipo de Recurso Customizado {short-project-name} +
+* `-o`, `--operation <TYPE>` — Tipo de Recurso Customizado {admc-short-name} +
   Valores possíveis: `CREATE`
 
 [[kwctl-scaffold-artifacthub]]
@@ -438,7 +438,7 @@ Gerar um manifesto de recurso do Kubernetes
 * `--sigstore-trust-config <PATH>` — Arquivo formatado em JSON que conforma à mensagem ClientTrustConfig nas especificações protobuf do Sigstore. Este arquivo configura todo o estado da instância do Sigstore, incluindo os URIs usados para acessar os serviços de CA e transparência de artefatos, bem como a raiz de confiança criptográfica em si
 * `--sources-path <PATH>` — Arquivo YAML contendo informações de origem (https, hosts inseguros do registro, CAs personalizadas...)
 * `--title <VALUE>` — Título da política
-* `-t`, `--type <VALUE>` — Tipo de Recurso Customizado {short-project-name} +
+* `-t`, `--type <VALUE>` — Tipo de Recurso Customizado {admc-short-name} +
   Valores possíveis: `ClusterAdmissionPolicy`, `AdmissionPolicy`
 * `-a`, `--verification-annotation <KEY=VALUE>` — Anotação no formato chave=valor. Pode ser repetido várias vezes
 * `--verification-config-path <PATH>` — Arquivo YAML contendo informações de configuração de verificação (assinaturas, chaves públicas...)
@@ -447,7 +447,7 @@ Gerar um manifesto de recurso do Kubernetes
 [[kwctl-scaffold-vap]]
 === `kwctl scaffold vap`
 
-Converter um `ValidatingAdmissionPolicy` do Kubernetes em um {short-project-name} `ClusterAdmissionPolicy`
+Converter um `ValidatingAdmissionPolicy` do Kubernetes em um {admc-short-name} `ClusterAdmissionPolicy`
 
 *Uso:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
 
@@ -468,7 +468,7 @@ Gere um arquivo de configuração de verificação padrão do Sigstore
 [[kwctl-verify]]
 === `kwctl verify`
 
-Verifique uma política {short-project-name} de uma URI fornecida usando o Sigstore
+Verifique uma política {admc-short-name} de uma URI fornecida usando o Sigstore
 
 *Uso:* `kwctl verify [OPTIONS] <uri>`
 

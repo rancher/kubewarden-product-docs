@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: ネットワーク機能
 :current-version: {page-origin-branch}
 
-{project-name} ポリシーは、WebAssembly実行コンテキスト内からネットワークリクエストを行うことはできません。
+{admc-name} ポリシーは、WebAssembly実行コンテキスト内からネットワークリクエストを行うことはできません。
 
 ネットワーク操作は、ホストによって公開された一連の機能を活用することで行うことができます。
 

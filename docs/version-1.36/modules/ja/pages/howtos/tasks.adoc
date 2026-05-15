@@ -4,27 +4,27 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: kwctl CLIツールを使用して、Kubernetesクラスター内のポリシーを{project-name}で管理します。
+:description: kwctl CLIツールを使用して、Kubernetesクラスター内のポリシーを{admc-name}で管理します。
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :current-version: {page-origin-branch}
 
-これは、Kubernetesクラスター内でxref:quick-start.adoc#installation[インストール{project-name}]した後の一般的なタスクを説明します。
+これは、Kubernetesクラスター内でxref:quick-start.adoc#installation[インストール{admc-name}]した後の一般的なタスクを説明します。
 
 個別のタスクは論理的な順序で配置されています。
 
 == ポリシーのテスト
 
-{short-project-name}は、ポリシーを見つけてローカルでテストするために2つのツールを使用します：
+{admc-short-name}は、ポリシーを見つけてローカルでテストするために2つのツールを使用します：
 
-* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub]、{short-project-name}ポリシーのためのパッケージフィルターを使用
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub]、{admc-short-name}ポリシーのためのパッケージフィルターを使用
 * https://github.com/kubewarden/kwctl[`kwctl`]、CLIツール
 
 === Artifact Hub
 
-Artifact Hubは、コミュニティによって寄稿されたポリシーをホストしています。例えば、{short-project-name}の開発者によって作成された、https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[廃止されたKubernetes Pod Security Policies]の代替品を見つけることができます。
+Artifact Hubは、コミュニティによって寄稿されたポリシーをホストしています。例えば、{admc-short-name}の開発者によって作成された、https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[廃止されたKubernetes Pod Security Policies]の代替品を見つけることができます。
 
 下のスクリーンショットに示されているように、興味のあるポリシーを見つけたら、`Install`ボタンを選択し、`kwctl`を使用してクラスターのポリシーを取得します。
 
@@ -33,7 +33,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 [NOTE]
 ====
 
-以前は、{short-project-name}ポリシーはhttps://hub.kubewarden.io[{short-project-name} Policy Hub]で見つけることができました。これはhttps://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[廃止されました]。
+以前は、{admc-short-name}ポリシーはhttps://hub.kubewarden.io[{admc-short-name} Policy Hub]で見つけることができました。これはhttps://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[廃止されました]。
 ポリシーは現在、https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io]から入手可能です。
 
 ====
@@ -41,7 +41,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 
 === `kwctl` CLIツール
 
-`kwctl`は{short-project-name}のCLIツールで、ポリシーの作成者とクラスター管理者がKubernetesクラスターに適用する前にポリシーをテストするためのものです。
+`kwctl`は{admc-short-name}のCLIツールで、ポリシーの作成者とクラスター管理者がKubernetesクラスターに適用する前にポリシーをテストするためのものです。
 
 このツールは`docker` CLIツールと似たインターフェースを持っています。
 
@@ -74,8 +74,8 @@ _クラスター管理者として_
 ----
 $ kwctl --help
 kwctl 0.2.5
-{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage {short-project-name} policies
+{admc-short-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {admc-short-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -86,18 +86,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add {short-project-name} metadata to a WebAssembly module
+    annotate       Add {admc-short-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect {short-project-name} policy
+    inspect        Inspect {admc-short-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a {short-project-name} policy from a given URI
-    push           Pushes a {short-project-name} policy to an OCI registry
-    rm             Removes a {short-project-name} policy from the store
-    run            Runs a {short-project-name} policy from a given URI
+    pull           Pulls a {admc-short-name} policy from a given URI
+    push           Pushes a {admc-short-name} policy to an OCI registry
+    rm             Removes a {admc-short-name} policy from the store
+    run            Runs a {admc-short-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+    verify         Verify a {admc-short-name} policy from a given URI using Sigstore
 ----
 
 ここにいくつかのコマンド使用例があります:
@@ -261,5 +261,5 @@ clusteradmissionpolicy.policies.kubewarden.io/privileged-pods created
 
 == 次のステップ
 
-* xref:tutorials/writing-policies/index.adoc[ポリシーの作成]は、異なる言語でポリシーを書く方法とWebAssemblyバイナリを生成する方法を説明しており、それらは{short-project-name}によって使用できます。
+* xref:tutorials/writing-policies/index.adoc[ポリシーの作成]は、異なる言語でポリシーを書く方法とWebAssemblyバイナリを生成する方法を説明しており、それらは{admc-short-name}によって使用できます。
 * xref:../explanations/distributing-policies.adoc[ポリシーの配布]は、ポリシーをhttps://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCIレジストリ]に公開する方法を説明しています。

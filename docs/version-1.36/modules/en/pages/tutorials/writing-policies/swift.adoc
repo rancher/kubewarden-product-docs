@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Learn how to use the Swift compiler with WebAssembly support through SwiftWasm to access tools for building {project-name} policies.
+:description: Learn how to use the Swift compiler with WebAssembly support through SwiftWasm to access tools for building {admc-name} policies.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "swift"]
 :doc-type: ["tutorial"]
@@ -24,7 +24,7 @@ https://swiftwasm.org/[SwiftWasm] project provides a patched compiler with this
 capability.
 
 The SwiftWasm team is working to merge these changes into the Swift project.
-In the meantime, you can use the tool chain provided by the SwiftWasm project to build {project-name} policies.
+In the meantime, you can use the tool chain provided by the SwiftWasm project to build {admc-name} policies.
 
 [NOTE]
 ====
@@ -38,8 +38,8 @@ can be done also on a Linux machine or on Windows (by using Docker for Windows).
 
 Policy authors can use the following resources:
 
-* https://github.com/kubewarden/policy-sdk-swift[{short-project-name} Swift SDK]: this provides a set of ``struct``s and functions that simplify the process of writing policies.
-* https://github.com/kubewarden/swift-policy-template[{short-project-name} Swift template project]: use this template to scaffold a Swift-based policy.
+* https://github.com/kubewarden/policy-sdk-swift[{admc-short-name} Swift SDK]: this provides a set of ``struct``s and functions that simplify the process of writing policies.
+* https://github.com/kubewarden/swift-policy-template[{admc-short-name} Swift template project]: use this template to scaffold a Swift-based policy.
 The template comes with a working policy and a set of GitHub Actions to automate its lifecycle.
 
 There are no severe limitations with Swift, only some minor issues:
@@ -54,4 +54,4 @@ The GitHub Action provided by the template repository already takes care of that
 == More examples
 
 https://github.com/kubewarden/pod-runtime-class-policy/tree/swift-implementation[This GitHub repository branch]
-has a {short-project-name} Policy written in Swift.
+has a {admc-short-name} Policy written in Swift.

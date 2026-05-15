@@ -21,7 +21,7 @@ Esta página fue revisada por última vez en diciembre de 2023.
 
 El compilador oficial de Go puede producir binarios de WebAssembly, para ejecución fuera de un navegador, desde la versión v1.21.
 
-Hay otro compilador de Go que puede construir binarios de WebAssembly utilizables por {project-name}.
+Hay otro compilador de Go que puede construir binarios de WebAssembly utilizables por {admc-name}.
 Este proyecto de compilador es https://tinygo.org/[TinyGo]:
 
 ____
@@ -33,7 +33,7 @@ TinyGo también puede producir código WebAssembly (Wasm) que es muy compacto en
 Puedes compilar programas para navegadores web, así como para entornos de computación en servidor y en el borde que soportan la familia de interfaces del Sistema de Interfaces WebAssembly (WASI).
 ____
 
-El proyecto {short-project-name} actualmente sugiere usar TinyGo por dos razones:
+El proyecto {admc-short-name} actualmente sugiere usar TinyGo por dos razones:
 
 * los binarios son más pequeños
 * soporte para https://wapc.io[waPC] por la capacidad de exportar funciones al tiempo de ejecución
@@ -44,13 +44,13 @@ TinyGo aún no soporta todas las características de Go, consulta la https://tin
 Actualmente, su mayor limitación es la falta de un paquete `reflect` totalmente compatible.
 Esto significa que los tipos de API de Go de Kubernetes oficiales (por ejemplo: `k8s.io/api/core/v1`) no se compilan.
 
-Las directivas {short-project-name} necesitan procesar datos JSON como la configuración de directivas y la solicitud recibida por Kubernetes.
+Las directivas {admc-short-name} necesitan procesar datos JSON como la configuración de directivas y la solicitud recibida por Kubernetes.
 
-A pesar de las limitaciones actuales de TinyGo, sigue siendo fácil escribir directivas de validación {short-project-name} con él.
+A pesar de las limitaciones actuales de TinyGo, sigue siendo fácil escribir directivas de validación {admc-short-name} con él.
 
 == Herramientas
 
-Escribir directivas {short-project-name} requiere una versión de TinyGo mayor que `v0.28.1`.
+Escribir directivas {admc-short-name} requiere una versión de TinyGo mayor que `v0.28.1`.
 Sin embargo, utiliza la última versión para obtener los mejores resultados.
 
 [CAUTION]
@@ -59,9 +59,9 @@ Usar versiones antiguas de TinyGo resulta en errores de tiempo de ejecución deb
 ====
 
 
-Estas bibliotecas de Go son útiles al escribir una directiva {short-project-name}:
+Estas bibliotecas de Go son útiles al escribir una directiva {admc-short-name}:
 
-* https://github.com/kubewarden/policy-sdk-go[{short-project-name} Go SDK]:
+* https://github.com/kubewarden/policy-sdk-go[{admc-short-name} Go SDK]:
 Proporciona estructuras y funciones que reducen la cantidad de código necesario.
 También proporciona ayudantes de prueba.
 * https://github.com/kubewarden/k8s-objects[tipos de Go de Kubernetes]:
@@ -72,9 +72,9 @@ Esto proporciona un lenguaje de consulta para una navegación rápida de documen
 Esta biblioteca no utiliza el paquete `encoding/json` proporcionado por el `stdlib` de Go, por lo tanto, es utilizable con TinyGo.
 * https://github.com/deckarep/golang-set[mapset]:
 Proporciona una implementación en Go de la estructura de datos https://en.wikipedia.org/wiki/Set_(abstract_data_type)[Set].
-Esta biblioteca reduce la cantidad de código a escribir, ya que operaciones como Set `union`, `intersection`, `difference` son operaciones comunes en directivas {short-project-name}.
+Esta biblioteca reduce la cantidad de código a escribir, ya que operaciones como Set `union`, `intersection`, `difference` son operaciones comunes en directivas {admc-short-name}.
 
-Por último, el proyecto {short-project-name} proporciona un https://github.com/kubewarden/go-policy-template[proyecto de directiva Go de plantilla] que puedes usar para crear directivas Go {short-project-name}.
+Por último, el proyecto {admc-short-name} proporciona un https://github.com/kubewarden/go-policy-template[proyecto de directiva Go de plantilla] que puedes usar para crear directivas Go {admc-short-name}.
 
 == Obteniendo dependencias de TinyGo
 
@@ -91,5 +91,5 @@ Durante este tutorial necesitas estas herramientas en tu máquina de desarrollo:
 Estarás utilizando el compilador incluido en la imagen de contenedor oficial de TinyGo.
 * https://github.com/bats-core/bats-core[bats]: se utiliza para escribir las pruebas y automatizar su ejecución.
 * https://github.com/kubewarden/kwctl/releases[`kwctl`]:
-Herramienta CLI proporcionada por {short-project-name} para ejecutar sus directivas fuera de Kubernetes, entre otras acciones.
+Herramienta CLI proporcionada por {admc-short-name} para ejecutar sus directivas fuera de Kubernetes, entre otras acciones.
 Está cubierto en xref:tutorials/testing-policies/index.adoc[esta sección] de la documentación.

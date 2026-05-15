@@ -3,18 +3,18 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprenda como instalar a UI {project-name} como uma extensão do Rancher Manager com um guia passo a passo pelo processo de instalação.
+:description: Aprenda como instalar a UI {admc-name} como uma extensão do Rancher Manager com um guia passo a passo pelo processo de instalação.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "rancher ui extension"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "rancher ui extension"]
 :current-version: {page-origin-branch}
 
-Esta seção descreve a instalação da UI {project-name} como uma extensão do https://github.com/rancher/rancher[Rancher Manager].
+Esta seção descreve a instalação da UI {admc-name} como uma extensão do https://github.com/rancher/rancher[Rancher Manager].
 
-== Instalar {short-project-name} Extensão da UI
+== Instalar {admc-short-name} Extensão da UI
 
-Você instala a UI {short-project-name} como uma extensão global, no entanto, você instala o controlador {short-project-name} através da UI do Rancher como um recurso com escopo de cluster.
+Você instala a UI {admc-short-name} como uma extensão global, no entanto, você instala o controlador {admc-short-name} através da UI do Rancher como um recurso com escopo de cluster.
 
 [NOTE]
 ====
@@ -24,16 +24,16 @@ Para instalações air-gapped, siga xref:howtos/airgap/02-install.adoc[estes pas
 ====
 
 
-Na página de extensões, selecione o botão "Habilitar" e escolha a opção para adicionar o repositório de extensões do Rancher. Quando habilitado, o item de extensão "{short-project-name}" aparece automaticamente. Selecione este item para instalar a extensão. Uma vez instalada, você pode instalar {short-project-name} no cluster necessário.
+Na página de extensões, selecione o botão "Habilitar" e escolha a opção para adicionar o repositório de extensões do Rancher. Quando habilitado, o item de extensão "{admc-short-name}" aparece automaticamente. Selecione este item para instalar a extensão. Uma vez instalada, você pode instalar {admc-short-name} no cluster necessário.
 
-=== Instale o {short-project-name}
+=== Instale o {admc-short-name}
 
-Seguindo os passos anteriores, dentro do seu cluster, um novo item aparece no menu lateral para {short-project-name}. Esta página do painel orienta você pelo processo de instalação, completando os pré-requisitos.
+Seguindo os passos anteriores, dentro do seu cluster, um novo item aparece no menu lateral para {admc-short-name}. Esta página do painel orienta você pelo processo de instalação, completando os pré-requisitos.
 
 [NOTE]
 ====
 
-Durante a etapa "Instalação do App" do assistente de instalação, o botão "Instalar {short-project-name}" pode permanecer desativado. Se isso acontecer, atualize a página e navegue de volta para esta etapa.
+Durante a etapa "Instalação do App" do assistente de instalação, o botão "Instalar {admc-short-name}" pode permanecer desativado. Se isso acontecer, atualize a página e navegue de volta para esta etapa.
 
 ====
 
@@ -54,7 +54,7 @@ Após instalar o gráfico, você pode visualizar os detalhes do Servidor de Pol�
 
 === Criando políticas
 
-Ao criar políticas, você inicialmente recebe a opção "Política Personalizada" na Grade de Políticas. Forneça as informações necessárias para o Nome, Módulo e Regras da sua política. É recomendável adicionar o repositório do Catálogo de Políticas para acessar as políticas oficiais do {short-project-name}.
+Ao criar políticas, você inicialmente recebe a opção "Política Personalizada" na Grade de Políticas. Forneça as informações necessárias para o Nome, Módulo e Regras da sua política. É recomendável adicionar o repositório do Catálogo de Políticas para acessar as políticas oficiais do {admc-short-name}.
 
 *_Criando uma política personalizada_* image:ui_policy_custom.png[UI Lista Branca de Políticas]
 
@@ -64,9 +64,9 @@ Siga as instruções para incluir xref:howtos/ui-extension/02-metrics.adoc[Monit
 
 == Instalação air-gapped
 
-Como {short-project-name} é uma Extensão Oficial do Rancher, a equipe do Rancher fornece um mecanismo para gerar automaticamente uma Imagem do Catálogo de Extensões. Isso é adicionado ao arquivo `rancher-images.txt` ao https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[instalar o Rancher Manager] para instâncias air-gapped.
+Como {admc-short-name} é uma Extensão Oficial do Rancher, a equipe do Rancher fornece um mecanismo para gerar automaticamente uma Imagem do Catálogo de Extensões. Isso é adicionado ao arquivo `rancher-images.txt` ao https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[instalar o Rancher Manager] para instâncias air-gapped.
 
-Uma vez que esta imagem é espelhada para um registro acessível ao seu cluster air-gapped, você pode importar a imagem dentro da UI do Rancher. Isso cria um repositório local de Helm com o gráfico UI {short-project-name} para instalação.
+Uma vez que esta imagem é espelhada para um registro acessível ao seu cluster air-gapped, você pode importar a imagem dentro da UI do Rancher. Isso cria um repositório local de Helm com o gráfico UI {admc-short-name} para instalação.
 
 === Etapas de instalação
 
@@ -80,6 +80,6 @@ Uma vez que esta imagem é espelhada para um registro acessível ao seu cluster 
 . Clique em *Carregar*. A extensão agora estará *Pendente*.
 . Volte para a página *Extensões*.
 . Selecione a aba *Disponíveis* e clique no botão *Recarregar* para garantir que a lista de extensões esteja atualizada. imagem:ui_airgap_04.png[Instalar
-  {short-project-name}]
-. Encontre a extensão {short-project-name} que você acabou de adicionar e selecione o botão
+  {admc-short-name}]
+. Encontre a extensão {admc-short-name} que você acabou de adicionar e selecione o botão
   *Instalar*.

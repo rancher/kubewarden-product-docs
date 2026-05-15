@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Learn how to distribute policies and access related information for {project-name}, including configuration details.
+:description: Learn how to distribute policies and access related information for {admc-name}, including configuration details.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]
@@ -24,4 +24,4 @@ GitHub `release.yml` Action defined in the last chapter.
 
 The topic of distributing policies is covered in greater depth in the
 xref:/explanations/distributing-policies.adoc["distributing policies"]
-section of {project-name}'s documentation.
+section of {admc-name}'s documentation.

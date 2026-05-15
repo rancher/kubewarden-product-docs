@@ -5,18 +5,18 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Ative mTLS com K3s
 :description: Implemente protocolos de TLS mútuo (mTLS) para webhooks seguros com K3s em sua distribuição SUSE Kubernetes.
-:keywords: ["{project-name}", kubewarden, kubernetes, segurança]
+:keywords: ["{admc-name}", kubewarden, kubernetes, segurança]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: manual-do-operador, segurança
 
-Este guia mostra como ativar o protocolo TLS mútuo (mTLS) para webhooks do stack {project-name} ao usar https://k3s.io/[K3s] como sua distribuição Kubernetes.
+Este guia mostra como ativar o protocolo TLS mútuo (mTLS) para webhooks do stack {admc-name} ao usar https://k3s.io/[K3s] como sua distribuição Kubernetes.
 
 Para mais informações sobre como fortalecer os webhooks, consulte a xref:/reference/security-hardening/webhooks-hardening.adoc[página de referência].
 
 == Pré-requisitos
 
-Antes de instalar o K3s, você precisa criar uma CA (autoridade certificadora) e um certificado de cliente. Você usa para proteger a comunicação entre os {short-project-name} webhooks e o servidor API do Kubernetes.
+Antes de instalar o K3s, você precisa criar uma CA (autoridade certificadora) e um certificado de cliente. Você usa para proteger a comunicação entre os {admc-short-name} webhooks e o servidor API do Kubernetes.
 
 Como primeiro passo, crie o diretório `/etc/rancher/k3s/admission/certs`:
 
@@ -140,11 +140,11 @@ curl -sfL https://get.k3s.io | sh -
 
 Aguarde a conclusão da instalação.
 
-== Instale o {short-project-name} stack
+== Instale o {admc-short-name} stack
 
 === Pré-requisitos
 
-O certificado da CA raiz, que emitiu o certificado do cliente Kubernetes, precisa estar disponível para o {short-project-name} stack.
+O certificado da CA raiz, que emitiu o certificado do cliente Kubernetes, precisa estar disponível para o {admc-short-name} stack.
 
 A CA raiz está disponível em `/etc/rancher/k3s/admission/certs/rootCA.crt` no nó Kubernetes. Você precisa do seu conteúdo em um `ConfigMap` sob o namespace `kubewarden`. Você armazena o conteúdo do arquivo `rootCA.crt` na chave chamada `client-ca.crt`.
 
@@ -165,9 +165,9 @@ kubectl create configmap -n kubewarden api-server-mtls \
 
 O nome do `ConfigMap` resultante é `api-server-mtls`.
 
-=== Instale o {short-project-name} stack
+=== Instale o {admc-short-name} stack
 
-Instale o {short-project-name} stack conforme descrito no xref:/quick-start.adoc[guia de início rápido]. Siga todos os passos, mas ao instalar o chart Helm `kubewarden-controller`, certifique-se de habilitar os seguintes valores:
+Instale o {admc-short-name} stack conforme descrito no xref:/quick-start.adoc[guia de início rápido]. Siga todos os passos, mas ao instalar o chart Helm `kubewarden-controller`, certifique-se de habilitar os seguintes valores:
 
 * `mTLS.enable`: deve ser `true`.
 * `mTLS.configMapName`: deve ser o nome do `ConfigMap` criado anteriormente.
@@ -181,4 +181,4 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
     --set mTLS.configMapName=api-server-mtls
 ----
 
-Uma vez que este comando termine, o mTLS garante a instalação do {short-project-name} stack e seus webhooks.
+Uma vez que este comando termine, o mTLS garante a instalação do {admc-short-name} stack e seus webhooks.

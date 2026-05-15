@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
 :current-version: {page-origin-branch}
 
-作为Kubernetes集群操作符，您需要对想要使用的{project-name}策略进行测试。
+作为Kubernetes集群操作符，您需要对想要使用的{admc-name}策略进行测试。
 
 您可能会有以下问题：
 
@@ -21,12 +21,12 @@ include::partial$variables.adoc[]
  ** 更改策略的配置参数时，如何确保一切按预期工作？
  ** 等等？
 
-{short-project-name}有一个工具，https://github.com/kubewarden/kwctl[`kwctl`]，允许在Kubernetes外部测试策略。
+{admc-short-name}有一个工具，https://github.com/kubewarden/kwctl[`kwctl`]，允许在Kubernetes外部测试策略。
 
 要使用`kwctl`，您需要使用以下输入调用它：
 
 . 要运行的策略的WebAssembly二进制文件URI。
-{short-project-name}策略可以从以下位置加载：
+{admc-short-name}策略可以从以下位置加载：
  ** 本地文件系统`file://`
  ** HTTP(s)服务器`https://`
  ** OCI注册表`registry://`。

@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura una nueva {project-name} política de mutación para mutar objetos entrantes con anotaciones personalizadas, y luego pruébala.
+:description: Configura una nueva {admc-name} política de mutación para mutar objetos entrantes con anotaciones personalizadas, y luego pruébala.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
 :doc-type: ["tutorial"]
@@ -19,7 +19,7 @@ Pueden:
 * Aceptar una solicitud sin cambiar el objeto entrante
 * Mutar el objeto entrante según sea necesario y aceptar la solicitud
 
-Escribir una {project-name} política de mutación es sencillo.
+Escribir una {admc-name} política de mutación es sencillo.
 Utilizarás la política de validación creada en las secciones anteriores, y con algunos cambios, la convertirás en una política de mutación.
 
 Tu política utiliza la misma lógica de validación definida anteriormente, pero también añade una anotación a todos los Pods que tienen un nombre válido.

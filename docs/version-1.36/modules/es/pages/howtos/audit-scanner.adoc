@@ -4,16 +4,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verifica el estado de cumplimiento de tus clústeres utilizando la función Audit Scanner dentro de {project-name}, para asegurar su correcta configuración.
+:description: Verifica el estado de cumplimiento de tus clústeres utilizando la función Audit Scanner dentro de {admc-name}, para asegurar su correcta configuración.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "audit scanner"]
 :sidebar_label: Escáner de Auditoría
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-A partir de la versión `v1.7.0`, {project-name} tiene una nueva función llamada "Audit Scanner". Un nuevo componente, llamado "audit-scanner", comprueba constantemente los recursos declarados en el clúster, señalando aquellos que no cumplen con las políticas {project-name} desplegadas y guardando estos resultados en Recursos Personalizados específicos para informes.
+A partir de la versión `v1.7.0`, {admc-name} tiene una nueva función llamada "Audit Scanner". Un nuevo componente, llamado "audit-scanner", comprueba constantemente los recursos declarados en el clúster, señalando aquellos que no cumplen con las políticas {admc-name} desplegadas y guardando estos resultados en Recursos Personalizados específicos para informes.
 
 Las políticas evolucionan con el tiempo: despliegas nuevas políticas y actualizas las políticas existentes. Tanto la versión como la configuración cambian. Esto puede llevar a situaciones en las que los recursos presentes en el clúster ya no cumplen.
 
@@ -23,7 +23,7 @@ El Audit Scanner puede guardar sus resultados ya sea en Definiciones de Recursos
 
 == Instalación
 
-El componente de auditoría está disponible desde {short-project-name} `v1.7.0`.
+El componente de auditoría está disponible desde {admc-short-name} `v1.7.0`.
 Por lo tanto, asegúrate de que estás instalando el chart de Helm con la versión de aplicación `v1.7.0` o superior.
 
 . Instala el `kubewarden-crds` chart de Helm. El chart instala por defecto los CRDs necesarios de `PolicyReport`.
@@ -71,7 +71,7 @@ El escáner de auditoría está habilitado de forma predeterminada. Para desacti
 Si deseas que el Escáner de Auditoría guarde sus informes en los CRDs de PolicyReports (marcados como obsoletos) en lugar de los CRDs de OpenReports de forma predeterminada, configura `auditScanner.reportCRDsKind="policyreport"`.
 ====
 
-Para más información sobre la instalación de {short-project-name}, consulta la xref:quick-start.adoc[Guía de inicio rápido].
+Para más información sobre la instalación de {admc-short-name}, consulta la xref:quick-start.adoc[Guía de inicio rápido].
 
 De forma predeterminada, la implementación del Escáner de Auditoría es como un https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cron (daemon)] que se activa cada 60 minutos. Puedes ajustar esta y otras configuraciones del escáner de auditoría cambiando el chart kubewarden-controller https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml].
 

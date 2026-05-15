@@ -3,19 +3,19 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprende a rotar certificados en tu {project-name} sin causar tiempo de inactividad.
+:description: Aprende a rotar certificados en tu {admc-name} sin causar tiempo de inactividad.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "certificates"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "certificate", "controller", "reconciliation"]
+:keywords: ["{admc-name}", "kubewarden", "certificate", "controller", "reconciliation"]
 :sidebar_label: Rotación de certificados
 :sidebar_position: 21
 
-{project-name} v1.17.0 eliminó la dependencia de cert-manager. El controlador es capaz de gestionar todos los certificados utilizados por todos los componentes. Ahora, el controlador tiene un nuevo bucle de reconciliación que asegura que los certificados estén siempre actualizados y que la configuración del webhook sea correcta.
+{admc-name} v1.17.0 eliminó la dependencia de cert-manager. El controlador es capaz de gestionar todos los certificados utilizados por todos los componentes. Ahora, el controlador tiene un nuevo bucle de reconciliación que asegura que los certificados estén siempre actualizados y que la configuración del webhook sea correcta.
 
-La instalación del gráfico de Helm realiza la primera generación de certificados. Genera la CA raíz con diez años hasta la expiración. La instalación del gráfico de Helm también genera el certificado del servidor web del webhook del controlador, firmado por la CA raíz. El servidor API utiliza esto para comunicarse con el {short-project-name} controlador para validar el CRD. Tiene una expiración de un año.
+La instalación del gráfico de Helm realiza la primera generación de certificados. Genera la CA raíz con diez años hasta la expiración. La instalación del gráfico de Helm también genera el certificado del servidor web del webhook del controlador, firmado por la CA raíz. El servidor API utiliza esto para comunicarse con el {admc-short-name} controlador para validar el CRD. Tiene una expiración de un año.
 
-Una vez que el controlador comienza, su reconciliador renueva los certificados automáticamente cuando están a punto de expirar. También actualiza todos los certificados y configuraciones de webhook utilizados por toda la pila {short-project-name}.
+Una vez que el controlador comienza, su reconciliador renueva los certificados automáticamente cuando están a punto de expirar. También actualiza todos los certificados y configuraciones de webhook utilizados por toda la pila {admc-short-name}.
 
 [NOTE]
 ====

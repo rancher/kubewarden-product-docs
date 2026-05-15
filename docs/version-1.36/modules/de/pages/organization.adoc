@@ -5,26 +5,26 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Organisation
 :sidebar_position: 75
-:description: Zugriff auf umfassende Dokumentation, die in Tutorials, Erklärungen, Anleitungen und Referenzmaterialien für {project-name} organisiert ist.
-:keywords: ["Zulassungsrichtlinien-Manager", "{project-name}", Dokumentation, Organisation]
+:description: Zugriff auf umfassende Dokumentation, die in Tutorials, Erklärungen, Anleitungen und Referenzmaterialien für {admc-name} organisiert ist.
+:keywords: ["Zulassungsrichtlinien-Manager", "{admc-name}", Dokumentation, Organisation]
 :doc-persona: [kubewarden-all]
 :doc-type: [explanation]
 :doc-topic: [explanation]
 
-{project-name} organisiert die Projektdokumentation wie folgt:
+{admc-name} organisiert die Projektdokumentation wie folgt:
 
 * xref:/introduction.adoc[Einführung]
 * xref:/quick-start.adoc[Schnelleinführung]
 * _Tutorials_—Lernen durch Beispiele.
 * _Erklärungen_—Grundlegende Konzepte.
-* _Anleitungen_—{short-project-name} Aufgaben erledigen.
+* _Anleitungen_—{admc-short-name} Aufgaben erledigen.
 * _Kurz nachgeschlagen_
 * Organisation—diese Seite
-* xref:/personas.adoc[Personas]—Für wen ist {short-project-name} gedacht?
+* xref:/personas.adoc[Personas]—Für wen ist {admc-short-name} gedacht?
 * xref:/disclosure.adoc[Sicherheit]
 * xref:/glossary.adoc[Glossar]
 
-Der Großteil des Materials befindet sich in den vier Abschnitten _Tutorials_, _Erklärungen_, _Anleitungen_ und _Referenz_. Es kann Überschneidungen geben, da sich die Abschnitte nicht gegenseitig ausschließen. Das {short-project-name} Projekt versucht, dem link:https://diataxis.fr/[Diátaxis] Dokumentationsrahmen zu folgen.
+Der Großteil des Materials befindet sich in den vier Abschnitten _Tutorials_, _Erklärungen_, _Anleitungen_ und _Referenz_. Es kann Überschneidungen geben, da sich die Abschnitte nicht gegenseitig ausschließen. Das {admc-short-name} Projekt versucht, dem link:https://diataxis.fr/[Diátaxis] Dokumentationsrahmen zu folgen.
 
 == Navigation
 

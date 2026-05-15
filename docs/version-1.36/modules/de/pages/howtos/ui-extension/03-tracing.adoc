@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aktivieren Sie das Tracing für detaillierte Informationen zu den Richtlinienbewertungen und zur Fehlersuche bei Problemen im Zusammenhang mit der {project-name}-Implementierung.
+:description: Aktivieren Sie das Tracing für detaillierte Informationen zu den Richtlinienbewertungen und zur Fehlersuche bei Problemen im Zusammenhang mit der {admc-name}-Implementierung.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "ui-extension", "tracing"]
 :doc-type: ["hosto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "tracing"]
 :current-version: {page-origin-branch}
 
 Tracing ermöglicht die Sammlung detaillierter Informationen zu den Richtlinienbewertungen.
-Es ist ein nützliches Werkzeug zur Fehlersuche bei Problemen in Ihrer {project-name}-Implementierung und den Richtlinien.
+Es ist ein nützliches Werkzeug zur Fehlersuche bei Problemen in Ihrer {admc-name}-Implementierung und den Richtlinien.
 
-{short-project-name} verwendet https://www.jaegertracing.io/[Jaeger], um Trace-Ereignisse zu empfangen, zu speichern und zu visualisieren.
+{admc-short-name} verwendet https://www.jaegertracing.io/[Jaeger], um Trace-Ereignisse zu empfangen, zu speichern und zu visualisieren.
 
 *_Richtlinien-Trace-Protokolle_* image:ui_policy_tracing.png[UI-Richtlinien-Trace-Protokolle]
 

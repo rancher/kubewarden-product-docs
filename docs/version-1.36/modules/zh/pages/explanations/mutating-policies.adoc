@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["mutating-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "变更策略", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "变更策略", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: 变更策略
 :sidebar_position: 10
 :current-version: {page-origin-branch}
@@ -25,7 +25,7 @@ include::partial$variables.adoc[]
 [WARNING]
 ====
 
-为了防止系统滥用，{project-name}管理员应审查变更策略。变更策略可能会修改工作负载，从而允许特权容器的创建。
+为了防止系统滥用，{admc-name}管理员应审查变更策略。变更策略可能会修改工作负载，从而允许特权容器的创建。
 
 ====
 
@@ -182,4 +182,4 @@ EOF
 Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
 ----
 
-总之，您可以看到{short-project-name}复制了已弃用的 Kubernetes Pod 安全策略（PSP）的相同行为。
+总之，您可以看到{admc-short-name}复制了已弃用的 Kubernetes Pod 安全策略（PSP）的相同行为。

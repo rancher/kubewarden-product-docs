@@ -19,11 +19,11 @@ Beim Erstellen einer Rego-Richtlinie in ein WebAssembly-Modul sind bestimmte die
 Es sind die integrierten Funktionen, die auf der verlinkten Seite mit einem grünen Häkchen markiert sind.
 Die WebAssembly-Laufzeit, die das Modul auswertet, stellt die anderen bereit.
 
-Die als `SDK-dependent` markierten integrierten Funktionen sind die, die der Host implementieren muss, in diesem Fall {project-name}.
+Die als `SDK-dependent` markierten integrierten Funktionen sind die, die der Host implementieren muss, in diesem Fall {admc-name}.
 OPA und Gatekeeper können sie je nach den Anforderungen der Richtlinie verwenden.
 In jedem Fall sind diese integrierten Funktionen der Richtlinie zugänglich, und jede neue oder bestehende Richtlinie könnte von ihnen abhängen.
 
-Es gibt immer noch bestimmte integrierte Funktionen, die von {short-project-name} noch nicht bereitgestellt werden, jedoch sollten die bereits unterstützten Funktionen für die meisten Kubernetes-Nutzer ausreichend sein, basierend auf den in der Öffentlichkeit gesehenen Richtlinien.
+Es gibt immer noch bestimmte integrierte Funktionen, die von {admc-short-name} noch nicht bereitgestellt werden, jedoch sollten die bereits unterstützten Funktionen für die meisten Kubernetes-Nutzer ausreichend sein, basierend auf den in der Öffentlichkeit gesehenen Richtlinien.
 
 https://github.com/kubewarden/policy-evaluator/issues/56[Dieses GitHub-Issue] verfolgt die Rego-integrierten Funktionen, die wir noch implementieren müssen.
 Fühlen Sie sich frei, dort zu kommentieren, um unsere Arbeit zu priorisieren.

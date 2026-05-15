@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Capacidades criptográficas
 :current-version: {page-origin-branch}
 
-Debido a las limitaciones de Wasm en el momento de escribir, algunas bibliotecas criptográficas no pueden ser compiladas a Wasm. Mientras tanto, las directivas {project-name} que necesitan esas bibliotecas pueden realizar llamadas de retorno para evaluar las funciones criptográficas en el lado del host. Reciben el resultado y continúan con sus tareas.
+Debido a las limitaciones de Wasm en el momento de escribir, algunas bibliotecas criptográficas no pueden ser compiladas a Wasm. Mientras tanto, las directivas {admc-name} que necesitan esas bibliotecas pueden realizar llamadas de retorno para evaluar las funciones criptográficas en el lado del host. Reciben el resultado y continúan con sus tareas.
 
 == Comportamiento
 

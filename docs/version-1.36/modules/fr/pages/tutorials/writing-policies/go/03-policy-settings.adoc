@@ -102,11 +102,11 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == Création d'instances de `Settings`
 
-Une stratégie {short-project-name} expose deux fonctions différentes qui reçoivent les paramètres de stratégie en entrée :
+Une stratégie {admc-short-name} expose deux fonctions différentes qui reçoivent les paramètres de stratégie en entrée :
 
 * `validate` : Utilisez cette fonction lorsque l'objet Kubernetes nécessite une validation par la stratégie.
 Les paramètres font partie d'un objet https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`].
-* `validate_settings` : Appelez cette fonction lorsque la politique est chargée pour la première fois par {short-project-name}.
+* `validate_settings` : Appelez cette fonction lorsque la politique est chargée pour la première fois par {admc-short-name}.
 La fonction reçoit les paramètres de stratégie en entrée et vérifie leur validité.
 
 Vous devez créer une fonction d'assistance qui crée un objet `Settings` à partir de la charge utile JSON :
@@ -136,7 +136,7 @@ Voir https://github.com/WebAssembly/threads[la proposition officielle] pour plus
 
 == Mise en œuvre de la validation `Settings`
 
-Toutes les politiques {short-project-name} doivent mettre en œuvre la validation des paramètres.
+Toutes les politiques {admc-short-name} doivent mettre en œuvre la validation des paramètres.
 
 Vous le faites en ajoutant une méthode `Valid` aux instances `Settings` :
 
@@ -191,7 +191,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 }
 ----
 
-Vous pouvez voir que la fonction tire parti des fonctions utilitaires fournies par le SDK de https://github.com/kubewarden/policy-sdk-go[{short-project-name}.]
+Vous pouvez voir que la fonction tire parti des fonctions utilitaires fournies par le SDK de https://github.com/kubewarden/policy-sdk-go[{admc-short-name}.]
 
 == Tester le code des paramètres
 

@@ -95,7 +95,7 @@ Una política real utilizaría una vía de repositorio, como `github.com/kubewar
 Siempre que las herramientas necesarias estén en su lugar, un comando `make test` utiliza Docker para descargar una imagen del compilador TinyGo utilizándola para construir y probar la plantilla de política.
 
 El comando `make` por defecto construye el objetivo `policy.wasm`. Luego `make test` ejecuta las pruebas de Go definidas.
-El comando `make e2e-tests` ejecuta pruebas utilizando https://github.com/bats-core/bats-core[bats] dentro de un clúster {short-project-name}.
+El comando `make e2e-tests` ejecuta pruebas utilizando https://github.com/bats-core/bats-core[bats] dentro de un clúster {admc-short-name}.
 Después de clonar el `go-policy-template`, ejecutar estos comandos verifica que tienes las herramientas necesarias para el tutorial.
 
 .Salida de los comandos `make`

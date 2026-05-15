@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explore cluster metrics and patterns with {project-name}'s exposed platform metrics to inform decision-making processes.
+:description: Explore cluster metrics and patterns with {admc-name}'s exposed platform metrics to inform decision-making processes.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name} exposes relevant platform metrics allowing cluster administrators and
+{admc-short-name} exposes relevant platform metrics allowing cluster administrators and
 policy developers to identify patterns and potential issues.
 
 == Policy Server

@@ -18,7 +18,7 @@ El soporte para Rego está disponible en estas versiones:
 * kwctl: v0.2.0
 * policy-server: v0.2.0
 
-El soporte para políticas de Rego admite datos contextuales de la versión {project-name} 1.9.
+El soporte para políticas de Rego admite datos contextuales de la versión {admc-name} 1.9.
 ====
 
 
@@ -31,7 +31,7 @@ Open Policy Agent y Gatekeeper.
 
 Las siguientes secciones muestran cómo los dos marcos son diferentes,
 aunque utilizan el mismo lenguaje.
-Si estás más interesado en la implementación de {short-project-name},
+Si estás más interesado en la implementación de {admc-short-name},
 puedes visitar directamente la documentación específica del marco enlazada a continuación.
 
 * xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
@@ -90,12 +90,12 @@ La idea de las políticas conscientes del contexto también puede extenderse a r
 así que tu política podría querer evaluar una solicitud basada en los recursos personalizados actualmente utilizados también.
 
 Tanto OPA como Gatekeeper soportan políticas conscientes del contexto,
-a partir de la versión {short-project-name} 1.9.
+a partir de la versión {admc-short-name} 1.9.
 
 Más detalles sobre políticas conscientes del contexto están
 xref:reference/spec/05-context-aware-policies.adoc[aquí].
 
 === Políticas de mutación
 
-Gatekeeper tiene soporte para políticas de mutación, pero {short-project-name} aún no ha implementado políticas de mutación con compatibilidad con Gatekeeper.
-Puedes utilizar políticas que usen el SDK {short-project-name} para escribir políticas de mutación, pero actualmente, no puedes ejecutar políticas de mutación de Gatekeeper en {short-project-name}.
+Gatekeeper tiene soporte para políticas de mutación, pero {admc-short-name} aún no ha implementado políticas de mutación con compatibilidad con Gatekeeper.
+Puedes utilizar políticas que usen el SDK {admc-short-name} para escribir políticas de mutación, pero actualmente, no puedes ejecutar políticas de mutación de Gatekeeper en {admc-short-name}.

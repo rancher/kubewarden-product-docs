@@ -8,16 +8,16 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["説明", "監査スキャナー", "ポリシーレポート"]
 :doc-type: [“explanation”]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "監査スキャナー", "ポリシーレポート"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "監査スキャナー", "ポリシーレポート"]
 :sidebar_label: ポリシーレポート
 :current-version: {page-origin-branch}
 
-{project-name}監査スキャナーを使用する際、https://openreports.io/[OpenReports]カスタムリソースを使用してポリシースキャンの結果を保存します。
+{admc-name}監査スキャナーを使用する際、https://openreports.io/[OpenReports]カスタムリソースを使用してポリシースキャンの結果を保存します。
 
 [CAUTION]
 ====
 
-{project-name} 1.33では、監査スキャナー機能がデフォルトで[openreports.io](https://openreports.io)のOpenReports CRDにレポートを保存します。
+{admc-name} 1.33では、監査スキャナー機能がデフォルトで[openreports.io](https://openreports.io)のOpenReports CRDにレポートを保存します。
 
 K8sポリシー作業グループのlink:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport]CRDは、デフォルトではインストールされず、廃止としてマークされ、将来のリリースで削除される予定です。
 
@@ -199,7 +199,7 @@ summary:
 
 image::policy-reporter_dashboard.png[Policy Reporter dashboard example]
 
-{short-project-name}は、{short-project-name}ポリシーのみを表示する事前設定済みのフィルターを備えたポリシーレポータUIを搭載し、拡張情報を提供します。
+{admc-short-name}は、{admc-short-name}ポリシーのみを表示する事前設定済みのフィルターを備えたポリシーレポータUIを搭載し、拡張情報を提供します。
 
 image::policy-reporter_policyreports.png[ポリシーレポータ ポリシーレポートの例]
 

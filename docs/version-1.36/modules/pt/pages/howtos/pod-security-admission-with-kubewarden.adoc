@@ -1,13 +1,13 @@
 include::partial$variables.adoc[]
-= Usando o Pod Security Admission com {project-name}
+= Usando o Pod Security Admission com {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure o Pod Security Admission em um cluster Kubernetes com {project-name} para proteger os pods.
+:description: Configure o Pod Security Admission em um cluster Kubernetes com {admc-name} para proteger os pods.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-admission-with-kubewarden"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "pod security admission", "pod security policy", "kubernetes"]
+:keywords: ["{admc-name}", "kubewarden", "pod security admission", "pod security policy", "kubernetes"]
 :sidebar_label: Pod Security Admission
 :sidebar_position: 30
 :current-version: {page-origin-branch}
@@ -32,13 +32,13 @@ No momento da redação, com Kubernetes 1.28, o controlador PSA tem as seguintes
 * Sem capacidades de mutação
 * Objetos de nível superior (como `Deployment`, `Job`) são avaliados apenas quando os modos `audit` ou `warn` estão habilitados
 
-{short-project-name} pode ser usado para *integrar* um perfil de PSA para evitar essas limitações.
+{admc-short-name} pode ser usado para *integrar* um perfil de PSA para evitar essas limitações.
 
 [NOTE]
 ====
 
-Você pode usar {short-project-name} para substituir a configuração antiga do PSP, conforme mostrado em xref:howtos/psp-migration.adoc[migração do PSP].
-No entanto, o objetivo deste artigo é mostrar como {short-project-name} pode complementar o novo PSA.
+Você pode usar {admc-short-name} para substituir a configuração antiga do PSP, conforme mostrado em xref:howtos/psp-migration.adoc[migração do PSP].
+No entanto, o objetivo deste artigo é mostrar como {admc-short-name} pode complementar o novo PSA.
 ====
 
 
@@ -200,14 +200,14 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-h4bx7 -o json | jq 
 ]
 ----
 
-É aqui que {short-project-name} pode ajudar.
+É aqui que {admc-short-name} pode ajudar.
 Você pode usar a política https://artifacthub.io/packages/kubewarden/user-group-psp/user-group-psp[`user-group-policy`] para modificar a definição da implantação.
 Isso configura um usuário padrão para contêineres omitindo essa informação.
 
 [NOTE]
 ====
 
-Você precisa da pilha {short-project-name} no cluster Kubernetes para este exemplo.
+Você precisa da pilha {admc-short-name} no cluster Kubernetes para este exemplo.
 Veja o xref:quick-start.adoc[QuickStart] para mais detalhes.
 ====
 
@@ -306,7 +306,7 @@ EOF
 
 ======
 
-Agora a implantação é alterada pela política de {short-project-name}, que permite que o Pod seja iniciado.
+Agora a implantação é alterada pela política de {admc-short-name}, que permite que o Pod seja iniciado.
 O contêiner definido dentro do Pod tem um valor padrão de `runAsUser`:
 
 [subs="+attributes",shell]
@@ -327,10 +327,10 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-nv8fj -o json | jq 
 }
 ----
 
-A integração {short-project-name} pode fazer mais neste cenário.
+A integração {admc-short-name} pode fazer mais neste cenário.
 Ela pode verificar o valor do `runAsUser` fornecido.
 
-Este recurso é rejeitado pela política {short-project-name} mencionada anteriormente:
+Este recurso é rejeitado pela política {admc-short-name} mencionada anteriormente:
 
 .comando kubectl para mostrar a rejeição do recurso
 [%collapsible]
@@ -394,4 +394,4 @@ kubectl get deploy -n my-namespace nginx-deployment -o json | jq ".status.condit
 O PSA fornece uma maneira fácil de proteger clusters Kubernetes.
 O principal objetivo do PSA é a simplicidade e ele não possui o poder e a flexibilidade do PSP anterior.
 
-Usar {short-project-name} junto com o PSA ajuda a preencher essa lacuna.
+Usar {admc-short-name} junto com o PSA ajuda a preencher essa lacuna.

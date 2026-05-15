@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-= Renforcement de la sécurité des {short-project-name} webhooks
+= Renforcement de la sécurité des {admc-short-name} webhooks
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
@@ -10,8 +10,8 @@ include::partial$variables.adoc[]
 :doc-type: Référence
 :doc-topic: référence, sécurité
 
-La pile {project-name} utilise des webhooks pour appliquer des stratégies dans un cluster Kubernetes.
-Chaque instance `PolicyServer` expose un webhook que le serveur API Kubernetes appelle pour valider et modifier les ressources. De plus, le `kubewarden-controller` expose des webhooks pour valider et modifier les ressources personnalisées fournies par le projet {short-project-name}.
+La pile {admc-name} utilise des webhooks pour appliquer des stratégies dans un cluster Kubernetes.
+Chaque instance `PolicyServer` expose un webhook que le serveur API Kubernetes appelle pour valider et modifier les ressources. De plus, le `kubewarden-controller` expose des webhooks pour valider et modifier les ressources personnalisées fournies par le projet {admc-short-name}.
 
 Pour réduire leur surface d'attaque, vous devez limiter l'accès à ces webhooks aux seuls appelants valides qu'ils ont :
 
@@ -60,7 +60,7 @@ spec:
 [NOTE]
 ====
 
-Cette stratégie réseau utilise des sélecteurs d'étiquettes introduits dans {short-project-name} 1.23.0. Si vous utilisez une version antérieure, mettez à jour les étiquettes dans la stratégie pour qu'elles correspondent à votre déploiement.
+Cette stratégie réseau utilise des sélecteurs d'étiquettes introduits dans {admc-short-name} 1.23.0. Si vous utilisez une version antérieure, mettez à jour les étiquettes dans la stratégie pour qu'elles correspondent à votre déploiement.
 
 Plus spécifiquement, écrivez les
 
@@ -108,7 +108,7 @@ spec:
 [NOTE]
 ====
 
-Cette stratégie réseau utilise des sélecteurs d'étiquettes introduits dans {short-project-name} 1.23.0. Si vous utilisez une version antérieure, mettez à jour les étiquettes dans la stratégie pour qu'elles correspondent à votre déploiement.
+Cette stratégie réseau utilise des sélecteurs d'étiquettes introduits dans {admc-short-name} 1.23.0. Si vous utilisez une version antérieure, mettez à jour les étiquettes dans la stratégie pour qu'elles correspondent à votre déploiement.
 
 Plus spécifiquement, écrivez le
 
@@ -146,7 +146,7 @@ Reportez-vous à xref:/howtos/security-hardening/webhook-mtls.adoc[webook mTLS p
 
 ====
 
-Les webhooks exposés par la pile {short-project-name} ne devraient accepter que les requêtes du serveur API Kubernetes ou du composant scanner d'audit. Par défaut, ces webhooks ne nécessitent pas que les clients s'authentifient auprès d'eux. Ils acceptent toute requête.
+Les webhooks exposés par la pile {admc-short-name} ne devraient accepter que les requêtes du serveur API Kubernetes ou du composant scanner d'audit. Par défaut, ces webhooks ne nécessitent pas que les clients s'authentifient auprès d'eux. Ils acceptent toute requête.
 
 Vous pouvez configurer les webhooks pour exiger des identifiants afin que seuls le serveur API et le composant scanner d'audit puissent y accéder. Reportez-vous à la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers[documentation Kubernetes] pour plus d'informations.
 
@@ -173,7 +173,7 @@ plugins:
 +
 C'est le même fichier de configuration utilisé pour configurer d'autres plug-ins, tels que `PodSecurity` . Si votre distribution ou votre configuration utilise des plug-ins d'admission supplémentaires, vous devez également les configurer.
 
-. Créez le fichier `kubeconfig` auquel se réfèrent les plug-ins d'admission. {short-project-name} ne prend en charge que l'authentification par certificat client, donc générez une paire de clés TLS et configurez le kubeconfig pour utiliser soit le certificat client et la clé client, soit les données du certificat client et les données de la clé client.
+. Créez le fichier `kubeconfig` auquel se réfèrent les plug-ins d'admission. {admc-short-name} ne prend en charge que l'authentification par certificat client, donc générez une paire de clés TLS et configurez le kubeconfig pour utiliser soit le certificat client et la clé client, soit les données du certificat client et les données de la clé client.
 +
 Par exemple :
 +
@@ -190,7 +190,7 @@ users:
 
 . Démarrez le binaire `kube-apiserver` avec l'option `--admission-control-config-file` pointant vers votre fichier `AdmissionConfiguration`. La manière de procéder varie selon la distribution, et cela n'est pas pris en charge de manière universelle, comme dans les fournisseurs Kubernetes hébergés. Consultez la documentation pour votre distribution Kubernetes.
 
-. Rendez le certificat de l'autorité de certification racine qui a délivré le certificat client du serveur API disponible pour la pile {short-project-name}.
+. Rendez le certificat de l'autorité de certification racine qui a délivré le certificat client du serveur API disponible pour la pile {admc-short-name}.
 +
 Mettez son contenu dans un `ConfigMap` sous l'espace de noms `kubewarden` en utilisant une clé nommée `client-ca.crt`.
 +
@@ -216,4 +216,4 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
    --set mTLS.configMapName=api-server-mtls
 ----
 +
-Le contrôleur {short-project-name} crée un certificat client à utiliser par le composant scanner d'audit. Le certificat est automatiquement renouvelé par le contrôleur lorsque cela est nécessaire.
+Le contrôleur {admc-short-name} crée un certificat client à utiliser par le composant scanner d'audit. Le certificat est automatiquement renouvelé par le contrôleur lorsque cela est nécessaire.

@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprende a escribir las políticas {project-name} utilizando varios lenguajes de programación que se dirigen a módulos WebAssembly y a la interfaz WASI.
+:description: Aprende a escribir las políticas {admc-name} utilizando varios lenguajes de programación que se dirigen a módulos WebAssembly y a la interfaz WASI.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "other-languages"]
 :doc-type: ["tutorial"]
@@ -12,6 +12,6 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-{project-name} Las políticas se pueden escribir con cualquier lenguaje de programación que pueda producir módulos WebAssembly dirigidos a la interfaz WASI.
+{admc-name} Las políticas se pueden escribir con cualquier lenguaje de programación que pueda producir módulos WebAssembly dirigidos a la interfaz WASI.
 
-Por favor, abre una Pull Request o un GitHub Issue https://github.com/kubewarden/docs[aquí] si conoces un lenguaje de programación que se pueda utilizar para escribir políticas {short-project-name}.
+Por favor, abre una Pull Request o un GitHub Issue https://github.com/kubewarden/docs[aquí] si conoces un lenguaje de programación que se pueda utilizar para escribir políticas {admc-short-name}.

@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-= Rédaction de {project-name} politiques
+= Rédaction de {admc-name} politiques
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
@@ -11,38 +11,38 @@ include::partial$variables.adoc[]
 :sidebar_label: Rédaction de politiques
 :current-version: {page-origin-branch}
 
-Cette section présente des {project-name} politiques en utilisant des analogies de l'informatique traditionnelle.
+Cette section présente des {admc-name} politiques en utilisant des analogies de l'informatique traditionnelle.
 
-Une {short-project-name} politique est comme un programme qui effectue une tâche.
+Une {admc-short-name} politique est comme un programme qui effectue une tâche.
 Elle reçoit des données d'entrée, effectue des calculs avec ces données et renvoie un résultat.
 
 Les données d'entrée sont des demandes d'admission Kubernetes.
 Le résultat du calcul est une réponse de validation, qui indique à Kubernetes s'il faut accepter, rejeter ou modifier les données d'entrée, la demande d'admission.
 
-Le composant https://github.com/kubewarden/policy-server[policy-server] de {short-project-name} effectue ces opérations.
+Le composant https://github.com/kubewarden/policy-server[policy-server] de {admc-short-name} effectue ces opérations.
 
 Le serveur de politiques n'inclut aucune capacité de traitement de données.
 Vous ajoutez des capacités de traitement à l'exécution avec des modules complémentaires.
-Ces modules complémentaires sont les {short-project-name} politiques.
+Ces modules complémentaires sont les {admc-short-name} politiques.
 
-Ainsi, une {short-project-name} politique est comme un https://en.wikipedia.org/wiki/Plug-in_%28computing%29[plug-in traditionnel] du programme "policy server".
+Ainsi, une {admc-short-name} politique est comme un https://en.wikipedia.org/wiki/Plug-in_%28computing%29[plug-in traditionnel] du programme "policy server".
 
 En bref :
 
-* Les {short-project-name} politiques sont des plug-ins qui exposent un ensemble de fonctionnalités bien définies (valider un objet de demande Kubernetes, valider les paramètres de politique fournis par l'utilisateur, et d'autres fonctions) en utilisant une API bien définie.
+* Les {admc-short-name} politiques sont des plug-ins qui exposent un ensemble de fonctionnalités bien définies (valider un objet de demande Kubernetes, valider les paramètres de politique fournis par l'utilisateur, et d'autres fonctions) en utilisant une API bien définie.
 * Le serveur de politiques est le programme "principal" qui charge les plug-ins (alias politiques) et utilise leurs fonctionnalités exposées pour accepter, rejeter ou modifier les demandes Kubernetes.
 
-La rédaction de {short-project-name} politiques consiste à écrire la logique métier de validation puis à l'exposer via une API bien définie.
+La rédaction de {admc-short-name} politiques consiste à écrire la logique métier de validation puis à l'exposer via une API bien définie.
 
 == Exigences en matière de langage de programmation
 
-Vous fournissez des {short-project-name} politiques sous forme de binaires https://webassembly.org/[WebAssembly].
+Vous fournissez des {admc-short-name} politiques sous forme de binaires https://webassembly.org/[WebAssembly].
 
 Les auteurs de politiques peuvent rédiger des politiques en utilisant n'importe quel langage de programmation qui prend en charge WebAssembly comme cible de compilation.
 La liste des langages pris en charge évolue constamment, https://github.com/appcypher/awesome-wasm-langs[cette page] fournit un bon aperçu du paysage WebAssembly.
 
 Actuellement, WebAssembly n'a pas de moyen officiel de partager des types de données complexes entre l'hôte et un invité WebAssembly.
-Pour surmonter cette limitation, les {short-project-name} politiques utilisent le projet https://github.com/wapc[waPC], qui fournit un canal de communication bidirectionnel.
+Pour surmonter cette limitation, les {admc-short-name} politiques utilisent le projet https://github.com/wapc[waPC], qui fournit un canal de communication bidirectionnel.
 
 Ainsi, le langage de programmation de votre choix doit disposer d'un SDK invité waPC disponible.
 Si ce n'est pas le cas, n'hésitez pas à nous contacter.

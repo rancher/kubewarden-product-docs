@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explore Kubernetes capabilities using {project-name}'s context-aware policies and the waPC protocol to access cluster resources.
+:description: Explore Kubernetes capabilities using {admc-name}'s context-aware policies and the waPC protocol to access cluster resources.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "kubernetes-capabilities"]
 :doc-type: ["reference"]
@@ -11,8 +11,8 @@ include::partial$variables.adoc[]
 :sidebar_label: Kubernetes capabilities
 :current-version: {page-origin-branch}
 
-{project-name} context aware policies require access to resources from the Kubernetes cluster where they are running.
-For that, the {short-project-name} SDKs expose functions that use the waPC communication protocol to talk with the host system asking for data about the cluster.
+{admc-name} context aware policies require access to resources from the Kubernetes cluster where they are running.
+For that, the {admc-short-name} SDKs expose functions that use the waPC communication protocol to talk with the host system asking for data about the cluster.
 
 == waPC protocol contract
 

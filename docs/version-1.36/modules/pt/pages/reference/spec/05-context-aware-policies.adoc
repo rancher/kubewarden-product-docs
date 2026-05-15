@@ -15,7 +15,7 @@ O `policy-server` tem a capacidade de expor informações do cluster para polít
 
 O Servidor de Políticas que hospeda a política recupera recursos do Kubernetes. Regras RBAC aplicadas à Conta de Serviço do Servidor de Políticas regulam o acesso ao Kubernetes.
 
-O Servidor de Políticas `default` implantado pelos gráficos Helm {project-name} tem acesso aos seguintes recursos do Kubernetes:
+O Servidor de Políticas `default` implantado pelos gráficos Helm {admc-name} tem acesso aos seguintes recursos do Kubernetes:
 
 * Namespaces
 * Serviços
@@ -41,23 +41,23 @@ O servidor de políticas realiza o cache dos resultados obtidos do servidor da A
 
 | Rego
 | ✅
-| Desde o lançamento {short-project-name} 1.9
+| Desde o lançamento {admc-short-name} 1.9
 
 | WASI
 | ✅
-| Desde a versão {short-project-name} 1.10.0, apenas para o SDK Go
+| Desde a versão {admc-short-name} 1.10.0, apenas para o SDK Go
 |===
 
 == Restrições
 
-A prioridade de {short-project-name} é reduzir o número de consultas ao servidor API do Kubernetes. {short-project-name} considera duas restrições:
+A prioridade de {admc-short-name} é reduzir o número de consultas ao servidor API do Kubernetes. {admc-short-name} considera duas restrições:
 
 * Uso da memória: O processo do Policy Server armazena em cache os dados obtidos do Kubernetes na memória. Quanto mais dados forem obtidos, mais memória os Pods do Policy Server consomem.
 * Consistência: O cache mantido pelo Policy Server pode conter dados desatualizados. Novos recursos podem estar ausentes, recursos deletados podem ainda estar disponíveis e os alterados podem ter dados antigos. Isso pode afetar a avaliação de políticas.
 
 === Listando múltiplos recursos
 
-As políticas de {short-project-name} podem buscar múltiplos recursos ao mesmo tempo. Por exemplo, elas podem fazer uma consulta como "obter todos os Pods definidos dentro do namespace `default` que têm o rótulo `color` definido como ``green``".
+As políticas de {admc-short-name} podem buscar múltiplos recursos ao mesmo tempo. Por exemplo, elas podem fazer uma consulta como "obter todos os Pods definidos dentro do namespace `default` que têm o rótulo `color` definido como ``green``".
 
 Com tal consulta, o Policy Server busca todos os recursos que correspondem aos critérios do usuário. A busca de recursos é feita em lotes para reduzir a carga no servidor API do Kubernetes. Antes de armazenar os recursos na memória, o Policy Server descarta o atributo `managedFields` de cada recurso para reduzir a quantidade de memória consumida. Esse atributo não é útil para políticas e consome uma quantidade significativa de memória.
 
@@ -68,11 +68,11 @@ Finalmente, o código atual tem a seguinte limitação. Dadas essas duas consult
 * `kubectl get pods -n default`
 * `kubectl get pods -n default -l color=green`
 
-O Policy Server cria duas watches e duplica todos os Pods da segunda consulta. Essa limitação será removida em futuras versões do {short-project-name}.
+O Policy Server cria duas watches e duplica todos os Pods da segunda consulta. Essa limitação será removida em futuras versões do {admc-short-name}.
 
 === Buscando um recurso específico
 
-As políticas de {short-project-name} podem obter um recurso específico definido dentro do cluster.
+As políticas de {admc-short-name} podem obter um recurso específico definido dentro do cluster.
 Por exemplo, elas podem fazer uma consulta como "obter o Pod chamado `psql-0` definido dentro do namespace `db`."
 
 Por padrão, essa consulta busca o objeto e o armazena em um cache na memória por cinco segundos. Durante esses cinco segundos, as políticas recebem dados em cache.
@@ -80,7 +80,7 @@ Por padrão, essa consulta busca o objeto e o armazena em um cache na memória p
 O autor da política também pode decidir fazer uma consulta direta, pulando o cache.
 Dados frescos são sempre fornecidos. Isso causa mais carga no servidor API do Kubernetes (dependendo da frequência de acionamento da política) e introduz mais latência na avaliação de uma solicitação de admissão.
 
-O comportamento da consulta direta ou em cache é configurado em nível de consulta pelo autor da política usando os SDKs do {short-project-name}.
+O comportamento da consulta direta ou em cache é configurado em nível de consulta pelo autor da política usando os SDKs do {admc-short-name}.
 
 == ClusterAdmissionPolicies
 

@@ -3,19 +3,19 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 了解如何在您的 {project-name} 中轮换证书，而不会造成停机时间。
+:description: 了解如何在您的 {admc-name} 中轮换证书，而不会造成停机时间。
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "certificates"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "certificate", "controller", "reconciliation"]
+:keywords: ["{admc-name}", "kubewarden", "certificate", "controller", "reconciliation"]
 :sidebar_label: 证书轮换
 :sidebar_position: 21
 
-{project-name} v1.17.0 去除了 cert-manager 依赖。控制器能够管理所有组件使用的所有证书。现在，控制器有一个新的协调循环，确保证书始终是最新的，且 webhook 配置正确。
+{admc-name} v1.17.0 去除了 cert-manager 依赖。控制器能够管理所有组件使用的所有证书。现在，控制器有一个新的协调循环，确保证书始终是最新的，且 webhook 配置正确。
 
-Helm 图表安装执行第一次证书生成。它生成了有效期为十年的根 CA。Helm 图表安装还生成了由根 CA 签名的控制器 webhook 网络服务器证书。API 服务器使用此证书与 {short-project-name} 控制器通信以验证 CRD。它的有效期为一年。
+Helm 图表安装执行第一次证书生成。它生成了有效期为十年的根 CA。Helm 图表安装还生成了由根 CA 签名的控制器 webhook 网络服务器证书。API 服务器使用此证书与 {admc-short-name} 控制器通信以验证 CRD。它的有效期为一年。
 
-一旦控制器启动，其协调器会在证书即将过期时自动续订证书。它还更新整个 {short-project-name} 堆栈使用的所有证书和 webhook 配置。
+一旦控制器启动，其协调器会在证书即将过期时自动续订证书。它还更新整个 {admc-short-name} 堆栈使用的所有证书和 webhook 配置。
 
 [NOTE]
 ====

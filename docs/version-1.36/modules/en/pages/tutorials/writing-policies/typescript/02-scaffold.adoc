@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Create a new validation policy to reject invalid hostnames in Pod objects through configuration of policy settings, tested with provided tools.
-:keywords: {project-name}, kubewarden, kubernetes, writing policies in TypeScript, new validation policy
+:keywords: {admc-name}, kubewarden, kubernetes, writing policies in TypeScript, new validation policy
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, writing-policies, typescript, creating a new validation policy
+:doc-topic: {admc-name}, kubewarden, writing-policies, typescript, creating a new validation policy
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 

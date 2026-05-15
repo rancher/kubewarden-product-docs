@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 [IMPORTANT]
 ====
 
-Cette fonctionnalité est disponible à partir de {project-name} v1.5.0 pour le délai par serveur de stratégies et à partir de v1.29.0 pour le délai par stratégie.
+Cette fonctionnalité est disponible à partir de {admc-name} v1.5.0 pour le délai par serveur de stratégies et à partir de v1.29.0 pour le délai par stratégie.
 
 ====
 
@@ -21,7 +21,7 @@ La protection contre le dépassement de délai d'évaluation des stratégies est
 
 == Fonction
 
-Vous pouvez écrire {short-project-name} stratégies en utilisant à la fois des langages de programmation traditionnels (comme xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] et xref:../tutorials/writing-policies/index.adoc[d'autres]) ou en utilisant le langage de requête spécial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Les deux approches ont des mérites, donc un objectif de {short-project-name} est de permettre aux auteurs de stratégies de choisir le meilleur outil pour leurs besoins.
+Vous pouvez écrire {admc-short-name} stratégies en utilisant à la fois des langages de programmation traditionnels (comme xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] et xref:../tutorials/writing-policies/index.adoc[d'autres]) ou en utilisant le langage de requête spécial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Les deux approches ont des mérites, donc un objectif de {admc-short-name} est de permettre aux auteurs de stratégies de choisir le meilleur outil pour leurs besoins.
 
 Lors de l'utilisation d'un langage traditionnel https://en.wikipedia.org/wiki/Turing_completeness[complet de Turing], il est possible de rencontrer des problèmes tels que :
 
@@ -47,7 +47,7 @@ Toutes les valeurs des délais d'évaluation par stratégie, le délai d'évalua
 
 ### Par stratégie
 
-À partir de {short-project-name} v1.29.0, chaque {short-project-name} stratégie peut définir sa propre valeur de délai via son attribut `spec.timeoutEvalSeconds`. Cela ne doit pas être confondu avec `spec.timeoutSeconds`, utilisé pour le délai des webhooks (voir la section [ci-dessous](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+À partir de {admc-short-name} v1.29.0, chaque {admc-short-name} stratégie peut définir sa propre valeur de délai via son attribut `spec.timeoutEvalSeconds`. Cela ne doit pas être confondu avec `spec.timeoutSeconds`, utilisé pour le délai des webhooks (voir la section [ci-dessous](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
 
 Le `spec.timeoutEvalSeconds` est granulaire, permettant un réglage par stratégie de leur délai d'évaluation.
 
@@ -90,7 +90,7 @@ spec:
 
 === Par serveur de stratégie
 
-À partir de {short-project-name} v1.5.0, les Policy Servers sont livrés avec un délai d'évaluation configurable, activé par défaut. L'interruption d'une évaluation de demande a lieu après 2 secondes. Cette configuration affecte toutes les stratégies programmées dans ce serveur de stratégie. Le délai configurable par stratégie `spec.timeoutEvalSeconds` a la priorité sur ce paramètre par serveur de stratégie.
+À partir de {admc-short-name} v1.5.0, les Policy Servers sont livrés avec un délai d'évaluation configurable, activé par défaut. L'interruption d'une évaluation de demande a lieu après 2 secondes. Cette configuration affecte toutes les stratégies programmées dans ce serveur de stratégie. Le délai configurable par stratégie `spec.timeoutEvalSeconds` a la priorité sur ce paramètre par serveur de stratégie.
 
 Vous pouvez ajuster ce comportement en utilisant ces variables d'environnement :
 
@@ -126,9 +126,9 @@ spec:
 
 == Comparaison avec le délai d'attente du Contrôleur d'Admission Dynamique Kubernetes
 
-{short-project-name} est une implémentation de https://en.wikipedia.org/wiki/Webhook[webhook] du https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Contrôleur d'Admission Dynamique Kubernetes].
+{admc-short-name} est une implémentation de https://en.wikipedia.org/wiki/Webhook[webhook] du https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Contrôleur d'Admission Dynamique Kubernetes].
 
-En interne, le serveur API Kubernetes effectue une requête HTTP vers le serveur de stratégies de {short-project-name} décrivant un événement sur le point de se produire. Après la requête HTTP, le Serveur API Kubernetes attend une réponse. Cependant, le serveur API Kubernetes n'attend pas indéfiniment. Après un certain temps, il considère que la requête a expiré.
+En interne, le serveur API Kubernetes effectue une requête HTTP vers le serveur de stratégies de {admc-short-name} décrivant un événement sur le point de se produire. Après la requête HTTP, le Serveur API Kubernetes attend une réponse. Cependant, le serveur API Kubernetes n'attend pas indéfiniment. Après un certain temps, il considère que la requête a expiré.
 
 En citant la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[documentation officielle de Kubernetes] :
 
@@ -144,7 +144,7 @@ ____
 
 Cela signifie que, indépendamment de la fonctionnalité de délai d'attente d'évaluation des stratégies, chaque demande d'admission Kubernetes est soumise à un délai d'attente.
 
-Chaque stratégie {short-project-name} peut définir sa propre valeur de délai d'attente via l'attribut `timeoutSeconds` des ressources personnalisées `ClusterAdmissionPolicy` et `AdmissionPolicy`.
+Chaque stratégie {admc-short-name} peut définir sa propre valeur de délai d'attente via l'attribut `timeoutSeconds` des ressources personnalisées `ClusterAdmissionPolicy` et `AdmissionPolicy`.
 Par défaut, la valeur du délai d'attente est de 10 secondes.
 
 [IMPORTANT]
@@ -157,10 +157,10 @@ Toutes les demandes d'admission Kubernetes faites à un serveur de stratégies s
 
 ====
 
-Vous pouvez maintenant examiner les scénarios suivants pour mieux comprendre les différences entre le délai d'expiration du Webhook de Kubernetes et le délai d'évaluation de la stratégie de {short-project-name}.
+Vous pouvez maintenant examiner les scénarios suivants pour mieux comprendre les différences entre le délai d'expiration du Webhook de Kubernetes et le délai d'évaluation de la stratégie de {admc-short-name}.
 
 
-=== {short-project-name} Le délai d'évaluation de la stratégie est désactivé.
+=== {admc-short-name} Le délai d'évaluation de la stratégie est désactivé.
 
 Supposons que vous ayez un serveur de stratégies dont la fonction de délai d'évaluation de la stratégie est désactivée, et qu'aucune stratégie programmée sur celui-ci n'ait défini son champ `spec.timeoutEvalSeconds`. Ce serveur de stratégies héberge une stratégie affectée par un bug qui provoque une boucle infinie lors de l'évaluation.
 
@@ -172,19 +172,19 @@ Après 10 secondes, le délai d'expiration du webhook de Kubernetes se produit, 
 Maintenant, le serveur de stratégies a des ressources informatiques bloquées dans cette boucle infinie.
 Avec le temps, avec davantage de demandes d'admission déclenchant la stratégie défectueuse, le serveur de stratégies manque de ressources informatiques. Il est incapable de répondre au serveur API de Kubernetes. Ceci équivaut à une attaque par déni de service (DOS) sur le serveur de stratégies.
 
-=== {short-project-name} Le délai d'évaluation de la stratégie est activé.
+=== {admc-short-name} Le délai d'évaluation de la stratégie est activé.
 
 Supposons un scénario où le même serveur de stratégies a maintenant la fonction de délai d'évaluation de la stratégie activée, soit globalement dans le serveur de stratégies, soit dans la stratégie via le champ `spec.timeoutEvalSeconds`, et le délai d'évaluation de la stratégie est de 2 secondes.
 
 Le serveur API de Kubernetes envoie une demande d'admission pour évaluation par cette stratégie défectueuse. En conséquence, l'évaluation de la stratégie entre dans une boucle infinie.
 Pendant ce temps, le serveur API de Kubernetes attend une réponse.
 
-Après deux secondes, la fonction de délai d'évaluation de la stratégie de {short-project-name} interrompt l'évaluation de la stratégie et produit une réponse de rejet. La réponse contient un message expliquant que le rejet s'est produit parce que l'évaluation de la stratégie n'a pas été complétée à temps.
+Après deux secondes, la fonction de délai d'évaluation de la stratégie de {admc-short-name} interrompt l'évaluation de la stratégie et produit une réponse de rejet. La réponse contient un message expliquant que le rejet s'est produit parce que l'évaluation de la stratégie n'a pas été complétée à temps.
 
 [NOTE]
 ====
 
-Définir le délai d'évaluation de la stratégie de {short-project-name} à une valeur aussi élevée que le délai d'expiration du webhook de Kubernetes n'est pas un bon choix.
+Définir le délai d'évaluation de la stratégie de {admc-short-name} à une valeur aussi élevée que le délai d'expiration du webhook de Kubernetes n'est pas un bon choix.
 
 Bien que l'évaluation de la stratégie soit toujours interrompue, réduisant les chances d'une attaque par déni de service (DOS), la réponse finale de rejet n'est pas produite par le serveur de stratégies. Le rejet provient du serveur API de Kubernetes avec le délai d'expiration du webhook.
 

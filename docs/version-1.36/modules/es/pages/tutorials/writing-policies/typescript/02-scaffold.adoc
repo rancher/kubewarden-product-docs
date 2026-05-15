@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Crea una nueva directiva de validación para rechazar nombres de host no válidos en objetos Pod a través de la configuración de los ajustes de la directiva, probada con las herramientas proporcionadas.
-:keywords: {project-name}, kubewarden, kubernetes, escribiendo directivas en TypeScript, nueva directiva de validación
+:keywords: {admc-name}, kubewarden, kubernetes, escribiendo directivas en TypeScript, nueva directiva de validación
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, escribiendo-directivas, typescript, creando una nueva directiva de validación
+:doc-topic: {admc-name}, kubewarden, escribiendo-directivas, typescript, creando una nueva directiva de validación
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 

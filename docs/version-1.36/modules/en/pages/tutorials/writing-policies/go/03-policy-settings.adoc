@@ -107,13 +107,13 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == Building `Settings` instances
 
-A {short-project-name} policy exposes two different functions that receive the policy settings as input:
+A {admc-short-name} policy exposes two different functions that receive the policy settings as input:
 
 * `validate`: Use this function when Kubernetes object requires validation by the policy.
 The settings are part of a
 https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`]
 object.
-* `validate_settings`: Call this function when the policy is first loaded by {short-project-name}.
+* `validate_settings`: Call this function when the policy is first loaded by {admc-short-name}.
 The function receives the policy settings as input and checks validity.
 
 You need to create a helper function that creates a `Settings` object starting from the JSON payload:
@@ -144,7 +144,7 @@ See https://github.com/WebAssembly/threads[the official proposal] for more detai
 
 == Implementing `Settings` validation
 
-All {short-project-name} policies have to implement settings validation.
+All {admc-short-name} policies have to implement settings validation.
 
 You do this by adding a `Valid` method to the `Settings` instances:
 
@@ -202,7 +202,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 ----
 
 You can see the function takes advantage of the helper functions provided by
-https://github.com/kubewarden/policy-sdk-go[{short-project-name}'s SDK].
+https://github.com/kubewarden/policy-sdk-go[{admc-short-name}'s SDK].
 
 == Testing the settings code
 

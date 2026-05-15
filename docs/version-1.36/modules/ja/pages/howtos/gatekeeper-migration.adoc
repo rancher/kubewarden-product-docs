@@ -1,37 +1,37 @@
 include::partial$variables.adoc[]
-= Gatekeeperのポリシーを{project-name}に移行する
+= Gatekeeperのポリシーを{admc-name}に移行する
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 既存のGatekeeperポリシーを移行し、RegoコードをWebAssemblyにコンパイルするという2つの主要なステップを通じて、{project-name}ポリシーを構築します。
-:keywords: ["{project-name}", kubewarden, gatekeeper]
+:description: 既存のGatekeeperポリシーを移行し、RegoコードをWebAssemblyにコンパイルするという2つの主要なステップを通じて、{admc-name}ポリシーを構築します。
+:keywords: ["{admc-name}", kubewarden, gatekeeper]
 :doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 :doc-type: [howto]
 :doc-topic: [operator-manual]
 
-このガイドでは、既存のゲートキーパーのポリシーを{project-name}ポリシーに変換する方法を示します。このプロセスには主に2つのステップが含まれます：
+このガイドでは、既存のゲートキーパーのポリシーを{admc-name}ポリシーに変換する方法を示します。このプロセスには主に2つのステップが含まれます：
 . RegoプログラムをWebAssembly（Wasm）モジュールにコンパイルします。
-. WebAssemblyモジュールを{short-project-name}ポリシーとして配布します。
+. WebAssemblyモジュールを{admc-short-name}ポリシーとして配布します。
 
-xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Regoポリシーのチュートリアル]は、RegoコードをWebAssemblyモジュールにコンパイルするためのビルドプロセスのほとんどをカバーしています。このガイドは、ゲートキーパーのカスタムリソース定義（CRD）を抽出し、それらを機能的な{short-project-name}ポリシーに移行する手順に焦点を当てています。基本的なゲートキーパーのデモポリシーを使用します。
+xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Regoポリシーのチュートリアル]は、RegoコードをWebAssemblyモジュールにコンパイルするためのビルドプロセスのほとんどをカバーしています。このガイドは、ゲートキーパーのカスタムリソース定義（CRD）を抽出し、それらを機能的な{admc-short-name}ポリシーに移行する手順に焦点を当てています。基本的なゲートキーパーのデモポリシーを使用します。
 
 == 前提条件
 
 * link:https://github.com/open-policy-agent/opa/releases[opa]：このツールを使用して、コードをwasmにビルドします。このガイドは`v1.5.1`バージョンを使用して書かれました。
-* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]：{short-project-name}ウェブアセンブリモジュールを準備して実行するために使用するツール
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]：{admc-short-name}ウェブアセンブリモジュールを準備して実行するために使用するツール
 * link:https://github.com/bats-core/bats-core[`bats`]：エンドツーエンドのテストを実行するために使用されるツール。そのようなテストを書くことに決めた場合。
 * link:https://github.com/mikefarah/yq[`yq`]：yamlファイルからデータを抽出するために使用されるツール
 
 == ポリシーを移行する前に
 
-ゲートキーパーのポリシーを移行するプロセスを開始する前に、{short-project-name}のlink:https://artifacthub.io/packages/search?kind=13[カタログ]に既に利用可能なポリシーを使用することを検討してください。link:https://github.com/kubewarden/rego-policies-library[ポリシー]のいくつかは、{short-project-name}に移行された公開されているOPAおよびゲートキーパーのポリシーです。
+ゲートキーパーのポリシーを移行するプロセスを開始する前に、{admc-short-name}のlink:https://artifacthub.io/packages/search?kind=13[カタログ]に既に利用可能なポリシーを使用することを検討してください。link:https://github.com/kubewarden/rego-policies-library[ポリシー]のいくつかは、{admc-short-name}に移行された公開されているOPAおよびゲートキーパーのポリシーです。
 
-また、xref:/explanations/comparisons/opa-comparison.adoc[比較]のドキュメントを見て、{short-project-name}とゲートキーパーの違いを確認してください。
+また、xref:/explanations/comparisons/opa-comparison.adoc[比較]のドキュメントを見て、{admc-short-name}とゲートキーパーの違いを確認してください。
 
-== 手順1:{short-project-name}ポリシープロジェクトを初期化します。
+== 手順1:{admc-short-name}ポリシープロジェクトを初期化します。
 
-まず、{short-project-name}ゲートキーパーのlink:https://github.com/kubewarden/gatekeeper-policy-template[テンプレート]を使用して、基本的なポリシープロジェクト構造を作成します。これにより、ポリシーのビルドとテストのためのMakefileターゲットが提供されます。テンプレートからポリシーコードを作成した後、ポリシーのビルドとテストが成功するかを確認するためにMakefileコマンドを実行します：
+まず、{admc-short-name}ゲートキーパーのlink:https://github.com/kubewarden/gatekeeper-policy-template[テンプレート]を使用して、基本的なポリシープロジェクト構造を作成します。これにより、ポリシーのビルドとテストのためのMakefileターゲットが提供されます。テンプレートからポリシーコードを作成した後、ポリシーのビルドとテストが成功するかを確認するためにMakefileコマンドを実行します：
 
 [source,console]
 ----
@@ -48,9 +48,9 @@ PASS: 2/2
 
 == ステップ2:ゲートキーパーのポリシーコードを移行します。
 
-では、Gatekeeperのポリシーの移行を開始してください。これは、`ConstraintTemplate`とその関連する`Constraint`リソースを{short-project-name}ポリシーへ変換する作業です。{short-project-name}の文脈では、`ConstraintTemplate`をコアとなるポリシーコードと見なし、`Constraint`インスタンスは{short-project-name}内で実行されるポリシーインスタンスに変換されます。
+では、Gatekeeperのポリシーの移行を開始してください。これは、`ConstraintTemplate`とその関連する`Constraint`リソースを{admc-short-name}ポリシーへ変換する作業です。{admc-short-name}の文脈では、`ConstraintTemplate`をコアとなるポリシーコードと見なし、`Constraint`インスタンスは{admc-short-name}内で実行されるポリシーインスタンスに変換されます。
 
-まず、`ConstraintTemplate`からRegoコードをコピーし、{short-project-name}テンプレートによって生成された`policy.rego`ファイルに貼り付けます。この例では、Gatekeeperリポジトリから次の基本的なlink:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[デモポリシー]を使用してください。
+まず、`ConstraintTemplate`からRegoコードをコピーし、{admc-short-name}テンプレートによって生成された`policy.rego`ファイルに貼り付けます。この例では、Gatekeeperリポジトリから次の基本的なlink:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[デモポリシー]を使用してください。
 
 [.details]
 .ゲートキーパーのポリシーYAML
@@ -98,10 +98,10 @@ spec:
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== Regoコードを{short-project-name}に合わせて調整します。
+=== Regoコードを{admc-short-name}に合わせて調整します。
 
 Regoコード内で使用される`package`の名前が`policy`であることを確認する必要があります。
-これは、{short-project-name}ゲートキーパーのテンプレートによって多くの場所で期待される値です。
+これは、{admc-short-name}ゲートキーパーのテンプレートによって多くの場所で期待される値です。
 
 これを変更しないと、ポリシーをビルドし、エンドツーエンドテストを実行する際にエラーが発生します。
 
@@ -187,7 +187,7 @@ link:https://open-policy-agent.github.io/gatekeeper/website/docs/constrainttempl
 
 非常に推奨されますが、ポリシーの初期バージョンのテストを作成することをポリシー作成者がスキップすることもあります。これがあなたに当てはまる場合、テストを実行するために使用されるMakefileターゲットを無効にする必要があります。これらのターゲットを完全に削除することはできません。デフォルトのCIジョブは、それらが定義されていることを期待しています。代わりに、`opa`と`bats`を呼び出すコマンドを「ノーオペレーション」操作に置き換えるべきです。例えば、テストが実行されない理由を説明するために`echo`コマンドを使用できます。
 
-{short-project-name} Gatekeeperテンプレートには、RegoユニットテストとBatsおよび`kwctl`を使用したエンドツーエンド（e2e）テストの両方が含まれています。テストを含める予定がある場合、両方のセットはあなたのポリシーに合わせて調整する必要があります。
+{admc-short-name} Gatekeeperテンプレートには、RegoユニットテストとBatsおよび`kwctl`を使用したエンドツーエンド（e2e）テストの両方が含まれています。テストを含める予定がある場合、両方のセットはあなたのポリシーに合わせて調整する必要があります。
 
 あなたのGatekeeperポリシーにすでにRegoテストがある場合、それらを`policy_test.rego`ファイルにコピーできます。これらは`make test`コマンドを実行すると自動的に実行されます。
 
@@ -398,7 +398,7 @@ spec:
 
 === ポリシー設定を定義する
 
-このポリシーには、Gatekeeperが`Constraint`内で定義するパラメータがあります。生成された`settings`ポリシーマニフェストの{short-project-name}セクションを更新して、これらの必要なパラメータを含める必要があります。次の例では、設定を定義するだけでなく、OCIレジストリからポリシーをテストすることもできます：
+このポリシーには、Gatekeeperが`Constraint`内で定義するパラメータがあります。生成された`settings`ポリシーマニフェストの{admc-short-name}セクションを更新して、これらの必要なパラメータを含める必要があります。次の例では、設定を定義するだけでなく、OCIレジストリからポリシーをテストすることもできます：
 
 [source,yaml]
 ----

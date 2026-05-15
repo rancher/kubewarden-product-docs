@@ -7,12 +7,12 @@ include::partial$variables.adoc[]
 :sidebar_label: ArgoCDのインストール
 :sidebar_position: 35
 :description: Kubernetesリソースを効果的に管理するために、証明書の作成と更新のための特定の設定オプションを安全に設定して、ArgoCDアプリケーションを構成してください。
-:keywords: ["{project-name}", gitops, argocd]
+:keywords: ["{admc-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [ハウツー]
 :doc-topic: [argocd-installation]
 
-Kubernetesリソースを管理するためにArgoCDを使用している場合、ArgoCDを使用して{project-name}をインストールしたいかもしれません。これは可能ですが、いくつかの考慮事項があります。{short-project-name} v1.17.0以降、cert-managerの依存関係は削除されました。新しい証明書リコンシリエーターがあり、証明書を自動的に更新します。これは、{short-project-name}コントローラーが証明書の作成と更新を行うことを意味します。これには、ルートCAとすべてのWebhook証明書が含まれます。
+Kubernetesリソースを管理するためにArgoCDを使用している場合、ArgoCDを使用して{admc-name}をインストールしたいかもしれません。これは可能ですが、いくつかの考慮事項があります。{admc-short-name} v1.17.0以降、cert-managerの依存関係は削除されました。新しい証明書リコンシリエーターがあり、証明書を自動的に更新します。これは、{admc-short-name}コントローラーが証明書の作成と更新を行うことを意味します。これには、ルートCAとすべてのWebhook証明書が含まれます。
 
 初期のルートCAとWebhook証明書の作成は、利用可能なHelm関数を使用してHelmチャートのインストール中に行われます。したがって、Helmチャートのレンダリング中に、インストールは証明書がすでに作成されているかどうかを確認し、作成されていない場合はそれを作成します。
 
@@ -121,6 +121,6 @@ spec:
 [NOTE]
 ====
 
-この例では、重要な要素は`ignoreDifferences`設定であり、{short-project-name}コントローラーアプリケーションです。残りの内容は、ArgoCDアプリケーションの設定方法と完全な例を提供するための文脈を提供します。
+この例では、重要な要素は`ignoreDifferences`設定であり、{admc-short-name}コントローラーアプリケーションです。残りの内容は、ArgoCDアプリケーションの設定方法と完全な例を提供するための文脈を提供します。
 
 ====

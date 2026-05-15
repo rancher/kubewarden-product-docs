@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "ポリシーグループ", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:keywords: ["{admc-name}", "kubewarden", "ポリシーグループ", "clusteradmissionpolicygroup", "admissionpolicygroup"]
 :sidebar_label: ポリシーグループ
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -85,7 +85,7 @@ spec:
 
 === `policies`属性
 
-ポリシーフィールドは、通常のポリシーのマップです。{project-name}はポリシーグループによってポリシーを呼び出し、評価中のリソースを受け入れるか拒否するかを判断します。これらのポリシーの定義は、通常の{short-project-name}ポリシーの簡略版であり、`module`、`settings`、および`contextAwareResources`属性のみを含みます。これらの要素は、ポリシーグループ内でポリシーが機能するために必要です。
+ポリシーフィールドは、通常のポリシーのマップです。{admc-name}はポリシーグループによってポリシーを呼び出し、評価中のリソースを受け入れるか拒否するかを判断します。これらのポリシーの定義は、通常の{admc-short-name}ポリシーの簡略版であり、`module`、`settings`、および`contextAwareResources`属性のみを含みます。これらの要素は、ポリシーグループ内でポリシーが機能するために必要です。
 
 ユニークな名前は、グループポリシーの各ポリシーを識別します。例えば、次のスニペットは三つのポリシーを定義しています：`signed_by_alice`、`signed_by_bob`および`reject_latest_tag`。
 

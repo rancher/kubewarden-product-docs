@@ -3,16 +3,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: kwctlのようなOCI準拠のレジストリを介してポリシーを安全に配布し、{project-name}ポリシー管理を通じてクラスターのセキュリティを確保します。
+:description: kwctlのようなOCI準拠のレジストリを介してポリシーを安全に配布し、{admc-name}ポリシー管理を通じてクラスターのセキュリティを確保します。
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:keywords: ["{admc-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-{project-name}ポリシーは、{short-project-name}ポリシーサーバーによって評価されるWebAssembly（Wasm）バイナリです。
+{admc-name}ポリシーは、{admc-short-name}ポリシーサーバーによって評価されるWebAssembly（Wasm）バイナリです。
 
-{short-project-name}ポリシーサーバーは、これらのソースからポリシーを読み込みます：
+{admc-short-name}ポリシーサーバーは、これらのソースからポリシーを読み込みます：
 
 * ローカルファイルシステム
 * HTTP(s)サーバー
@@ -23,23 +23,23 @@ include::partial$variables.adoc[]
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Googleコンテナレジストリ]
 
-{short-project-name}は、通常のOCI準拠のレジストリを介して{short-project-name}ポリシーを配布することを推奨します。コンテナレジストリは、すべてのKubernetesクラスターにとって必須の要件です。クラスターに必要なすべてのアーティファクトを保存し、保護するための単一の場所を持つことは有益です。
+{admc-short-name}は、通常のOCI準拠のレジストリを介して{admc-short-name}ポリシーを配布することを推奨します。コンテナレジストリは、すべてのKubernetesクラスターにとって必須の要件です。クラスターに必要なすべてのアーティファクトを保存し、保護するための単一の場所を持つことは有益です。
 
 == OCI準拠のレジストリにポリシーをプッシュする
 
 https://github.com/opencontainers/image-spec[OCIイメージフォーマット]仕様は、通常のOCI準拠のコンテナレジストリ内に任意のバイナリブロブを保存することを許可します。
 
-*ターゲットOCI準拠のレジストリは、アーティファクトをサポートする必要があります*。これにより、{short-project-name}ポリシーを正常にプッシュできます。
+*ターゲットOCI準拠のレジストリは、アーティファクトをサポートする必要があります*。これにより、{admc-short-name}ポリシーを正常にプッシュできます。
 
-https://github.com/kubewarden/kwctl[`kwctl`] CLIを使用して、{short-project-name}ポリシーをOCI準拠のレジストリにプッシュできます。
+https://github.com/kubewarden/kwctl[`kwctl`] CLIを使用して、{admc-short-name}ポリシーをOCI準拠のレジストリにプッシュできます。
 
 == ポリシーの注釈付け
 
-ポリシーには、`kwctl`を使用して注釈を付けることもできます。ポリシーの注釈付けは、{short-project-name}ポリシーのバイナリにWasmカスタムセクションを追加することで行われます。これは、ポリシーが独自のメタデータをパッケージ化することを意味します。
+ポリシーには、`kwctl`を使用して注釈を付けることもできます。ポリシーの注釈付けは、{admc-short-name}ポリシーのバイナリにWasmカスタムセクションを追加することで行われます。これは、ポリシーが独自のメタデータをパッケージ化することを意味します。
 
 `kwctl annotate`コマンドは、2つの入力を必要とします：
 
-* {short-project-name}ポリシーに注釈を付けるための、ファイルシステム内のローカルファイル。
+* {admc-short-name}ポリシーに注釈を付けるための、ファイルシステム内のローカルファイル。
 * 注釈ファイル、ポリシーメタデータのYAML記述を含むファイル。
 このファイルは通常、ポリシーのルートプロジェクトフォルダーにあります。
 
@@ -155,4 +155,4 @@ $ kwctl push annotated-policy.wasm \
 
 注釈のないポリシーをプッシュすることは推奨されません。ポリシーサーバーは、注釈によって提供されたメタデータを使用して、ポリシーを正しく実行します。デフォルトでは、`kwctl push`はそのようなポリシーをOCIレジストリにプッシュすることを拒否します。注釈のないポリシーが必要な場合は、`-&#x200D;-&#x200D;force`の`kwctl push`フラグを使用してください。
 
-{short-project-name}ポリシーサーバーまたは`kwctl`から`registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`としてポリシーを参照できます。
+{admc-short-name}ポリシーサーバーまたは`kwctl`から`registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`としてポリシーを参照できます。

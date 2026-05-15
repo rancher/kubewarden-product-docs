@@ -8,16 +8,16 @@ include::partial$variables.adoc[]
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-développeur-de-stratégie”, “kubewarden-integrator”]
 :doc-topic: [“explications”, “scanner-d'audit”, “rapports-de-stratégie”]
 :doc-type: [“explication”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “scanner d'audit”, "rapports de stratégie"]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “scanner d'audit”, "rapports de stratégie"]
 :sidebar_label: Rapports de stratégie
 :current-version: {page-origin-branch}
 
-Lorsque vous utilisez le Scanner d'audit {project-name}, vous stockez les résultats des analyses de stratégie en utilisant les Ressources Personnalisées https://openreports.io/[OpenReports].
+Lorsque vous utilisez le Scanner d'audit {admc-name}, vous stockez les résultats des analyses de stratégie en utilisant les Ressources Personnalisées https://openreports.io/[OpenReports].
 
 [CAUTION]
 ====
 
-Avec {project-name} 1.33, la fonctionnalité Scanner d'audit enregistre les rapports dans des CRD OpenReports de [openreports.io](https://openreports.io) par défaut.
+Avec {admc-name} 1.33, la fonctionnalité Scanner d'audit enregistre les rapports dans des CRD OpenReports de [openreports.io](https://openreports.io) par défaut.
 
 Les CRD link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] du groupe de travail sur les politiques Kubernetes ne sont pas installées par défaut, marquées comme obsolètes, et seront supprimées dans une future version.
 
@@ -202,8 +202,8 @@ capture d'écran ci-dessous :
 
 image::policy-reporter_dashboard.png[Exemple de tableau de bord du Policy Reporter]
 
-{short-project-name} livre l'interface utilisateur du Policy Reporter avec un filtre préconfiguré
-qui ne montre que les stratégies {short-project-name}, ainsi que des informations développées :
+{admc-short-name} livre l'interface utilisateur du Policy Reporter avec un filtre préconfiguré
+qui ne montre que les stratégies {admc-short-name}, ainsi que des informations développées :
 
 image::policy-reporter_policyreports.png[Exemple de PolicyReports du Policy Reporter]
 

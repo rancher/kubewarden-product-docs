@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: の{project-name}セットアップにおいて、ポリシーを効果的に構築および配布するための重要な手順に従ってください。
+:description: の{admc-name}セットアップにおいて、ポリシーを効果的に構築および配布するための重要な手順に従ってください。
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
 :doc-type: ["tutorial"]
@@ -36,13 +36,13 @@ policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
 
 == ポリシーの配布
 
-{project-name}は、ポリシー配布に関する情報をxref:../../../explanations/distributing-policies.adoc[ポリシーの配布]セクションに記載しています。
+{admc-name}は、ポリシー配布に関する情報をxref:../../../explanations/distributing-policies.adoc[ポリシーの配布]セクションに記載しています。
 
 == その他の例
 
-より多くのRust製{short-project-name}ポリシーは、{short-project-name}のGitHubスペースで見つけることができます。https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[このクエリ]を使用すると、見つけるのに役立ちます。
+より多くのRust製{admc-short-name}ポリシーは、{admc-short-name}のGitHubスペースで見つけることができます。https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[このクエリ]を使用すると、見つけるのに役立ちます。
 
-そのクエリで示された{short-project-name}ポリシーリポジトリには、次のタスクを自動化するGitHub Actionsがあります：
+そのクエリで示された{admc-short-name}ポリシーリポジトリには、次のタスクを自動化するGitHub Actionsがあります：
 
 * プルリクエストおよびメインブランチへのコードマージ後にユニットテストとコードリンティングを実行します。
 * `release`モードでポリシーを構築し、アーティファクトとしてOCIレジストリにプッシュします。

@@ -3,20 +3,20 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: kwctlを使用して、batsまたは標準テストを使い、特にWasmの{project-name}ポリシーをテストする方法を学びます。
+:description: kwctlを使用して、batsまたは標準テストを使い、特にWasmの{admc-name}ポリシーをテストする方法を学びます。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "ポリシーのテスト", "ポリシー作成者", "rust", "go", "assemblyscript", "開発環境"]
 :current-version: {page-origin-branch}
 
-{project-name}ポリシーはWebAssembly（Wasm）としてコンパイルされた通常のプログラムです。
+{admc-name}ポリシーはWebAssembly（Wasm）としてコンパイルされた通常のプログラムです。
 あらゆる種類のプログラムと同様に、良好なテストカバレッジは重要です。
 
 ポリシー作成者はお気に入りの開発環境を使用できます。
 慣れ親しんだツールやテストフレームワークを使用して開発を検証できます。
 
-これらの{short-project-name}ポリシーは、xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust]とxref:tutorials/writing-policies/go/01-intro-go.adoc[Go]で書かれた例です。
+これらの{admc-short-name}ポリシーは、xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust]とxref:tutorials/writing-policies/go/01-intro-go.adoc[Go]で書かれた例です。
 
 * https://github.com/kubewarden/psp-apparmor[psp-apparmor]
 * https://github.com/kubewarden/ingress-policy[ingress-policy]
@@ -31,12 +31,12 @@ include::partial$variables.adoc[]
 Kubernetesクラスターをデプロイせずにこれを行うには、これらのツールを使用できます：
 
 * https://github.com/bats-core/bats-core[bats]: テストを書くためのものであり、その実行を自動化します。
-* https://github.com/kubewarden/kwctl[`kwctl`]: {short-project-name}のデフォルトCLIツールで、ポリシー関連の操作を支援します。プル、検査、注釈、プッシュ、実行。
+* https://github.com/kubewarden/kwctl[`kwctl`]: {admc-short-name}のデフォルトCLIツールで、ポリシー関連の操作を支援します。プル、検査、注釈、プッシュ、実行。
 
 `kwctl run`を使用するには、次のものが必要です。
 
 . 実行するポリシーのWasmバイナリファイルの参照。
-{short-project-name}ポリシーは次の場所からロードできます：
+{admc-short-name}ポリシーは次の場所からロードできます：
  ** ローカルファイルシステム（`file://`）
  ** HTTP(s)サーバー（`https://`）
  ** OCIレジストリ（`registry://`）。

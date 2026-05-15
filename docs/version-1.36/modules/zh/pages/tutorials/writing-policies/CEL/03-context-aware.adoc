@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 配置上下文感知策略，以确保主机之间的唯一Ingress规则，防止与{project-name}的CEL扩展库产生冲突。
+:description: 配置上下文感知策略，以确保主机之间的唯一Ingress规则，防止与{admc-name}的CEL扩展库产生冲突。
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
 :doc-type: ["tutorial"]
@@ -11,9 +11,9 @@ include::partial$variables.adoc[]
 :sidebar_label: 上下文感知策略
 :current-version: {page-origin-branch}
 
-{project-name}的`cel-policy`支持xref:reference/spec/05-context-aware-policies.adoc[上下文感知]功能。该策略能够读取集群信息，并且能够基于除通过准入请求触发策略评估的资源之外的其他现有资源做出决策。
+{admc-name}的`cel-policy`支持xref:reference/spec/05-context-aware-policies.adoc[上下文感知]功能。该策略能够读取集群信息，并且能够基于除通过准入请求触发策略评估的资源之外的其他现有资源做出决策。
 
-为此，我们可以使用策略中包含的https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{short-project-name}的CEL扩展库（用于主机能力）]。
+为此，我们可以使用策略中包含的https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{admc-short-name}的CEL扩展库（用于主机能力）]。
 
 == 示例：唯一的Ingress
 
@@ -53,7 +53,7 @@ spec:
 
 ----
 
-现在，我们需要编写CEL代码，以获取集群中现有的Ingress资源。为此，我们使用[{short-project-name}的CEL扩展库](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities)。
+现在，我们需要编写CEL代码，以获取集群中现有的Ingress资源。为此，我们使用[{admc-short-name}的CEL扩展库](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities)。
 特别是`kw.k8s`主机能力，允许我们在集群中查询GroupVersionKinds。您可以在[这里](https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library)查看CEL函数的文档。
 
 该库采用构建者模式，与上游Kubernetes的CEL扩展类似；调用CEL函数方法会返回一个CEL对象，该对象本身具有特定的函数方法。这样可以简化我们确定CEL代码的作用范围和返回值的过程。

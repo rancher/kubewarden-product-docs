@@ -11,9 +11,9 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes policy development", "policy metadata"]
 :current-version: {page-origin-branch}
 
-The {project-name} metadata file, `metadata.yaml`,
+The {admc-name} metadata file, `metadata.yaml`,
 is a configuration file containing important information and settings
-related to the policies used within {short-project-name}.
+related to the policies used within {admc-short-name}.
 This documentation is overview of the purpose and usage of the metadata file.
 
 The policy `metadata.yaml` file has defaults for the policy,

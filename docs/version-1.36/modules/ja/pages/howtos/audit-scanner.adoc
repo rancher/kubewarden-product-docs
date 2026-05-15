@@ -4,16 +4,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}内の監査スキャナー機能を使用して、クラスターのコンプライアンス状態を確認し、適切な構成がされていることを保証します。
+:description: {admc-name}内の監査スキャナー機能を使用して、クラスターのコンプライアンス状態を確認し、適切な構成がされていることを保証します。
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "audit scanner"]
 :sidebar_label: 監査スキャナー
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-バージョン`v1.7.0`から、{project-name}には「監査スキャナー」という新機能が追加されました。「監査スキャナー」と呼ばれる新しいコンポーネントは、クラスター内で宣言されたリソースを常にチェックし、展開された{project-name}ポリシーに準拠していないものをフラグ付けし、これらの結果を特定のレポートカスタムリソースに保存します。
+バージョン`v1.7.0`から、{admc-name}には「監査スキャナー」という新機能が追加されました。「監査スキャナー」と呼ばれる新しいコンポーネントは、クラスター内で宣言されたリソースを常にチェックし、展開された{admc-name}ポリシーに準拠していないものをフラグ付けし、これらの結果を特定のレポートカスタムリソースに保存します。
 
 ポリシーは時間とともに進化します。新しいポリシーをデプロイし、既存のポリシーを更新します。バージョンと設定の両方が変更されます。これにより、クラスター内に既に存在するリソースがもはや準拠していない状況が生じる可能性があります。
 
@@ -23,7 +23,7 @@ include::partial$variables.adoc[]
 
 == インストール
 
-監査スキャナーコンポーネントは{short-project-name} `v1.7.0`以降利用可能です。
+監査スキャナーコンポーネントは{admc-short-name} `v1.7.0`以降利用可能です。
 したがって、アプリバージョン`v1.7.0`以上のHelmチャートをインストールしていることを確認してください。
 
 . `kubewarden-crds` Helmチャートをインストールします。チャートは、デフォルトで必要な`PolicyReport` CRDsをインストールします。
@@ -71,7 +71,7 @@ helm install kubewarden-controller kubewarden/kubewarden-controller
 監査スキャナーがデフォルトのOpenReports CRDsの代わりに、非推奨のPolicyReports CRDsにレポートを保存するようにしたい場合は、`auditScanner.reportCRDsKind="policyreport"`を設定してください。
 ====
 
-{short-project-name}のインストールに関する詳細情報は、xref:quick-start.adoc[クイックスタートガイド]をご覧ください。
+{admc-short-name}のインストールに関する詳細情報は、xref:quick-start.adoc[クイックスタートガイド]をご覧ください。
 
 デフォルトでは、監査スキャナーの実装は、60分ごとにトリガーされるhttps://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob]として行われます。kubewarden-controllerチャートのhttps://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml]を変更することで、監査スキャナーの設定を調整できます。
 

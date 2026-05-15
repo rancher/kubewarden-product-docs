@@ -23,7 +23,7 @@ xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTeleme
 ====
 
 
-跟踪让您收集有关策略评估的详细信息。它可以帮助您调试 {project-name} 部署和策略中的问题。
+跟踪让您收集有关策略评估的详细信息。它可以帮助您调试 {admc-name} 部署和策略中的问题。
 
 您使用 https://www.jaegertracing.io/[Jaeger] -- 来接收、存储和可视化跟踪事件。
 
@@ -75,9 +75,9 @@ EOF
 
 在创建 Jaeger Operator 资源后，您在 `my-open-telemetry-collector.jaeger.svc.cluster.local` 下有一个服务。Jaeger 查询 UI 由 `my-open-telemetry-query` 服务在 `jaeger` 名称空间中公开。
 
-== 安装 {short-project-name}
+== 安装 {admc-short-name}
 
-现在您可以按照通常的方式继续部署 {short-project-name}。
+现在您可以按照通常的方式继续部署 {admc-short-name}。
 
 [NOTE]
 ====
@@ -86,14 +86,14 @@ EOF
 
 ====
 
-作为第一步，您添加包含 {short-project-name} 的 Helm 储存库：
+作为第一步，您添加包含 {admc-short-name} 的 Helm 储存库：
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-然后您安装由 {short-project-name} 定义的自定义资源定义（CRDs）：
+然后您安装由 {admc-short-name} 定义的自定义资源定义（CRDs）：
 
 [subs="+attributes",console]
 ----
@@ -103,7 +103,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-现在您可以部署其余的 {short-project-name} 堆栈。官方的 `kubewarden-defaults` helm 图表创建一个名为 `default` 的 PolicyServer。您希望此 PolicyServer 实例启用跟踪。
+现在您可以部署其余的 {admc-short-name} 堆栈。官方的 `kubewarden-defaults` helm 图表创建一个名为 `default` 的 PolicyServer。您希望此 PolicyServer 实例启用跟踪。
 
 为此，您需要为 `kubewarden-controller` 图表指定一些额外的值。您应该创建一个 `values.yaml` 文件，包含以下内容：
 

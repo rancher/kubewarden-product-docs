@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure a coleta de métricas no Policy Server usando Prometheus e {project-name} habilitado através de Helm charts para coleta de dados.
+:description: Configure a coleta de métricas no Policy Server usando Prometheus e {admc-name} habilitado através de Helm charts para coleta de dados.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]
@@ -91,9 +91,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== Instale o {short-project-name}
+== Instale o {admc-short-name}
 
-Agora você pode instalar {short-project-name}, da maneira recomendada com Helm
+Agora você pode instalar {admc-short-name}, da maneira recomendada com Helm
 charts.
 
 [NOTE]
@@ -104,14 +104,14 @@ O `cert-manager` é um requisito do OpenTelemetry, mas você já o instalou em u
 ====
 
 
-Primeiro, você deve adicionar o repositório Helm que contém {short-project-name}:
+Primeiro, você deve adicionar o repositório Helm que contém {admc-short-name}:
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Em seguida, você instala as Definições de Recursos Personalizados (CRDs) definidas pelo {short-project-name}:
+Em seguida, você instala as Definições de Recursos Personalizados (CRDs) definidas pelo {admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -120,9 +120,9 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Agora você pode implantar o restante da pilha do {short-project-name}. O Helm chart oficial cria um PolicyServer chamado `default`.
+Agora você pode implantar o restante da pilha do {admc-short-name}. O Helm chart oficial cria um PolicyServer chamado `default`.
 
-Você deve configurar o Helm chart para que as métricas estejam habilitadas em {short-project-name}. O arquivo `kubewarden-values.yaml` deve ter o seguinte conteúdo:
+Você deve configurar o Helm chart para que as métricas estejam habilitadas em {admc-short-name}. O arquivo `kubewarden-values.yaml` deve ter o seguinte conteúdo:
 
 [subs="+attributes",yaml]
 ----
@@ -187,9 +187,9 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 
 Agora você pode fazer login com o nome de usuário padrão `admin` e a senha `prom-operator`.
 
-=== Usando o {short-project-name} painel do Grafana
+=== Usando o {admc-short-name} painel do Grafana
 
-{short-project-name} tem um painel do Grafana com métricas básicas que fornecem uma visão geral de como {short-project-name} se comporta no cluster. Este painel está disponível nas versões do GitHub do repositório policy-server {short-project-name} como um https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[arquivo JSON] ou no https://grafana.com/grafana/dashboards/15314[site do Grafana].
+{admc-short-name} tem um painel do Grafana com métricas básicas que fornecem uma visão geral de como {admc-short-name} se comporta no cluster. Este painel está disponível nas versões do GitHub do repositório policy-server {admc-short-name} como um https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[arquivo JSON] ou no https://grafana.com/grafana/dashboards/15314[site do Grafana].
 
 Para importar o painel para o seu ambiente, você pode baixar o arquivo JSON do site do Grafana ou do repositório:
 
@@ -212,7 +212,7 @@ Outra opção é importá-lo diretamente do site grafana.com. Para isso:
 . Clique no botão `load`.
 . Após importar o painel, defina a fonte de dados Prometheus a ser utilizada e finalize o processo de importação.
 
-O painel do Grafana possui painéis mostrando o estado de todas as políticas gerenciadas por {short-project-name}. Ele também possui painéis específicos para políticas.
+O painel do Grafana possui painéis mostrando o estado de todas as políticas gerenciadas por {admc-short-name}. Ele também possui painéis específicos para políticas.
 
 Você pode obter métricas detalhadas para uma política específica alterando o valor da variável `policy_name` para corresponder ao nome da política requerida.
 

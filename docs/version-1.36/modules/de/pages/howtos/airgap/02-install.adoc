@@ -4,15 +4,15 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie ein privates Registry mit {project-name} Bildern und Richtlinien, um {project-name} in einer Air-Gapped-Umgebung zu installieren.
+:description: Konfigurieren Sie ein privates Registry mit {admc-name} Bildern und Richtlinien, um {admc-name} in einer Air-Gapped-Umgebung zu installieren.
 :doc-persona: [„kubewarden-operator“, „kubewarden-integrator“]
 :doc-topic: [„Operator-Handbuch“, „Air Gap“, „Installation“]
 :doc-type: [„howto“]
-:keywords: ["{project-name}", "Kubewarden", "Kubernetes", "Air-Gap-Installation"]
+:keywords: ["{admc-name}", "Kubewarden", "Kubernetes", "Air-Gap-Installation"]
 :current-version: {page-origin-branch}
 
-Für eine Air-Gapped-Installation von {project-name} benötigen Sie ein privates Open Container Initiative (OCI) Registry, das von Ihrem Kubernetes-Cluster aus zugänglich ist.
-{short-project-name} Richtlinien sind WebAssembly-Module, daher können Sie sie als OCI-Artefakte in einem OCI-konformen Registry speichern. Sie müssen die Bilder und Richtlinien von {short-project-name} in dieses OCI-Registry hinzufügen. Sie können auf eine Liste von {short-project-name} Artefakten auf der Seite xref:/reference/artifacts.adoc[Artefaktverzeichnis] verweisen. Die folgenden Abschnitte beschreiben den Prozess.
+Für eine Air-Gapped-Installation von {admc-name} benötigen Sie ein privates Open Container Initiative (OCI) Registry, das von Ihrem Kubernetes-Cluster aus zugänglich ist.
+{admc-short-name} Richtlinien sind WebAssembly-Module, daher können Sie sie als OCI-Artefakte in einem OCI-konformen Registry speichern. Sie müssen die Bilder und Richtlinien von {admc-short-name} in dieses OCI-Registry hinzufügen. Sie können auf eine Liste von {admc-short-name} Artefakten auf der Seite xref:/reference/artifacts.adoc[Artefaktverzeichnis] verweisen. Die folgenden Abschnitte beschreiben den Prozess.
 
 [NOTE]
 ====
@@ -63,7 +63,7 @@ cat */imagelist.txt > kubewarden-images.txt
 ----
 
 . Laden Sie `kubewarden-save-images.sh` und `kubewarden-load-images.sh` aus dem https://github.com/kubewarden/utils[Utilities-Repository] herunter.
-. Speichern Sie {short-project-name} Containerbilder in einer `.tar.gz` Datei:
+. Speichern Sie {admc-short-name} Containerbilder in einer `.tar.gz` Datei:
 +
 [,shell]
 ----
@@ -83,7 +83,7 @@ Docker beginnt mit dem Herunterladen der Bilder, die für eine Air-Gap-Installat
 cat */policylist.txt > policies.txt
 ----
 +
-Eine Datei mit einer Liste der Standardrichtlinien befindet sich auf der {short-project-name} Standard- https://github.com/kubewarden/helm-charts/releases/[Release-Seite].
+Eine Datei mit einer Liste der Standardrichtlinien befindet sich auf der {admc-short-name} Standard- https://github.com/kubewarden/helm-charts/releases/[Release-Seite].
 
 . Laden Sie `kubewarden-save-policies.sh` und `kubewarden-load-policies.sh` aus dem https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller` Repository] herunter.
 
@@ -118,7 +118,7 @@ Verschieben Sie diese Dateien in die Air-Gapped-Umgebung:
 * `kubewarden-load-policies.sh` und
 * `policies.txt`
 
-. Laden Sie {short-project-name} Bilder in das private Registry. Sie müssen den Docker-Client gegen das lokale Registry authentifizieren.
+. Laden Sie {admc-short-name} Bilder in das private Registry. Sie müssen den Docker-Client gegen das lokale Registry authentifizieren.
 +
 [,shell]
 ----
@@ -128,7 +128,7 @@ Verschieben Sie diese Dateien in die Air-Gapped-Umgebung:
    --registry <REGISTRY.YOURDOMAIN.COM:PORT>
 ----
 
-. Laden Sie die {short-project-name} Richtlinien in das private Registry. Sie sollten sich authentifizieren, um das lokale Registry (`kwctl` verwendet denselben Mechanismus zur Authentifizierung wie `docker`, eine `~/.docker/config.json` Datei)
+. Laden Sie die {admc-short-name} Richtlinien in das private Registry. Sie sollten sich authentifizieren, um das lokale Registry (`kwctl` verwendet denselben Mechanismus zur Authentifizierung wie `docker`, eine `~/.docker/config.json` Datei)
 +
 [,shell]
 ----
@@ -153,11 +153,11 @@ Verweisen Sie auf xref:howtos/custom-certificate-authorities.adoc[den Abschnitt 
 ====
 
 
-== Installieren Sie {short-project-name}
+== Installieren Sie {admc-short-name}
 
-Jetzt, da Ihr privates Registry alles Erforderliche hat, können Sie {short-project-name} installieren. Der einzige Unterschied zu einer Standardinstallation von {short-project-name} besteht darin, dass Sie das Registry in den Containerbildern und Richtlinien auf das private Registry ändern müssen.
+Jetzt, da Ihr privates Registry alles Erforderliche hat, können Sie {admc-short-name} installieren. Der einzige Unterschied zu einer Standardinstallation von {admc-short-name} besteht darin, dass Sie das Registry in den Containerbildern und Richtlinien auf das private Registry ändern müssen.
 
-Installieren Sie den {short-project-name} Stack:
+Installieren Sie den {admc-short-name} Stack:
 
 [,shell]
 ----
@@ -223,7 +223,7 @@ Wenn die `recommendedPolicies.defaultPoliciesRegistry` Konfiguration nicht festg
 
 Schließlich müssen Sie den Policy Server so konfigurieren, dass er Richtlinien aus Ihrem privaten Registry abruft. Bitte beachten Sie den Abschnitt xref:howtos/policy-servers/02-private-registry.adoc[Verwendung des privaten Registry] der Dokumentation.
 
-Jetzt können Sie {short-project-name} Richtlinien in Ihrem Cluster erstellen. Richtlinien müssen in Ihrem privaten Registry verfügbar sein.
+Jetzt können Sie {admc-short-name} Richtlinien in Ihrem Cluster erstellen. Richtlinien müssen in Ihrem privaten Registry verfügbar sein.
 
 [,console]
 ----

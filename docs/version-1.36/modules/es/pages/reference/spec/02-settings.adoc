@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura la configuración de la directiva utilizando {project-name} para la validación y serialización de los datos de la directiva.
+:description: Configura la configuración de la directiva utilizando {admc-name} para la validación y serialización de los datos de la directiva.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "settings"]
 :doc-type: ["reference"]
@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 
 El comportamiento de la directiva no es rígido, puedes configurarlo proporcionando detalles de configuración a la directiva en tiempo de ejecución. El autor de la directiva tiene la libertad de definir la estructura de la configuración de la directiva.
 
-{project-name} se encarga de serializar la configuración de la directiva en JSON y la proporciona a la directiva cada vez que se invoca.
+{admc-name} se encarga de serializar la configuración de la directiva en JSON y la proporciona a la directiva cada vez que se invoca.
 
 == Validación de la configuración de la directiva
 
@@ -41,7 +41,7 @@ Si la configuración proporcionada por el usuario es `valid`, `validate_settings
 [NOTE]
 ====
 
-El {short-project-name}https://github.com/chimera-kube/policy-server[policy-server] de valida toda la configuración de la directiva proporcionada por los usuarios al inicio. El policy-server sale inmediatamente con un error si al menos una de sus directivas recibió parámetros de configuración incorrectos.
+El {admc-short-name}https://github.com/chimera-kube/policy-server[policy-server] de valida toda la configuración de la directiva proporcionada por los usuarios al inicio. El policy-server sale inmediatamente con un error si al menos una de sus directivas recibió parámetros de configuración incorrectos.
 
 ====
 

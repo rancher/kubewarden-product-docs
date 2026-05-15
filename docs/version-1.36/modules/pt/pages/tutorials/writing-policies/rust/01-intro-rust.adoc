@@ -14,11 +14,11 @@ include::partial$variables.adoc[]
 https://www.rust-lang.org/[Rust] é a linguagem de programação mais madura que pode gerar módulos WebAssembly.
 O WebAssembly é considerado um cidadão de primeira classe no mundo Rust, de modo que muitas das ferramentas e crates do ecossistema Rust funcionam de imediato.
 
-O {project-name} fornece um https://crates.io/crates/kubewarden-policy-sdk[SDK Rust] que simplifica o processo de escrever políticas.
+O {admc-name} fornece um https://crates.io/crates/kubewarden-policy-sdk[SDK Rust] que simplifica o processo de escrever políticas.
 Há também um https://github.com/kubewarden/rust-policy-template[projeto modelo] que oferece a estrutura inicial para um projeto de políticas utilizando o https://github.com/cargo-generate/cargo-generate[`cargo-generate`] utilitário.
 
-Esta documentação mostra como usar esses projetos para escrever {short-project-name} políticas usando Rust.
-Não cobre os detalhes do SDK Rust do {short-project-name}.
+Esta documentação mostra como usar esses projetos para escrever {admc-short-name} políticas usando Rust.
+Não cobre os detalhes do SDK Rust do {admc-short-name}.
 Os detalhes estão na https://docs.rs/kubewarden-policy-sdk/0.1.0[documentação do crate].
 
 == Obtendo as dependências do Rust

@@ -24,7 +24,7 @@ Sie verwenden den Compiler, der im offiziellen TinyGo-Container-Image enthalten 
 * https://github.com/bats-core/bats-core[bats]:
 Wird verwendet, um die Tests zu schreiben und deren Ausführung zu automatisieren.
 * https://github.com/kubewarden/kwctl/releases[`kwctl`]:
-CLI-Tool, das von {project-name} bereitgestellt wird, um seine Richtlinien außerhalb von Kubernetes auszuführen, unter anderem.
+CLI-Tool, das von {admc-name} bereitgestellt wird, um seine Richtlinien außerhalb von Kubernetes auszuführen, unter anderem.
 Es wird in xref:tutorials/testing-policies/index.adoc[diesem Abschnitt] der Dokumentation behandelt.
 
 == Tests schreiben

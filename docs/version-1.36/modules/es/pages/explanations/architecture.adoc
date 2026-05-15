@@ -1,20 +1,20 @@
 include::partial$variables.adoc[]
-= {project-name} arquitectura
+= {admc-name} arquitectura
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Descubre cómo {project-name} utiliza las características fundamentales de Kubernetes para integrarse sin problemas en tu clúster.
+:description: Descubre cómo {admc-name} utiliza las características fundamentales de Kubernetes para integrarse sin problemas en tu clúster.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["architecture"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "architecture"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "architecture"]
 :sidebar_label: Arquitectura
 :sidebar_position: 61
 :current-version: {page-origin-branch}
 
-{project-name} es un motor de directivas de Kubernetes.
+{admc-name} es un motor de directivas de Kubernetes.
 Utiliza directivas escritas en un lenguaje de programación de tu elección.
-Este lenguaje debe generar un binario de WebAssembly para que {project-name} lo utilice.
+Este lenguaje debe generar un binario de WebAssembly para que {admc-name} lo utilice.
 
 == ¿Qué _es_ una directiva?
 
@@ -23,7 +23,7 @@ Una directiva es un https://opencontainers.org/[artefacto de la Iniciativa de Co
 [NOTE]
 ====
 
-Al igual que https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes], {project-name} utiliza los términos 'PolicyServer' al hablar del {project-name} servidor de políticas y `policy-server` al hablar de Pod o Ampliación de un {project-name} PolicyServer.
+Al igual que https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes], {admc-name} utiliza los términos 'PolicyServer' al hablar del {admc-name} servidor de políticas y `policy-server` al hablar de Pod o Ampliación de un {admc-name} PolicyServer.
 
 ====
 
@@ -32,7 +32,7 @@ Al igual que https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes
 
 === Haciendo uso de las características fundamentales de Kubernetes
 
-El equipo diseñó {project-name} para utilizar características fundamentales de Kubernetes, sin reinventar la rueda.
+El equipo diseñó {admc-name} para utilizar características fundamentales de Kubernetes, sin reinventar la rueda.
 El proyecto utiliza una combinación de:
 
 * Kubernetes Controllers
@@ -42,56 +42,56 @@ El proyecto utiliza una combinación de:
 
 === Hace un uso efectivo de la arquitectura de Kubernetes
 
-{project-name} opera sin problemas dentro del ecosistema de Kubernetes. En su kernel, el {project-name} controlador es un controlador de Kubernetes, monitorizando las {project-name} Definiciones de Recursos Personalizados (CRDs) y configurando recursos de Kubernetes para ejecutarlos. Esta integración asegura que {project-name} utiliza los mecanismos integrados de Kubernetes, como controladores y CRDs, para observar, gestionar y aplicar directivas de seguridad de manera eficiente.
+{admc-name} opera sin problemas dentro del ecosistema de Kubernetes. En su kernel, el {admc-name} controlador es un controlador de Kubernetes, monitorizando las {admc-name} Definiciones de Recursos Personalizados (CRDs) y configurando recursos de Kubernetes para ejecutarlos. Esta integración asegura que {admc-name} utiliza los mecanismos integrados de Kubernetes, como controladores y CRDs, para observar, gestionar y aplicar directivas de seguridad de manera eficiente.
 
 === Definición extensible de directivas.
 
-{project-name} emplea CRDs para definir y gestionar recursos de {project-name}, que especifican las reglas para las validaciones de solicitudes de admisión. Este diseño permite a los usuarios extender las capacidades de Kubernetes con controles de admisión personalizados, asegurando que la aplicación de directivas de seguridad y cumplimiento sea consistente en todo el clúster.
+{admc-name} emplea CRDs para definir y gestionar recursos de {admc-name}, que especifican las reglas para las validaciones de solicitudes de admisión. Este diseño permite a los usuarios extender las capacidades de Kubernetes con controles de admisión personalizados, asegurando que la aplicación de directivas de seguridad y cumplimiento sea consistente en todo el clúster.
 
 === Control de admisión directo
 
-Cuando es configurado por el controlador {project-name}, el servicio policy-server recibe solicitudes de admisión directamente del plano de control de Kubernetes, utilizando `ValidationWebhooks` y `MutatingWebhooks`. Esta interacción directa agiliza el proceso de control de admisión, reduciendo la latencia y aumentando la eficiencia en la aplicación de políticas.
+Cuando es configurado por el controlador {admc-name}, el servicio policy-server recibe solicitudes de admisión directamente del plano de control de Kubernetes, utilizando `ValidationWebhooks` y `MutatingWebhooks`. Esta interacción directa agiliza el proceso de control de admisión, reduciendo la latencia y aumentando la eficiencia en la aplicación de políticas.
 
 WebAssembly ofrece un entorno de ejecución aislado, asegurando que las políticas se ejecuten en aislamiento, mejorando así la seguridad y estabilidad del mecanismo de aplicación de políticas. Este aislamiento previene que las políticas interfieran entre sí o con el sistema anfitrión, mitigando el riesgo de ejecución de código malicioso.
-WebAssembly es portátil y eficiente, permitiendo que las políticas se ejecuten en diferentes entornos sin modificación. Esta compatibilidad multiplataforma asegura que las políticas de {project-name} sean versátiles, por lo que puedes distribuirlas y ejecutarlas en diversos clústeres de Kubernetes.
+WebAssembly es portátil y eficiente, permitiendo que las políticas se ejecuten en diferentes entornos sin modificación. Esta compatibilidad multiplataforma asegura que las políticas de {admc-name} sean versátiles, por lo que puedes distribuirlas y ejecutarlas en diversos clústeres de Kubernetes.
 
 === Artefactos de políticas basados en OCI
 
-Las políticas en {project-name} son artefactos OCI (Open Container Initiative). Esta estandarización facilita la distribución y el versionado de directivas. Las directivas contienen tanto los módulos de WebAssembly para la lógica de cumplimiento, como los metadatos necesarios para el funcionamiento del PolicyServer. El uso de artefactos OCI promueve la interoperabilidad y la facilidad de gestión dentro de los ecosistemas en la nube.
+Las políticas en {admc-name} son artefactos OCI (Open Container Initiative). Esta estandarización facilita la distribución y el versionado de directivas. Las directivas contienen tanto los módulos de WebAssembly para la lógica de cumplimiento, como los metadatos necesarios para el funcionamiento del PolicyServer. El uso de artefactos OCI promueve la interoperabilidad y la facilidad de gestión dentro de los ecosistemas en la nube.
 
 === Aplicación de directivas de forma granular
 
-{project-name} asocia directivas con su propio webhook de 'validación' o 'mutación', permitiendo una aplicación de controles de admisión de forma granular. Esta flexibilidad permite a los administradores adaptar la aplicación de directivas según necesidades específicas, mejorando la seguridad y el cumplimiento del clúster de Kubernetes.
+{admc-name} asocia directivas con su propio webhook de 'validación' o 'mutación', permitiendo una aplicación de controles de admisión de forma granular. Esta flexibilidad permite a los administradores adaptar la aplicación de directivas según necesidades específicas, mejorando la seguridad y el cumplimiento del clúster de Kubernetes.
 
-== La pila {project-name}
+== La pila {admc-name}
 
-{project-name} consiste en estos componentes:
+{admc-name} consiste en estos componentes:
 
-* {project-name} Los Recursos Personalizados son https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Recursos Personalizados de Kubernetes] que simplifican el proceso de gestión de directivas.
+* {admc-name} Los Recursos Personalizados son https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Recursos Personalizados de Kubernetes] que simplifican el proceso de gestión de directivas.
 +
-{project-name} se integra con Kubernetes utilizando https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Control de Admisión Dinámico]. En particular, {project-name} opera como un Webhook de Admisión de Kubernetes. El `policy-server` es el punto final del Webhook llamado por el servidor API de Kubernetes para validar solicitudes.
+{admc-name} se integra con Kubernetes utilizando https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Control de Admisión Dinámico]. En particular, {admc-name} opera como un Webhook de Admisión de Kubernetes. El `policy-server` es el punto final del Webhook llamado por el servidor API de Kubernetes para validar solicitudes.
 
-* El https://github.com/kubewarden/kubewarden-controller[{project-name} controlador] es un controlador de Kubernetes que reconcilia los Recursos Personalizados de {project-name}. Este controlador crea partes de la pila {project-name}.
-También traduce la configuración de {project-name} en directivas de Kubernetes.
+* El https://github.com/kubewarden/kubewarden-controller[{admc-name} controlador] es un controlador de Kubernetes que reconcilia los Recursos Personalizados de {admc-name}. Este controlador crea partes de la pila {admc-name}.
+También traduce la configuración de {admc-name} en directivas de Kubernetes.
 +
 El `kubewarden-controller` registra los objetos necesarios `MutatingWebhookConfiguration` o `ValidatingWebhookConfiguration` con el servidor API de Kubernetes.
 
-* xref:../tutorials/writing-policies/index.adoc[{project-name} directivas] son módulos de WebAssembly que contienen la lógica de validación o mutación. Los módulos de WebAssembly tienen documentación detallada en las secciones xref:../tutorials/writing-policies/index.adoc[escribiendo directivas].
+* xref:../tutorials/writing-policies/index.adoc[{admc-name} directivas] son módulos de WebAssembly que contienen la lógica de validación o mutación. Los módulos de WebAssembly tienen documentación detallada en las secciones xref:../tutorials/writing-policies/index.adoc[escribiendo directivas].
 
-* El https://github.com/kubewarden/policy-server[Servidor de Directivas] recibe solicitudes de validación. Valida las solicitudes ejecutando las directivas de {project-name}.
+* El https://github.com/kubewarden/policy-server[Servidor de Directivas] recibe solicitudes de validación. Valida las solicitudes ejecutando las directivas de {admc-name}.
 
-* El https://github.com/kubewarden/audit-scanner[escáner de auditoría] inspecciona los recursos ya en el clúster. Identifica aquellos que violan las directivas de {project-name}.
+* El https://github.com/kubewarden/audit-scanner[escáner de auditoría] inspecciona los recursos ya en el clúster. Identifica aquellos que violan las directivas de {admc-name}.
 +
-xref:/explanations/audit-scanner/audit-scanner.adoc[Escáner de auditoría] verifica constantemente los recursos declarados en el clúster, señalando aquellos que ya no se adhieren a las directivas {project-name} desplegadas.
+xref:/explanations/audit-scanner/audit-scanner.adoc[Escáner de auditoría] verifica constantemente los recursos declarados en el clúster, señalando aquellos que ya no se adhieren a las directivas {admc-name} desplegadas.
 +
 .Arquitectura
 include::latest@shared:en:partial$architecture.adoc[]
 
-== El viaje de una directiva de {project-name}.
+== El viaje de una directiva de {admc-name}.
 
 === PolicyServer por defecto
 
-En un nuevo clúster, los {project-name} componentes definidos son:
+En un nuevo clúster, los {admc-name} componentes definidos son:
 
 * Definiciones de recursos personalizadas (CRD)
 * El `kubewarden-controller` Ampliación
@@ -99,7 +99,7 @@ En un nuevo clúster, los {project-name} componentes definidos son:
 
 Cuando el `kubewarden-controller` detecta el recurso PolicyServer predeterminado, crea una ampliación de `policy-server` del componente PolicyServer.
 
-{project-name} funciona como un Webhook de Admisión de Kubernetes. Kubernetes especifica el uso de https://en.wikipedia.org/wiki/Transport_Layer_Security[Seguridad de la capa de transporte] (TLS) para asegurar todos los puntos finales del Webhook. El `kubewarden-controller` establece esta comunicación segura mediante:
+{admc-name} funciona como un Webhook de Admisión de Kubernetes. Kubernetes especifica el uso de https://en.wikipedia.org/wiki/Transport_Layer_Security[Seguridad de la capa de transporte] (TLS) para asegurar todos los puntos finales del Webhook. El `kubewarden-controller` establece esta comunicación segura mediante:
 
 . Generación de una Autoridad de Certificación autofirmada
 . Utiliza esta CA para generar una clave de certificado TLS para el `policy-server` Servicio.
@@ -123,7 +123,7 @@ El `kubewarden-controller` detecta el nuevo recurso `ClusterAdmissionPolicy` y a
 
 Al crear, modificar o eliminar un `ClusterAdmissionPolicy` o `AdmissionPolicy`, se activa un bucle de reconciliación en `kubewarden-controller`, para el `policy-server` que posee la política. Este bucle de reconciliación crea un `ConfigMap` con todas las políticas vinculadas al `policy-server`. Luego comienza la ampliación del `policy-server`. Esto resulta en el inicio de la nueva instancia de `policy-server` con la configuración actualizada.
 
-Al iniciar, el `policy-server` lee su configuración del ConfigMap y descarga todas las {project-name} políticas especificadas. Puedes descargar {project-name} directivas de servidores HTTP remotos y registros de contenedores.
+Al iniciar, el `policy-server` lee su configuración del ConfigMap y descarga todas las {admc-name} políticas especificadas. Puedes descargar {admc-name} directivas de servidores HTTP remotos y registros de contenedores.
 
 Utilizas parámetros de configuración de directivas para ajustar el comportamiento de las directivas. Después del inicio y la descarga de directivas, el `policy-server` verifica que los parámetros de configuración de directivas proporcionados por el usuario sean válidos.
 
@@ -131,9 +131,9 @@ El `policy-server` valida los parámetros de configuración de directivas invoca
 
 Si alguna directiva recibe parámetros de configuración incorrectos, de la especificación de directivas del usuario, entonces cualquier solicitud de admisión evaluada por esa directiva devuelve un error.
 
-Cuando el {project-name} ha configurado todas las directivas, el `policy-server` genera un grupo de hilos de trabajo para evaluar las solicitudes entrantes utilizando las directivas {project-name} especificadas por el usuario.
+Cuando el {admc-name} ha configurado todas las directivas, el `policy-server` genera un grupo de hilos de trabajo para evaluar las solicitudes entrantes utilizando las directivas {admc-name} especificadas por el usuario.
 
-Finalmente, el `policy-server` inicia un servidor HTTPS, escuchando las solicitudes de validación entrantes. El {project-name} utiliza la clave y el certificado TLS creados por el controlador {project-name} para asegurar el servidor web.
+Finalmente, el `policy-server` inicia un servidor HTTPS, escuchando las solicitudes de validación entrantes. El {admc-name} utiliza la clave y el certificado TLS creados por el controlador {admc-name} para asegurar el servidor web.
 
 El servidor web expone cada directiva a través de una vía dedicada siguiendo la convención de nomenclatura: `/validate/<policy ID>`.
 
@@ -141,7 +141,7 @@ El servidor web expone cada directiva a través de una vía dedicada siguiendo l
 
 Todas las instancias de `policy-server` tienen un https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/[`sondeo de disponibilidad`], que `kubewarden-controller`+ utiliza para comprobar cuándo la ampliación `PolicyServer` está lista para evaluar un https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response[`AdmissionReview`].
 
-Una vez que el {project-name} marca la ampliación `policy-server` como 'alcanzable de manera única' o `Ready`, el `kubewarden-controller` hace que el servidor API de Kubernetes sea consciente de la nueva directiva. Esto se realiza creando un objeto `MutatingWebhookConfiguration` o un objeto `ValidatingWebhookConfiguration`. En este contexto, 'alcanzable de manera única' significa que todas las instancias de PolicyServer en el clúster tienen la última configuración de directiva instalada. La distinción es un punto sutil, pero es necesaria, debido a cómo funciona el despliegue de PolicyServers.
+Una vez que el {admc-name} marca la ampliación `policy-server` como 'alcanzable de manera única' o `Ready`, el `kubewarden-controller` hace que el servidor API de Kubernetes sea consciente de la nueva directiva. Esto se realiza creando un objeto `MutatingWebhookConfiguration` o un objeto `ValidatingWebhookConfiguration`. En este contexto, 'alcanzable de manera única' significa que todas las instancias de PolicyServer en el clúster tienen la última configuración de directiva instalada. La distinción es un punto sutil, pero es necesaria, debido a cómo funciona el despliegue de PolicyServers.
 Es posible tener la misma directiva en diferentes PolicyServers con diferentes configuraciones.
 
 Cada directiva tiene un `MutatingWebhookConfiguration` o `ValidatingWebhookConfiguration` dedicado que apunta al punto final de Webhook servido por `policy-server`. El punto final es accesible en la URL `/validate/<policy ID>`.
@@ -152,12 +152,12 @@ Ahora que toda la infraestructura necesaria está completa, Kubernetes comienza 
 
 Un `policy-server` recibe el objeto de Solicitud de Admisión y, basándose en el punto final que recibió la solicitud, utiliza la directiva correcta para evaluarla.
 
-{project-name} evalúa cada directiva dentro de su propia sandbox de WebAssembly dedicada. La comunicación entre una instancia de `policy-server` (el "anfitrión") y la directiva de WebAssembly (el "invitado") utiliza el protocolo de comunicación waPC. La descripción del protocolo es parte de la documentación de xref:../tutorials/writing-policies/index.adoc[escribir directivas].
+{admc-name} evalúa cada directiva dentro de su propia sandbox de WebAssembly dedicada. La comunicación entre una instancia de `policy-server` (el "anfitrión") y la directiva de WebAssembly (el "invitado") utiliza el protocolo de comunicación waPC. La descripción del protocolo es parte de la documentación de xref:../tutorials/writing-policies/index.adoc[escribir directivas].
 Las directivas también pueden utilizar las interfaces proporcionadas por el xref:../tutorials/writing-policies/wasi/01-intro-wasi.adoc[Sistema de Interfaz de WebAssembly] (WASI).
 
-== Cómo {project-name} maneja muchos PolicyServer y directivas.
+== Cómo {admc-name} maneja muchos PolicyServer y directivas.
 
-Un clúster puede tener muchos PolicyServers y directivas {project-name} definidas.
+Un clúster puede tener muchos PolicyServers y directivas {admc-name} definidas.
 Hay beneficios en tener muchos PolicyServers:
 
 * Puedes aislar espacios de nombres o inquilinos ruidosos, o aquellos que generan muchas evaluaciones de directivas, del resto del clúster para no afectar negativamente a otras operaciones del clúster.

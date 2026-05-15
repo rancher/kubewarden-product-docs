@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:keywords: ["{admc-name}", "kubewarden", "policy groups", "clusteradmissionpolicygroup", "admissionpolicygroup"]
 :sidebar_label: Grupos de directivas
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -85,7 +85,7 @@ Esta sección cubre los principales campos de configuración de un grupo de dire
 
 === El atributo `policies`
 
-El campo de políticas es un mapa de directivas ordinarias. {project-name} llama a las directivas por el grupo de directivas, para determinar si se acepta o se rechaza el recurso en evaluación. Las definiciones de estas directivas son una versión simplificada de las directivas ordinarias {short-project-name}, que contienen solo los atributos `module`, `settings` y `contextAwareResources`. Estos elementos son necesarios para que las directivas funcionen dentro de un grupo de directivas.
+El campo de políticas es un mapa de directivas ordinarias. {admc-name} llama a las directivas por el grupo de directivas, para determinar si se acepta o se rechaza el recurso en evaluación. Las definiciones de estas directivas son una versión simplificada de las directivas ordinarias {admc-short-name}, que contienen solo los atributos `module`, `settings` y `contextAwareResources`. Estos elementos son necesarios para que las directivas funcionen dentro de un grupo de directivas.
 
 Un nombre único identifica cada directiva del grupo de directivas. Por ejemplo, el siguiente fragmento define tres directivas: `signed_by_alice`, `signed_by_bob` y `reject_latest_tag`.
 

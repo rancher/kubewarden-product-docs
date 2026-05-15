@@ -13,9 +13,9 @@ include::partial$variables.adoc[]
 
 Container-Registries können verwendet werden, um viele Arten von OCI-Objekten zu verteilen.
 Von bekannten Container-Images bis hin zu generischen OCI-Artefakten.
-OCI-Artefakte werden verwendet, um Objekte wie {project-name} Richtlinien, Helm-Charts und mehr zu speichern.
+OCI-Artefakte werden verwendet, um Objekte wie {admc-name} Richtlinien, Helm-Charts und mehr zu speichern.
 
-Dies sind die Funktionen, die vom {short-project-name} Host bereitgestellt werden, um mit Container-Registries zu interagieren.
+Dies sind die Funktionen, die vom {admc-short-name} Host bereitgestellt werden, um mit Container-Registries zu interagieren.
 
 == OCI-Manifest-Digest abrufen
 
@@ -23,12 +23,12 @@ Dieser Callback berechnet den Digest eines OCI-Manifests. Der Digest kann verwen
 
 === Caching
 
-Die Berechnung des Digests umfasst eine Reihe von Netzwerkanfragen zwischen dem {short-project-name} Richtlinien-Host und der entfernten Registry.
+Die Berechnung des Digests umfasst eine Reihe von Netzwerkanfragen zwischen dem {admc-short-name} Richtlinien-Host und der entfernten Registry.
 Diese Operationen können zeitaufwendig sein, daher werden die Ergebnisse für 1 Minute zwischengespeichert.
 
 === Authentifizierung
 
-Interaktionen mit privaten Registries erfordern, dass der {short-project-name} Richtlinien-Host sich bei der entfernten Registry authentifiziert.
+Interaktionen mit privaten Registries erfordern, dass der {admc-short-name} Richtlinien-Host sich bei der entfernten Registry authentifiziert.
 
 Der Richtlinien-Host verwendet dasselbe Set von Anmeldeinformationen, das zum Abrufen von Richtlinien aus der entfernten Registry verwendet wird.
 
@@ -65,11 +65,11 @@ Dieser Callback ruft das OCI-Objektmanifest ab. Wenn verfügbar, können diese I
 
 === Caching
 
-Das Abrufen dieser Informationen erfordert Netzwerkanfragen zwischen dem {short-project-name} Richtlinien-Host und der entfernten Registry. Diese Operationen können zeitaufwendig sein, daher werden die Ergebnisse für 1 Minute zwischengespeichert.
+Das Abrufen dieser Informationen erfordert Netzwerkanfragen zwischen dem {admc-short-name} Richtlinien-Host und der entfernten Registry. Diese Operationen können zeitaufwendig sein, daher werden die Ergebnisse für 1 Minute zwischengespeichert.
 
 === Authentifizierung
 
-Interaktionen mit privaten Registries erfordern, dass der {short-project-name} Richtlinien-Host sich bei der entfernten Registry authentifiziert.
+Interaktionen mit privaten Registries erfordern, dass der {admc-short-name} Richtlinien-Host sich bei der entfernten Registry authentifiziert.
 
 Der Richtlinien-Host verwendet denselben Satz von Anmeldeinformationen, der auch zum Abrufen von Richtlinien von der entfernten Registry verwendet wird.
 
@@ -187,11 +187,11 @@ Dieser Callback ruft das OCI-Manifest und seine Konfigurationsinformationen ab. 
 
 === Caching
 
-Das Abrufen dieser Informationen erfordert Netzwerkanfragen zwischen dem {short-project-name} Richtlinien-Host und dem entfernten Registry. Diese Operationen können zeitaufwendig sein, daher werden die Ergebnisse für 1 Minute zwischengespeichert.
+Das Abrufen dieser Informationen erfordert Netzwerkanfragen zwischen dem {admc-short-name} Richtlinien-Host und dem entfernten Registry. Diese Operationen können zeitaufwendig sein, daher werden die Ergebnisse für 1 Minute zwischengespeichert.
 
 === Authentifizierung
 
-Interaktionen mit privaten Registries erfordern, dass der {short-project-name} Richtlinien-Host sich bei der entfernten Registry authentifiziert.
+Interaktionen mit privaten Registries erfordern, dass der {admc-short-name} Richtlinien-Host sich bei der entfernten Registry authentifiziert.
 
 Der Richtlinien-Host verwendet denselben Satz von Anmeldeinformationen, der auch zum Abrufen von Richtlinien von der entfernten Registry verwendet wird.
 

@@ -24,7 +24,7 @@ Vous utiliserez le compilateur fourni avec l'image de conteneur officielle TinyG
 * https://github.com/bats-core/bats-core[bats] :
 Utilisé pour écrire les tests et automatiser leur exécution.
 * https://github.com/kubewarden/kwctl/releases[`kwctl`] :
-Outil CLI fourni par {project-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions.
+Outil CLI fourni par {admc-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions.
 C'est couvert dans xref:tutorials/testing-policies/index.adoc[cette section] de la documentation.
 
 == Écriture de tests

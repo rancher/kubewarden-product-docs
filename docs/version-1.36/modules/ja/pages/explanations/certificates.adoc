@@ -3,19 +3,19 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: ダウンタイムを引き起こさずに、{project-name}内で証明書をローテーションする方法を学びます。
+:description: ダウンタイムを引き起こさずに、{admc-name}内で証明書をローテーションする方法を学びます。
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "certificates"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "certificate", "controller", "reconciliation"]
+:keywords: ["{admc-name}", "kubewarden", "certificate", "controller", "reconciliation"]
 :sidebar_label: 証明書のローテーション
 :sidebar_position: 21
 
-{project-name} v1.17.0では、cert-managerの依存関係が削除されました。コントローラーは、すべてのコンポーネントで使用されるすべての証明書を管理することができます。現在、コントローラーには、証明書が常に最新であり、Webhookの設定が正しいことを保証する新しいリコンシリエーションループがあります。
+{admc-name} v1.17.0では、cert-managerの依存関係が削除されました。コントローラーは、すべてのコンポーネントで使用されるすべての証明書を管理することができます。現在、コントローラーには、証明書が常に最新であり、Webhookの設定が正しいことを保証する新しいリコンシリエーションループがあります。
 
-Helmチャートのインストールは、最初の証明書生成を行います。それは、10年の有効期限を持つルートCAを生成します。Helmチャートのインストールは、ルートCAによって署名されたコントローラーWebhookウェブサーバー証明書も生成します。APIサーバーは、CRDを検証するために{short-project-name}コントローラーと通信するためにこれを使用します。それは1年の有効期限があります。
+Helmチャートのインストールは、最初の証明書生成を行います。それは、10年の有効期限を持つルートCAを生成します。Helmチャートのインストールは、ルートCAによって署名されたコントローラーWebhookウェブサーバー証明書も生成します。APIサーバーは、CRDを検証するために{admc-short-name}コントローラーと通信するためにこれを使用します。それは1年の有効期限があります。
 
-コントローラーが起動すると、そのリコンシリエーターは、証明書が期限切れになりそうなときに自動的に更新します。それはまた、{short-project-name}スタック全体で使用されるすべての証明書とWebhookの設定を更新します。
+コントローラーが起動すると、そのリコンシリエーターは、証明書が期限切れになりそうなときに自動的に更新します。それはまた、{admc-short-name}スタック全体で使用されるすべての証明書とWebhookの設定を更新します。
 
 [NOTE]
 ====

@@ -4,14 +4,14 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 通过各种接口访问针对{project-name}解决方案的企业支持的集中信息。
-:keywords: [ {project-name}, Kubewarden, 支持, ]
+:description: 通过各种接口访问针对{admc-name}解决方案的企业支持的集中信息。
+:keywords: [ {admc-name}, Kubewarden, 支持, ]
 :doc-persona: [kubewarden-all]
 :doc-type: [说明]
 :doc-topic: [支持]
 
 ifeval::["{build-type}" == "community"]
-这些组织提供{project-name}的企业支持：
+这些组织提供{admc-name}的企业支持：
 
 [cols="1,1"]
 |===

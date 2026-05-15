@@ -4,20 +4,20 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verwenden Sie Hauler, um {project-name} in Air Gap-Umgebungen zu installieren.
-:keywords: ["{project-name}", Kubewarden, Kubernetes, Air Gap-Installation, Hauler]
+:description: Verwenden Sie Hauler, um {admc-name} in Air Gap-Umgebungen zu installieren.
+:keywords: ["{admc-name}", Kubewarden, Kubernetes, Air Gap-Installation, Hauler]
 :doc-persona: Kubewarden-operator, Kubewarden-integrator
 :doc-type: howto
 :doc-topic: Operator-Handbuch, Air Gap, Installation, Hauler
 
-Dieser Leitfaden zeigt Ihnen, wie Sie {project-name} in Air Gap-Umgebungen mit link:https://docs.hauler.dev/docs/intro[Hauler] installieren. Hauler ist ein Tool, das Benutzern hilft, Workloads in Air Gap-Umgebungen auszuführen. Es bewegt die erforderlichen Ressourcen für Apps in diese Air Gap-Umgebungen.
+Dieser Leitfaden zeigt Ihnen, wie Sie {admc-name} in Air Gap-Umgebungen mit link:https://docs.hauler.dev/docs/intro[Hauler] installieren. Hauler ist ein Tool, das Benutzern hilft, Workloads in Air Gap-Umgebungen auszuführen. Es bewegt die erforderlichen Ressourcen für Apps in diese Air Gap-Umgebungen.
 
-{short-project-name} stellt eine Manifestdatei mit allen erforderlichen Ressourcen zur Verfügung, um {short-project-name} in einer privaten Umgebung auszuführen. Diese Dokumentation beschreibt, wie Sie es verwenden können. Konsultieren Sie die Hauler-Dokumentation, um mehr darüber zu erfahren.
+{admc-short-name} stellt eine Manifestdatei mit allen erforderlichen Ressourcen zur Verfügung, um {admc-short-name} in einer privaten Umgebung auszuführen. Diese Dokumentation beschreibt, wie Sie es verwenden können. Konsultieren Sie die Hauler-Dokumentation, um mehr darüber zu erfahren.
 
 Der grundlegende Arbeitsablauf mit dem Hauler-Manifest ist:
 
-. Holen Sie es von einer {short-project-name}-Release-Seite
-. Laden Sie alle Ressourcen, die erforderlich sind, um {short-project-name} auszuführen, in einen lokalen Speicher
+. Holen Sie es von einer {admc-short-name}-Release-Seite
+. Laden Sie alle Ressourcen, die erforderlich sind, um {admc-short-name} auszuführen, in einen lokalen Speicher
 . Exportieren Sie sie in eine Datei
 . Bewegen Sie die Datei in die private Umgebung
 . Laden Sie die Ressourcen in Hauler, das in der privaten Umgebung läuft
@@ -25,7 +25,7 @@ Der grundlegende Arbeitsablauf mit dem Hauler-Manifest ist:
 
 == Laden Sie das Hauler-Manifest von der Helm-Chart-Release-Seite herunter
 
-Laden Sie `hauler_manifest.yml` von der {short-project-name} link:https://github.com/kubewarden/helm-charts/releases/[Release-Seite] herunter.
+Laden Sie `hauler_manifest.yml` von der {admc-short-name} link:https://github.com/kubewarden/helm-charts/releases/[Release-Seite] herunter.
 
 Synchronisieren Sie die im Manifest definierten Ressourcen mit Ihrem Hauler-Speicher:
 
@@ -36,7 +36,7 @@ hauler store sync --filename hauler_manifest.yaml
 
 Der Hauler lädt alle Ressourcen aus dem Manifest in den lokalen Speicher herunter. Dieser Prozess dauert einige Minuten. Wenn der Vorgang abgeschlossen ist, können Sie die synchronisierten Ressourcen mit dem `hauler store info` Befehl sehen.
 
-== Generieren Sie die TAR-Datei mit allen {short-project-name} Ressourcen.
+== Generieren Sie die TAR-Datei mit allen {admc-short-name} Ressourcen.
 
 Führen Sie den Hauler-Befehl aus, um alle zuvor im Speicher geladenen Ressourcen in eine Datei zu exportieren:
 
@@ -48,7 +48,7 @@ hauler store save --filename kubewarden-resources.tar.zst
 [NOTE]
 ====
 
-{short-project-name} Containerbilder unterstützen die Architekturen x86_64 und ARM. Daher können Sie, wenn Sie die Ressource in die Datei speichern, Warnmeldungen wie diese sehen:
+{admc-short-name} Containerbilder unterstützen die Architekturen x86_64 und ARM. Daher können Sie, wenn Sie die Ressource in die Datei speichern, Warnmeldungen wie diese sehen:
 
 [source,shell]
 ----
@@ -66,7 +66,7 @@ Um diese Warnmeldung zu vermeiden, können Sie das `--platform` CLI-Flag setzen,
 
 == Übertragen Sie die TAR-Datei in Ihre isolierte Umgebung.
 
-Jetzt, da Sie alle {short-project-name} Ressourcen in `kubewarden-resources.tar.zst` haben, kopieren Sie es in Ihre Air Gap-Umgebung und laden Sie es dort in den Hauler-Speicher:
+Jetzt, da Sie alle {admc-short-name} Ressourcen in `kubewarden-resources.tar.zst` haben, kopieren Sie es in Ihre Air Gap-Umgebung und laden Sie es dort in den Hauler-Speicher:
 
 [source,shell]
 ----
@@ -75,7 +75,7 @@ hauler store load --filename kubewarden-resources.tar.zst
 hauler store info
 ----
 
-Jetzt sind alle Ressourcen, die zur Installation von {short-project-name} erforderlich sind, im Hauler-Speicher in Ihrer isolierten Umgebung.
+Jetzt sind alle Ressourcen, die zur Installation von {admc-short-name} erforderlich sind, im Hauler-Speicher in Ihrer isolierten Umgebung.
 
 == Private Registry befüllen
 
@@ -109,13 +109,13 @@ Sie können auch Hauler ausführen, um ein privates Registry mit allen Ressource
 hauler store serve registry
 ----
 
-Dies startet ein privates Registry unter der Adresse `localhost:5000`. Von diesem Punkt an können Sie andere Befehle wie Skopeo verwenden, um alle Containerbilder, Richtlinienmodule und Helm-Charts, die von {short-project-name} verwendet werden, in Ihr privates Registry zu kopieren.
+Dies startet ein privates Registry unter der Adresse `localhost:5000`. Von diesem Punkt an können Sie andere Befehle wie Skopeo verwenden, um alle Containerbilder, Richtlinienmodule und Helm-Charts, die von {admc-short-name} verwendet werden, in Ihr privates Registry zu kopieren.
 
-== Installieren Sie {short-project-name}
+== Installieren Sie {admc-short-name}
 
-Jetzt, da Ihr privates Registry alles Erforderliche hat, können Sie {short-project-name} installieren. Der Unterschied zu einer Standardinstallation von {short-project-name} besteht darin, dass Sie das Registry in den Containerbildern und Richtlinien auf das private Registry ändern müssen. Zusätzlich müssen Sie die Helm-Charts aus OCI-Artefakten installieren.
+Jetzt, da Ihr privates Registry alles Erforderliche hat, können Sie {admc-short-name} installieren. Der Unterschied zu einer Standardinstallation von {admc-short-name} besteht darin, dass Sie das Registry in den Containerbildern und Richtlinien auf das private Registry ändern müssen. Zusätzlich müssen Sie die Helm-Charts aus OCI-Artefakten installieren.
 
-Installieren Sie den {short-project-name} Stack:
+Installieren Sie den {admc-short-name} Stack:
 
 [source,shell]
 ----
@@ -155,7 +155,7 @@ helm install --wait -n kubewarden \
 
 Schließlich konfigurieren Sie jeden Policy Server, um Richtlinien aus Ihrem privaten Registry abzurufen. Bitte beachten Sie den Abschnitt xref:/howtos/policy-servers/02-private-registry.adoc[Verwendung des privaten Registry] der Dokumentation.
 
-Jetzt erstellen Sie {short-project-name} Richtlinien in Ihrem Cluster. Richtlinien müssen in Ihrem privaten Registry verfügbar sein.
+Jetzt erstellen Sie {admc-short-name} Richtlinien in Ihrem Cluster. Richtlinien müssen in Ihrem privaten Registry verfügbar sein.
 
 [source,yaml]
 ----

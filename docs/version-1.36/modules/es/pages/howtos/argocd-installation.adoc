@@ -7,12 +7,12 @@ include::partial$variables.adoc[]
 :sidebar_label: Instalación de ArgoCD
 :sidebar_position: 35
 :description: Configura tu aplicación ArgoCD para gestionar los recursos de Kubernetes de manera efectiva estableciendo opciones de configuración específicas para la creación y renovación de certificados de forma segura.
-:keywords: ["{project-name}", gitops, argocd]
+:keywords: ["{admc-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]
 :doc-topic: [argocd-installation]
 
-Si estás utilizando ArgoCD para gestionar tus recursos de Kubernetes, puede que desees instalar {project-name} utilizando ArgoCD. Esto es posible, pero hay ciertas consideraciones. Desde la versión {short-project-name} v1.17.0, la dependencia cert-manager ha sido eliminada. Hay un nuevo reconciliador de certificados que renueva automáticamente los certificados. Esto significa que el controlador {short-project-name} se encarga de crear y renovar los certificados por ti. Esto incluye tanto la CA raíz como todos los certificados de webhook.
+Si estás utilizando ArgoCD para gestionar tus recursos de Kubernetes, puede que desees instalar {admc-name} utilizando ArgoCD. Esto es posible, pero hay ciertas consideraciones. Desde la versión {admc-short-name} v1.17.0, la dependencia cert-manager ha sido eliminada. Hay un nuevo reconciliador de certificados que renueva automáticamente los certificados. Esto significa que el controlador {admc-short-name} se encarga de crear y renovar los certificados por ti. Esto incluye tanto la CA raíz como todos los certificados de webhook.
 
 La creación inicial de la CA raíz y del certificado de webhook se realiza durante la instalación del chart de Helm utilizando las funciones de Helm disponibles. Así que, durante el renderizado del chart de Helm, la instalación verifica si los certificados ya están creados, y si no, los crea.
 
@@ -121,6 +121,6 @@ spec:
 [NOTE]
 ====
 
-En el ejemplo, el aspecto clave es la configuración del `ignoreDifferences` para la aplicación del controlador {short-project-name}. El resto del contenido proporciona contexto sobre cómo configurar la aplicación ArgoCD y ofrecer un ejemplo completo.
+En el ejemplo, el aspecto clave es la configuración del `ignoreDifferences` para la aplicación del controlador {admc-short-name}. El resto del contenido proporciona contexto sobre cómo configurar la aplicación ArgoCD y ofrecer un ejemplo completo.
 
 ====

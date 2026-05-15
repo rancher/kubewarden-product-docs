@@ -18,14 +18,14 @@ La https://wasi.dev/[Interfaz del Sistema WebAssembly (WASI)] es un estándar de
 
 Los autores que escriben directivas regulares nunca deben usar interfaces de sistema WASI simples para escribir directivas.
 
-Esta página es para {project-name} mantenedores o autores de directivas de bajo nivel que quieren experimentar con plataformas de WASM de vanguardia.
+Esta página es para {admc-name} mantenedores o autores de directivas de bajo nivel que quieren experimentar con plataformas de WASM de vanguardia.
 ====
 
 
 Usando WASI, puedes tener un módulo de WebAssembly que interactúe con primitivas del sistema como STDOUT, STDERR, STDIN, variables de entorno y más.
 
-Muchos de los compiladores utilizados para compilar directivas de {short-project-name} producen módulos de WebAssembly que apuntan a interfaces de WASI.
-Sin embargo, las directivas de {short-project-name} utilizan el proyecto https://github.com/wapc[waPC] para implementar comunicación bidireccional entre la directiva y el tiempo de ejecución de la directiva (`kwctl` o `policy-server`). {short-project-name}El uso del protocolo de comunicación se describe xref:reference/spec/01-intro-spec.adoc[aquí].
+Muchos de los compiladores utilizados para compilar directivas de {admc-short-name} producen módulos de WebAssembly que apuntan a interfaces de WASI.
+Sin embargo, las directivas de {admc-short-name} utilizan el proyecto https://github.com/wapc[waPC] para implementar comunicación bidireccional entre la directiva y el tiempo de ejecución de la directiva (`kwctl` o `policy-server`). {admc-short-name}El uso del protocolo de comunicación se describe xref:reference/spec/01-intro-spec.adoc[aquí].
 
 Hay casos especiales en los que el proyecto waPC aún no puede ser utilizado.
 En estas circunstancias, puedes escribir una directiva utilizando las interfaces proporcionadas por WASI.
@@ -33,7 +33,7 @@ En estas circunstancias, puedes escribir una directiva utilizando las interfaces
 [IMPORTANT]
 ====
 
-{short-project-name} admite políticas de WASI desde la versión {short-project-name} 1.7.0 en adelante.
+{admc-short-name} admite políticas de WASI desde la versión {admc-short-name} 1.7.0 en adelante.
 ====
 
 
@@ -46,7 +46,7 @@ No deberías usar directivas WASI en circunstancias normales porque tienen un re
 
 La comunicación bidireccional entre la directiva y el host se puede lograr, pero requiere cambios que deben hacerse dentro del SDK del lenguaje. Esto es necesario para usar xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[capacidades del host] y para escribir directivas xref:/explanations/context-aware-policies.adoc[conscientes del contexto].
 
-Actualmente, solo los SDK de {short-project-name} Go y JavaScript/TypeScript los exponen a directivas WASI.
+Actualmente, solo los SDK de {admc-short-name} Go y JavaScript/TypeScript los exponen a directivas WASI.
 
 Si esto es de tu interés, por favor, ponte en contacto. Entonces podemos priorizar el esfuerzo.
 
@@ -63,7 +63,7 @@ A partir de la versión 1.21, el compilador oficial de Go es capaz de producir m
 Sin embargo, estos módulos aún no pueden exportar funciones al tiempo de ejecución de WebAssembly.
 Esta limitación, registrada en https://github.com/golang/go/issues/42372[este problema dedicado], impide la adopción del protocolo waPC.
 
-El equipo del proyecto {short-project-name} aconseja que escribas {short-project-name} directivas de Go utilizando el compilador TinyGo, como se describe xref:tutorials/writing-policies/go/01-intro-go.adoc[aquí].
+El equipo del proyecto {admc-short-name} aconseja que escribas {admc-short-name} directivas de Go utilizando el compilador TinyGo, como se describe xref:tutorials/writing-policies/go/01-intro-go.adoc[aquí].
 
 Sin embargo, ciertos códigos base complejos de Go no pueden ser compilados utilizando el compilador TinyGo.
 Esto incluye, por ejemplo, códigos base como https://github.com/google/cel-go[CEL-go] o https://github.com/kyverno/kyverno/[Kyverno].
@@ -123,7 +123,7 @@ El formato del `SettingsValidationResponse` y el proceso de validación de confi
 
 == Metadatos de la directiva
 
-Cada directiva {short-project-name} debe ser anotada a través del comando `kwctl annotate`.
+Cada directiva {admc-short-name} debe ser anotada a través del comando `kwctl annotate`.
 Los metadatos de la directiva de una directiva WASI sencilla deben tener este valor:
 
 [subs="+attributes",yaml]

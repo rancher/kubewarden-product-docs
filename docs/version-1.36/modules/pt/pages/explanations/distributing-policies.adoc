@@ -3,16 +3,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Distribua políticas de forma segura por meio de um registro compatível com OCI usando ferramentas como kwctl, e garanta a segurança do cluster por meio do gerenciamento de políticas {project-name}.
+:description: Distribua políticas de forma segura por meio de um registro compatível com OCI usando ferramentas como kwctl, e garanta a segurança do cluster por meio do gerenciamento de políticas {admc-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "oci", "kubewarden", "política", "wasm", "webassembly"]
+:keywords: ["{admc-name}", "oci", "kubewarden", "política", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-As políticas {project-name} são binários WebAssembly (Wasm) avaliados pelo servidor de políticas {short-project-name}.
+As políticas {admc-name} são binários WebAssembly (Wasm) avaliados pelo servidor de políticas {admc-short-name}.
 
-O servidor de políticas {short-project-name} carrega políticas dessas fontes:
+O servidor de políticas {admc-short-name} carrega políticas dessas fontes:
 
 * Sistema de arquivos local
 * Servidor HTTP(s)
@@ -23,23 +23,23 @@ O servidor de políticas {short-project-name} carrega políticas dessas fontes:
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Registro de contêiner do Google]
 
-{short-project-name} recomenda distribuir políticas {short-project-name} por meio de um registro regular compatível com OCI. Registros de contêiner são um requisito obrigatório para qualquer cluster Kubernetes. Ter um único lugar para armazenar e proteger todos os artefatos necessários para um cluster é benéfico.
+{admc-short-name} recomenda distribuir políticas {admc-short-name} por meio de um registro regular compatível com OCI. Registros de contêiner são um requisito obrigatório para qualquer cluster Kubernetes. Ter um único lugar para armazenar e proteger todos os artefatos necessários para um cluster é benéfico.
 
 == Enviando políticas para um registro compatível com OCI
 
 A especificação do formato de imagem https://github.com/opencontainers/image-spec[OCI image format] permite armazenar qualquer blob binário dentro de um registro de contêiner compatível com OCI.
 
-O registro compatível com OCI de destino *deve suportar artefatos* para enviar com sucesso uma {short-project-name} política para ele.
+O registro compatível com OCI de destino *deve suportar artefatos* para enviar com sucesso uma {admc-short-name} política para ele.
 
-Você pode usar o CLI https://github.com/kubewarden/kwctl[`kwctl`] para enviar uma {short-project-name} política para um registro compatível com OCI.
+Você pode usar o CLI https://github.com/kubewarden/kwctl[`kwctl`] para enviar uma {admc-short-name} política para um registro compatível com OCI.
 
 == Anotando a política
 
-Você também anota uma política com `kwctl`. Anotar uma {short-project-name}política é feito adicionando seções personalizadas Wasm ao binário da política. Isso significa que a política empacota seus próprios metadados.
+Você também anota uma política com `kwctl`. Anotar uma {admc-short-name}política é feito adicionando seções personalizadas Wasm ao binário da política. Isso significa que a política empacota seus próprios metadados.
 
 O comando `kwctl annotate` requer duas entradas:
 
-* a {short-project-name}política a ser anotada, um arquivo local no sistema de arquivos.
+* a {admc-short-name}política a ser anotada, um arquivo local no sistema de arquivos.
 * o arquivo de anotações, um arquivo contendo uma descrição YAML dos metadados da política.
 Este arquivo geralmente está localizado na pasta raiz do projeto da sua política.
 
@@ -156,5 +156,5 @@ $ kwctl push annotated-policy.wasm \
 É desaconselhável enviar políticas não anotadas. O servidor de políticas usa os metadados fornecidos pelas anotações para executar corretamente uma política. Por padrão,
 `kwctl push` se recusa a enviar tal política para um registro compatível com OCI. Se você precisar de uma política não anotada, use a flag `-&#x200D;-&#x200D;force` de `kwctl push`.
 
-Você pode referenciar uma política a partir do {short-project-name}servidor de políticas ou de `kwctl` como
+Você pode referenciar uma política a partir do {admc-short-name}servidor de políticas ou de `kwctl` como
 `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

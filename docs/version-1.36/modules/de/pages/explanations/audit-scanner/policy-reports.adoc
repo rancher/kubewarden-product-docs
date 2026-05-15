@@ -8,16 +8,16 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["erklärungen", "audit-scanner", "richtlinienberichte"]
 :doc-type: ["erklärung"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner", "richtlinienberichte"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "audit scanner", "richtlinienberichte"]
 :sidebar_label: Richtlinienberichte
 :current-version: {page-origin-branch}
 
-Wenn Sie den {project-name} Audit Scanner verwenden, speichern Sie die Ergebnisse der Richtlinienprüfungen mithilfe der https://openreports.io/[OpenReports] Benutzerdefinierten Ressourcen.
+Wenn Sie den {admc-name} Audit Scanner verwenden, speichern Sie die Ergebnisse der Richtlinienprüfungen mithilfe der https://openreports.io/[OpenReports] Benutzerdefinierten Ressourcen.
 
 [CAUTION]
 ====
 
-Mit {project-name} 1.33 speichert die Audit Scanner-Funktion die Berichte standardmäßig in OpenReports CRDs von [openreports.io](https://openreports.io).
+Mit {admc-name} 1.33 speichert die Audit Scanner-Funktion die Berichte standardmäßig in OpenReports CRDs von [openreports.io](https://openreports.io).
 
 Die link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] CRDs der K8s Policy-Arbeitsgruppe sind standardmäßig nicht installiert, als auslaufend markiert und werden in einer zukünftigen Version entfernt.
 
@@ -197,7 +197,7 @@ Die Policy Reporter Benutzeroberfläche bietet ein Dashboard, das alle Verstöß
 
 image::policy-reporter_dashboard.png[Policy Reporter Dashboard-Beispiel]
 
-{short-project-name} liefert die Benutzeroberfläche des Policy Reporters mit einem vorkonfigurierten Filter aus, der nur {short-project-name} Richtlinien anzeigt, zusammen mit erweiterten Informationen:
+{admc-short-name} liefert die Benutzeroberfläche des Policy Reporters mit einem vorkonfigurierten Filter aus, der nur {admc-short-name} Richtlinien anzeigt, zusammen mit erweiterten Informationen:
 
 image::policy-reporter_policyreports.png[Policy Reporter PolicyReports-Beispiel]
 

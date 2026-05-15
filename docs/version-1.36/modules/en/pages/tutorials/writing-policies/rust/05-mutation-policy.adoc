@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure a new {project-name} mutation policy to mutate incoming objects with custom annotations, then test it.
+:description: Configure a new {admc-name} mutation policy to mutate incoming objects with custom annotations, then test it.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
 :doc-type: ["tutorial"]
@@ -20,7 +20,7 @@ They can:
 * Accept a request without changing the incoming object
 * Mutate the incoming object as they need to and accept the request
 
-Writing a {project-name} mutation policy is uncomplicated.
+Writing a {admc-name} mutation policy is uncomplicated.
 You'll use the validating policy created in the previous sections,
 and with a few changes,
 turn it into a mutating one.

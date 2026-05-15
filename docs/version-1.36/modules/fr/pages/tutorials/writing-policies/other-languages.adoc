@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Apprenez à rédiger des {project-name}stratégies en utilisant divers langages de programmation qui ciblent les modules WebAssembly et l'interface WASI.
+:description: Apprenez à rédiger des {admc-name}stratégies en utilisant divers langages de programmation qui ciblent les modules WebAssembly et l'interface WASI.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "rédaction-de-stratégies", "autres-langues"]
 :doc-type: ["tutorial"]
@@ -12,6 +12,6 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-{project-name} Les stratégies peuvent être rédigées avec n'importe quel langage de programmation capable de produire des modules WebAssembly ciblant l'interface WASI.
+{admc-name} Les stratégies peuvent être rédigées avec n'importe quel langage de programmation capable de produire des modules WebAssembly ciblant l'interface WASI.
 
-Veuillez ouvrir une Pull Request ou une issue GitHub https://github.com/kubewarden/docs[ici] si vous connaissez un langage de programmation qui peut être utilisé pour rédiger des {short-project-name}stratégies.
+Veuillez ouvrir une Pull Request ou une issue GitHub https://github.com/kubewarden/docs[ici] si vous connaissez un langage de programmation qui peut être utilisé pour rédiger des {admc-short-name}stratégies.

@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 1
 :current-version: {page-origin-branch}
 
-_{project-name} da la bienvenida a todos los contribuyentes, ya sean nuevos o experimentados._
+_{admc-name} da la bienvenida a todos los contribuyentes, ya sean nuevos o experimentados._
 
 ifeval::["{build-type}" == "community"]
 Por favor, revisa la guía de contribuciones https://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[aquí].

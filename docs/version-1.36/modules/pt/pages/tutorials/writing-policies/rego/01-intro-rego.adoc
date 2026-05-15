@@ -18,7 +18,7 @@ O suporte ao Rego está disponível a partir dessas versões:
 * kwctl: v0.2.0
 * policy-server: v0.2.0
 
-As políticas Rego suportam dados sensíveis ao contexto disponíveis a partir da versão {project-name} 1.9.
+As políticas Rego suportam dados sensíveis ao contexto disponíveis a partir da versão {admc-name} 1.9.
 ====
 
 
@@ -31,7 +31,7 @@ Agente de Política Aberta e Gatekeeper.
 
 As próximas seções mostram como os dois frameworks são diferentes,
 mesmo usando a mesma linguagem.
-Se você estiver mais interessado na implementação {short-project-name},
+Se você estiver mais interessado na implementação {admc-short-name},
 pode visitar diretamente a documentação específica do framework vinculada abaixo.
 
 * xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Agente de Política Aberta]
@@ -80,11 +80,11 @@ Outro exemplo seria uma política que avalia `Ingress` recursos, mas para tomar 
 
 A ideia de políticas contextuais também pode se estender a recursos personalizados, então sua política pode querer avaliar uma solicitação com base nos recursos personalizados atualmente utilizados também.
 
-Tanto o OPA quanto o Gatekeeper suportam políticas contextuais a partir da versão {short-project-name} 1.9.
+Tanto o OPA quanto o Gatekeeper suportam políticas contextuais a partir da versão {admc-short-name} 1.9.
 
 Mais detalhes sobre políticas contextuais estão xref:reference/spec/05-context-aware-policies.adoc[aqui].
 
 === Políticas de mutação
 
-O Gatekeeper tem suporte para políticas de mutação, mas {short-project-name} ainda não implementou políticas de mutação com compatibilidade com o Gatekeeper.
-Você pode usar políticas que utilizam o SDK {short-project-name} para escrever políticas de mutação, mas atualmente, você não pode executar políticas de mutação do Gatekeeper em {short-project-name}.
+O Gatekeeper tem suporte para políticas de mutação, mas {admc-short-name} ainda não implementou políticas de mutação com compatibilidade com o Gatekeeper.
+Você pode usar políticas que utilizam o SDK {admc-short-name} para escrever políticas de mutação, mas atualmente, você não pode executar políticas de mutação do Gatekeeper em {admc-short-name}.

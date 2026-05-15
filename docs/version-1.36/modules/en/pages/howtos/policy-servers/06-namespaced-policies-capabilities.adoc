@@ -7,12 +7,12 @@ include::partial$variables.adoc[]
 :sidebar_label: Namespaced policy host capabilities
 :sidebar_position: 60
 :description: How to restrict host capability calls available to namespaced policies and control which PolicyServer they run on.
-:keywords: ["{project-name}", kubernetes, policyserver, admissionpolicy, admissionpolicygroup, host-capabilities, security, namespaced-policies]
+:keywords: ["{admc-name}", kubernetes, policyserver, admissionpolicy, admissionpolicygroup, host-capabilities, security, namespaced-policies]
 :doc-persona: [kubewarden-operator, kubewarden-integrator]
 :doc-type: [howto]
 :doc-topic: [operator-manual, policy-servers, host-capabilities, namespaced-policies, security]
 
-{project-name} upholds the following security promise:
+{admc-name} upholds the following security promise:
 
 *"If you can deploy namespaced policies, you can do so without obtaining raised privileges."*
 
@@ -24,7 +24,7 @@ This how-to explains how cluster operators can enforce that promise by:
 
 [WARNING]
 ====
-The per-PolicyServer restriction on host capabilities is part of {project-name}
+The per-PolicyServer restriction on host capabilities is part of {admc-name}
 `v1.35.0` and higher.
 
 Earlier versions may be vulnerable to reconnaissance or information disclosure,
@@ -55,7 +55,7 @@ policies.
 == Host capability call reference
 
 See the full list on our
-xref:/reference/spec/host-capabilities/07-host-capabiliy-call-reference.adoc[capabilities call reference]
+xref:/reference/spec/host-capabilities/07-host-capability-call-reference.adoc[capabilities call reference]
 documentation page.
 
 == Configuring `spec.namespacedPoliciesCapabilities`
@@ -107,7 +107,7 @@ kind: PolicyServer
 metadata:
   name: for-namespaced-policies
 spec:
-  image: ghcr.io/kubewarden/policy-server:latest
+  image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
   replicas: 1
   namespacedPoliciesCapabilities: []
 ----
@@ -124,7 +124,7 @@ kind: PolicyServer
 metadata:
   name: for-namespaced-policies
 spec:
-  image: ghcr.io/kubewarden/policy-server:latest
+  image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
   replicas: 1
   namespacedPoliciesCapabilities:
     - "oci/v1/verify"
@@ -140,7 +140,7 @@ kind: PolicyServer
 metadata:
   name: for-namespaced-policies
 spec:
-  image: ghcr.io/kubewarden/policy-server:latest
+  image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
   replicas: 1
   namespacedPoliciesCapabilities:
     - "*"
@@ -268,7 +268,7 @@ metadata:
   name: for-namespaced-policies
   namespace: kubewarden
 spec:
-  image: ghcr.io/kubewarden/policy-server:v1.35.0
+  image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
   namespacedPoliciesCapabilities: []
 ----
 
@@ -330,7 +330,7 @@ helm upgrade --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 
 == Upgrade considerations
 
-When upgrading from a {project-name} version that predates this feature
+When upgrading from a {admc-name} version that predates this feature
 (`<= v1.34`):
 
 * Existing namespaced policies continue to work without any change. The default

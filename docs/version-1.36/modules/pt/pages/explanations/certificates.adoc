@@ -3,19 +3,19 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprenda como rotacionar certificados em seu {project-name} sem causar tempo de inatividade.
+:description: Aprenda como rotacionar certificados em seu {admc-name} sem causar tempo de inatividade.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["explanations", "certificates"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "certificado", "controlador", "reconciliação"]
+:keywords: ["{admc-name}", "kubewarden", "certificado", "controlador", "reconciliação"]
 :sidebar_label: Rotação de certificados
 :sidebar_position: 21
 
-A versão {project-name} v1.17.0 removeu a dependência do cert-manager. O controlador é capaz de gerenciar todos os certificados usados por todos os componentes. Agora, o controlador possui um novo loop de reconciliação que garante que os certificados estejam sempre atualizados e que a configuração do webhook esteja correta.
+A versão {admc-name} v1.17.0 removeu a dependência do cert-manager. O controlador é capaz de gerenciar todos os certificados usados por todos os componentes. Agora, o controlador possui um novo loop de reconciliação que garante que os certificados estejam sempre atualizados e que a configuração do webhook esteja correta.
 
-A instalação do gráfico Helm realiza a primeira geração de certificados. Ela gera a CA raiz com dez anos até a expiração. A instalação do gráfico Helm também gera o certificado do servidor web do webhook do controlador, assinado pela CA raiz. O servidor da API usa isso para se comunicar com o {short-project-name} controlador para validar os CRDs. Ele tem uma expiração de um ano.
+A instalação do gráfico Helm realiza a primeira geração de certificados. Ela gera a CA raiz com dez anos até a expiração. A instalação do gráfico Helm também gera o certificado do servidor web do webhook do controlador, assinado pela CA raiz. O servidor da API usa isso para se comunicar com o {admc-short-name} controlador para validar os CRDs. Ele tem uma expiração de um ano.
 
-Uma vez que o controlador inicia, seu reconciliador renova os certificados automaticamente quando estão prestes a expirar. Ele também atualiza todos os certificados e configurações de webhook usados por toda a {short-project-name} pilha.
+Uma vez que o controlador inicia, seu reconciliador renova os certificados automaticamente quando estão prestes a expirar. Ele também atualiza todos os certificados e configurações de webhook usados por toda a {admc-short-name} pilha.
 
 [NOTE]
 ====

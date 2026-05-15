@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}の依存関係について、バージョン制約を含めて学びます。
+:description: {admc-name}の依存関係について、バージョン制約を含めて学びます。
 :doc-persona: [“kubewarden-all”]
 :doc-topic: [“operator-manual”, “dependencies”]
 :doc-type: [“reference”]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
-このページでは、{project-name}の依存関係とその関連するバージョン制約を一覧表示します。提供された範囲外のバージョンも動作する可能性がありますが、テストは行われていません。
+このページでは、{admc-name}の依存関係とその関連するバージョン制約を一覧表示します。提供された範囲外のバージョンも動作する可能性がありますが、テストは行われていません。
 
 == OpenTelemetry、メトリクスおよびトレーシングの依存関係
 
-執筆時点で、https://opentelemetry.io[OpenTelemetry]スタックは改善を続けています。しかし、まだ安定しておらず、未発表の後方互換性のない変更が発生することがあります。{short-project-name}の開発者は、OpenTelemetryスタックの変更を追跡し、それに適応するよう努めています。プロジェクトは、既知の動作範囲のOpenTelemetry、メトリクスおよびトレーシングスタックに対してテストを行います。
+執筆時点で、https://opentelemetry.io[OpenTelemetry]スタックは改善を続けています。しかし、まだ安定しておらず、未発表の後方互換性のない変更が発生することがあります。{admc-short-name}の開発者は、OpenTelemetryスタックの変更を追跡し、それに適応するよう努めています。プロジェクトは、既知の動作範囲のOpenTelemetry、メトリクスおよびトレーシングスタックに対してテストを行います。
 
 == オプションの依存関係
 
@@ -64,4 +64,4 @@ include::partial$variables.adoc[]
 
 == Rancher
 
-{short-project-name}は、Rancherチャートリポジトリで提供されている監視およびトレーシング用Helmチャートに対してテストを行います。
+{admc-short-name}は、Rancherチャートリポジトリで提供されている監視およびトレーシング用Helmチャートに対してテストを行います。

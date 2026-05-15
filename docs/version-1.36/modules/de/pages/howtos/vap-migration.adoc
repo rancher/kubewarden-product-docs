@@ -3,22 +3,22 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Migrieren Sie eine ValidatingAdmissionPolicy zu {project-name} über die Migrationsschritte des kwctl-Befehls für einen reibungslosen Übergang der Richtlinie.
+:description: Migrieren Sie eine ValidatingAdmissionPolicy zu {admc-name} über die Migrationsschritte des kwctl-Befehls für einen reibungslosen Übergang der Richtlinie.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 Ab Kubernetes v1.26 bietet die https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy] eine Möglichkeit, benutzerdefinierte Zulassungsrichtlinien in Kubernetes zu schreiben. Die Richtlinien werden mit dem https://cel.dev/[Common Expression Language (CEL)] geschrieben, erweitert um einige https://kubernetes.io/docs/reference/using-api/cel/[Kubernetes-spezifische Erweiterungen].
 Die ValidatingAdmissionPolicy erreichte Stabilität in Kubernetes v1.30.
 
-{project-name} bietet eine CEL-Richtlinie, die in der Lage ist, Kubernetes VAP-Richtlinien ohne Änderungen auszuführen.
-Sie können mehr über die CEL-Richtlinie in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[diesem Abschnitt] der Dokumentation von {short-project-name} lesen.
-xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Dieser Absatz] erklärt die Vorteile der Ausführung von VAP-Richtlinien mit {short-project-name}.
+{admc-name} bietet eine CEL-Richtlinie, die in der Lage ist, Kubernetes VAP-Richtlinien ohne Änderungen auszuführen.
+Sie können mehr über die CEL-Richtlinie in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[diesem Abschnitt] der Dokumentation von {admc-short-name} lesen.
+xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Dieser Absatz] erklärt die Vorteile der Ausführung von VAP-Richtlinien mit {admc-short-name}.
 
-Dieser Leitfaden erklärt, wie Sie das `kwctl`-Tool verwenden, um eine VAP-Richtlinie zu {short-project-name} zu migrieren.
+Dieser Leitfaden erklärt, wie Sie das `kwctl`-Tool verwenden, um eine VAP-Richtlinie zu {admc-short-name} zu migrieren.
 
 == Migrationsschritte
 
@@ -82,7 +82,7 @@ spec:
 
 ======
 
-Sie können die Richtlinie zu {short-project-name} migrieren, indem Sie diese Schritte befolgen:
+Sie können die Richtlinie zu {admc-short-name} migrieren, indem Sie diese Schritte befolgen:
 
 .`kwctl` Befehl zur Richtlinienmigration
 [%collapsible]

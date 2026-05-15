@@ -27,12 +27,12 @@ Kubernetes CEL検証ルールは、いくつかの関数ライブラリにアク
 * https://pkg.go.dev/github.com/google/cel-go/ext#Strings[CEL拡張文字列関数ライブラリ]
 * https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-cel-libraries[Kubernetes CEL拡張ライブラリ]、リスト、正規表現、URL、認可者、数量、オプション型、数値比較などの補助関数を含みます。
 
-== {project-name}におけるCEL：`cel-policy`
+== {admc-name}におけるCEL：`cel-policy`
 
-{short-project-name}はhttps://github.com/kubewarden/cel-policy[cel-policy]を提供します。
+{admc-short-name}はhttps://github.com/kubewarden/cel-policy[cel-policy]を提供します。
 これは、アップストリームのhttps://pkg.go.dev/github.com/google/cel-go[cel-go]インタープリターを構築しバンドルするポリシーであり、KubernetesのCEL用に上記のさまざまなライブラリも含まれています。 `apiextensions-apiserver`
 
-さらに、`cel-policy`は*{short-project-name}CEL拡張ライブラリ*をバンドルしており、{short-project-name}のhttps://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[ホスト機能をネイティブCELとして公開します]。
+さらに、`cel-policy`は*{admc-short-name}CEL拡張ライブラリ*をバンドルしており、{admc-short-name}のhttps://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[ホスト機能をネイティブCELとして公開します]。
 
 * Sigstore検証
 * OCIインタラクション
@@ -40,19 +40,19 @@ Kubernetes CEL検証ルールは、いくつかの関数ライブラリにアク
 * ネットワーク操作
 * Kubernetesリソースへのアクセス
 
-これは、`cel-policy`がKubernetes CELのスーパーセットであり、後方互換性があることを意味します。バニラKubernetes用に書かれたCELを再利用したり、{short-project-name}によって追加された機能を利用したりできます。
+これは、`cel-policy`がKubernetes CELのスーパーセットであり、後方互換性があることを意味します。バニラKubernetes用に書かれたCELを再利用したり、{admc-short-name}によって追加された機能を利用したりできます。
 
 `cel-policy`はコンパイル済みで出荷され、CELインタープリタとして動作します。ポリシーのユーザーは、(Cluster)AdmissionPolicyの`spec.settings`に希望するCEL式を渡し、CEL機能のおかげで、式は作成または更新時にコンパイルされ、型チェックによって正しさが検証されます。これは、`cel-policy`のカスタムビルドが必要ないことを意味します。
 
-=== ValidatingAdmissionPoliciesと比較した場合の{short-project-name}の`cel-policy`の利点
+=== ValidatingAdmissionPoliciesと比較した場合の{admc-short-name}の`cel-policy`の利点
 
-{short-project-name} `cel-policy`：
+{admc-short-name} `cel-policy`：
 
 * そのCELコードはValidatingAdmissionPoliciesと後方互換性があります。
-* ValidatingAdmissionPoliciesとは異なり、ValidatingAdmissionPolicyBindingのようなバインディングは不要です。これは、{short-project-name}の(Cluster)AdmissionPolicy定義に含まれているためです。
+* ValidatingAdmissionPoliciesとは異なり、ValidatingAdmissionPolicyBindingのようなバインディングは不要です。これは、{admc-short-name}の(Cluster)AdmissionPolicy定義に含まれているためです。
 * ValidatingAdmissionPoliciesのサポートがないクラスターにデプロイできます。
-* コンテキストを認識し、{short-project-name}の細かい権限をxref:../../../reference/spec/05-context-aware-policies.adoc[コンテキスト認識]に利用します。
+* コンテキストを認識し、{admc-short-name}の細かい権限をxref:../../../reference/spec/05-context-aware-policies.adoc[コンテキスト認識]に利用します。
 * (Cluster)AdmissionPolicyとしてデプロイされます。
-* ポリシーに関する{short-project-name}のトレースおよびテレメトリの恩恵を受けます。
+* ポリシーに関する{admc-short-name}のトレースおよびテレメトリの恩恵を受けます。
 * 監査スキャナーによって考慮されます。
 * kwctlのおかげで、クラスター外で開発およびテストが可能です。

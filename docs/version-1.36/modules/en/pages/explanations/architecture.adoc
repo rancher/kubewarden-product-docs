@@ -1,20 +1,19 @@
 include::partial$variables.adoc[]
-= {project-name} architecture
+
+= {admc-name} architecture
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Discover how {project-name} uses core Kubernetes features to integrate seamlessly into your cluster.
+:description: Discover how {admc-name} uses core Kubernetes features to integrate seamlessly into your cluster.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["architecture"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "architecture"]
-:sidebar_label: Architecture
-:sidebar_position: 61
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "architecture"]
 :current-version: {page-origin-branch}
 
-{project-name} is a Kubernetes policy engine.
+{admc-name} is a Kubernetes policy engine.
 It uses policies written in a programming language of your choosing.
-This language must generate a WebAssembly binary for {project-name} to use.
+This language must generate a WebAssembly binary for {admc-name} to use.
 
 == What _is_ a policy?
 
@@ -27,9 +26,9 @@ mutations.
 ====
 
 Like https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes],
-{project-name} uses the terms 'PolicyServer' when discussing the {project-name}
+{admc-name} uses the terms 'PolicyServer' when discussing the {admc-name}
 policy server and `policy-server` when discussing Pod or Deployment of a
-{project-name} PolicyServer.
+{admc-name} PolicyServer.
 
 ====
 
@@ -38,7 +37,7 @@ policy server and `policy-server` when discussing Pod or Deployment of a
 
 === Making use of core Kubernetes features
 
-The team designed {project-name} to use core features of Kubernetes,
+The team designed {admc-name} to use core features of Kubernetes,
 without reinventing the wheel.
 The project utilizes a combination of:
 
@@ -49,16 +48,16 @@ The project utilizes a combination of:
 
 === Makes effective use of the Kubernetes architecture
 
-{project-name} operates seamlessly within the Kubernetes ecosystem. At its
-core, the {project-name} controller is a Kubernetes controller, monitoring
-{project-name} Custom Resource Definitions (CRDs) and configuring Kubernetes
-resources to execute them. This integration ensures that {project-name} uses
+{admc-name} operates seamlessly within the Kubernetes ecosystem. At its
+core, the {admc-name} controller is a Kubernetes controller, monitoring
+{admc-name} Custom Resource Definitions (CRDs) and configuring Kubernetes
+resources to execute them. This integration ensures that {admc-name} uses
 the built-in Kubernetes mechanisms, such as controllers and CRDs, to watch,
 manage, and apply security policies efficiently.
 
 === Extensible policy definition
 
-{project-name} employs CRDs to define and manage {project-name} resources,
+{admc-name} employs CRDs to define and manage {admc-name} resources,
 which specify the rules for admission request validations. This design enables
 users to extend Kubernetes' capabilities with custom admission controls,
 ensuring that security and compliance policy enforcement is consistent across
@@ -66,7 +65,7 @@ the cluster.
 
 === Direct admission control
 
-When setup by the {project-name} controller, the policy-server Service receives
+When setup by the {admc-name} controller, the policy-server Service receives
 admission requests directly from the Kubernetes control plane, using
 `ValidationWebhooks` and `MutatingWebhooks`. This direct interaction
 streamlines the admission control process, reducing latency and increasing
@@ -78,12 +77,12 @@ mechanism. This isolation prevents policies from interfering with each other or
 with the host system, mitigating the risk of malicious code execution.
 WebAssembly is portable and efficient, enabling policies to run across
 different environments without modification. This cross-platform compatibility
-ensures that {project-name} policies are versatile, so you can distribute and
+ensures that {admc-name} policies are versatile, so you can distribute and
 run them on diverse Kubernetes clusters
 
 === OCI based policy artifacts
 
-Policies in {project-name} are OCI (Open Container Initiative) artifacts. This
+Policies in {admc-name} are OCI (Open Container Initiative) artifacts. This
 standardization makes the distribution and versioning of policies easier,
 Policies contain both the WebAssembly modules for enforcement logic, and
 metadata necessary for the PolicyServer's operation. Using OCI artifacts
@@ -91,60 +90,60 @@ promotes interoperability and ease of management within cloud ecosystems.
 
 === Fine-grained policy application
 
-{project-name} associates policies with their own 'validation' or 'mutating'
+{admc-name} associates policies with their own 'validation' or 'mutating'
 webhook, allowing for fine-grained application of admission controls. This
 flexibility enables administrators to tailor the enforcement of policies
 according to specific needs, enhancing the security and compliance posture of
 the Kubernetes cluster.
 
-== The {project-name} stack
+== The {admc-name} stack
 
-{project-name} consists of these components:
+{admc-name} consists of these components:
 
-* {project-name} Custom Resources are
+* {admc-name} Custom Resources are
 https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes
 Custom Resources] that simplify the process of managing policies.
 +
-{project-name} integrates with Kubernetes using
+{admc-name} integrates with Kubernetes using
 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamic
-Admission Control]. In particular, {project-name} operates as a Kubernetes
+Admission Control]. In particular, {admc-name} operates as a Kubernetes
 Admission Webhook. The `policy-server` is the Webhook endpoint called by the
 Kubernetes API server to validate requests.
 
-* The https://github.com/kubewarden/kubewarden-controller[{project-name}
-controller] is a Kubernetes controller that reconciles {project-name}'s
-Custom Resources. This controller creates parts of the {project-name} stack.
-It also translates {project-name} configuration into Kubernetes directives.
+* The https://github.com/kubewarden/adm-controller[{admc-name}
+controller] is a Kubernetes controller that reconciles {admc-name}'s
+Custom Resources. This controller creates parts of the {admc-name} stack.
+It also translates {admc-name} configuration into Kubernetes directives.
 +
-The `kubewarden-controller` registers the needed
+The admission controller registers the needed
 `MutatingWebhookConfiguration` or `ValidatingWebhookConfiguration` objects
 with the Kubernetes API server.
 
-* xref:../tutorials/writing-policies/index.adoc[{project-name} policies] are
+* xref:/tutorials/writing-policies/index.adoc[{admc-name} policies] are
 WebAssembly modules holding the validation or mutation logic. WebAssembly
 modules have detailed documentation in the
-xref:../tutorials/writing-policies/index.adoc[writing policies] sections.
+xref:/tutorials/writing-policies/index.adoc[writing policies] sections.
 
-* The https://github.com/kubewarden/policy-server[PolicyServer] receives
+* The xref:/reference/policy-server-cli.adoc[PolicyServer] receives
 requests for validation. It validates the requests by executing
-{project-name} policies.
+{admc-name} policies.
 
-* The https://github.com/kubewarden/audit-scanner[audit scanner] inspects the
+* The xref:/explanations/audit-scanner/audit-scanner.adoc[audit scanner] inspects the
 resources already in the cluster. It identifies those violating
-{project-name} policies.
+{admc-name} policies.
 +
 xref:/explanations/audit-scanner/audit-scanner.adoc[Audit scanner] constantly
 checks the resources declared in the cluster, flagging the ones that no
-longer adhere to the deployed {project-name} policies.
+longer adhere to the deployed {admc-name} policies.
 +
 .Architecture
 include::latest@shared:en:partial$architecture.adoc[]
 
-== The journey of a {project-name} policy
+== The journey of a {admc-name} policy
 
 === Default PolicyServer
 
-On a new cluster, the {project-name} components defined are:
+On a new cluster, the {admc-name} components defined are:
 
 * Custom Resource Definitions (CRD)
 * The `kubewarden-controller` Deployment
@@ -153,7 +152,7 @@ On a new cluster, the {project-name} components defined are:
 When the `kubewarden-controller` notices the default PolicyServer resource, it
 creates a `policy-server` deployment of the PolicyServer component.
 
-{project-name} works as a Kubernetes Admission Webhook. Kubernetes specifies
+{admc-name} works as a Kubernetes Admission Webhook. Kubernetes specifies
 using https://en.wikipedia.org/wiki/Transport_Layer_Security[Transport Layer
 Security] (TLS) to secure all Webhook endpoints. The `kubewarden-controller`
 sets up this secure communication by:
@@ -191,8 +190,8 @@ Deployment rollout of the `policy-server` starts. This results in starting the
 new `policy-server` instance with the updated configuration.
 
 At start time, the `policy-server` reads its configuration from the ConfigMap
-and downloads all the {project-name} policies specified. You can download
-{project-name} policies from remote HTTP servers and container registries.
+and downloads all the {admc-name} policies specified. You can download
+{admc-name} policies from remote HTTP servers and container registries.
 
 You use policy settings parameters to tune a policies' behavior. After startup
 and policy download the `policy-server` checks the policy settings provided by
@@ -207,13 +206,13 @@ If any policies received wrong configuration parameters, from the users policy
 specification, then any admission requests evaluated by that policy return an
 error.
 
-When {project-name} has configured all policies, the `policy-server` spawns a
-pool of worker threads to evaluate incoming requests using the {project-name}
+When {admc-name} has configured all policies, the `policy-server` spawns a
+pool of worker threads to evaluate incoming requests using the {admc-name}
 policies specified by the user.
 
 Finally, the `policy-server` starts a HTTPS server, listening to incoming
-validation requests. {project-name} uses the TLS key and certificate created by
-the {project-name} controller to secure the web server.
+validation requests. {admc-name} uses the TLS key and certificate created by
+the {admc-name} controller to secure the web server.
 
 The web server exposes each policy by a dedicated path following the naming
 convention: `/validate/<policy ID>`.
@@ -226,7 +225,7 @@ Probe`], that `kubewarden-controller` uses to check when the `policy-server`
 Deployment is ready to evaluate an
 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response[`AdmissionReview`].
 
-Once {project-name} marks the `policy-server` deployment as 'uniquely
+Once {admc-name} marks the `policy-server` deployment as 'uniquely
 reachable' or `Ready`, the `kubewarden-controller` makes the Kubernetes API
 server aware of the new policy. This is by creating either a
 `MutatingWebhookConfiguration` or a `ValidatingWebhookConfiguration` object. In
@@ -248,7 +247,7 @@ Admission Review requests to the right `policy-server` endpoints.
 A `policy-server` receives the Admission Request object and, based on the
 endpoint that received the request, uses the correct policy to evaluate it.
 
-{project-name} evaluates each policy inside its own dedicated WebAssembly
+{admc-name} evaluates each policy inside its own dedicated WebAssembly
 sand-box. The communication between a `policy-server` instance (the "host") and
 the WebAssembly policy (the "guest") uses the waPC communication protocol. The
 protocol description is part of the
@@ -257,9 +256,9 @@ Policies can also use the interfaces provided by the
 xref:../tutorials/writing-policies/wasi/01-intro-wasi.adoc[Web Assembly System
 Interface] (WASI).
 
-== How {project-name} handles many PolicyServer and policies
+== How {admc-name} handles many PolicyServer and policies
 
-A cluster can have many PolicyServers and {project-name} policies defined.
+A cluster can have many PolicyServers and {admc-name} policies defined.
 There are benefits of having many PolicyServers:
 
 * You can isolate noisy namespaces or tenants, or those generating many policy

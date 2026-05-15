@@ -1,37 +1,37 @@
 include::partial$variables.adoc[]
-= 将Gatekeeper策略迁移到{project-name}
+= 将Gatekeeper策略迁移到{admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 通过两个主要步骤配置{project-name}策略：将Rego代码编译为WebAssembly。
-:keywords: ["{project-name}", kubewarden, gatekeeper]
+:description: 通过两个主要步骤配置{admc-name}策略：将Rego代码编译为WebAssembly。
+:keywords: ["{admc-name}", kubewarden, gatekeeper]
 :doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 :doc-type: [howto]
 :doc-topic: [operator-manual]
 
-本指南向您展示如何将现有的Gatekeeper策略转换为{project-name}策略。此过程涉及两个主要步骤：
+本指南向您展示如何将现有的Gatekeeper策略转换为{admc-name}策略。此过程涉及两个主要步骤：
 . 将Rego程序编译为WebAssembly（Wasm）模块。
-. 将WebAssembly模块分发为{short-project-name}策略。
+. 将WebAssembly模块分发为{admc-short-name}策略。
 
-xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego策略教程]涵盖了将Rego代码编译为WebAssembly模块的大部分构建过程。本指南专注于逐步提取Gatekeeper自定义资源定义（CRD），并将其迁移为功能性{short-project-name}策略。它使用一个基本的Gatekeeper演示策略。
+xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego策略教程]涵盖了将Rego代码编译为WebAssembly模块的大部分构建过程。本指南专注于逐步提取Gatekeeper自定义资源定义（CRD），并将其迁移为功能性{admc-short-name}策略。它使用一个基本的Gatekeeper演示策略。
 
 == 先决条件
 
 * link:https://github.com/open-policy-agent/opa/releases[opa]：您使用此工具将代码构建为wasm。本指南是使用`v1.5.1`版本编写的。
-* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]：您用来准备和运行{short-project-name} WebAssembly模块的工具。
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]：您用来准备和运行{admc-short-name} WebAssembly模块的工具。
 * link:https://github.com/bats-core/bats-core[`bats`]：用于运行端到端测试的工具。如果您决定编写这种类型的测试
 * link:https://github.com/mikefarah/yq[`yq`]：用于从yaml文件中提取数据的工具。
 
 == 在迁移您的策略之前
 
-在开始迁移Gatekeeper策略的过程中，请考虑使用{short-project-name}link:https://artifacthub.io/packages/search?kind=13[目录]中已有的策略。其中一些link:https://github.com/kubewarden/rego-policies-library[策略]是公开可用的OPA和Gatekeeper策略，已迁移到{short-project-name}。
+在开始迁移Gatekeeper策略的过程中，请考虑使用{admc-short-name}link:https://artifacthub.io/packages/search?kind=13[目录]中已有的策略。其中一些link:https://github.com/kubewarden/rego-policies-library[策略]是公开可用的OPA和Gatekeeper策略，已迁移到{admc-short-name}。
 
-此外，请查看我们的xref:/explanations/comparisons/opa-comparison.adoc[比较]的文档，对比{short-project-name}和Gatekeeper。
+此外，请查看我们的xref:/explanations/comparisons/opa-comparison.adoc[比较]的文档，对比{admc-short-name}和Gatekeeper。
 
-== 第 1 步：初始化您的{short-project-name}策略项目
+== 第 1 步：初始化您的{admc-short-name}策略项目
 
-首先，使用{short-project-name} Gatekeeper
+首先，使用{admc-short-name} Gatekeeper
 link:https://github.com/kubewarden/gatekeeper-policy-template[模板]来创建
 一个基本的策略项目结构。这提供了用于构建和测试您策略的Makefile目标。在您从模板创建策略代码后，运行Makefile命令以检查策略构建和测试是否成功：
 
@@ -50,9 +50,9 @@ PASS: 2/2
 
 == 第 2 步：迁移Gatekeeper策略代码
 
-现在，开始迁移Gatekeeper策略。这涉及将一个`ConstraintTemplate`及其相关的`Constraint`资源转换为一个{short-project-name}策略。在{short-project-name}上下文中，将`ConstraintTemplate`视为核心策略代码，而`Constraint`实例则转换为在{short-project-name}中运行的策略实例。
+现在，开始迁移Gatekeeper策略。这涉及将一个`ConstraintTemplate`及其相关的`Constraint`资源转换为一个{admc-short-name}策略。在{admc-short-name}上下文中，将`ConstraintTemplate`视为核心策略代码，而`Constraint`实例则转换为在{admc-short-name}中运行的策略实例。
 
-首先，将您的`ConstraintTemplate`中的Rego代码复制到`policy.rego`文件中，该文件由{short-project-name}模板生成。在这个例子中，您应该使用来自Gatekeeper储存库的以下基本link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[演示策略]。
+首先，将您的`ConstraintTemplate`中的Rego代码复制到`policy.rego`文件中，该文件由{admc-short-name}模板生成。在这个例子中，您应该使用来自Gatekeeper储存库的以下基本link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[演示策略]。
 
 [.details]
 .Gatekeeper策略yaml
@@ -100,10 +100,10 @@ spec:
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== 为{short-project-name}调整Rego代码
+=== 为{admc-short-name}调整Rego代码
 
 您需要确保Rego代码中使用的`package`名称是`policy`。
-这是{short-project-name} Gatekeeper模板在许多地方期望的值。
+这是{admc-short-name} Gatekeeper模板在许多地方期望的值。
 
 如果您不更改它，构建策略和运行其端到端测试时将会出现错误。
 
@@ -189,7 +189,7 @@ touch policy.wasm # opa creates the bundle with unix epoch timestamp, fix it
 
 虽然强烈推荐，但策略作者可能会跳过为策略的初始版本创建测试。如果这适用于您，您需要禁用用于运行测试的 Makefile 目标。您不能完全去除这些目标，因为默认的 CI 作业期望它们被定义。相反，您应该用 "无操作" 操作替换调用 `opa` 和 `bats` 的命令。例如，您可以使用 `echo` 命令打印出为什么不运行测试的解释。
 
-{short-project-name} Gatekeeper 模板包括 Rego 单元测试和使用 Bats 和 `kwctl` 的端到端 (e2e) 测试。如果您计划包含测试，则两个集合都需要根据您的策略进行调整。
+{admc-short-name} Gatekeeper 模板包括 Rego 单元测试和使用 Bats 和 `kwctl` 的端到端 (e2e) 测试。如果您计划包含测试，则两个集合都需要根据您的策略进行调整。
 
 如果您的 Gatekeeper 策略已经有 Rego 测试，您可以将它们复制到 `policy_test.rego` 文件中。当您执行 `make test` 命令时，这些测试会自动运行。
 
@@ -400,7 +400,7 @@ spec:
 
 === 定义策略设置
 
-该策略具有参数，Gatekeeper在`Constraint`中定义这些参数。您需要更新生成的`settings`策略清单中的{short-project-name}部分，以包含这些必需的参数。在以下示例中，除了定义设置外，您还可以从OCI注册表测试该策略：
+该策略具有参数，Gatekeeper在`Constraint`中定义这些参数。您需要更新生成的`settings`策略清单中的{admc-short-name}部分，以包含这些必需的参数。在以下示例中，除了定义设置外，您还可以从OCI注册表测试该策略：
 
 [source,yaml]
 ----

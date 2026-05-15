@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 8
 :current-version: {page-origin-branch}
 
-{short-project-name}のドキュメントに問題がある場合や新しいコンテンツを提案したい場合は、イシューを開いてください。https://github.com/join[GitHubアカウント]とブラウザへのアクセスが必要です。
+{admc-short-name}のドキュメントに問題がある場合や新しいコンテンツを提案したい場合は、イシューを開いてください。https://github.com/join[GitHubアカウント]とブラウザへのアクセスが必要です。
 
-通常、{short-project-name}の新しいドキュメント作業はGitHubのイシューから始まります。
+通常、{admc-short-name}の新しいドキュメント作業はGitHubのイシューから始まります。
 ifeval::["{build-type}" == "community"]
-https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name}ドキュメントチーム]がそれらをレビューし、分類し、タグ付けします。
+https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{admc-short-name}ドキュメントチーム]がそれらをレビューし、分類し、タグ付けします。
 endif::[]
 ifeval::["{build-type}" == "product"]
-https://github.com/orgs/rancher/teams/docs[{short-project-name}ドキュメントチーム]がそれらをレビューし、分類し、タグ付けします。
+https://github.com/orgs/rancher/teams/docs[{admc-short-name}ドキュメントチーム]がそれらをレビューし、分類し、タグ付けします。
 endif::[]
 誰でも報告者を含む任意のイシューに取り組むことができますが、重複作業を避けるために作業を開始する前に自分に割り当てるべきです。
 
@@ -29,10 +29,10 @@ endif::[]
 
 * 上部のGitHubオクトキャットアイコンをクリックしてください。これにより、
 ifeval::["{build-type}" == "community"]
-  https://github.com/kubewarden/docs[{short-project-name}のドキュメントリポジトリ]にリダイレクトされます。
+  https://github.com/kubewarden/docs[{admc-short-name}のドキュメントリポジトリ]にリダイレクトされます。
 endif::[]
 ifeval::["{build-type}" == "product"]
-  https://github.com/rancher/kubewarden-product-docs[{short-project-name}のドキュメントリポジトリ]にリダイレクトされます。
+  https://github.com/rancher/kubewarden-product-docs[{admc-short-name}のドキュメントリポジトリ]にリダイレクトされます。
 endif::[]
 * イシュータブに移動し、*新しいイシュー*をクリックします。
 * 問題または改善提案を説明してください。詳細が多いほど、より良いです。

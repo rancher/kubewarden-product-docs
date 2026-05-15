@@ -1,13 +1,14 @@
 include::partial$variables.adoc[]
+
 = Quick start
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Understand the {project-name} stack by learning how to deploy and manage its main components, including PolicyServers and ClusterAdmissionPolicy resources.
+:description: Understand the {admc-name} stack by learning how to deploy and manage its main components, including PolicyServers and ClusterAdmissionPolicy resources.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]
-:keywords: ["{project-name}", "installation", "quick start", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "installation", "quick start", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Quick start
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -18,26 +19,26 @@ include::partial$variables.adoc[]
 </head>
 ++++
 
-The {project-name} stack comprises:
+The {admc-name} stack comprises:
 
 * One or more {cluster-admission-policy} resources: this defines policies
   for Kubernetes clusters.
 * One or more {policy-server} resources: representing a deployment of a
-  {short-project-name}
-  `PolicyServer`. The {short-project-name} `PolicyServer` loads and evaluates your
+  {admc-short-name}
+  `PolicyServer`. The {admc-short-name} `PolicyServer` loads and evaluates your
   administrator's policies.
 * One or more {admission-policy} resources: policies for a defined namespace.
 * A deployment of a `kubewarden-controller`: this controller monitors the
-  {cluster-admission-policy} resources and interacts with the {short-project-name}
+  {cluster-admission-policy} resources and interacts with the {admc-short-name}
   {policy-server} components.
 
 [TIP]
 ====
 
-{short-project-name} describes its Kubernetes Custom Resource Definitions (CRDs)
+{admc-short-name} describes its Kubernetes Custom Resource Definitions (CRDs)
 xref:reference/CRDs.adoc[here].
 
-{short-project-name} CRDs mentioned in this tutorial and in the rest of
+{admc-short-name} CRDs mentioned in this tutorial and in the rest of
 documentation have short names, which are easier to use. These are the short
 names for the CRDs:
 
@@ -73,9 +74,9 @@ names for the CRDs:
 
 :gh-pat-url: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
-You can retrieve {short-project-name} policies from the GitHub container registry at
+You can retrieve {admc-short-name} policies from the GitHub container registry at
 https://ghcr.io. You need authentication to use the repository with the
-{short-project-name} CLI, a {gh-pat-url}[GitHub personal access token] (PAT). Their
+{admc-short-name} CLI, a {gh-pat-url}[GitHub personal access token] (PAT). Their
 documentation guides you through creating one if you haven't already done so.
 Then you authenticate with a command like:
 
@@ -87,7 +88,7 @@ echo $PAT | docker login ghcr.io --username <my-gh-username> --password-stdin
 ====
 
 
-Deploy the {short-project-name} stack using `helm` charts as follows:
+Deploy the {admc-short-name} stack using `helm` charts as follows:
 
 [subs="+attributes",console]
 ----
@@ -105,7 +106,7 @@ Kubernetes cluster:
 * `kubewarden-crds`, which registers the {cluster-admission-policy},
   {admission-policy} and {policy-server} Custom Resource Definitions. Also, the
   {report} Custom Resource Definitions used by the audit scanner.
-* `kubewarden-controller`, which installs the {short-project-name} controller and the
+* `kubewarden-controller`, which installs the {admc-short-name} and the
   audit scanner
 +
 [NOTE]
@@ -139,7 +140,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 ====
 
 Since
-https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`],
+https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`],
 a `PolicyServer` resource named `default` isn't created using the
 `kubewarden-controller` chart. Now a Helm chart called `kubewarden-defaults`,
 installs the default policy server.
@@ -163,7 +164,7 @@ options.
 
 == Main components
 
-{short-project-name} has three main components which you interact with:
+{admc-short-name} has three main components which you interact with:
 
 * The {policy-server}
 * The {cluster-admission-policy}
@@ -171,10 +172,10 @@ options.
 
 === `PolicyServer`
 
-The `kubewarden-controller` manages a {short-project-name} `PolicyServer`. You can
+The `kubewarden-controller` manages a {admc-short-name} `PolicyServer`. You can
 deploy multiple {policy-server}s in the same Kubernetes cluster.
 
-A `PolicyServer` validates incoming requests by executing {short-project-name}
+A `PolicyServer` validates incoming requests by executing {admc-short-name}
 policies against them.
 
 This is the default `PolicyServer` configuration:
@@ -186,7 +187,7 @@ kind: PolicyServer
 metadata:
   name: reserved-instance-for-tenant-a
 spec:
-  image: ghcr.io/kubewarden/policy-server:v1.3.0
+  image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
   replicas: 2
   serviceAccountName: ~
   env:
@@ -198,7 +199,7 @@ spec:
 ====
 
 Check the
-https://github.com/kubewarden/policy-server/pkgs/container/policy-server[latest
+https://github.com/kubewarden/adm-controller/policy-server/pkgs/container/adm-controller%2Fpolicy-server[latest
 released `PolicyServer` version] and change the tag to match.
 
 ====
@@ -237,7 +238,7 @@ new configuration.
 
 === ClusterAdmissionPolicy
 
-The {cluster-admission-policy} resource is the core of the {short-project-name}
+The {cluster-admission-policy} resource is the core of the {admc-short-name}
 stack. It defines how policies evaluate requests.
 
 Enforcing policies is the most common operation which a Kubernetes
@@ -286,7 +287,7 @@ Overview of the attributes of the {cluster-admission-policy} resource:
 
 | Y
 | `module`
-| The location of the {short-project-name} policy. The following schemes are allowed:
+| The location of the {admc-short-name} policy. The following schemes are allowed:
 
 | N
 |
@@ -360,12 +361,12 @@ Other than that, there are no functional differences between the
 ====
 
 {admission-policy} requires Kubernetes 1.21.0 or greater. This is because
-{short-project-name} uses the `kubernetes.io/metadata.name` label, introduced in
+{admc-short-name} uses the `kubernetes.io/metadata.name` label, introduced in
 Kubernetes 1.21.0
 
 ====
 
-The complete documentation of these Custom Resources is https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[here] or on https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
+The complete documentation of these Custom Resources is xref:/reference/CRDs.adoc[here].
 
 == Example: Enforce your first policy
 
@@ -526,7 +527,7 @@ helm uninstall --namespace kubewarden kubewarden-crds
 ----
 
 After removal of the `helm` charts remove the Kubernetes namespace used to
-deploy the {short-project-name} stack:
+deploy the {admc-short-name} stack:
 
 [subs="+attributes",console]
 ----
@@ -536,7 +537,7 @@ kubectl delete namespace kubewarden
 [CAUTION]
 ====
 
-{short-project-name} contains a helm pre-delete hook that removes all
+{admc-short-name} contains a helm pre-delete hook that removes all
 `PolicyServer`s and `kubewarden-controller`s. Then the
 `kubewarden-controller` deletes all resources, so it's important that
 `kubewarden-controller` is running when helm uninstall executes.
@@ -544,7 +545,7 @@ kubectl delete namespace kubewarden
 ====
 
 
-{short-project-name} deletes {validating-webhook-configuration}s and
+{admc-short-name} deletes {validating-webhook-configuration}s and
 {mutating-webhook-configuration}s. Check this with:
 
 [subs="+attributes",console]
@@ -578,7 +579,7 @@ configuration for the rest of the resources needed to run the policies.
 
 == What's next?
 
-Now, you are ready to deploy {short-project-name}! Have a look at the policies on
+Now, you are ready to deploy {admc-short-name}! Have a look at the policies on
 https://artifacthub.io/packages/search?kind=13[artifacthub.io], on
 https://github.com/topics/kubewarden-policy[GitHub], or reuse existing Rego
 policies as shown in the xref:tutorials/writing-policies/rego/01-intro-rego.adoc[following

@@ -4,14 +4,14 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: さまざまなインターフェースを通じて、{project-name}ソリューションのエンタープライズサポートに関する情報へアクセスできます。
-:keywords: [ {project-name}, Kubewarden, サポート, ]
+:description: さまざまなインターフェースを通じて、{admc-name}ソリューションのエンタープライズサポートに関する情報へアクセスできます。
+:keywords: [ {admc-name}, Kubewarden, サポート, ]
 :doc-persona: [kubewarden-all]
 :doc-type: [explanation]
 :doc-topic: [サポート]
 
 ifeval::["{build-type}" == "community"]
-これらの組織は、{project-name}のエンタープライズサポートを提供します：
+これらの組織は、{admc-name}のエンタープライズサポートを提供します：
 
 [cols="1,1"]
 |===

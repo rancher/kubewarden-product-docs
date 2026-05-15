@@ -3,16 +3,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Distribuez les stratégies de manière sécurisée via un registre conforme à l'OCI en utilisant des outils comme kwctl, et assurez la sécurité du cluster grâce à {project-name} la gestion des stratégies.
+:description: Distribuez les stratégies de manière sécurisée via un registre conforme à l'OCI en utilisant des outils comme kwctl, et assurez la sécurité du cluster grâce à {admc-name} la gestion des stratégies.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:keywords: ["{admc-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-Les stratégies {project-name} sont des binaires WebAssembly (Wasm) évalués par le serveur de stratégie {short-project-name}.
+Les stratégies {admc-name} sont des binaires WebAssembly (Wasm) évalués par le serveur de stratégie {admc-short-name}.
 
-Le {short-project-name} serveur de stratégie charge les stratégies à partir de ces sources :
+Le {admc-short-name} serveur de stratégie charge les stratégies à partir de ces sources :
 
 * Système de fichiers local
 * Serveur HTTP(s)
@@ -23,23 +23,23 @@ Le {short-project-name} serveur de stratégie charge les stratégies à partir d
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Registre de conteneurs Google]
 
-{short-project-name} recommande de distribuer les stratégies {short-project-name} via un registre conforme à l'OCI. Les registres de conteneurs sont une exigence obligatoire pour tout cluster Kubernetes. Avoir un seul endroit pour stocker et sécuriser tous les artefacts requis par un cluster est bénéfique.
+{admc-short-name} recommande de distribuer les stratégies {admc-short-name} via un registre conforme à l'OCI. Les registres de conteneurs sont une exigence obligatoire pour tout cluster Kubernetes. Avoir un seul endroit pour stocker et sécuriser tous les artefacts requis par un cluster est bénéfique.
 
 == Pousser les stratégies vers un registre conforme à l'OCI
 
 La spécification du format d'image https://github.com/opencontainers/image-spec[OCI] permet de stocker tout blob binaire à l'intérieur d'un registre de conteneurs conforme à l'OCI.
 
-Le registre conforme à l'OCI *doit prendre en charge les artefacts* pour pouvoir y pousser avec succès une {short-project-name} stratégie.
+Le registre conforme à l'OCI *doit prendre en charge les artefacts* pour pouvoir y pousser avec succès une {admc-short-name} stratégie.
 
-Vous pouvez utiliser https://github.com/kubewarden/kwctl[`kwctl`] CLI pour pousser une {short-project-name} stratégie vers un registre conforme à l'OCI.
+Vous pouvez utiliser https://github.com/kubewarden/kwctl[`kwctl`] CLI pour pousser une {admc-short-name} stratégie vers un registre conforme à l'OCI.
 
 == Annotation de la stratégie
 
-Vous annotez également une stratégie avec `kwctl`. L'annotation d'une stratégie {short-project-name} se fait en ajoutant des sections personnalisées Wasm au binaire de la stratégie. Cela signifie que la stratégie emballe ses propres métadonnées.
+Vous annotez également une stratégie avec `kwctl`. L'annotation d'une stratégie {admc-short-name} se fait en ajoutant des sections personnalisées Wasm au binaire de la stratégie. Cela signifie que la stratégie emballe ses propres métadonnées.
 
 La commande `kwctl annotate` nécessite deux entrées :
 
-* la stratégie {short-project-name} à annoter, un fichier local dans le système de fichiers.
+* la stratégie {admc-short-name} à annoter, un fichier local dans le système de fichiers.
 * le fichier d'annotations, un fichier contenant une description YAML des métadonnées de la stratégie.
 Ce fichier se trouve généralement dans le répertoire racine du projet de votre stratégie.
 
@@ -155,4 +155,4 @@ $ kwctl push annotated-policy.wasm \
 
 Il est déconseillé de pousser des stratégies non annotées. Le serveur de stratégie utilise les métadonnées fournies par les annotations pour exécuter correctement une stratégie. Par défaut, `kwctl push` refuse de pousser une telle stratégie vers un registre OCI. Si vous avez besoin d'une stratégie non annotée, utilisez l'option `-&#x200D;-&#x200D;force` de `kwctl push`.
 
-Vous pouvez faire référence à une stratégie depuis le {short-project-name} serveur de stratégie ou `kwctl` en tant que `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.
+Vous pouvez faire référence à une stratégie depuis le {admc-short-name} serveur de stratégie ou `kwctl` en tant que `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

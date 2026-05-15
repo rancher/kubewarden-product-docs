@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explore métricas e padrões de cluster com as métricas expostas da plataforma {project-name} para informar os processos de tomada de decisão.
+:description: Explore métricas e padrões de cluster com as métricas expostas da plataforma {admc-name} para informar os processos de tomada de decisão.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name} expõe métricas relevantes da plataforma permitindo que administradores de cluster e desenvolvedores de políticas identifiquem padrões e potenciais problemas.
+{admc-short-name} expõe métricas relevantes da plataforma permitindo que administradores de cluster e desenvolvedores de políticas identifiquem padrões e potenciais problemas.
 
 == Servidor de Políticas
 

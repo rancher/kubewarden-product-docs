@@ -1,16 +1,16 @@
 include::partial$variables.adoc[]
-= kwctl ({project-name} CLI) のインストール
+= kwctl ({admc-name} CLI) のインストール
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl のインストール
-:description: さまざまなオペレーティングシステムのインストール手順に従って kwctl ({project-name} CLI) をインストールし、シェル補完を有効にしてください。
-:keywords: ["{project-name}", kubewarden, kubernetes, kwctl をインストール, インストール, kwctl]
+:description: さまざまなオペレーティングシステムのインストール手順に従って kwctl ({admc-name} CLI) をインストールし、シェル補完を有効にしてください。
+:keywords: ["{admc-name}", kubewarden, kubernetes, kwctl をインストール, インストール, kwctl]
 :doc-persona: kubewarden-all
 :doc-type: HOWTO(操作方法)
 :doc-topic: kwctl をインストールする
 
-`kwctl` は {project-name} のコマンドラインインターフェース (CLI) ツールです。以下は、いくつかのオペレーティングシステムのインストール手順です。
+`kwctl` は {admc-name} のコマンドラインインターフェース (CLI) ツールです。以下は、いくつかのオペレーティングシステムのインストール手順です。
 
 [tabs]
 ====
@@ -178,7 +178,7 @@ Windows::
 Windows にインストールします
 
 . `kwctl` をダウンロードしてください：
-    .. ブラウザを開き、https://github.com/kubewarden/kwctl/releases/latest[{short-project-name} リリースページ] に移動します。
+    .. ブラウザを開き、https://github.com/kubewarden/kwctl/releases/latest[{admc-short-name} リリースページ] に移動します。
     .. `kwctl-windows-x86_64.zip` ファイルをダウンロードしてください。
 
 . ダウンロードした zip ファイルからファイルを抽出してください。次の内容が含まれます：

@@ -3,14 +3,14 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure o monitoramento para ambientes Rancher integrando com o {project-name} e o Prometheus.
+:description: Configure o monitoramento para ambientes Rancher integrando com o {admc-name} e o Prometheus.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "user interface extension", "metrics", "monitoring"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "user interface extension", "metrics", "monitoring"]
 :current-version: {page-origin-branch}
 
-O Rancher possui uma Ferramenta de Cluster para monitoramento que utiliza Grafana e Prometheus. Você pode usar esta ferramenta, integrando-a com {project-name}, para visualizar métricas gerais de um Servidor de Políticas ou métricas para uma política específica.
+O Rancher possui uma Ferramenta de Cluster para monitoramento que utiliza Grafana e Prometheus. Você pode usar esta ferramenta, integrando-a com {admc-name}, para visualizar métricas gerais de um Servidor de Políticas ou métricas para uma política específica.
 
 [CAUTION]
 ====
@@ -29,7 +29,7 @@ Você precisa do Prometheus Operator. Siga xref:howtos/telemetry/30-metrics-qs.a
 === Crie os ServiceMonitors
 
 * Importe o manifesto para criar os ServiceMonitors.
-* Você precisa especificar o namespace de instalação do {short-project-name}
+* Você precisa especificar o namespace de instalação do {admc-short-name}
 
 Esses passos são uma adaptação das xref:howtos/telemetry/30-metrics-qs.adoc[instruções de métricas de telemetria].
 
@@ -108,4 +108,4 @@ Dentro da visualização de detalhes para um Servidor de Políticas ou uma Polí
 * Siga o aviso para criar o ConfigMap.
 * Recarregue a página para atualizar a visualização do Grafana (o Grafana pode demorar para confirmar o novo painel).
 
-Você deve ser capaz de visualizar as métricas para um Servidor de Políticas ou qualquer Política específica na página de detalhes de cada recurso respectivo. Você também pode visualizar os painéis {short-project-name} dentro da interface do Grafana, ou os eventos da interface do Prometheus.
+Você deve ser capaz de visualizar as métricas para um Servidor de Políticas ou qualquer Política específica na página de detalhes de cada recurso respectivo. Você também pode visualizar os painéis {admc-short-name} dentro da interface do Grafana, ou os eventos da interface do Prometheus.

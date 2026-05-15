@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Directivas de verificación de firmas
 :current-version: {page-origin-branch}
 
-{project-name} implementa soporte para el
+{admc-name} implementa soporte para el
 https://www.sigstore.dev/[Sigstore]
 proyecto.
 Esto permite implementar un "Sistema de Suministro Seguro" para tu clúster.
@@ -24,7 +24,7 @@ xref:/howtos/security-hardening/secure-supply-chain.adoc[cómo implementamos un 
 Las firmas de Sigstore se almacenan dentro de los registros de contenedores,
 junto al objeto OCI que se está firmando.
 Pueden ser una imagen de contenedor o un artefacto OCI más genérico,
-como una {short-project-name} directiva.
+como una {admc-short-name} directiva.
 Cuando un objeto es firmado,
 sus firmas se almacenan como capas de un objeto OCI creado por Sigstore.
 Las directivas que necesitan verificar las firmas de los contenedores deben comprobar esas capas,
@@ -32,11 +32,11 @@ y necesitan extraer las capas de firma para verificar las firmas mismas.
 
 Obtener y operar con esas capas OCI debe ocurrir fuera del invitado de WebAssembly (la directiva).
 Por lo tanto, esto lo realiza el tiempo de ejecución de WebAssembly,
-{short-project-name}'s `policy-server` o `kwctl`.
+{admc-short-name}'s `policy-server` o `kwctl`.
 
-Los diferentes SDK de lenguaje para directivas de {short-project-name} se encargan de esto.
+Los diferentes SDK de lenguaje para directivas de {admc-short-name} se encargan de esto.
 Proporcionan funciones para la verificación de imágenes de contenedor,
-{short-project-name} directivas, gráficos de Helm y otros tipos de artefactos OCI.
+{admc-short-name} directivas, gráficos de Helm y otros tipos de artefactos OCI.
 Esto asegura una vía de código segura y probada para la verificación.
 
 Extraer datos de un registro y verificar criptográficamente las firmas puede ser costoso en tiempo y recursos computacionales, por lo que el tiempo de ejecución de WebAssembly (PolicyServer, `kwctl`) asegura que tanto las extracciones de firmas como los cálculos de verificación estén en caché.
@@ -83,7 +83,7 @@ Ahora es responsabilidad de la directiva asegurar que los contenedores se instan
 
 == Un ejemplo
 
-El equipo de {short-project-name} https://github.com/kubewarden/verify-image-signatures[proporciona una directiva de verificador] que impone las firmas de Sigstore para todos los contenedores.
+El equipo de {admc-short-name} https://github.com/kubewarden/verify-image-signatures[proporciona una directiva de verificador] que impone las firmas de Sigstore para todos los contenedores.
 Está construido utilizando Rust y con el SDK de Rust.
 La directiva asegura que los contenedores estén firmados, y opcionalmente, muta las solicitudes. La mutación añade la suma de comprobación verificada a la etiqueta de la imagen.
 Consulta la documentación para más detalles.

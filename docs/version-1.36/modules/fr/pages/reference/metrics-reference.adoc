@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explorez les métriques et les modèles de cluster avec les métriques de plateforme exposées par {project-name} pour éclairer les processus de prise de décision.
+:description: Explorez les métriques et les modèles de cluster avec les métriques de plateforme exposées par {admc-name} pour éclairer les processus de prise de décision.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "télémétrie", "métriques", "référence"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name} expose des métriques de plateforme pertinentes permettant aux administrateurs de cluster et aux développeurs de politiques d'identifier des modèles et des problèmes potentiels.
+{admc-short-name} expose des métriques de plateforme pertinentes permettant aux administrateurs de cluster et aux développeurs de politiques d'identifier des modèles et des problèmes potentiels.
 
 == Serveur de politique
 

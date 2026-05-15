@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Crie uma nova política de validação para rejeitar nomes de host inválidos em objetos Pod por meio da configuração das definições da política, testada com as ferramentas fornecidas.
-:keywords: {project-name}, kubewarden, kubernetes, escrevendo políticas em TypeScript, nova política de validação
+:keywords: {admc-name}, kubewarden, kubernetes, escrevendo políticas em TypeScript, nova política de validação
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, escrevendo políticas, TypeScript, criando uma nova política de validação
+:doc-topic: {admc-name}, kubewarden, escrevendo políticas, TypeScript, criando uma nova política de validação
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 

@@ -3,19 +3,19 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erfahren Sie, wie Sie Zertifikate in Ihrem {project-name} rotieren können, ohne Ausfallzeit zu verursachen.
+:description: Erfahren Sie, wie Sie Zertifikate in Ihrem {admc-name} rotieren können, ohne Ausfallzeit zu verursachen.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["Erklärungen", "Zertifikate"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "Zertifikat", "Controller", "Abgleich"]
+:keywords: ["{admc-name}", "kubewarden", "Zertifikat", "Controller", "Abgleich"]
 :sidebar_label: Zertifikatsrotation
 :sidebar_position: 21
 
-{project-name} v1.17.0 hat die Abhängigkeit von cert-manager entfernt. Der Controller kann alle Zertifikate verwalten, die von allen Komponenten verwendet werden. Jetzt hat der Controller eine neue Abgleichschleife, die sicherstellt, dass die Zertifikate immer aktuell sind und die Webhook-Konfiguration korrekt ist.
+{admc-name} v1.17.0 hat die Abhängigkeit von cert-manager entfernt. Der Controller kann alle Zertifikate verwalten, die von allen Komponenten verwendet werden. Jetzt hat der Controller eine neue Abgleichschleife, die sicherstellt, dass die Zertifikate immer aktuell sind und die Webhook-Konfiguration korrekt ist.
 
-Die Helm-Chart-Installation führt die erste Zertifikatserstellung durch. Es generiert die Root-CA mit einer Gültigkeit von zehn Jahren. Die Helm-Chart-Installation generiert auch das Webserver-Zertifikat des Controller-Webhooks, das von der Root-CA signiert ist. Der API-Server verwendet dies, um mit dem {short-project-name} Controller zu kommunizieren, um die CRDs zu validieren. Es hat eine Laufzeit von einem Jahr.
+Die Helm-Chart-Installation führt die erste Zertifikatserstellung durch. Es generiert die Root-CA mit einer Gültigkeit von zehn Jahren. Die Helm-Chart-Installation generiert auch das Webserver-Zertifikat des Controller-Webhooks, das von der Root-CA signiert ist. Der API-Server verwendet dies, um mit dem {admc-short-name} Controller zu kommunizieren, um die CRDs zu validieren. Es hat eine Laufzeit von einem Jahr.
 
-Sobald der Controller startet, erneuert sein Abgleicher die Zertifikate automatisch, wenn sie kurz vor dem Ablauf stehen. Er aktualisiert auch alle Zertifikate und Webhook-Konfigurationen, die vom gesamten {short-project-name} Stack verwendet werden.
+Sobald der Controller startet, erneuert sein Abgleicher die Zertifikate automatisch, wenn sie kurz vor dem Ablauf stehen. Er aktualisiert auch alle Zertifikate und Webhook-Konfigurationen, die vom gesamten {admc-short-name} Stack verwendet werden.
 
 [NOTE]
 ====

@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= Contribuindo para a {short-project-name} documentação de
+= Contribuindo para a {admc-short-name} documentação de
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Contribua para a {project-name} documentação de através de melhorias no conteúdo existente, criação de novos tópicos e assistência com tradução.
+:description: Contribua para a {admc-name} documentação de através de melhorias no conteúdo existente, criação de novos tópicos e assistência com tradução.
 :doc-persona: ["kubewarden-developer", "kubewarden-operator", "kubewarden-manager"]
 :doc-topic: ["contribution-guide", "docs-contribution"]
 :doc-type: ["howto"]
@@ -12,9 +12,9 @@ include::partial$variables.adoc[]
 :sidebar_position: 2
 :current-version: {page-origin-branch}
 
-_{short-project-name} acolhe sugestões de melhoria de todos os colaboradores, sejam novos ou experientes._
+_{admc-short-name} acolhe sugestões de melhoria de todos os colaboradores, sejam novos ou experientes._
 
-Você pode contribuir para a {short-project-name} documentação de das seguintes formas:
+Você pode contribuir para a {admc-short-name} documentação de das seguintes formas:
 
 * Melhorar o conteúdo existente
 * Criar novo conteúdo

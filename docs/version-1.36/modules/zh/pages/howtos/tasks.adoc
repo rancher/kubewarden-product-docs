@@ -4,27 +4,27 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用 {project-name} 和 kwctl CLI 工具管理 Kubernetes 集群中的策略。
+:description: 使用 {admc-name} 和 kwctl CLI 工具管理 Kubernetes 集群中的策略。
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :current-version: {page-origin-branch}
 
-这描述了在您 xref:quick-start.adoc#installation[安装 {project-name}] 后在 Kubernetes 集群中常见的任务。
+这描述了在您 xref:quick-start.adoc#installation[安装 {admc-name}] 后在 Kubernetes 集群中常见的任务。
 
 这些单独的任务是按逻辑顺序排列的。
 
 == 测试策略
 
-{short-project-name} 使用两个工具来帮助您查找策略并在本地测试它们：
+{admc-short-name} 使用两个工具来帮助您查找策略并在本地测试它们：
 
-* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub]，使用他们针对 {short-project-name} 策略的软件包过滤器
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub]，使用他们针对 {admc-short-name} 策略的软件包过滤器
 * https://github.com/kubewarden/kwctl[`kwctl`]，一个 CLI 工具
 
 === Artifact hub
 
-Artifact hub 托管社区贡献的策略。例如，您可以找到由 {short-project-name} 开发者创建的 https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[已弃用的 Kubernetes Pod 安全策略] 的替代品。
+Artifact hub 托管社区贡献的策略。例如，您可以找到由 {admc-short-name} 开发者创建的 https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[已弃用的 Kubernetes Pod 安全策略] 的替代品。
 
 如下面的截图所示，一旦您找到感兴趣的策略，选择 `Install` 按钮并使用 `kwctl` 获取您集群的策略。
 
@@ -33,7 +33,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 [NOTE]
 ====
 
-以前，{short-project-name} 策略可以在 https://hub.kubewarden.io[{short-project-name} 策略中心] 找到。这已经被 https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[退役]。
+以前，{admc-short-name} 策略可以在 https://hub.kubewarden.io[{admc-short-name} 策略中心] 找到。这已经被 https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[退役]。
 现在可以从 https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io] 获取策略。
 
 ====
@@ -41,7 +41,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 
 === `kwctl` CLI 工具
 
-`kwctl` 是 {short-project-name} 的 CLI 工具，供策略作者和集群管理员在应用于 Kubernetes 集群之前测试策略。
+`kwctl` 是 {admc-short-name} 的 CLI 工具，供策略作者和集群管理员在应用于 Kubernetes 集群之前测试策略。
 
 该工具的界面与 `docker` CLI 工具类似。
 
@@ -74,8 +74,8 @@ _作为集群管理员_
 ----
 $ kwctl --help
 kwctl 0.2.5
-{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage {short-project-name} policies
+{admc-short-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {admc-short-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -86,18 +86,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add {short-project-name} metadata to a WebAssembly module
+    annotate       Add {admc-short-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect {short-project-name} policy
+    inspect        Inspect {admc-short-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a {short-project-name} policy from a given URI
-    push           Pushes a {short-project-name} policy to an OCI registry
-    rm             Removes a {short-project-name} policy from the store
-    run            Runs a {short-project-name} policy from a given URI
+    pull           Pulls a {admc-short-name} policy from a given URI
+    push           Pushes a {admc-short-name} policy to an OCI registry
+    rm             Removes a {admc-short-name} policy from the store
+    run            Runs a {admc-short-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+    verify         Verify a {admc-short-name} policy from a given URI using Sigstore
 ----
 
 以下是一些命令使用示例：
@@ -261,5 +261,5 @@ clusteradmissionpolicy.policies.kubewarden.io/privileged-pods created
 
 == 后续步骤
 
-* xref:tutorials/writing-policies/index.adoc[编写策略] 解释了如何用不同的语言编写策略并生成 WebAssembly 二进制文件，以便它们可以被 {short-project-name} 使用。
+* xref:tutorials/writing-policies/index.adoc[编写策略] 解释了如何用不同的语言编写策略并生成 WebAssembly 二进制文件，以便它们可以被 {admc-short-name} 使用。
 * xref:../explanations/distributing-policies.adoc[分发策略] 解释了如何将策略发布到 https://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCI 注册表]。

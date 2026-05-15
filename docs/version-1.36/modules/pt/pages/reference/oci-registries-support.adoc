@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= Suporte ao registro OCI para {short-project-name}
+= Suporte ao registro OCI para {admc-short-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Distribua as políticas de {project-name} como artefatos OCI via registros regulares da Open Container Initiative (OCI).
+:description: Distribua as políticas de {admc-name} como artefatos OCI via registros regulares da Open Container Initiative (OCI).
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,17 +12,17 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-Você distribui suas políticas de {project-name} como
+Você distribui suas políticas de {admc-name} como
 https://opencontainers.org[Artefatos OCI]
 usando registros regulares da Open Container Initiative (OCI).
 
-{short-project-name} O armazenamento da política está ao lado das imagens de contêiner.
+{admc-short-name} O armazenamento da política está ao lado das imagens de contêiner.
 Elas não requerem configuração ou manutenção extra
 além da necessária para imagens de contêiner regulares.
 
 [NOTE]
 ====
-Você pode adicionar um registro que funcione com {short-project-name} ou
+Você pode adicionar um registro que funcione com {admc-short-name} ou
 corrigir quaisquer imprecisões do registro usando o
 botão "Editar esta página" na parte inferior da página
 ====
@@ -47,7 +47,7 @@ botão "Editar esta página" na parte inferior da página
 
 == Ferramentas que funcionam com registros OCI
 
-O {short-project-name} projeto recomenda:
+O {admc-short-name} projeto recomenda:
 
 * https://github.com/kubewarden/kwctl[`kwctl`] (nossa ferramenta CLI).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
@@ -57,7 +57,7 @@ O {short-project-name} projeto recomenda:
 
 === Docker Hub
 
-Atualmente, o Docker Hub não suporta artefatos OCI, portanto não pode ser usado para armazenar {short-project-name} políticas.
+Atualmente, o Docker Hub não suporta artefatos OCI, portanto não pode ser usado para armazenar {admc-short-name} políticas.
 A Docker Inc. anunciou que o Docker Hub suportará artefatos OCI no https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[futuro].
 
 === JFrog

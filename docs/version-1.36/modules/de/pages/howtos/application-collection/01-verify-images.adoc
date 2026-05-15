@@ -7,11 +7,11 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher", "installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "rancher", "anwendungssammlung", "appco", "signatur", "überprüfung", "verifizieren"]
+:keywords: ["{admc-name}", "rancher", "anwendungssammlung", "appco", "signatur", "überprüfung", "verifizieren"]
 :sidebar_label: Bilder überprüfen
 :current-version: {page-origin-branch}
 
-Dieser Abschnitt beschreibt, wie man Anwendungen und Bilder aus der https://apps.rancher.io/[Rancher-Anwendungssammlung] mit {project-name} überprüft.
+Dieser Abschnitt beschreibt, wie man Anwendungen und Bilder aus der https://apps.rancher.io/[Rancher-Anwendungssammlung] mit {admc-name} überprüft.
 
 Sie führen die Bildüberprüfung durch, indem Sie die https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[Bildsignaturen überprüfen]-Richtlinie bereitstellen und die PolicyServer so konfigurieren, dass sie die Signaturschichten der Bilder aus der Anwendungssammlung abrufen.
 

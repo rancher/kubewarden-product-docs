@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Aprende a escribir y ejecutar pruebas de extremo a extremo completas para el comportamiento de la directiva utilizando BATS y kwctl.
-:keywords: "{project-name}", kubewarden, kubernetes, pruebas de políticas, typescript, pruebas e2e
+:keywords: "{admc-name}", kubewarden, kubernetes, pruebas de políticas, typescript, pruebas e2e
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, escritura-de-políticas, typescript, pruebas-de-extremo-a-extremo
+:doc-topic: {admc-name}, kubewarden, escritura-de-políticas, typescript, pruebas-de-extremo-a-extremo
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ Esta sección muestra cómo puedes escribir pruebas de extremo a extremo ejecut�
 Recuerda, necesitas estas herramientas en tu máquina de desarrollo:
 
 * `bats`: Utilizado para escribir las pruebas y automatizar su ejecución.
-* `kwctl` >= v1.30: Herramienta CLI proporcionada por {project-name} para ejecutar su directiva fuera de Kubernetes, entre otras acciones. Está cubierto en xref:/tutorials/testing-policies/index.adoc[la sección de pruebas de directivas] de la documentación.
+* `kwctl` >= v1.30: Herramienta CLI proporcionada por {admc-name} para ejecutar su directiva fuera de Kubernetes, entre otras acciones. Está cubierto en xref:/tutorials/testing-policies/index.adoc[la sección de pruebas de directivas] de la documentación.
 
 == Escribiendo pruebas
 
@@ -252,9 +252,9 @@ Las declaraciones `echo "output = $\{output}"` en cada prueba ayudan con la depu
 
 == Conclusión
 
-Las pruebas de extremo a extremo proporcionan una cobertura completa del comportamiento de la directiva al probar contra el binario de WebAssembly real. Esto asegura que la directiva funcione correctamente cuando se despliega en {short-project-name}, no solo en el entorno de desarrollo de TypeScript.
+Las pruebas de extremo a extremo proporcionan una cobertura completa del comportamiento de la directiva al probar contra el binario de WebAssembly real. Esto asegura que la directiva funcione correctamente cuando se despliega en {admc-short-name}, no solo en el entorno de desarrollo de TypeScript.
 
 [TIP]
 ====
-Para ejemplos más completos de pruebas de extremo a extremo, puedes explorar el https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[código fuente de policy-sdk-js], que incluye extensas pruebas e2e que demuestran cada una de las capacidades de host de {short-project-name}. Estas pruebas pueden servir de inspiración para probar características de directiva más avanzadas, como redes, operaciones criptográficas e interacciones con el registro OCI.
+Para ejemplos más completos de pruebas de extremo a extremo, puedes explorar el https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[código fuente de policy-sdk-js], que incluye extensas pruebas e2e que demuestran cada una de las capacidades de host de {admc-short-name}. Estas pruebas pueden servir de inspiración para probar características de directiva más avanzadas, como redes, operaciones criptográficas e interacciones con el registro OCI.
 ====

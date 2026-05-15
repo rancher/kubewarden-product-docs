@@ -15,7 +15,7 @@ Le `policy-server` a la capacité d'exposer des informations sur le cluster aux 
 
 Le serveur de stratégies hébergeant la stratégie récupère les ressources Kubernetes. Les règles RBAC appliquées au compte de service du serveur de stratégies régulent l'accès à Kubernetes.
 
-Le serveur de stratégies `default` déployé par les charts Helm {project-name} a accès aux ressources Kubernetes suivantes :
+Le serveur de stratégies `default` déployé par les charts Helm {admc-name} a accès aux ressources Kubernetes suivantes :
 
 * Espaces de noms
 * Services
@@ -41,23 +41,23 @@ Le serveur de stratégies effectue la mise en cache des résultats obtenus à pa
 
 | Rego
 | ✅
-| Depuis la version {short-project-name} 1.9
+| Depuis la version {admc-short-name} 1.9
 
 | WASI
 | ✅
-| Depuis la version {short-project-name} 1.10.0, uniquement pour le SDK Go
+| Depuis la version {admc-short-name} 1.10.0, uniquement pour le SDK Go
 |===
 
 == Contraintes
 
-La priorité de {short-project-name} est de réduire le nombre de requêtes contre le serveur API Kubernetes. {short-project-name} considère deux contraintes :
+La priorité de {admc-short-name} est de réduire le nombre de requêtes contre le serveur API Kubernetes. {admc-short-name} considère deux contraintes :
 
 * Utilisation de la mémoire : Le processus du serveur de stratégies met en cache les données récupérées de Kubernetes en mémoire. Plus les données récupérées sont nombreuses, plus les Pods du serveur de stratégies consomment de la mémoire.
 * Cohérence : Le cache conservé par le serveur de stratégies pourrait contenir des données obsolètes. De nouvelles ressources pourraient manquer, des ressources supprimées pourraient encore être disponibles et celles modifiées pourraient avoir des données anciennes. Cela pourrait affecter l'évaluation des stratégies.
 
 === Lister plusieurs ressources
 
-Les stratégies de {short-project-name} peuvent récupérer plusieurs ressources en même temps. Par exemple, elles peuvent effectuer une requête comme « récupérer tous les Pods définis dans l'espace de noms `default` qui ont l'étiquette `color` définie sur ``green`` ».
+Les stratégies de {admc-short-name} peuvent récupérer plusieurs ressources en même temps. Par exemple, elles peuvent effectuer une requête comme « récupérer tous les Pods définis dans l'espace de noms `default` qui ont l'étiquette `color` définie sur ``green`` ».
 
 Avec une telle requête, le serveur de stratégies récupère toutes les ressources correspondant aux critères de l'utilisateur. La récupération des ressources se fait par lots pour réduire la charge sur le serveur API Kubernetes. Avant de stocker les ressources en mémoire, le serveur de stratégies supprime l'attribut `managedFields` de chaque ressource pour réduire la quantité de mémoire consommée. Cet attribut n'est pas utile pour les stratégies et prend une quantité significative de mémoire.
 
@@ -68,11 +68,11 @@ Enfin, le code actuel présente la limitation suivante. Étant donné ces deux r
 * `kubectl get pods -n default`
 * `kubectl get pods -n default -l color=green`
 
-Le serveur de stratégies crée deux watches et duplique tous les Pods de la deuxième requête. Cette limitation sera supprimée dans les futures versions de {short-project-name}.
+Le serveur de stratégies crée deux watches et duplique tous les Pods de la deuxième requête. Cette limitation sera supprimée dans les futures versions de {admc-short-name}.
 
 === Récupérer une ressource spécifique
 
-Les stratégies de {short-project-name} peuvent obtenir une ressource spécifique définie à l'intérieur du cluster.
+Les stratégies de {admc-short-name} peuvent obtenir une ressource spécifique définie à l'intérieur du cluster.
 Par exemple, elles peuvent effectuer une requête comme "obtenir le Pod nommé `psql-0` défini à l'intérieur de l'espace de noms `db`."
 
 Par défaut, cette requête récupère l'objet et le stocke dans un cache en mémoire pendant cinq secondes. Pendant ces cinq secondes, les stratégies reçoivent des données mises en cache.
@@ -80,7 +80,7 @@ Par défaut, cette requête récupère l'objet et le stocke dans un cache en mé
 L'auteur de la stratégie peut également décider de faire une requête directe, en contournant le cache.
 Des données fraîches sont toujours fournies. Cela entraîne une charge supplémentaire sur le serveur API Kubernetes (en fonction de la fréquence de déclenchement des stratégies) et introduit plus de latence lors de l'évaluation d'une demande d'admission.
 
-Le comportement de requête directe ou mise en cache est configuré au niveau de chaque requête par l'auteur de la stratégie utilisant les SDK {short-project-name}.
+Le comportement de requête directe ou mise en cache est configuré au niveau de chaque requête par l'auteur de la stratégie utilisant les SDK {admc-short-name}.
 
 == ClusterAdmissionPolicies
 

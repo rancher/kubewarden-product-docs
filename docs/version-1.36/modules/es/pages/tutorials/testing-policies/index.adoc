@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprende a crear y probar {project-name} directivas con {project-name} para una gestión segura del clúster.
+:description: Aprende a crear y probar {admc-name} directivas con {admc-name} para una gestión segura del clúster.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "introduction"]
 :doc-type: ["tutorial"]
@@ -13,11 +13,11 @@ include::partial$variables.adoc[]
 
 == Personas de pruebas de directivas
 
-Esta sección cubre el tema de probar {project-name} Directivas.
+Esta sección cubre el tema de probar {admc-name} Directivas.
 Hay dos personas interesadas en probar directivas:
 
-* *Desarrollador de directivas*: estás escribiendo una {short-project-name} Directiva y quieres asegurarte de que tu código se comporta como esperas.
-* *Operador de clúster*: encontraste una {short-project-name} Directiva y quieres probar y ajustar la configuración de la directiva antes de desplegarla.
+* *Desarrollador de directivas*: estás escribiendo una {admc-short-name} Directiva y quieres asegurarte de que tu código se comporta como esperas.
+* *Operador de clúster*: encontraste una {admc-short-name} Directiva y quieres probar y ajustar la configuración de la directiva antes de desplegarla.
 Quieres seguir probando estas configuraciones en tus pipelines de CI/CD y otras tareas administrativas.
 
-Las siguientes secciones de la documentación muestran cómo estas personas pueden probar {short-project-name} directivas.
+Las siguientes secciones de la documentación muestran cómo estas personas pueden probar {admc-short-name} directivas.

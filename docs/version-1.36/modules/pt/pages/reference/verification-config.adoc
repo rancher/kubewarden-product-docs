@@ -31,7 +31,7 @@ A configuração possui 2 chaves raiz:
 Essas duas chaves raiz aceitam um array de chaves do tipo `kind`. Uma lista completa de chaves aceitas com base em diferentes casos de uso está abaixo:
 
 * `pubKey`: Para assinaturas realizadas com criptografia tradicional de chave pública/privada.
-* `githubAction`: Para assinaturas realizadas com o fluxo de trabalho sem chave do Sigstore dentro do GitHub Actions. {short-project-name} verifica essas informações contra a extensão do certificado x509 `workflow_repository` criada pelo OpenID Connect do GitHub, e não apenas o `issuer` e `subject`. Você deve usar este `kind` se estiver lidando com o GitHub Actions.
+* `githubAction`: Para assinaturas realizadas com o fluxo de trabalho sem chave do Sigstore dentro do GitHub Actions. {admc-short-name} verifica essas informações contra a extensão do certificado x509 `workflow_repository` criada pelo OpenID Connect do GitHub, e não apenas o `issuer` e `subject`. Você deve usar este `kind` se estiver lidando com o GitHub Actions.
 * `genericIssuer`: Para assinaturas realizadas com o fluxo de trabalho sem chave do Sigstore, onde o usuário precisa validar o certificado `issuer` e `subject` por conta própria. Aceita um `subject`, que pode ser:
 
 ** `equal`: O valor passado aqui deve corresponder exatamente ao `subject` no certificado de assinatura.
@@ -225,7 +225,7 @@ Por exemplo, o último trecho, usando `genericIssuer`, poderia ser reescrito com
 Todos os tipos de assinatura podem ter outros campos de validação opcionais, `annotations`.
 Esses campos são dados chave/valor adicionados durante o processo de assinatura.
 
-Com {short-project-name}, você pode verificar se a assinatura da política provém de usuários confiáveis e possui anotações específicas.
+Com {admc-short-name}, você pode verificar se a assinatura da política provém de usuários confiáveis e possui anotações específicas.
 
 A próxima validação verifica duas condições para a política:
 
@@ -265,7 +265,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-Este último exemplo testa se uma determinada política veio da organização {short-project-name}:
+Este último exemplo testa se uma determinada política veio da organização {admc-short-name}:
 
 [subs="+attributes",console]
 ----

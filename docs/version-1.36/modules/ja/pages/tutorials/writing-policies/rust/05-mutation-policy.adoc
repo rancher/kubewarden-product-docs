@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: カスタムアノテーションで受信オブジェクトをミューテートする新しい {project-name} ミューテーションポリシーを設定し、テストします。
+:description: カスタムアノテーションで受信オブジェクトをミューテートする新しい {admc-name} ミューテーションポリシーを設定し、テストします。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
 :doc-type: ["tutorial"]
@@ -19,7 +19,7 @@ include::partial$variables.adoc[]
 * 受信オブジェクトを変更せずにリクエストを受け入れる
 * 必要に応じて受信オブジェクトを変更し、リクエストを受け入れる
 
-{project-name} ミューテーションポリシーの作成は簡単です。
+{admc-name} ミューテーションポリシーの作成は簡単です。
 前のセクションで作成したバリデーションポリシーを使用し、いくつかの変更を加えて、ミューテーションポリシーに変えます。
 
 あなたのポリシーは、以前に定義されたのと同じバリデーションロジックを使用しますが、有効な名前を持つすべてのポッドにアノテーションを追加します。

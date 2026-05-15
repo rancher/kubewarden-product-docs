@@ -4,13 +4,13 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure o {project-name} para enviar dados de telemetria de forma segura para um coletor OpenTelemetry personalizado implantado dentro do cluster.
+:description: Configure o {admc-name} para enviar dados de telemetria de forma segura para um coletor OpenTelemetry personalizado implantado dentro do cluster.
 :keywords: kubewarden, kubernetes, métricas, rastreamento, opentelemetry
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: manual-do-operador, telemetria, métricas, início rápido
 
-Este guia explica como configurar o {short-project-name} para enviar dados de telemetria para um coletor OpenTelemetry já implantado no cluster.
+Este guia explica como configurar o {admc-short-name} para enviar dados de telemetria para um coletor OpenTelemetry já implantado no cluster.
 
 Você deve implantar apenas uma instância do https://opentelemetry.io/docs/collector/[Coletor OpenTelemetry] no cluster.
 
@@ -18,11 +18,11 @@ Você deve implantar apenas uma instância do https://opentelemetry.io/docs/coll
 
 Primeiro, comece instalando as dependências do Coletor OpenTelemetry.
 
-Você precisa de comunicação criptografada entre os componentes do {project-name} e o coletor. Você pode usar https://cert-manager.io/[cert-manager] para gerenciar todos os certificados necessários para comunicação segura.
+Você precisa de comunicação criptografada entre os componentes do {admc-name} e o coletor. Você pode usar https://cert-manager.io/[cert-manager] para gerenciar todos os certificados necessários para comunicação segura.
 
 Os traços do Coletor OpenTelemetry são enviados para uma instância do https://www.jaegertracing.io/[Jaeger].
 
-A pilha do {short-project-name} envia métricas para o Coletor OpenTelemetry.
+A pilha do {admc-short-name} envia métricas para o Coletor OpenTelemetry.
 Este expõe as métricas como um endpoint Prometheus. As métricas são então coletadas por uma instância do Prometheus e armazenadas em seu banco de dados. A mesma instância do Prometheus também expõe uma interface para visualizar e usar as métricas.
 
 Os recursos que você cria são definidos no Namespace `kubewarden` e pressupõem a sua existência. Devido a isso, você deve começar criando o Namespace:
@@ -55,7 +55,7 @@ helm install --wait \
   my-opentelemetry-operator open-telemetry/opentelemetry-operator
 ----
 
-Você configura a comunicação entre os componentes {short-project-name} e o Coletor OpenTelemetry usando mTLS.
+Você configura a comunicação entre os componentes {admc-short-name} e o Coletor OpenTelemetry usando mTLS.
 
 Para fazer isso, você precisa criar toda a Infraestrutura de Chave Pública (PKI):
 
@@ -183,7 +183,7 @@ helm install --wait --create-namespace \
 [NOTE]
 ====
 
-O monitor de serviço do Prometheus obtém as métricas {short-project-name} raspando o coletor OpenTelemetry em execução no `kubewarden` Namespace.
+O monitor de serviço do Prometheus obtém as métricas {admc-short-name} raspando o coletor OpenTelemetry em execução no `kubewarden` Namespace.
 
 ====
 
@@ -253,13 +253,13 @@ kubectl apply -f otel-collector.yaml
 
 Essa configuração usa um pipeline de processamento trivial para receber eventos de rastreamento e encaminhá-los para o Jaeger. Ele também recebe métricas e as expõe para coleta pelo Prometheus.
 
-Você protege a comunicação entre a pilha {short-project-name} e o Coletor OpenTelemetry usando mTLS. No entanto, a comunicação entre o Coletor OpenTelemetry e o Jaeger não está segura, para reduzir a complexidade do exemplo.
+Você protege a comunicação entre a pilha {admc-short-name} e o Coletor OpenTelemetry usando mTLS. No entanto, a comunicação entre o Coletor OpenTelemetry e o Jaeger não está segura, para reduzir a complexidade do exemplo.
 
-== Instale a pilha {short-project-name}
+== Instale a pilha {admc-short-name}
 
-Quando o Coletor OpenTelemetry estiver em execução, você pode implantar {short-project-name} da maneira usual.
+Quando o Coletor OpenTelemetry estiver em execução, você pode implantar {admc-short-name} da maneira usual.
 
-Você precisa configurar os componentes {short-project-name} para que eles enviem eventos e métricas para o OpenTelemetry Collector.
+Você precisa configurar os componentes {admc-short-name} para que eles enviem eventos e métricas para o OpenTelemetry Collector.
 
 [source,yaml]
 ----
@@ -277,11 +277,11 @@ telemetry:
 
 O Secret referenciado pela chave `otelCollectorCertificateSecret` deve ter uma entrada chamada `ca.crt`. Isso contém o certificado da CA que emitiu o certificado usado pelo OpenTelemetry Collector.
 
-O Secret referenciado pela chave `otelCollectorClientCertificateSecret` deve ter as seguintes entradas: as chaves `tls.crt` e `tls.key`. Esses são o certificado do cliente e sua chave usados pela pilha {short-project-name} para se autenticar contra o OpenTelemetry Collector.
+O Secret referenciado pela chave `otelCollectorClientCertificateSecret` deve ter as seguintes entradas: as chaves `tls.crt` e `tls.key`. Esses são o certificado do cliente e sua chave usados pela pilha {admc-short-name} para se autenticar contra o OpenTelemetry Collector.
 
 Deixe esses valores vazios se você não usar criptografia ou mTLS.
 
-Instale a pilha {short-project-name}:
+Instale a pilha {admc-short-name}:
 
 [source,console]
 ----
@@ -305,7 +305,7 @@ Agora tudo está em ordem.
 
 == Explorando a interface do Jaeger
 
-Você pode ver os eventos de rastreamento gerados por {short-project-name} usando a interface web do Jaeger. Eles estão agrupados sob o serviço `kubewarden-policy-server`:
+Você pode ver os eventos de rastreamento gerados por {admc-short-name} usando a interface web do Jaeger. Eles estão agrupados sob o serviço `kubewarden-policy-server`:
 
 image::jaeger-custom-otel-collector.png[O painel do Jaeger]
 

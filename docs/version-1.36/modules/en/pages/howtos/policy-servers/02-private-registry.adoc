@@ -2,13 +2,13 @@ include::partial$variables.adoc[]
 
 = Configuring PolicyServers to use private registries
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
 :description: Configure PolicyServers to use private registries by creating a Docker configuration secret and configuring the spec.imagePullSecret field in the configuration.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "private-registry"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
 :current-version: {page-origin-branch}
 
 It's possible to configure PolicyServers to use credentials of private OCI

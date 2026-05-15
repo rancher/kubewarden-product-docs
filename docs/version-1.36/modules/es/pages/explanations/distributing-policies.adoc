@@ -3,16 +3,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Distribuye directivas de forma segura a través de un registro compatible con OCI utilizando herramientas como kwctl, y asegura la seguridad del clúster mediante {project-name} la gestión de directivas.
+:description: Distribuye directivas de forma segura a través de un registro compatible con OCI utilizando herramientas como kwctl, y asegura la seguridad del clúster mediante {admc-name} la gestión de directivas.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:keywords: ["{admc-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-Las directivas {project-name} son binarios de WebAssembly (Wasm) evaluados por el servidor de directivas {short-project-name}.
+Las directivas {admc-name} son binarios de WebAssembly (Wasm) evaluados por el servidor de directivas {admc-short-name}.
 
-El servidor de directivas {short-project-name} carga directivas de estas fuentes:
+El servidor de directivas {admc-short-name} carga directivas de estas fuentes:
 
 * Sistema de archivos local
 * Servidor HTTP(s)
@@ -23,23 +23,23 @@ El servidor de directivas {short-project-name} carga directivas de estas fuentes
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Registro de contenedores de Google]
 
-{short-project-name} recomienda distribuir directivas {short-project-name} a través de un registro compatible con OCI. Los registros de contenedores son un requisito obligatorio para cualquier clúster de Kubernetes. Tener un único lugar para almacenar y asegurar todos los artefactos requeridos por un clúster es beneficioso.
+{admc-short-name} recomienda distribuir directivas {admc-short-name} a través de un registro compatible con OCI. Los registros de contenedores son un requisito obligatorio para cualquier clúster de Kubernetes. Tener un único lugar para almacenar y asegurar todos los artefactos requeridos por un clúster es beneficioso.
 
 == Subiendo directivas a un registro compatible con OCI
 
 El formato de imagen https://github.com/opencontainers/image-spec[OCI] permite almacenar cualquier blob binario dentro de un registro de contenedores compatible con OCI.
 
-El registro compatible con OCI *debe soportar artefactos* para poder enviar con éxito una {short-project-name} directiva a él.
+El registro compatible con OCI *debe soportar artefactos* para poder enviar con éxito una {admc-short-name} directiva a él.
 
-Puedes usar la CLI https://github.com/kubewarden/kwctl[`kwctl`] para enviar una {short-project-name} directiva a un registro compatible con OCI.
+Puedes usar la CLI https://github.com/kubewarden/kwctl[`kwctl`] para enviar una {admc-short-name} directiva a un registro compatible con OCI.
 
 == Anotando la directiva
 
-También anotas una directiva con `kwctl`. Anotar una directiva {short-project-name} se realiza añadiendo secciones personalizadas de Wasm al binario de la directiva. Esto significa que la directiva empaqueta su propia metadata.
+También anotas una directiva con `kwctl`. Anotar una directiva {admc-short-name} se realiza añadiendo secciones personalizadas de Wasm al binario de la directiva. Esto significa que la directiva empaqueta su propia metadata.
 
 El comando `kwctl annotate` requiere dos entradas:
 
-* la directiva {short-project-name} a anotar, un archivo local en el sistema de archivos.
+* la directiva {admc-short-name} a anotar, un archivo local en el sistema de archivos.
 * el archivo de anotaciones, un archivo que contiene una descripción en YAML de la metadata de la directiva.
 Este archivo suele estar ubicado en la carpeta raíz del proyecto de tu directiva.
 
@@ -155,5 +155,5 @@ $ kwctl push annotated-policy.wasm \
 
 Se desaconseja enviar directivas no anotadas. El servidor de directivas utiliza la metadata proporcionada por las anotaciones para ejecutar correctamente una directiva. Por defecto, `kwctl push` se niega a enviar tal directiva a un registro compatible con OCI. Si necesitas una directiva sin anotar, utiliza la opción `-&#x200D;-&#x200D;force` de `kwctl push`.
 
-Puedes hacer referencia a una directiva desde el Servidor de Directivas {short-project-name} o `kwctl` como
+Puedes hacer referencia a una directiva desde el Servidor de Directivas {admc-short-name} o `kwctl` como
 `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

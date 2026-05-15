@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Konfigurieren von PolicyServern zur Verwendung einer privaten Sigstore-Instanz
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:description: Konfigurieren von PolicyServern zur Verwendung einer privaten oder selbst gehosteten Sigstore-Instanz zur Überprüfung von Richtlinienunterschriften in {project-name}.
+:description: Konfigurieren von PolicyServern zur Verwendung einer privaten oder selbst gehosteten Sigstore-Instanz zur Überprüfung von Richtlinienunterschriften in {admc-name}.
 :keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-type: ["howto"]
@@ -52,7 +52,7 @@ kubectl get secret -o json -n tuf-system ctlog-public-key \
 .Sicherheitsüberlegung
 ====
 
-Stellen Sie sicher, dass Sie die Zertifikate und Schlüssel sicher von Ihrer Sigstore-Instanz herunterladen. Andernfalls könnten Sie {project-name} mit kompromittierten Daten konfigurieren.
+Stellen Sie sicher, dass Sie die Zertifikate und Schlüssel sicher von Ihrer Sigstore-Instanz herunterladen. Andernfalls könnten Sie {admc-name} mit kompromittierten Daten konfigurieren.
 
 Die obigen Befehle sind Beispiele dafür, wie man das in einer Testumgebung macht.
 Konsultieren Sie das entsprechende Team in Ihrer Organisation, um zu erfahren, wie Sie diese Informationen ordnungsgemäß erhalten.
@@ -156,7 +156,7 @@ kubectl --namespace kubewarden create configmap my-verification-config \
 
 [NOTE]
 ====
-Der ConfigMap-Schlüssel **muss** `verification-config` sein (nicht der Dateiname). {short-project-name} sucht nach diesem genauen Schlüssel.
+Der ConfigMap-Schlüssel **muss** `verification-config` sein (nicht der Dateiname). {admc-short-name} sucht nach diesem genauen Schlüssel.
 ====
 
 == Schritt 4 - Konfigurieren Sie den PolicyServer

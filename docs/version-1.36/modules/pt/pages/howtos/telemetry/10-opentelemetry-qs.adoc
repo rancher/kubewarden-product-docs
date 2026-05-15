@@ -13,19 +13,19 @@ include::partial$variables.adoc[]
 
 https://opentelemetry.io/[OpenTelemetry] é um framework da Cloud Native Computing Foundation (CNCF) para observabilidade. Ele permite que seus microserviços forneçam métricas, logs e rastreamentos.
 
-Os componentes de {project-name}, usando o SDK OpenTelemetry, relatam dados a um coletor OpenTelemetry — chamado de agente.
+Os componentes de {admc-name}, usando o SDK OpenTelemetry, relatam dados a um coletor OpenTelemetry — chamado de agente.
 
 Este guia explica como implantar o coletor OpenTelemetry em modo `sidecar` usando o gráfico Helm oficial do Kubernetes.
 
 Este é um padrão de implantação simples usando OpenTelemetry. A configuração final fica assim:
 
-* Cada Pod da pilha {short-project-name} (PolicyServer, Controlador) possui um sidecar OpenTelemetry.
-* O sidecar recebe informações de rastreamento e monitoramento do componente {short-project-name} via o Protocolo OpenTelemetry (OTLP)
+* Cada Pod da pilha {admc-short-name} (PolicyServer, Controlador) possui um sidecar OpenTelemetry.
+* O sidecar recebe informações de rastreamento e monitoramento do componente {admc-short-name} via o Protocolo OpenTelemetry (OTLP)
 * O coletor OpenTelemetry:
  ** Envia os eventos de rastreamento para uma instância central do Jaeger
  ** Expõe métricas do Prometheus em uma porta específica
 
-O gráfico Helm {short-project-name} não cobre todos os possíveis cenários de implantação do coletor OpenTelemetry. Também é possível configurar {short-project-name} para enviar dados a um coletor OpenTelemetry. A documentação para esse cenário está no xref:./40-custom-otel-collector.adoc[guia OpenTelemetry personalizado].
+O gráfico Helm {admc-short-name} não cobre todos os possíveis cenários de implantação do coletor OpenTelemetry. Também é possível configurar {admc-short-name} para enviar dados a um coletor OpenTelemetry. A documentação para esse cenário está no xref:./40-custom-otel-collector.adoc[guia OpenTelemetry personalizado].
 
 Primeiro, você implanta o OpenTelemetry em um cluster Kubernetes, para que possa usá-lo nas seções seguintes que abordam especificamente rastreamento e métricas.
 

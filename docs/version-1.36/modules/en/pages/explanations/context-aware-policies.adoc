@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "context-aware-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "context-aware policy", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "cluster administrator"]
+:keywords: ["{admc-name}", "kubewarden", "context-aware policy", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "cluster administrator"]
 :sidebar_label: Context aware policies
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -19,7 +19,7 @@ resources deployed in the cluster.
 
 [NOTE]
 ====
-Context aware policies are only available in {project-name} versions ≥ v1.6.0.
+Context aware policies are only available in {admc-name} versions ≥ v1.6.0.
 ====
 
 Control of which resources a policy can access in the cluster is by by the
@@ -55,7 +55,7 @@ xref:/howtos/policy-servers/06-namespaced-policies-capabilities.adoc[Controlling
 
 ====
 
-By default, {short-project-name} blocks all cluster resources. A {project-name} administrator
+By default, {admc-short-name} blocks all cluster resources. A {admc-name} administrator
 defines which Kubernetes resources each context aware policy can read.
 `contextAwareResources` to do this.
 
@@ -91,7 +91,7 @@ spec:
 Once deployed, this policy can read the data of the `deployment` and `pod` resources.
 
 Policy authors provide lists of Kubernetes resources for their context aware
-policy. Policy authors do this by annotating the policy. {project-name}
+policy. Policy authors do this by annotating the policy. {admc-name}
 administrators view policy metadata using the `kwctl inspect` command. They can
 get a list of resources the policy needs access to. An administrator uses this
 list to populate the `ClusterAdmissionPolicy` definition.
@@ -99,7 +99,7 @@ list to populate the `ClusterAdmissionPolicy` definition.
 [WARNING]
 ====
 
-To prevent system abuse, {project-name} administrators must review the resources
+To prevent system abuse, {admc-name} administrators must review the resources
 the policy accesses.
 
 For example, a policy evaluating ingress objects would have good reasons to

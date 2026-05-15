@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 :title: Migração de PodSecurityPolicy
-:description: Configure {project-name} políticas em seus clusters Kubernetes para obter controle granular sobre a configuração de políticas, substituindo PodSecurityPolicy (PSP).
+:description: Configure {admc-name} políticas em seus clusters Kubernetes para obter controle granular sobre a configuração de políticas, substituindo PodSecurityPolicy (PSP).
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "appvia", "psp", "política de segurança de pod"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "appvia", "psp", "política de segurança de pod"]
 :sidebar_label: Migração de PSP
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -15,13 +15,13 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 
 For Kubernetes ≥ v1.25.
-https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy] (PSP) foi removido. Agora você pode usar {project-name} para controle de admissão em seus clusters Kubernetes.
+https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy] (PSP) foi removido. Agora você pode usar {admc-name} para controle de admissão em seus clusters Kubernetes.
 
-{short-project-name} possui políticas separadas para alcançar o mesmo objetivo que uma configuração monolítica de PSP. Cada definição de política {short-project-name} funciona como uma seção de configuração diferente na especificação de um PSP. O mapeamento dos campos de configuração do PSP para suas respectivas políticas {short-project-name} está na <<_mapping_kubewarden_policies_to_psp_fields,tabela de mapeamento>> abaixo.
+{admc-short-name} possui políticas separadas para alcançar o mesmo objetivo que uma configuração monolítica de PSP. Cada definição de política {admc-short-name} funciona como uma seção de configuração diferente na especificação de um PSP. O mapeamento dos campos de configuração do PSP para suas respectivas políticas {admc-short-name} está na <<_mapping_kubewarden_policies_to_psp_fields,tabela de mapeamento>> abaixo.
 
-Com {short-project-name}, os operadores têm controle granular da configuração de políticas em seus clusters.
+Com {admc-short-name}, os operadores têm controle granular da configuração de políticas em seus clusters.
 
-Com uma instância de {short-project-name}, você pode implantar políticas para substituir o objeto `PodSecurityPolicy`. Consideramos essas regras neste exemplo:
+Com uma instância de {admc-short-name}, você pode implantar políticas para substituir o objeto `PodSecurityPolicy`. Consideramos essas regras neste exemplo:
 
 * uma PSP desabilitando a elevação de privilégios
 * containers privilegiados → contêineres privilegiados
@@ -62,10 +62,10 @@ spec:
 
 ======
 
-== Substituições de {short-project-name} para PSP
+== Substituições de {admc-short-name} para PSP
 
-Agora criaremos {short-project-name} políticas para alcançar o mesmo objetivo.
-Você aplica cada regra com uma política {short-project-name} separada.
+Agora criaremos {admc-short-name} políticas para alcançar o mesmo objetivo.
+Você aplica cada regra com uma política {admc-short-name} separada.
 Assim, neste exemplo, você precisa de uma política separada para a aplicação de cada um dos seguintes:
 
 * elevação de privilégios
@@ -465,12 +465,12 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 ======
 
-== Mapeando políticas {short-project-name} para campos PSP
+== Mapeando políticas {admc-short-name} para campos PSP
 
-Esta tabela mapeia os campos de configuração do PSP para as políticas {short-project-name} correspondentes.
+Esta tabela mapeia os campos de configuração do PSP para as políticas {admc-short-name} correspondentes.
 
 |===
-| Campo PSP | Política equivalente a {short-project-name}
+| Campo PSP | Política equivalente a {admc-short-name}
 
 | https://kubernetes.io/docs/concepts/security/pod-security-policy/#privileged[privilegiado]
 | https://github.com/kubewarden/pod-privileged-policy[política-pod-privilegiada]
@@ -547,18 +547,18 @@ Esta tabela mapeia os campos de configuração do PSP para as políticas {short-
 
 == Script de migração do PSP
 
-A equipe {short-project-name} desenvolveu um script para migração do PSP. Ele utiliza a ferramenta de migração do https://github.com/appvia/psp-migration[AppVia]. A ferramenta AppVia lê uma configuração YAML do PSP. Em seguida, gera as políticas correspondentes. Faz isso para {short-project-name} e outros mecanismos de política.
+A equipe {admc-short-name} desenvolveu um script para migração do PSP. Ele utiliza a ferramenta de migração do https://github.com/appvia/psp-migration[AppVia]. A ferramenta AppVia lê uma configuração YAML do PSP. Em seguida, gera as políticas correspondentes. Faz isso para {admc-short-name} e outros mecanismos de política.
 
 [CAUTION]
 ====
 
 A ferramenta de migração AppVia está fora do controle dos mantenedores do Kubewarden.
-Isso significa que é possível que ela gere políticas {short-project-name} desatualizadas. Use com cautela. Precisamos de um pull request para o AppVia, para o qual o trabalho está em andamento.
+Isso significa que é possível que ela gere políticas {admc-short-name} desatualizadas. Use com cautela. Precisamos de um pull request para o AppVia, para o qual o trabalho está em andamento.
 Entre em contato conosco para mais informações, se necessário.
 ====
 
 
-O script está disponível no repositório {short-project-name}https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]. Ele baixa a ferramenta de migração AppVia para o diretório de trabalho para uso. Ele processa os PSPs definidos no contexto padrão `kubectl`. Em seguida, imprime as definições das políticas do Kubewarden na saída padrão. Os usuários podem redirecionar o conteúdo para um arquivo ou para `kubectl` diretamente.
+O script está disponível no repositório {admc-short-name}https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]. Ele baixa a ferramenta de migração AppVia para o diretório de trabalho para uso. Ele processa os PSPs definidos no contexto padrão `kubectl`. Em seguida, imprime as definições das políticas do Kubewarden na saída padrão. Os usuários podem redirecionar o conteúdo para um arquivo ou para `kubectl` diretamente.
 
 [NOTE]
 ====
@@ -636,7 +636,7 @@ spec:
 
 ======
 
-{short-project-name} políticas podem ser aplicadas diretamente a um cluster usando o seguinte comando:
+{admc-short-name} políticas podem ser aplicadas diretamente a um cluster usando o seguinte comando:
 
 [subs="+attributes",shell]
 ----

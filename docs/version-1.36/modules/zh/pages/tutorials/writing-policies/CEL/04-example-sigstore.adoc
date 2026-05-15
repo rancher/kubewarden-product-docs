@@ -19,7 +19,7 @@ include::partial$variables.adoc[]
 
 在这种情况下，我们将检查在 GitHub Actions 中执行的 Sigstore 无密钥签名。这种无密钥签名与 GitHub 的 OIDC 发行者在创建加密证书时相关联，因此我们只需知道容器镜像发布所在的 GitHub 组织。您可以在 xref:reference/spec/host-capabilities/02-signature-verifier-policies.adoc[这里] 阅读有关 Sigstore 主机能力的更多信息。
 
-要在 CEL 中实现这一点，我们在策略中使用 https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{project-name} 的 CEL 扩展库]，特别是 https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[`githubAction` 函数]。
+要在 CEL 中实现这一点，我们在策略中使用 https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{admc-name} 的 CEL 扩展库]，特别是 https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[`githubAction` 函数]。
 
 和往常一样，我们可以从 `kwctl` 开始：
 

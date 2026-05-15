@@ -116,7 +116,7 @@ fn validate(payload: &[u8]) -> CallResult {
 
 最后，您可以创建单元测试来检查验证代码是否按预期工作。
 
-`lib.rs` 文件底部已经定义了测试，正如您所看到的，{short-project-name} 的 Rust SDK 也提供了测试助手。
+`lib.rs` 文件底部已经定义了测试，正如您所看到的，{admc-short-name} 的 Rust SDK 也提供了测试助手。
 
 此外，脚手架项目已经在 `test_data` 目录中提供了默认的 https://en.wikipedia.org/wiki/Test_fixture#Software[测试夹具]。您将使用这些记录的准入请求来编写单元测试。
 

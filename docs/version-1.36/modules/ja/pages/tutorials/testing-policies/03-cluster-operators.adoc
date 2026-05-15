@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
 :current-version: {page-origin-branch}
 
-Kubernetesクラスターオペレーターとして、使用したい{project-name}ポリシーのテストを行いたいと思うでしょう。
+Kubernetesクラスターオペレーターとして、使用したい{admc-name}ポリシーのテストを行いたいと思うでしょう。
 
 次のような質問があるでしょう：
 
@@ -21,12 +21,12 @@ Kubernetesクラスターオペレーターとして、使用したい{project-n
  ** ポリシーの設定パラメータを変更する場合？
  ** などなど？
 
-{short-project-name}には、Kubernetesの外部でポリシーのテストを許可するユーティリティ、https://github.com/kubewarden/kwctl[`kwctl`]があります。
+{admc-short-name}には、Kubernetesの外部でポリシーのテストを許可するユーティリティ、https://github.com/kubewarden/kwctl[`kwctl`]があります。
 
 `kwctl`を使用するには、次の入力で呼び出します：
 
 . 実行するポリシーのWebAssemblyバイナリファイルURI。
-{short-project-name}ポリシーは次の場所から読み込むことができます：
+{admc-short-name}ポリシーは次の場所から読み込むことができます：
  ** ローカルファイルシステム `file://`
  ** HTTP(S)サーバー `https://`
  ** OCIレジストリ `registry://`。

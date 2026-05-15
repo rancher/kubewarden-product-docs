@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 配置自定义证书颁发机构以便与{project-name}安装一起使用，以确保安全通信和身份验证。
+:description: 配置自定义证书颁发机构以便与{admc-name}安装一起使用，以确保安全通信和身份验证。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "custom-certificate-authorities"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "自定义证书颁发机构"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "自定义证书颁发机构"]
 :sidebar_label: 自定义证书颁发机构
 :sidebar_position: 50
 :current-version: {page-origin-branch}
@@ -17,7 +17,7 @@ include::partial$variables.adoc[]
 默认情况下，使用HTTPS和主机TLS验证。
 
 系统的证书颁发机构（CA）存储用于验证来自OCI注册表的受信任证书链。
-在标准的{project-name}安装中，`policy-server`使用随其 Linux Container 一起提供的CA存储。
+在标准的{admc-name}安装中，`policy-server`使用随其 Linux Container 一起提供的CA存储。
 在客户端，`kwctl`使用您的操作系统CA存储。
 
 如果您使用的是https://github.com/kubewarden/kubewarden-controller[Controller]，您可以通过其xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`字段]配置PolicyServer。

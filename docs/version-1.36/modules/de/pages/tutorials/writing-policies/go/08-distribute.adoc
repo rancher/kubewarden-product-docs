@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erfahren Sie, wie Sie Richtlinien verteilen und verwandte Informationen für {project-name} abrufen, einschließlich Konfigurationsdetails.
+:description: Erfahren Sie, wie Sie Richtlinien verteilen und verwandte Informationen für {admc-name} abrufen, einschließlich Konfigurationsdetails.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]
@@ -19,4 +19,4 @@ Während dieses Tutorials haben Sie die https://github.com/kubewarden/safe-label
 Es gibt nichts Besonderes zu tun, wenn es um die Verteilung einer Richtlinie geht.
 Wenn Sie dieser Anleitung gefolgt sind, haben Sie Ihre Richtlinie bereits mit der GitHub `release.yml` Aktion veröffentlicht, die im letzten Kapitel definiert ist.
 
-Das Thema der Verteilung von Richtlinien wird im Abschnitt xref:/explanations/distributing-policies.adoc["Richtlinien verteilen"] der Dokumentation von {project-name} ausführlicher behandelt.
+Das Thema der Verteilung von Richtlinien wird im Abschnitt xref:/explanations/distributing-policies.adoc["Richtlinien verteilen"] der Dokumentation von {admc-name} ausführlicher behandelt.

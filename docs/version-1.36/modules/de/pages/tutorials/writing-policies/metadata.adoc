@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "Kubernetes-Richtlinienentwicklung", "richtlinienmetadaten"]
 :current-version: {page-origin-branch}
 
-Die {project-name} Metadatendatei, `metadata.yaml`, ist eine Konfigurationsdatei, die wichtige Informationen und Einstellungen enthält, die sich auf die innerhalb von {short-project-name} verwendeten Richtlinien beziehen.
+Die {admc-name} Metadatendatei, `metadata.yaml`, ist eine Konfigurationsdatei, die wichtige Informationen und Einstellungen enthält, die sich auf die innerhalb von {admc-short-name} verwendeten Richtlinien beziehen.
 Diese Dokumentation bietet einen Überblick über den Zweck und die Verwendung der Metadatendatei.
 
 Die Richtliniendatei `metadata.yaml` hat Standardwerte für die Richtlinie sowie Metadaten wie Autor und Beschreibung, die vom Richtlinienautor festgelegt werden.

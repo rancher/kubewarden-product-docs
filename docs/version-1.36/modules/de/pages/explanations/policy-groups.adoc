@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-topic: ["Erklärungen", "Richtliniengruppe"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["{project-name}", "Kubewarden", "Richtliniengruppen", "clusteradmissionpolicygroup", "admissionpolicygroup"]
+:keywords: ["{admc-name}", "Kubewarden", "Richtliniengruppen", "clusteradmissionpolicygroup", "admissionpolicygroup"]
 :sidebar_label: Richtliniengruppen
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -85,7 +85,7 @@ Dieser Abschnitt behandelt die Hauptkonfigurationsfelder einer Richtliniengruppe
 
 === Das Attribut `policies`
 
-Das Feld für Richtlinien ist eine Zuordnung gewöhnlicher Richtlinien. {project-name} ruft Richtlinien durch die Richtliniengruppe auf, um zu bestimmen, ob die Ressource, die bewertet wird, akzeptiert oder abgelehnt wird. Die Definitionen dieser Richtlinien sind eine vereinfachte Version von gewöhnlichen {short-project-name} Richtlinien, die nur die Attribute `module`, `settings` und `contextAwareResources` enthalten. Diese Elemente sind notwendig, damit die Richtlinien innerhalb einer Richtliniengruppe funktionieren.
+Das Feld für Richtlinien ist eine Zuordnung gewöhnlicher Richtlinien. {admc-name} ruft Richtlinien durch die Richtliniengruppe auf, um zu bestimmen, ob die Ressource, die bewertet wird, akzeptiert oder abgelehnt wird. Die Definitionen dieser Richtlinien sind eine vereinfachte Version von gewöhnlichen {admc-short-name} Richtlinien, die nur die Attribute `module`, `settings` und `contextAwareResources` enthalten. Diese Elemente sind notwendig, damit die Richtlinien innerhalb einer Richtliniengruppe funktionieren.
 
 Ein einzigartiger Name identifiziert jede Richtlinie der Richtliniengruppe. Zum Beispiel definiert der folgende Ausschnitt drei Richtlinien: `signed_by_alice`, `signed_by_bob` und `reject_latest_tag`.
 

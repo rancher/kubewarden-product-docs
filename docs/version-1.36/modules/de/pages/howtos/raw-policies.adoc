@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie rohe Richtlinien als generische Richtlinienbewertungsmaschine mit {project-name}.
+:description: Konfigurieren Sie rohe Richtlinien als generische Richtlinienbewertungsmaschine mit {admc-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "rohe Richtlinien"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "support", "rohe Richtlinien"]
 :sidebar_label: Roh-Richtlinien
 :sidebar_position: 60
 :current-version: {page-origin-branch}
 
-Ab `v1.9.0` unterstützt {project-name} die Möglichkeit, Richtlinien außerhalb eines Kubernetes-Clusters zu schreiben und auszuführen, als generische Richtlinienbewertungsmaschine.
-Der Policy-Server stellt den `/validate_raw` Endpunkt zur Verfügung, der verwendet werden kann, um beliebige JSON-Dokumente gegen eine {short-project-name} Richtlinie zu validieren.
+Ab `v1.9.0` unterstützt {admc-name} die Möglichkeit, Richtlinien außerhalb eines Kubernetes-Clusters zu schreiben und auszuführen, als generische Richtlinienbewertungsmaschine.
+Der Policy-Server stellt den `/validate_raw` Endpunkt zur Verfügung, der verwendet werden kann, um beliebige JSON-Dokumente gegen eine {admc-short-name} Richtlinie zu validieren.
 
 Für diesen Leitfaden verwenden wir die folgenden rohen Richtlinien:
 
@@ -87,9 +87,9 @@ NOTE: Das Flag `--ignore-kubernetes-connection-failure=true` ist erforderlich, u
 Es ist jedoch möglich, den Policy-Server innerhalb von Kubernetes zu starten und den Endpunkt für die rohe Validierung zu verwenden.
 Rohe Richtlinien können kontextbewusste xref:../explanations/context-aware-policies.adoc[Fähigkeiten] wie Standardrichtlinien nutzen.
 
-== Ausführen eines Policy-Servers innerhalb von Kubernetes ohne den {short-project-name} Controller
+== Ausführen eines Policy-Servers innerhalb von Kubernetes ohne den {admc-short-name} Controller
 
-Es ist nicht möglich, eine vom {short-project-name} Controller verwaltete Policy-Server-Instanz zu verwenden, um rohe Richtlinien zu hosten.
+Es ist nicht möglich, eine vom {admc-short-name} Controller verwaltete Policy-Server-Instanz zu verwenden, um rohe Richtlinien zu hosten.
 Der Controller erlaubt es dem Benutzer nicht, die Policy Server ConfigMap zu ändern, um eine rohe Richtlinie hinzuzufügen, da er versuchen wird, sie zu reconciliieren und die Änderungen zurückzusetzen.
 Deshalb muss ein dedizierter Policy Server gestartet werden.
 
@@ -295,7 +295,7 @@ Die Anfrage wird verändert und die Antwort wird einen JSON Patch enthalten:
 
 == Roh-Richtlinien schreiben
 
-Ähnlich wie bei Richtlinien, die Kubernetes-Ressourcen validieren, werden rohe Richtlinien in WebAssembly unter Verwendung von {short-project-name} SDKs geschrieben.
+Ähnlich wie bei Richtlinien, die Kubernetes-Ressourcen validieren, werden rohe Richtlinien in WebAssembly unter Verwendung von {admc-short-name} SDKs geschrieben.
 Wenn Sie daran interessiert sind, rohe Richtlinien zu schreiben, beziehen Sie sich bitte auf die sprachspezifische Dokumentation für weitere Informationen:
 
 * xref:../tutorials/writing-policies/go/10-raw-policies.adoc[Weiter]

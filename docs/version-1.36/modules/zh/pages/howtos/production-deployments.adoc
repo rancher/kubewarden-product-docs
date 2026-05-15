@@ -1,36 +1,36 @@
 include::partial$variables.adoc[]
-= 为生产配置{project-name}堆栈
+= 为生产配置{admc-name}堆栈
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 为 Kubernetes 集群中的{project-name}堆栈配置容忍和亲和性规则，以实现最佳调度和可靠性。
-:keywords: ["{project-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
+:description: 为 Kubernetes 集群中的{admc-name}堆栈配置容忍和亲和性规则，以实现最佳调度和可靠性。
+:keywords: ["{admc-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: HOWTO
 :doc-topic: operator-manual, policy-servers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass
 
-{project-name}提供了在Kubernetes集群中确保其组件可靠性和正确调度的功能。本页面上的一些提示来自于大规模使用{short-project-name}的{short-project-name}社区成员。
+{admc-name}提供了在Kubernetes集群中确保其组件可靠性和正确调度的功能。本页面上的一些提示来自于大规模使用{admc-short-name}的{admc-short-name}社区成员。
 
 [IMPORTANT]
 ====
-如果您想查看在大规模环境中运行{short-project-name}的真实示例，请查看xref:/howtos/deploy-at-scale.adoc[{short-project-name}文档页面]。
+如果您想查看在大规模环境中运行{admc-short-name}的真实示例，请查看xref:/howtos/deploy-at-scale.adoc[{admc-short-name}文档页面]。
 
 ====
 
 == 配置容忍和亲和性/反亲和性
 
-通过使用`tolerations`和`affinity`字段，操作员可以微调{short-project-name}堆栈的调度和可靠性，以满足其特定的部署需求和约束。有关确切字段及其配置的更多详细信息，请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/[Kubernetes关于污点和容忍的文档]和https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[亲和性和反亲和性]。
+通过使用`tolerations`和`affinity`字段，操作员可以微调{admc-short-name}堆栈的调度和可靠性，以满足其特定的部署需求和约束。有关确切字段及其配置的更多详细信息，请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/[Kubernetes关于污点和容忍的文档]和https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[亲和性和反亲和性]。
 
-从{short-project-name}堆栈的1.15版本开始，{short-project-name} Helm图表附带两个新值：
+从{admc-short-name}堆栈的1.15版本开始，{admc-short-name} Helm图表附带两个新值：
 
 * `.global.tolerations`
 * `.global.affinity`
 
-这些Helm图表值允许用户为{short-project-name}堆栈定义Kubernetes容忍和亲和性/反亲和性设置，包括控制器部署、审计扫描器定时任务和默认的`PolicyServer`自定义资源。
+这些Helm图表值允许用户为{admc-short-name}堆栈定义Kubernetes容忍和亲和性/反亲和性设置，包括控制器部署、审计扫描器定时任务和默认的`PolicyServer`自定义资源。
 
 === 容忍
 
-`tolerations`值是一个数组，用户可以在其中为{short-project-name}组件指定Kubernetes容忍。容忍允许在具有匹配污点的节点上调度Pod。这对于管理Pod的调度位置非常有用，特别是在涉及节点维护、专用工作负载或特定硬件要求的场景中：
+`tolerations`值是一个数组，用户可以在其中为{admc-short-name}组件指定Kubernetes容忍。容忍允许在具有匹配污点的节点上调度Pod。这对于管理Pod的调度位置非常有用，特别是在涉及节点维护、专用工作负载或特定硬件要求的场景中：
 
 [source,yaml]
 ----
@@ -50,7 +50,7 @@ global:
 
 === 亲和性/反亲和性
 
-`affinity`值允许用户为{short-project-name}组件定义Kubernetes亲和性和反亲和性规则。亲和性规则将Pod限制在特定节点上，而反亲和性规则则防止Pod在某些节点上或与其他Pod靠近调度。这些设置对于确保集群的高可用性、容错性和优化资源使用非常有用。
+`affinity`值允许用户为{admc-short-name}组件定义Kubernetes亲和性和反亲和性规则。亲和性规则将Pod限制在特定节点上，而反亲和性规则则防止Pod在某些节点上或与其他Pod靠近调度。这些设置对于确保集群的高可用性、容错性和优化资源使用非常有用。
 
 [source,yaml]
 ----
@@ -103,18 +103,18 @@ global:
 
 在这个例子中，亲和性规则将应用于控制器部署、审计扫描器定时任务和默认的`PolicyServer`自定义资源。
 
-在`kubewarden-default` Helm图表中，此前用于为`PolicyServer`定义亲和性配置的选项现已被移除，取而代之的是全局的`affinity`值。此更改通过提供一种单一的方法来定义所有{short-project-name}组件的亲和性和反亲和性规则，从而简化了配置过程。
+在`kubewarden-default` Helm图表中，此前用于为`PolicyServer`定义亲和性配置的选项现已被移除，取而代之的是全局的`affinity`值。此更改通过提供一种单一的方法来定义所有{admc-short-name}组件的亲和性和反亲和性规则，从而简化了配置过程。
 
 [WARNING]
 ====
-`affinity`配置在`kubewarden-default` Helm图表中已被去除。用户现在应使用`.global.affinity`字段来配置整个{short-project-name}堆栈的亲和性和反亲和性设置。
+`affinity`配置在`kubewarden-default` Helm图表中已被去除。用户现在应使用`.global.affinity`字段来配置整个{admc-short-name}堆栈的亲和性和反亲和性设置。
 ====
 
 == 配置优先级类
 
-通过使用优先级类，操作员可以为{short-project-name}堆栈的工作负载Pod强制执行调度优先级。这确保了{short-project-name}工作负载在其他工作负载之上可用，防止驱逐并确保服务可靠性。有关更多信息，请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes关于优先级类的文档]。
+通过使用优先级类，操作员可以为{admc-short-name}堆栈的工作负载Pod强制执行调度优先级。这确保了{admc-short-name}工作负载在其他工作负载之上可用，防止驱逐并确保服务可靠性。有关更多信息，请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes关于优先级类的文档]。
 
-从{short-project-name}堆栈的版本1.25开始，{short-project-name} Helm图表附带一个新值：
+从{admc-short-name}堆栈的版本1.25开始，{admc-short-name} Helm图表附带一个新值：
 
 * `.global.priorityClassName`
 
@@ -146,11 +146,11 @@ Kubernetes已经附带了两个优先级类，它们是不错的候选者：`sys
 
 与其他动态准入控制器一样，此过程发生在请求到达Kubernetes API服务器之前。动态准入控制器的延迟或服务延迟可能会导致集群不一致、拒绝服务或死锁。
 
-{short-project-name}提供了几种方法来提高`PolicyServers`的可靠性。生产部署可能差异很大，具体配置取决于操作员的需求。
+{admc-short-name}提供了几种方法来提高`PolicyServers`的可靠性。生产部署可能差异很大，具体配置取决于操作员的需求。
 
 === PodDisruptionBudgets
 
-{short-project-name}控制器可以为`PolicyServer` Pods创建一个https://kubernetes.io/docs/tasks/run-application/configure-pdb/[PodDisruptionBudget]（PDB）。这控制与`PolicyServer`相关的`PolicyServer` Pod副本的范围，确保高可用性，并在节点维护、扩展操作或集群升级时进行受控驱逐。
+{admc-short-name}控制器可以为`PolicyServer` Pods创建一个https://kubernetes.io/docs/tasks/run-application/configure-pdb/[PodDisruptionBudget]（PDB）。这控制与`PolicyServer`相关的`PolicyServer` Pod副本的范围，确保高可用性，并在节点维护、扩展操作或集群升级时进行受控驱逐。
 
 通过设置`spec.minAvailable`或`spec.maxUnavailable`字段来配置`PolicyServer`资源，从而实现这一目标：
 
@@ -197,7 +197,7 @@ spec:
 
 === 亲和性/反亲和性
 
-{short-project-name}控制器可以设置`PolicyServer` Pods的亲和性。这允许将Pods约束到特定节点，或将Pods与其他Pods进行约束。有关亲和性的更多信息，请参见https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[Kubernetes文档]。
+{admc-short-name}控制器可以设置`PolicyServer` Pods的亲和性。这允许将Pods约束到特定节点，或将Pods与其他Pods进行约束。有关亲和性的更多信息，请参见https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[Kubernetes文档]。
 
 Kubernetes亲和性配置允许将 Pod 约束到节点（通过`spec.affinity.nodeAffinity`）或将 Pod 与其他 Pod 进行约束（通过`spec.affinity.podAffinity`）。亲和性可以设置为软约束（使用`preferredDuringSchedulingIgnoredDuringExecution`）或硬约束（使用`requiredDuringSchedulingIgnoredDuringExecution`）。
 
@@ -263,7 +263,7 @@ spec:
 
 === 限制和请求
 
-{short-project-name} 控制器可以设置 `PolicyServer` Pod 的资源限制和请求。这指定了与 `PolicyServer` Pod 相关的每个容器需要多少每种资源。对于 `PolicyServers`，只有 `cpu` 和 `memory` 资源是相关的。有关资源单位的更多信息，请参见 https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes[Kubernetes 文档]。
+{admc-short-name} 控制器可以设置 `PolicyServer` Pod 的资源限制和请求。这指定了与 `PolicyServer` Pod 相关的每个容器需要多少每种资源。对于 `PolicyServers`，只有 `cpu` 和 `memory` 资源是相关的。有关资源单位的更多信息，请参见 https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes[Kubernetes 文档]。
 
 通过设置以下 `PolicyServer` 资源字段来实现：
 
@@ -297,7 +297,7 @@ spec:
 
 === PriorityClasses
 
-{short-project-name} 控制器可以为 `PolicyServers` 的 Pod 设置 PriorityClass。这意味着 `PolicyServer` 工作负载将优先调度，防止驱逐并确保服务可靠性。请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes文档以获取更多信息]。
+{admc-short-name} 控制器可以为 `PolicyServers` 的 Pod 设置 PriorityClass。这意味着 `PolicyServer` 工作负载将优先调度，防止驱逐并确保服务可靠性。请参阅https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[Kubernetes文档以获取更多信息]。
 
 [WARNING]
 ====
@@ -331,7 +331,7 @@ spec:
 
 为了处理高流量并确保可用性，请提供足够的资源并扩展您的副本。
 
-* *分配足够的资源：*在高流量环境中，为每个副本分配充足的资源。不要让`PolicyServers`处于资源不足的状态，因为处理器或内存不足是请求超时的主要原因。请记住，`PolicyServers`将接收来自控制平面和{short-project-name}审计扫描器的请求。
+* *分配足够的资源：*在高流量环境中，为每个副本分配充足的资源。不要让`PolicyServers`处于资源不足的状态，因为处理器或内存不足是请求超时的主要原因。请记住，`PolicyServers`将接收来自控制平面和{admc-short-name}审计扫描器的请求。
 * *为高可用性进行扩展：*对于处理每秒数百个请求的部署，运行大量副本。这有效地分配了负载，并确保少数几个Pod的故障不会影响集群的操作。
 
 从3-5个副本的基线开始，并监控处理器和内存使用情况。根据需要扩展副本数量。

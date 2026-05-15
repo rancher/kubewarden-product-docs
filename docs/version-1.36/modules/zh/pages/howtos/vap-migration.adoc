@@ -3,22 +3,22 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 通过 kwctl 命令的迁移步骤将 ValidatingAdmissionPolicy 迁移到 {project-name}，以实现平滑的策略过渡。
+:description: 通过 kwctl 命令的迁移步骤将 ValidatingAdmissionPolicy 迁移到 {admc-name}，以实现平滑的策略过渡。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 从 Kubernetes v1.26 开始，https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy] 提供了一种在 Kubernetes 中编写自定义准入策略的方法。这些策略是使用 https://cel.dev/[通用表达语言 (CEL)] 编写的，并扩展了一些 https://kubernetes.io/docs/reference/using-api/cel/[Kubernetes 特定扩展]。
 ValidatingAdmissionPolicy 在 Kubernetes v1.30 中进入稳定状态。
 
-{project-name} 提供了一个 CEL 策略，能够在不进行任何修改的情况下运行 Kubernetes VAP 策略。
-您可以在 xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[本节] 的 {short-project-name} 文档中阅读有关 CEL 策略的更多信息。
-xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[本段] 解释了使用 {short-project-name} 运行 VAP 策略的好处。
+{admc-name} 提供了一个 CEL 策略，能够在不进行任何修改的情况下运行 Kubernetes VAP 策略。
+您可以在 xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[本节] 的 {admc-short-name} 文档中阅读有关 CEL 策略的更多信息。
+xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[本段] 解释了使用 {admc-short-name} 运行 VAP 策略的好处。
 
-本指南解释了如何使用 `kwctl` 工具将 VAP 策略迁移到 {short-project-name}。
+本指南解释了如何使用 `kwctl` 工具将 VAP 策略迁移到 {admc-short-name}。
 
 == 迁移步骤
 
@@ -82,7 +82,7 @@ spec:
 
 ======
 
-您可以通过以下步骤将策略迁移到 {short-project-name}：
+您可以通过以下步骤将策略迁移到 {admc-short-name}：
 
 .`kwctl`用于策略迁移的命令
 [%collapsible]

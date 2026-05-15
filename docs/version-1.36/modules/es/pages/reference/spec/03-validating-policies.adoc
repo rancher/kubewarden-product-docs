@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Validando directivas
 :current-version: {page-origin-branch}
 
-El servidor de directivas {project-name} recibe:
+El servidor de directivas {admc-name} recibe:
 
 * Kubernetes
 https://godoc.org/k8s.io/api/admission/v1#AdmissionReview[`AdmissionReview`]

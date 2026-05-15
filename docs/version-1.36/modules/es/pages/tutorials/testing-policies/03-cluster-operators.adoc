@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
 :current-version: {page-origin-branch}
 
-Como operador de clúster de Kubernetes, querrás realizar pruebas para las directivas {project-name} que deseas utilizar.
+Como operador de clúster de Kubernetes, querrás realizar pruebas para las directivas {admc-name} que deseas utilizar.
 
 Tendrás preguntas como:
 
@@ -21,12 +21,12 @@ Tendrás preguntas como:
  ** ¿cambias los parámetros de configuración de la directiva?
  ** ¿y así sucesivamente?
 
-{short-project-name} tiene una utilidad, https://github.com/kubewarden/kwctl[`kwctl`], que permite probar las directivas fuera de Kubernetes.
+{admc-short-name} tiene una utilidad, https://github.com/kubewarden/kwctl[`kwctl`], que permite probar las directivas fuera de Kubernetes.
 
 Para usar `kwctl` lo invocas con las siguientes entradas:
 
 . Una URI de archivo binario de WebAssembly de la directiva que se va a ejecutar.
-La directiva {short-project-name} puede cargar desde el:
+La directiva {admc-short-name} puede cargar desde el:
  ** sistema de archivos local `file://`
  ** un servidor HTTP(s) `https://`
  ** un registro OCI `registry://`.

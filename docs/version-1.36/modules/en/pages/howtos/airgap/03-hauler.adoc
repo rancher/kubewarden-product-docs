@@ -4,26 +4,26 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Use Hauler to install {project-name} in air-gapped environments.
-:keywords: ["{project-name}", kubewarden, kubernetes, air gap installation, hauler]
+:description: Use Hauler to install {admc-name} in air-gapped environments.
+:keywords: ["{admc-name}", kubewarden, kubernetes, air gap installation, hauler]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, air gap, installation, hauler
 
-This guide shows you how to install {project-name} in air-gapped environments using
+This guide shows you how to install {admc-name} in air-gapped environments using
 link:https://docs.hauler.dev/docs/intro[Hauler]. Hauler is a tool that helps
 users run workloads in air-gapped environments. It moves the required resources
 for apps into those air-gapped environments.
 
-{short-project-name} provides a manifest file with all the
-required resources to run {short-project-name} in a private environment. This
+{admc-short-name} provides a manifest file with all the
+required resources to run {admc-short-name} in a private environment. This
 documentation describes how you can use it. Refer to the Hauler documentation
 to learn more about it.
 
 The basic workflow using the Hauler manifest is:
 
-. Get it from a {short-project-name} release page
-. Load all the resources required to run {short-project-name} into a local store
+. Get it from a {admc-short-name} release page
+. Load all the resources required to run {admc-short-name} into a local store
 . Export them into a file
 . Move the file into the private environment
 . Load the resources into Hauler running inside the private environment
@@ -32,7 +32,7 @@ The basic workflow using the Hauler manifest is:
 
 == Download Hauler manifest from Helm chart release page
 
-Download `hauler_manifest.yml` from the {short-project-name}
+Download `hauler_manifest.yml` from the {admc-short-name}
 link:https://github.com/kubewarden/helm-charts/releases/[release page].
 
 Synchronize the resources defined in the manifest to your Hauler store:
@@ -46,7 +46,7 @@ Hauler downloads all the resources from the manifest to the local store. This
 process takes a few minutes. When complete, you can see the synchronized
 resources with the `hauler store info` command.
 
-== Generate the tarball file with all {short-project-name} resources
+== Generate the tarball file with all {admc-short-name} resources
 
 Run the Hauler command to export all the resources previously loaded in the
 store to a file:
@@ -59,7 +59,7 @@ hauler store save --filename kubewarden-resources.tar.zst
 [NOTE]
 ====
 
-{short-project-name} container images support x86_64 and Arm architectures. Therefore,
+{admc-short-name} container images support x86_64 and Arm architectures. Therefore,
 when you save the resource into the file, you can see warning messages like
 this:
 
@@ -67,10 +67,10 @@ this:
 ----
 2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter:3.3.3]
 2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter-ui:2.4.1]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/policy-server:v1.27.0]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/audit-scanner:v1.27.0]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/rancher/kuberlr-kubectl:v5.0.0]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/kubewarden-controller:v1.27.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/adm-controller/audit-scanner:v1.36.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/rancher/kuberlr-kubectl:v8.0.0]
+2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/adm-controller/controller:v1.36.0]
 ----
 
 To avoid this warning message, you can set the `--platform` CLI flag to define
@@ -80,7 +80,7 @@ which platform architecture you want to save into the file.
 
 == Transfer the tarball into your isolated environment
 
-Now that you have all the {short-project-name} resources in
+Now that you have all the {admc-short-name} resources in
 `kubewarden-resources.tar.zst`, copy it into your air-gapped environment and
 load it into the Hauler store there:
 
@@ -91,7 +91,7 @@ hauler store load --filename kubewarden-resources.tar.zst
 hauler store info
 ----
 
-Now all the resources required to install {short-project-name} are in the Hauler store in
+Now all the resources required to install {admc-short-name} are in the Hauler store in
 your isolated environment.
 
 == Populate private registry
@@ -132,17 +132,17 @@ hauler store serve registry
 
 This starts a registry at the `localhost:5000` address. From this point, you
 can use other commands like Skopeo to copy all the container images, policy
-modules and Helm charts used by {short-project-name} into your private registry.
+modules and Helm charts used by {admc-short-name} into your private registry.
 
-== Install {short-project-name}
+== Install {admc-short-name}
 
 Now that your private registry has everything required, you can install
-{short-project-name}. The difference from a standard {short-project-name}
+{admc-short-name}. The difference from a standard {admc-short-name}
 installation is that you need to change the registry in the container images
 and policies to be the private registry. Additionally, you need to install the
 Helm charts from OCI artifacts.
 
-Install the {short-project-name} stack:
+Install the {admc-short-name} stack:
 
 [source,shell]
 ----
@@ -191,7 +191,7 @@ Finally, configure each Policy Server to fetch policies from your private
 registry. See the xref:/howtos/policy-servers/02-private-registry.adoc[using
 private registry] section of the documentation.
 
-Now create {short-project-name} policies in your cluster. Policies must be
+Now create {admc-short-name} policies in your cluster. Policies must be
 available in your private registry.
 
 [source,yaml]
@@ -226,8 +226,9 @@ kind: PolicyServer
 metadata:
   name: reserved-instance-for-tenant-a
 spec:
-  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
-  replicas:
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/adm-controller/policy-server:v1.36.0
+  replicas: 2
+  serviceAccountName: sa
 ----
 
 ====

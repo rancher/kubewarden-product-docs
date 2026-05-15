@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erfahren Sie mehr über die Abhängigkeiten des {project-name}, einschließlich ihrer Versionsbeschränkungen.
+:description: Erfahren Sie mehr über die Abhängigkeiten des {admc-name}, einschließlich ihrer Versionsbeschränkungen.
 :doc-persona: [„kubewarden-all“]
 :doc-topic: [„operator-manual“, „dependencies“]
 :doc-type: [„reference“]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
-Diese Seite listet die Abhängigkeiten von {project-name} mit ihren relevanten Versionsbeschränkungen auf. Versionen außerhalb der angegebenen Bereiche können funktionieren, wurden jedoch nicht getestet.
+Diese Seite listet die Abhängigkeiten von {admc-name} mit ihren relevanten Versionsbeschränkungen auf. Versionen außerhalb der angegebenen Bereiche können funktionieren, wurden jedoch nicht getestet.
 
 == OpenTelemetry, Metriken und Abhängigkeiten für das Tracing
 
-Zum Zeitpunkt des Schreibens verbessert sich der https://opentelemetry.io[OpenTelemetry] Stack kontinuierlich. Allerdings ist er noch nicht stabil, und unangekündigte, rückwärtsinkompatible Änderungen treten weiterhin auf. Die {short-project-name} Entwickler bemühen sich, Änderungen im OpenTelemetry-Stack zu verfolgen und sich anzupassen. Das Projekt testet gegen einen bekannten funktionierenden Bereich des OpenTelemetry-, Metriken- und Tracing-Stacks.
+Zum Zeitpunkt des Schreibens verbessert sich der https://opentelemetry.io[OpenTelemetry] Stack kontinuierlich. Allerdings ist er noch nicht stabil, und unangekündigte, rückwärtsinkompatible Änderungen treten weiterhin auf. Die {admc-short-name} Entwickler bemühen sich, Änderungen im OpenTelemetry-Stack zu verfolgen und sich anzupassen. Das Projekt testet gegen einen bekannten funktionierenden Bereich des OpenTelemetry-, Metriken- und Tracing-Stacks.
 
 == Optionale Abhängigkeiten
 
@@ -64,4 +64,4 @@ Benötigt für spezifische Funktionen.
 
 == Rancher
 
-{short-project-name} Tests gegen die bereitgestellten Monitoring- und Tracing-Helm-Diagramme im Rancher-Repository.
+{admc-short-name} Tests gegen die bereitgestellten Monitoring- und Tracing-Helm-Diagramme im Rancher-Repository.

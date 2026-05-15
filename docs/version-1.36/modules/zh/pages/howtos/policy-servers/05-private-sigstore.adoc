@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = 配置 PolicyServers 使用私有 Sigstore 实例
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:description: 配置 PolicyServers 使用私有或自托管的 Sigstore 实例进行 {project-name} 的策略签名验证。
+:description: 配置 PolicyServers 使用私有或自托管的 Sigstore 实例进行 {admc-name} 的策略签名验证。
 :keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-type: ["howto"]
@@ -52,7 +52,7 @@ kubectl get secret -o json -n tuf-system ctlog-public-key \
 .安全考虑
 ====
 
-确保安全地从您的 Sigstore 实例下载证书和密钥。否则，您可能会使用被破坏的数据配置 {project-name}。
+确保安全地从您的 Sigstore 实例下载证书和密钥。否则，您可能会使用被破坏的数据配置 {admc-name}。
 
 上述命令是如何在测试环境中执行此操作的示例。
 请咨询您组织中的相关团队，以了解如何正确获取此信息。
@@ -156,7 +156,7 @@ kubectl --namespace kubewarden create configmap my-verification-config \
 
 [NOTE]
 ====
-ConfigMap 键 **必须** 为 `verification-config`（而不是文件名）。{short-project-name} 查找这个确切的键。
+ConfigMap 键 **必须** 为 `verification-config`（而不是文件名）。{admc-short-name} 查找这个确切的键。
 ====
 
 == 步骤 4 - 配置 PolicyServer

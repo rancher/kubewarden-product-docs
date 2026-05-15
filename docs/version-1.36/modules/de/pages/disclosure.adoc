@@ -4,7 +4,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Ermittlungs-Sicherheitsforscher arbeiten mit dem Team von {project-name}, um Schwachstellen mithilfe von verantwortungsvollen Offenlegungsprotokollen zu identifizieren.
+:description: Ermittlungs-Sicherheitsforscher arbeiten mit dem Team von {admc-name}, um Schwachstellen mithilfe von verantwortungsvollen Offenlegungsprotokollen zu identifizieren.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["security", "disclosure"]
 :doc-type: ["explanation"]
@@ -13,13 +13,13 @@ include::partial$variables.adoc[]
 :sidebar_position: 80
 :current-version: {page-origin-branch}
 
-Das Team von {project-name} schätzt die Ermittlungsarbeit zu Schwachstellen, die von gut gemeinten, ethischen Sicherheitsforschern durchgeführt wird. {short-project-name} folgt der Praxis der [verantwortungsvollen Offenlegung](https://en.wikipedia.org/wiki/Responsible_disclosure), um die Benutzerbasis von {short-project-name} bestmöglich vor den Auswirkungen von Sicherheitsproblemen zu schützen. Auf der Seite von {short-project-name} bedeutet dies:
+Das Team von {admc-name} schätzt die Ermittlungsarbeit zu Schwachstellen, die von gut gemeinten, ethischen Sicherheitsforschern durchgeführt wird. {admc-short-name} folgt der Praxis der [verantwortungsvollen Offenlegung](https://en.wikipedia.org/wiki/Responsible_disclosure), um die Benutzerbasis von {admc-short-name} bestmöglich vor den Auswirkungen von Sicherheitsproblemen zu schützen. Auf der Seite von {admc-short-name} bedeutet dies:
 
-* {short-project-name} reagiert prioritär auf Sicherheitsvorfälle.
-* {short-project-name} veröffentlicht Korrekturen für Probleme, sobald dies praktikabel ist, wobei nach Risiko priorisiert wird.
-* {short-project-name} informiert die Community immer transparent über jeden Vorfall, der sie betrifft.
+* {admc-short-name} reagiert prioritär auf Sicherheitsvorfälle.
+* {admc-short-name} veröffentlicht Korrekturen für Probleme, sobald dies praktikabel ist, wobei nach Risiko priorisiert wird.
+* {admc-short-name} informiert die Community immer transparent über jeden Vorfall, der sie betrifft.
 
-Wenn Sie eine Schwachstelle in {short-project-name} gefunden haben, ist der einfachste Weg, eine Schwachstelle zu melden, über den https://github.com/kubewarden/community/security/advisories[Security-Tab auf GitHub]. Dieser Mechanismus ermöglicht es den Betreuern, privat mit Ihnen zu kommunizieren, und Sie müssen Ihre Nachrichten nicht verschlüsseln.
+Wenn Sie eine Schwachstelle in {admc-short-name} gefunden haben, ist der einfachste Weg, eine Schwachstelle zu melden, über den https://github.com/kubewarden/community/security/advisories[Security-Tab auf GitHub]. Dieser Mechanismus ermöglicht es den Betreuern, privat mit Ihnen zu kommunizieren, und Sie müssen Ihre Nachrichten nicht verschlüsseln.
 
 Alternativ können Sie es verantwortungsvoll offenlegen, indem Sie eine E-Mail an xref:mailto:cncf-kubewarden-maintainers@lists.cncf.io.adoc[cncf-kubewarden-maintainers@lists.cncf.io] in einer *unverschlüsselten* Nachricht senden. Bitte diskutieren Sie potenzielle Schwachstellen nicht öffentlich, ohne dies vorher mit uns abzuklären.
 
@@ -28,6 +28,6 @@ Sie können auch in unserem https://kubernetes.slack.com/archives/C03L52JRAFM[Sl
 Bei Erhalt informiert das Sicherheitsteam:
 
 * Überprüft den Bericht, verifiziert die Schwachstelle und antwortet mit einer Bestätigung und/oder weiteren Informationsanfragen.
-* Nachdem der gemeldete Sicherheitsfehler behoben wurde, benachrichtigt {short-project-name} den Forscher, der anschließend die Möglichkeit hat, ihn auch öffentlich offenzulegen.
+* Nachdem der gemeldete Sicherheitsfehler behoben wurde, benachrichtigt {admc-short-name} den Forscher, der anschließend die Möglichkeit hat, ihn auch öffentlich offenzulegen.
 
 Bitte konsultieren Sie das https://github.com/kubewarden/community[Community-Repository], um mehr über die Projekt-Governance und die Sicherheitsrichtlinie zu erfahren.

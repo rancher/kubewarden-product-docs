@@ -7,12 +7,12 @@ include::partial$variables.adoc[]
 :sidebar_label: ArgoCD-Installation
 :sidebar_position: 35
 :description: Konfigurieren Sie Ihre ArgoCD-Anwendung, um Kubernetes-Ressourcen effektiv zu verwalten, indem Sie spezifische Konfigurationsoptionen für die sichere Erstellung und Erneuerung von Zertifikaten festlegen.
-:keywords: ["{project-name}", gitops, argocd]
+:keywords: ["{admc-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]
 :doc-topic: [argocd-installation]
 
-Wenn Sie ArgoCD verwenden, um Ihre Kubernetes-Ressourcen zu verwalten, möchten Sie möglicherweise {project-name} mit ArgoCD installieren. Das ist möglich, aber es gibt bestimmte Überlegungen. Seit {short-project-name} v1.17.0 wurde die Abhängigkeit cert-manager entfernt. Es gibt einen neuen Zertifikatsreconciler, der die Zertifikate automatisch erneuert. Das bedeutet, dass der {short-project-name}-Controller sich um die Erstellung und Erneuerung der Zertifikate für Sie kümmert. Dies umfasst sowohl die Root-CA als auch alle Webhook-Zertifikate.
+Wenn Sie ArgoCD verwenden, um Ihre Kubernetes-Ressourcen zu verwalten, möchten Sie möglicherweise {admc-name} mit ArgoCD installieren. Das ist möglich, aber es gibt bestimmte Überlegungen. Seit {admc-short-name} v1.17.0 wurde die Abhängigkeit cert-manager entfernt. Es gibt einen neuen Zertifikatsreconciler, der die Zertifikate automatisch erneuert. Das bedeutet, dass der {admc-short-name}-Controller sich um die Erstellung und Erneuerung der Zertifikate für Sie kümmert. Dies umfasst sowohl die Root-CA als auch alle Webhook-Zertifikate.
 
 Die anfängliche Erstellung der Root-CA und des Webhook-Zertifikats erfolgt während der Helm-Chart-Installation unter Verwendung der verfügbaren Helm-Funktionen. Während des Renderns des Helm-Charts überprüft die Installation, ob die Zertifikate bereits erstellt wurden, und wenn nicht, erstellt sie diese.
 
@@ -121,6 +121,6 @@ spec:
 [NOTE]
 ====
 
-Im Beispiel ist der Schlüsselbereich die `ignoreDifferences`-Konfiguration für die {short-project-name} Controller-Anwendung. Der Rest des Inhalts bietet Kontext, wie man die ArgoCD-Anwendung konfiguriert und ein vollständiges Beispiel bereitstellt.
+Im Beispiel ist der Schlüsselbereich die `ignoreDifferences`-Konfiguration für die {admc-short-name} Controller-Anwendung. Der Rest des Inhalts bietet Kontext, wie man die ArgoCD-Anwendung konfiguriert und ein vollständiges Beispiel bereitstellt.
 
 ====

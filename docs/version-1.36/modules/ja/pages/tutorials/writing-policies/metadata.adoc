@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "Kubernetesポリシー開発", "ポリシーメタデータ"]
 :current-version: {page-origin-branch}
 
-{project-name}メタデータファイル、`metadata.yaml`は、{short-project-name}内で使用されるポリシーに関連する重要な情報と設定を含む設定ファイルです。
+{admc-name}メタデータファイル、`metadata.yaml`は、{admc-short-name}内で使用されるポリシーに関連する重要な情報と設定を含む設定ファイルです。
 このドキュメントは、メタデータファイルの目的と使用法の概要を説明します。
 
 ポリシー`metadata.yaml`ファイルには、ポリシーのデフォルトと、著者と説明などのメタデータが含まれており、ポリシーの著者によって設定されています。

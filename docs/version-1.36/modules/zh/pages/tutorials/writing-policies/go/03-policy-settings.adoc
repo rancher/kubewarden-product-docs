@@ -102,11 +102,11 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == 构建`Settings`实例
 
-一个{short-project-name}策略暴露两个不同的函数，这些函数接收策略设置作为输入：
+一个{admc-short-name}策略暴露两个不同的函数，这些函数接收策略设置作为输入：
 
 * `validate`：当Kubernetes对象需要通过策略进行验证时，请使用此函数。
 这些设置是https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`]对象的一部分。
-* `validate_settings`：当策略首次被{short-project-name}加载时，请调用此函数。
+* `validate_settings`：当策略首次被{admc-short-name}加载时，请调用此函数。
 该函数接收策略设置作为输入并检查有效性。
 
 您需要创建一个辅助函数，从JSON有效负载开始创建`Settings`对象：
@@ -136,7 +136,7 @@ WebAssembly标准尚未涵盖线程。
 
 == 实现`Settings`验证
 
-所有{short-project-name}策略必须实现设置验证。
+所有{admc-short-name}策略必须实现设置验证。
 
 您可以通过向`Settings`实例添加`Valid`方法来实现这一点：
 
@@ -191,7 +191,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 }
 ----
 
-您可以看到，该函数利用了由https://github.com/kubewarden/policy-sdk-go[{short-project-name}的SDK提供的辅助函数。]
+您可以看到，该函数利用了由https://github.com/kubewarden/policy-sdk-go[{admc-short-name}的SDK提供的辅助函数。]
 
 == 测试设置代码
 

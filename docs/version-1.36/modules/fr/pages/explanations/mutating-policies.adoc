@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["mutating-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "stratégie de mutation", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "stratégie de mutation", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Stratégies de mutation
 :sidebar_position: 10
 :current-version: {page-origin-branch}
@@ -25,7 +25,7 @@ Cependant, si vous définissez le champ `ClusterAdmissionPolicy.mutating` sur `f
 [WARNING]
 ====
 
-Pour prévenir les abus du système, les administrateurs {project-name} devraient examiner les stratégies de mutation. Les stratégies de mutation pourraient, par exemple, modifier une charge de travail, de sorte qu'elle permette la création de conteneurs privilégiés.
+Pour prévenir les abus du système, les administrateurs {admc-name} devraient examiner les stratégies de mutation. Les stratégies de mutation pourraient, par exemple, modifier une charge de travail, de sorte qu'elle permette la création de conteneurs privilégiés.
 
 ====
 
@@ -183,4 +183,4 @@ EOF
 Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
 ----
 
-En conclusion, vous pouvez voir que {short-project-name} reproduit le même comportement que les politiques de sécurité des pods Kubernetes (PSP) dont la prise en charge a cessé.
+En conclusion, vous pouvez voir que {admc-short-name} reproduit le même comportement que les politiques de sécurité des pods Kubernetes (PSP) dont la prise en charge a cessé.

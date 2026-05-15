@@ -3,10 +3,10 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 通过 {project-name} 策略在 src/types.ts 和 src/index.ts 文件中定义和实现有效的策略设置结构。
-:keywords: "{project-name}", kubewarden, kubernetes, 定义策略设置, TypeScript
+:description: 通过 {admc-name} 策略在 src/types.ts 和 src/index.ts 文件中定义和实现有效的策略设置结构。
+:keywords: "{admc-name}", kubewarden, kubernetes, 定义策略设置, TypeScript
 :doc-type: 教程
-:doc-topic: {project-name}, kubewarden, 编写策略, typescript, 定义策略设置
+:doc-topic: {admc-name}, kubewarden, 编写策略, typescript, 定义策略设置
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 重要：不要将日志信息写入 STDOUT。
 
-写入 STDOUT 会破坏策略。相反，使用 STDERR 进行日志记录或使用 {project-name} SDK 提供的日志记录功能。策略输出到 STDOUT 只能包含验证响应。
+写入 STDOUT 会破坏策略。相反，使用 STDERR 进行日志记录或使用 {admc-name} SDK 提供的日志记录功能。策略输出到 STDOUT 只能包含验证响应。
 ====
 
 首先，在 `src/types.ts` 中定义保存策略设置的结构：
@@ -45,7 +45,7 @@ export interface KubernetesResource {
 
 == 构建 Settings 实例
 
-{short-project-name} 策略使用两个处理设置的函数：
+{admc-short-name} 策略使用两个处理设置的函数：
 
 * `validate`：在对象验证期间调用。
 * `validateSettings`：在策略加载时调用。

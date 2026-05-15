@@ -34,9 +34,9 @@ Die Abhängigkeit von Kubernetes-Objekten, anstatt jq-ähnliche Suchen durchzuf�
 Eine Richtlinie, die Kubernetes-Objekte verwendet, kann etwa 1,5&nbsp;MB groß sein, während eine, die `gjson` verwendet, etwa 300&nbsp;KB groß ist.
 
 Abgesehen von der Größe benötigt die Richtlinie, die Kubernetes-Objekte verwendet, bei der ersten Ausführung viel mehr Zeit.
-Folgende Aufrufe sind schnell, da {project-name} die Cache-Funktion von Wasmtime nutzt.
+Folgende Aufrufe sind schnell, da {admc-name} die Cache-Funktion von Wasmtime nutzt.
 Die erste Ausführung kann etwa 20 Sekunden mit `kwctl` dauern, spätere Ausführungen 1 bis 2 Sekunden.
-Die {short-project-name} Policy Server hat eine langsamere Startzeit, aber die Zeiten der Richtlinienbewertung werden normalerweise nicht durch die Verwendung von Kubernetes-Objekten beeinflusst.
+Die {admc-short-name} Policy Server hat eine langsamere Startzeit, aber die Zeiten der Richtlinienbewertung werden normalerweise nicht durch die Verwendung von Kubernetes-Objekten beeinflusst.
 ====
 
 
@@ -319,7 +319,7 @@ Hier iterieren Sie über die verschiedenen Testfälle mit dem folgenden Code:
 
 . Erstellen Sie ein `BasicSettings`-Objekt, indem Sie die von `testCase` bereitgestellten Daten verwenden.
 . Erstellen Sie ein `Pod`-Objekt und weisen Sie ihm die in `testCase` definierten Labels zu.
-. Erstellen Sie ein `payload`-Objekt. Tun Sie dies mit einer Hilfsfunktion des {short-project-name} SDK: `kubewarden_testing.BuildValidationRequest`.
+. Erstellen Sie ein `payload`-Objekt. Tun Sie dies mit einer Hilfsfunktion des {admc-short-name} SDK: `kubewarden_testing.BuildValidationRequest`.
 Diese Funktion nimmt als Eingabe das Objekt, um das es in der Anfrage geht, das `Pod`, und das Objekt, das die Einstellungen beschreibt, die `BasicSettings`-Instanz.
 . Schließlich ruft der Code Ihre `validate`-Funktion auf und führt eine Überprüfung des Ergebnisses durch.
 
@@ -394,7 +394,7 @@ Sie fragen sich vielleicht, warum die Ausgabe der Unit-Tests Zeilen wie `NATIVE:
 
 Die `logger` Anweisungen in der Richtlinie erzeugen diese Ausgabe.
 Dies geschieht nur, wenn der Code außerhalb des WebAssembly-Kontexts ausgeführt wird.
-Das passiert nicht, wenn die Richtlinie in {short-project-name} ausgewertet wird; in diesem Kontext geben die `logger` Anweisungen stattdessen OpenTelemetry-Ereignisse aus.
+Das passiert nicht, wenn die Richtlinie in {admc-short-name} ausgewertet wird; in diesem Kontext geben die `logger` Anweisungen stattdessen OpenTelemetry-Ereignisse aus.
 ====
 
 

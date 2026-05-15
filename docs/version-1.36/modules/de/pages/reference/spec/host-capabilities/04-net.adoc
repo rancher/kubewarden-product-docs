@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Netzwerkfähigkeiten
 :current-version: {page-origin-branch}
 
-{project-name} Richtlinien können keine Netzwerkabfragen aus dem WebAssembly-Ausführungskontext heraus durchführen.
+{admc-name} Richtlinien können keine Netzwerkabfragen aus dem WebAssembly-Ausführungskontext heraus durchführen.
 
 Netzwerkoperationen können durch die Nutzung einer Reihe von Fähigkeiten, die vom Host bereitgestellt werden, durchgeführt werden.
 

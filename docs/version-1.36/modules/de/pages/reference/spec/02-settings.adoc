@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie die Richtlinieneinstellungen mithilfe von {project-name} zur Validierung und Serialisierung von Richtliniendaten.
+:description: Konfigurieren Sie die Richtlinieneinstellungen mithilfe von {admc-name} zur Validierung und Serialisierung von Richtliniendaten.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["richtlinien-schreiben", "spezifikation", "einstellungen"]
 :doc-type: ["reference"]
@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 
 Das Verhalten der Richtlinie ist nicht starr, Sie können es konfigurieren, indem Sie der Richtlinie zur Laufzeit Konfigurationsdetails bereitstellen. Der Autor der Richtlinie hat die Freiheit, die Struktur der Richtlinieneinstellungen zu definieren.
 
-{project-name} kümmert sich um die Serialisierung der Richtlinieneinstellungen in JSON und stellt sie der Richtlinie jedes Mal zur Verfügung, wenn sie aufgerufen wird.
+{admc-name} kümmert sich um die Serialisierung der Richtlinieneinstellungen in JSON und stellt sie der Richtlinie jedes Mal zur Verfügung, wenn sie aufgerufen wird.
 
 == Validierung der Einstellungen
 
@@ -41,7 +41,7 @@ Wenn die vom Benutzer bereitgestellten Einstellungen `valid` sind, ignoriert `va
 [NOTE]
 ====
 
-{short-project-name}'s https://github.com/chimera-kube/policy-server[policy-server] validiert alle von Benutzern bereitgestellten Richtlinieneinstellungen zur Startzeit. Der policy-server beendet sich sofort mit einem Fehler, wenn mindestens eine seiner Richtlinien falsche Konfigurationsparameter erhalten hat.
+{admc-short-name}'s https://github.com/chimera-kube/policy-server[policy-server] validiert alle von Benutzern bereitgestellten Richtlinieneinstellungen zur Startzeit. Der policy-server beendet sich sofort mit einem Fehler, wenn mindestens eine seiner Richtlinien falsche Konfigurationsparameter erhalten hat.
 
 ====
 

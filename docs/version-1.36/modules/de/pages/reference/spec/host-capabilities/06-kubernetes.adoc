@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erforschen Sie die Kubernetes-Funktionen mithilfe der kontextsensitiven Richtlinien von {project-name} und des waPC-Protokolls, um auf Clusterressourcen zuzugreifen.
+:description: Erforschen Sie die Kubernetes-Funktionen mithilfe der kontextsensitiven Richtlinien von {admc-name} und des waPC-Protokolls, um auf Clusterressourcen zuzugreifen.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "kubernetes-capabilities"]
 :doc-type: ["reference"]
@@ -11,8 +11,8 @@ include::partial$variables.adoc[]
 :sidebar_label: Kubernetes-Funktionen
 :current-version: {page-origin-branch}
 
-Die kontextsensitiven Richtlinien von {project-name} benötigen Zugriff auf Ressourcen aus dem Kubernetes-Cluster, in dem sie ausgeführt werden.
-Dafür stellen die {short-project-name} SDKs Funktionen zur Verfügung, die das waPC-Kommunikationsprotokoll verwenden, um mit dem Hostsystem zu kommunizieren und Daten über den Cluster anzufordern.
+Die kontextsensitiven Richtlinien von {admc-name} benötigen Zugriff auf Ressourcen aus dem Kubernetes-Cluster, in dem sie ausgeführt werden.
+Dafür stellen die {admc-short-name} SDKs Funktionen zur Verfügung, die das waPC-Kommunikationsprotokoll verwenden, um mit dem Hostsystem zu kommunizieren und Daten über den Cluster anzufordern.
 
 == waPC-Protokollvertrag
 

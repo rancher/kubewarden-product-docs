@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 了解如何在Kubernetes中使用{project-name}的（cel-policy）重用和验证准入策略。
+:description: 了解如何在Kubernetes中使用{admc-name}的（cel-policy）重用和验证准入策略。
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "ValidatingAdmissionPolicies"]
 :doc-type: ["tutorial"]
@@ -16,7 +16,7 @@ Kubernetes 原生 https://kubernetes.io/docs/reference/access-authn-authz/valida
 * ValidatingAdmissionPolicy：描述CEL中的逻辑。它可选地接受`spec.paramKind`中的参数。
 * ValidatingAdmissionPolicyBinding：限定策略的作用范围。
 
-让我们看一个具体的例子。这些和其他策略可以与{project-name}的`cel-policy`轻松重用。
+让我们看一个具体的例子。这些和其他策略可以与{admc-name}的`cel-policy`轻松重用。
 
 == ValidatingAdmissionPolicy
 
@@ -85,9 +85,9 @@ data:
   overrideReplicas: "3"
 ----
 
-在这里，我们有一个等效的{short-project-name}策略：
+在这里，我们有一个等效的{admc-short-name}策略：
 
-### {short-project-name}的`cel-policy`
+### {admc-short-name}的`cel-policy`
 
 ../cel-policy-example.yaml
 [,yaml]
@@ -159,22 +159,22 @@ data:
 
 | 1    | `failurePolicy`                   | `settings.failurePolicy`                 | CEL 行为，当 CEL 表达式评估为假时，会出现 CEL 运行时错误，或者存在无效或配置错误的 CEL。例如，返回假值的 CEL 表达式、缺少参数或缺少变量。不要与 (6) 混淆。
 | 2   | `matchConstraints`                | `rules`                                  | 两者接受相同的 https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#rulewithoperations-v1-admissionregistration[RuleWithOperations]，该规则指明策略适用于哪种资源。
-| 3   | `variables`                       | `settings.variables`                     | 在 {short-project-name} 的 `cel-policy` 中，定义变量的表达式位于 `settings.variables` 中。除此之外，它们是等效的。
-| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | 在 {short-project-name} 的 `cel-policy` 中，参数定义位于 `settings.paramKind`、`settings.paramRef` 中。除此之外，它们是等效的。
-| 5   | `validations`                     | `settings.validations`                   | 在 {short-project-name} 的 `cel-policy` 中，定义验证的表达式位于 `settings.validations` 中。除此之外，它们是等效的。
+| 3   | `variables`                       | `settings.variables`                     | 在 {admc-short-name} 的 `cel-policy` 中，定义变量的表达式位于 `settings.variables` 中。除此之外，它们是等效的。
+| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | 在 {admc-short-name} 的 `cel-policy` 中，参数定义位于 `settings.paramKind`、`settings.paramRef` 中。除此之外，它们是等效的。
+| 5   | `validations`                     | `settings.validations`                   | 在 {admc-short-name} 的 `cel-policy` 中，定义验证的表达式位于 `settings.validations` 中。除此之外，它们是等效的。
 | 6   | `---`                             | `failurePolicy`                          | Webhook 行为，针对 Kubernetes API Webhook 错误或超时，或针对 matchConditions 评估。不要与 (1) 混淆。
-| 7   | `validationActions`               | `mode`                                   | `mode` 的选项有 `protect` 和 `monitor`。在 {short-project-name} 中，审计功能更为全面，见 (9)。
-| 8   | `matchResources`                  | `namespaceSelector`、`objectSelector`   | 定义使用选择器的约束方式。{short-project-name} 的策略将其作为 `namespaceSelector` 和 `objectSelector`。
-| 9   | `auditAnnotations`（未显示） | `backgroundAudit`，注解           | 请改用 {short-project-name} 字段来设置 xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] 中的策略使用情况，以及其类别和严重性以供 OpenReports 使用。
-|10|`---`|`contextAwareResources` 权限|{short-project-name}的策略对读取集群资源具有细粒度的权限。在这里用于读取参数。
-|     | `matchConditions`                 | `matchConditions`                        | {short-project-name}的策略有`matchConditions`（在此示例中未显示）。
-|     | `---`                             | 仅限{short-project-name}的功能                 | 有关其他功能，请参阅其余的教程CEL示例。
+| 7   | `validationActions`               | `mode`                                   | `mode` 的选项有 `protect` 和 `monitor`。在 {admc-short-name} 中，审计功能更为全面，见 (9)。
+| 8   | `matchResources`                  | `namespaceSelector`、`objectSelector`   | 定义使用选择器的约束方式。{admc-short-name} 的策略将其作为 `namespaceSelector` 和 `objectSelector`。
+| 9   | `auditAnnotations`（未显示） | `backgroundAudit`，注解           | 请改用 {admc-short-name} 字段来设置 xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] 中的策略使用情况，以及其类别和严重性以供 OpenReports 使用。
+|10|`---`|`contextAwareResources` 权限|{admc-short-name}的策略对读取集群资源具有细粒度的权限。在这里用于读取参数。
+|     | `matchConditions`                 | `matchConditions`                        | {admc-short-name}的策略有`matchConditions`（在此示例中未显示）。
+|     | `---`                             | 仅限{admc-short-name}的功能                 | 有关其他功能，请参阅其余的教程CEL示例。
 |===
 
 [TIP]
 ====
 
-您可以使用`kwctl`工具将VAP策略迁移到{short-project-name}。
+您可以使用`kwctl`工具将VAP策略迁移到{admc-short-name}。
 
 此xref:howtos/vap-migration.adoc[VAP迁移how-to]描述了如何进行此操作。
 
@@ -187,9 +187,9 @@ data:
 
 * VAP https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz[授权库]。
 * VAP https://kubernetes.io/docs/reference/labels-annotations-taints/audit-annotations/[审计注释]（当ValidatingAdmissionPolicyBinding `spec.validationActions`设置为"审计"时，ValidatingAdmissionPolicy `spec.auditAnnotations`）。
-这由{short-project-name}的xref:explanations/audit-scanner/audit-scanner.adoc[审计扫描器]和PolicyReports覆盖，允许审计集群中已有的资源。
+这由{admc-short-name}的xref:explanations/audit-scanner/audit-scanner.adoc[审计扫描器]和PolicyReports覆盖，允许审计集群中已有的资源。
 * CEL https://kubernetes.io/docs/reference/using-api/cel/#resource-constraints[资源约束和估算成本限制]。
-这由{short-project-name}的一般xref:reference/policy-evaluation-timeout.adoc[策略超时保护]覆盖。
+这由{admc-short-name}的一般xref:reference/policy-evaluation-timeout.adoc[策略超时保护]覆盖。
 
 == 应用策略
 

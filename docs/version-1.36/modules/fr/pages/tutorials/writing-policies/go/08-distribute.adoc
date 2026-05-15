@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Apprenez à distribuer des stratégies et à accéder aux informations connexes pour {project-name}, y compris les détails de configuration.
+:description: Apprenez à distribuer des stratégies et à accéder aux informations connexes pour {admc-name}, y compris les détails de configuration.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]
@@ -19,4 +19,4 @@ Au cours de ce tutoriel, vous avez recréé le https://github.com/kubewarden/saf
 Il n'y a rien de spécial à faire en ce qui concerne la distribution d'une stratégie.
 Si vous avez suivi ce guide, vous avez déjà publié votre stratégie en utilisant l'Action GitHub `release.yml` définie dans le dernier chapitre.
 
-Le sujet de la distribution des stratégies est traité plus en profondeur dans la section xref:/explanations/distributing-policies.adoc["distribution des stratégies"] de la documentation de {project-name}.
+Le sujet de la distribution des stratégies est traité plus en profondeur dans la section xref:/explanations/distributing-policies.adoc["distribution des stratégies"] de la documentation de {admc-name}.

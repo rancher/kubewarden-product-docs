@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= OCI 注册表支持 {short-project-name}
+= OCI 注册表支持 {admc-short-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 通过常规开放容器倡议 (OCI) 注册表分发 {project-name} 策略作为 OCI 工件。
+:description: 通过常规开放容器倡议 (OCI) 注册表分发 {admc-name} 策略作为 OCI 工件。
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-您将 {project-name} 策略作为 https://opencontainers.org[OCI 工件] 使用常规开放容器倡议 (OCI) 注册表进行分发。
+您将 {admc-name} 策略作为 https://opencontainers.org[OCI 工件] 使用常规开放容器倡议 (OCI) 注册表进行分发。
 
-{short-project-name} 策略存储在容器镜像旁边。
+{admc-short-name} 策略存储在容器镜像旁边。
 它们不需要额外的设置或维护，除了常规容器镜像所需的设置。
 
 [NOTE]
 ====
-您可以添加与 {short-project-name} 兼容的注册表，或通过使用页面底部的 "编辑此页面" 按钮来纠正任何注册表不准确之处。
+您可以添加与 {admc-short-name} 兼容的注册表，或通过使用页面底部的 "编辑此页面" 按钮来纠正任何注册表不准确之处。
 ====
 
 
@@ -42,7 +42,7 @@ include::partial$variables.adoc[]
 
 == 与 OCI 注册表兼容的工具
 
-{short-project-name} 项目推荐：
+{admc-short-name} 项目推荐：
 
 * https://github.com/kubewarden/kwctl[`kwctl`]（我们的 CLI 工具）。
 * https://github.com/containers/skopeo[Skopeo]（https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]）。
@@ -52,7 +52,7 @@ include::partial$variables.adoc[]
 
 === Docker Hub
 
-目前，Docker Hub 不支持 OCI 工件，因此无法用于存储 {short-project-name} 策略。
+目前，Docker Hub 不支持 OCI 工件，因此无法用于存储 {admc-short-name} 策略。
 Docker Inc. 已宣布 Docker Hub 将在https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[未来]支持 OCI 工件。
 
 === JFrog

@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-type: ["howto"]
 :doc-topic: ["operator-manual", "policies"]
 
-Por padrão, o Admission Controller não permite que políticas avaliem recursos em seu próprio namespace. Isso previne configurações incorretas que podem quebrar a {short-project-name} instalação.
+Por padrão, o Admission Controller não permite que políticas avaliem recursos em seu próprio namespace. Isso previne configurações incorretas que podem quebrar a {admc-short-name} instalação.
 
 Essa medida de segurança é implementada em duas camadas. A primeira camada é controlada pela `--always-accept-admission-reviews-on-deployments-namespace` flag do CLI.
 Essa flag, que é habilitada por padrão nos charts do Helm, faz com que o controlador configure a `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` variável de ambiente nas implantações do PolicyServer. Essa variável informa ao servidor de políticas para sempre aceitar revisões de admissão do namespace definido na variável. A segunda camada é o próprio controlador de admissão, que por padrão adiciona um seletor de namespace às políticas de cluster para ignorar o namespace onde o controlador está em execução.
@@ -19,7 +19,7 @@ No entanto, em alguns cenários, os administradores de cluster podem querer que 
 
 O primeiro passo é configurar o controlador para não definir a `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` variável de ambiente nas implantações do PolicyServer.
 
-Para fazer isso, atualize sua {short-project-name} instalação e defina o `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` valor do `kubewarden-controller` chart Helm para `false`:
+Para fazer isso, atualize sua {admc-short-name} instalação e defina o `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` valor do `kubewarden-controller` chart Helm para `false`:
 
 [source,console]
 ----
@@ -29,7 +29,7 @@ helm upgrade -n kubewarden
 ----
 
 Essa mudança permite que os servidores de políticas avaliem recursos de qualquer namespace.
-Uma vez feito isso, as políticas podem ser configuradas para avaliar revisões de admissão do {short-project-name} namespace.
+Uma vez feito isso, as políticas podem ser configuradas para avaliar revisões de admissão do {admc-short-name} namespace.
 
 == Configurar políticas para avaliar recursos no namespace do Admission Controller
 
@@ -73,5 +73,5 @@ Esta opção de configuração, que é `false` por padrão, faz com que o contro
 [NOTE]
 .E quanto aos meus seletores de namespace personalizados?
 ====
-Os CRDs de políticas também permitem que os usuários definam seus próprios seletores de namespace. Esses seletores não são alterados. Isso significa que, se um usuário definir um seletor que ignora o {short-project-name} namespace, a política ainda ignorará esse namespace como esperado.
+Os CRDs de políticas também permitem que os usuários definam seus próprios seletores de namespace. Esses seletores não são alterados. Isso significa que, se um usuário definir um seletor que ignora o {admc-short-name} namespace, a política ainda ignorará esse namespace como esperado.
 ====

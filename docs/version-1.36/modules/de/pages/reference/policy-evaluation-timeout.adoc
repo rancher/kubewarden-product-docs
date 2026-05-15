@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 [IMPORTANT]
 ====
 
-Dieses Feature ist ab {project-name} v1.5.0 für Zeitüberschreitungen pro Policy-Server verfügbar und ab v1.29.0 für Zeitüberschreitungen pro Richtlinie.
+Dieses Feature ist ab {admc-name} v1.5.0 für Zeitüberschreitungen pro Policy-Server verfügbar und ab v1.29.0 für Zeitüberschreitungen pro Richtlinie.
 
 ====
 
@@ -21,7 +21,7 @@ Der Schutz vor Zeitüberschreitung bei der Richtlinienbewertung ist eine Sicherh
 
 == Beschreibung
 
-Sie können {short-project-name} Richtlinien sowohl mit traditionellen Programmiersprachen (wie xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] und xref:../tutorials/writing-policies/index.adoc[anderen]) als auch mit der speziellen Abfragesprache xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego] schreiben. Beide Ansätze haben ihre Vorzüge, daher ist ein Ziel von {short-project-name}, den Richtlinienautoren die Wahl des besten Werkzeugs für ihre Bedürfnisse zu ermöglichen.
+Sie können {admc-short-name} Richtlinien sowohl mit traditionellen Programmiersprachen (wie xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] und xref:../tutorials/writing-policies/index.adoc[anderen]) als auch mit der speziellen Abfragesprache xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego] schreiben. Beide Ansätze haben ihre Vorzüge, daher ist ein Ziel von {admc-short-name}, den Richtlinienautoren die Wahl des besten Werkzeugs für ihre Bedürfnisse zu ermöglichen.
 
 Bei der Verwendung einer traditionellen https://en.wikipedia.org/wiki/Turing_completeness[Turing-vollständigen] Sprache können Probleme wie folgende auftreten:
 
@@ -47,7 +47,7 @@ Alle Werte der pro-Richtlinie-Zeitlimits, des pro-Policy-Server-Zeitlimits und d
 
 ### Pro Richtlinie
 
-Beginnend mit {short-project-name} v1.29.0 kann jede {short-project-name}-Richtlinie ihr eigenes Zeitlimit über ihr `spec.timeoutEvalSeconds`-Attribut festlegen. Dies ist nicht zu verwechseln mit `spec.timeoutSeconds`, das für das Webhook-Zeitlimit verwendet wird (siehe Abschnitt [unten](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+Beginnend mit {admc-short-name} v1.29.0 kann jede {admc-short-name}-Richtlinie ihr eigenes Zeitlimit über ihr `spec.timeoutEvalSeconds`-Attribut festlegen. Dies ist nicht zu verwechseln mit `spec.timeoutSeconds`, das für das Webhook-Zeitlimit verwendet wird (siehe Abschnitt [unten](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
 
 Das `spec.timeoutEvalSeconds` ist feingranular und ermöglicht eine Anpassung des Zeitlimits pro Richtlinie.
 
@@ -90,7 +90,7 @@ spec:
 
 === Pro Policy-Server
 
-Beginnend mit {short-project-name} v1.5.0 kommen Policy-Server mit einem konfigurierbaren Bewertungszeitlimit, das standardmäßig aktiviert ist. Die Unterbrechung einer Anforderungsbewertung erfolgt nach 2 Sekunden. Diese Konfiguration betrifft alle Richtlinien, die in diesem Policy-Server geplant sind. Das konfigurierbare `spec.timeoutEvalSeconds`-Zeitlimit pro Richtlinie hat Vorrang vor dieser Einstellung pro Policy-Server.
+Beginnend mit {admc-short-name} v1.5.0 kommen Policy-Server mit einem konfigurierbaren Bewertungszeitlimit, das standardmäßig aktiviert ist. Die Unterbrechung einer Anforderungsbewertung erfolgt nach 2 Sekunden. Diese Konfiguration betrifft alle Richtlinien, die in diesem Policy-Server geplant sind. Das konfigurierbare `spec.timeoutEvalSeconds`-Zeitlimit pro Richtlinie hat Vorrang vor dieser Einstellung pro Policy-Server.
 
 Sie können dieses Verhalten anpassen, indem Sie diese Umgebungsvariablen verwenden:
 
@@ -126,9 +126,9 @@ spec:
 
 == Vergleich mit dem Timeout des Kubernetes Dynamic Admission Controllers
 
-{short-project-name} ist eine https://en.wikipedia.org/wiki/Webhook[Webhook] Implementierung des https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetes Dynamic Admission Controllers].
+{admc-short-name} ist eine https://en.wikipedia.org/wiki/Webhook[Webhook] Implementierung des https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetes Dynamic Admission Controllers].
 
-Intern führt der Kubernetes-API-Server eine HTTP-Anfrage an den Policy-Server von {short-project-name} durch, in der ein bevorstehendes Ereignis beschrieben wird. Nach der HTTP-Anfrage wartet der Kubernetes API-Server auf eine Antwort. Der Kubernetes API-Server wartet jedoch nicht ewig. Nach einer bestimmten Zeit betrachtet er die Anfrage als abgelaufen.
+Intern führt der Kubernetes-API-Server eine HTTP-Anfrage an den Policy-Server von {admc-short-name} durch, in der ein bevorstehendes Ereignis beschrieben wird. Nach der HTTP-Anfrage wartet der Kubernetes API-Server auf eine Antwort. Der Kubernetes API-Server wartet jedoch nicht ewig. Nach einer bestimmten Zeit betrachtet er die Anfrage als abgelaufen.
 
 Zitat aus der https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[offiziellen Kubernetes-Dokumentation]:
 
@@ -144,7 +144,7 @@ ____
 
 Das bedeutet, dass unabhängig von der Funktion zur Bewertung des Timeout der Richtlinie jede Kubernetes-Zulassungsanfrage einem Timeout unterliegt.
 
-Jede {short-project-name} Richtlinie kann ihren eigenen Timeout-Wert über das `timeoutSeconds` Attribut der `ClusterAdmissionPolicy` und `AdmissionPolicy` benutzerdefinierten Ressourcen festlegen.
+Jede {admc-short-name} Richtlinie kann ihren eigenen Timeout-Wert über das `timeoutSeconds` Attribut der `ClusterAdmissionPolicy` und `AdmissionPolicy` benutzerdefinierten Ressourcen festlegen.
 Standardmäßig beträgt der Timeout-Wert 10 Sekunden.
 
 [IMPORTANT]
@@ -157,10 +157,10 @@ Alle Kubernetes-Zulassungsanfragen, die an einen Policy-Server gerichtet sind, u
 
 ====
 
-Jetzt können Sie die folgenden Szenarien untersuchen, um die Unterschiede zwischen der Webhook-Zeitüberschreitung von Kubernetes und der Zeitüberschreitung der Richtlinienbewertung von {short-project-name} besser zu verstehen.
+Jetzt können Sie die folgenden Szenarien untersuchen, um die Unterschiede zwischen der Webhook-Zeitüberschreitung von Kubernetes und der Zeitüberschreitung der Richtlinienbewertung von {admc-short-name} besser zu verstehen.
 
 
-=== Die Zeitüberschreitung der Richtlinienbewertung von {short-project-name} ist deaktiviert.
+=== Die Zeitüberschreitung der Richtlinienbewertung von {admc-short-name} ist deaktiviert.
 
 Angenommen, Sie haben einen Policy-Server, bei dem die Funktion zur Zeitüberschreitung der Richtlinienbewertung deaktiviert ist und keine auf ihm geplante Richtlinie ihr Feld `spec.timeoutEvalSeconds` gesetzt hat. Dieser Policy-Server hostet eine Richtlinie, die von einem Fehler betroffen ist, der dazu führt, dass sie während der Bewertung in eine Endlosschleife gerät.
 
@@ -172,19 +172,19 @@ Nach 10 Sekunden tritt die Webhook-Zeitüberschreitung von Kubernetes ein, und d
 Jetzt hat der Policy-Server Rechenressourcen, die in dieser Endlosschleife feststecken.
 Im Laufe der Zeit, mit weiteren Zulassungsanfragen, die die fehlerhafte Richtlinie auslösen, gehen dem Policy-Server die Rechenressourcen aus. Er ist nicht in der Lage, auf den Kubernetes-API-Server zu antworten. Dies entspricht einem Denial of Service (DOS)-Angriff auf den Policy-Server.
 
-=== Die Zeitüberschreitung der Richtlinienbewertung von {short-project-name} ist aktiviert.
+=== Die Zeitüberschreitung der Richtlinienbewertung von {admc-short-name} ist aktiviert.
 
 Angenommen, ein Szenario, in dem derselbe Policy-Server jetzt die Funktion zur Zeitüberschreitung der Richtlinienbewertung aktiviert hat, entweder global im Policy-Server oder in der Richtlinie über das Feld `spec.timeoutEvalSeconds`, und die Zeitüberschreitung der Richtlinienbewertung beträgt 2 Sekunden.
 
 Der Kubernetes-API-Server sendet eine Zulassungsanfrage zur Bewertung durch diese fehlerhafte Richtlinie. Infolgedessen gerät die Richtlinienbewertung in eine Endlosschleife.
 In der Zwischenzeit wartet der Kubernetes-API-Server auf eine Antwort.
 
-Nach zwei Sekunden unterbricht die Funktion zur Zeitüberschreitung der Richtlinienbewertung von {short-project-name} die Richtlinienbewertung und erzeugt eine Ablehnungsantwort. Die Antwort enthält eine Nachricht, die erklärt, dass die Ablehnung erfolgt ist, weil die Richtlinienbewertung nicht rechtzeitig abgeschlossen wurde.
+Nach zwei Sekunden unterbricht die Funktion zur Zeitüberschreitung der Richtlinienbewertung von {admc-short-name} die Richtlinienbewertung und erzeugt eine Ablehnungsantwort. Die Antwort enthält eine Nachricht, die erklärt, dass die Ablehnung erfolgt ist, weil die Richtlinienbewertung nicht rechtzeitig abgeschlossen wurde.
 
 [NOTE]
 ====
 
-Die Einstellung der Zeitüberschreitung der Richtlinienbewertung von {short-project-name} auf einen Wert, der so hoch ist wie die Webhook-Zeitüberschreitung von Kubernetes, ist keine gute Wahl.
+Die Einstellung der Zeitüberschreitung der Richtlinienbewertung von {admc-short-name} auf einen Wert, der so hoch ist wie die Webhook-Zeitüberschreitung von Kubernetes, ist keine gute Wahl.
 
 Während die Bewertung der Richtlinie weiterhin unterbrochen ist, wodurch die Chancen eines DOS-Angriffs verringert werden, wird die endgültige Ablehnungsantwort nicht vom Policy Server erzeugt. Die Ablehnung kommt vom Kubernetes-API-Server mit dem Webhook-Timeout.
 

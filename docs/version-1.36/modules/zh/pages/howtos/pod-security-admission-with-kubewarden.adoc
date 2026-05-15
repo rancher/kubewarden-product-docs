@@ -1,13 +1,13 @@
 include::partial$variables.adoc[]
-= 使用 Pod 安全准入与 {project-name}
+= 使用 Pod 安全准入与 {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 在 Kubernetes 集群中配置 Pod 安全准入 {project-name}，以保护 Pods。
+:description: 在 Kubernetes 集群中配置 Pod 安全准入 {admc-name}，以保护 Pods。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-admission-with-kubewarden"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "pod 安全准入", "pod 安全策略", "kubernetes"]
+:keywords: ["{admc-name}", "kubewarden", "pod 安全准入", "pod 安全策略", "kubernetes"]
 :sidebar_label: Pod 安全准入
 :sidebar_position: 30
 :current-version: {page-origin-branch}
@@ -32,13 +32,13 @@ PSA 控制器在检测到违规时执行操作。
 * 没有变更能力
 * 只有在启用 `audit` 或 `warn` 模式时，才会评估更高级别的对象（如 `Deployment`、`Job`）
 
-{short-project-name} 可用于 *集成* PSA 控制文件，以避免这些限制。
+{admc-short-name} 可用于 *集成* PSA 控制文件，以避免这些限制。
 
 [NOTE]
 ====
 
-您可以使用{short-project-name}来替换旧的 Pod 安全策略，如xref:howtos/psp-migration.adoc[PSP 迁移]所示。
-然而，本文的目标是展示{short-project-name}如何补充新的PSA。
+您可以使用{admc-short-name}来替换旧的 Pod 安全策略，如xref:howtos/psp-migration.adoc[PSP 迁移]所示。
+然而，本文的目标是展示{admc-short-name}如何补充新的PSA。
 ====
 
 
@@ -200,14 +200,14 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-h4bx7 -o json | jq 
 ]
 ----
 
-在这里，{short-project-name}可以提供帮助。
+在这里，{admc-short-name}可以提供帮助。
 您可以使用https://artifacthub.io/packages/kubewarden/user-group-psp/user-group-psp[`user-group-policy`]策略来变更部署定义。
 这为省略该信息的容器配置了默认用户。
 
 [NOTE]
 ====
 
-您需要在 Kubernetes 集群中使用 {short-project-name} 堆栈来进行此示例。
+您需要在 Kubernetes 集群中使用 {admc-short-name} 堆栈来进行此示例。
 请参阅xref:quick-start.adoc[快速入门]以获取更多详细信息。
 ====
 
@@ -306,7 +306,7 @@ EOF
 
 ======
 
-现在部署受到{short-project-name}的策略影响，该策略允许启动 Pod。
+现在部署受到{admc-short-name}的策略影响，该策略允许启动 Pod。
 Pod 内定义的容器具有默认的 `runAsUser` 值：
 
 [subs="+attributes",shell]
@@ -327,10 +327,10 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-nv8fj -o json | jq 
 }
 ----
 
-在这种情况下，{short-project-name} 集成可以做更多。
+在这种情况下，{admc-short-name} 集成可以做更多。
 它可以检查提供的 `runAsUser` 的值。
 
-此资源被之前的 {short-project-name} 策略拒绝：
+此资源被之前的 {admc-short-name} 策略拒绝：
 
 .kubectl 命令显示资源拒绝
 [%collapsible]
@@ -394,4 +394,4 @@ kubectl get deploy -n my-namespace nginx-deployment -o json | jq ".status.condit
 PSA 提供了一种简单的方法来保护 Kubernetes 集群。
 PSA 的主要目标是简单性，它没有早期 Pod 安全策略的强大和灵活性。
 
-将 {short-project-name} 与 PSA 一起使用有助于填补这一空白。
+将 {admc-short-name} 与 PSA 一起使用有助于填补这一空白。

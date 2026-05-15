@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "grupos de políticas", "grupo de política de admissão de cluster", "grupo de política de admissão"]
+:keywords: ["{admc-name}", "kubewarden", "grupos de políticas", "grupo de política de admissão de cluster", "grupo de política de admissão"]
 :sidebar_label: Grupos de políticas
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -85,7 +85,7 @@ Esta seção abrange os principais campos de configuração de um grupo de polí
 
 === O atributo `policies`
 
-O campo de políticas é um mapa de políticas comuns. {project-name} chama políticas pelo grupo de políticas, para determinar se aceita ou rejeita o recurso em avaliação. As definições dessas políticas são uma versão simplificada das políticas comuns {short-project-name}, contendo apenas os atributos `module`, `settings` e `contextAwareResources`. Esses elementos são necessários para que as políticas funcionem dentro de um grupo de políticas.
+O campo de políticas é um mapa de políticas comuns. {admc-name} chama políticas pelo grupo de políticas, para determinar se aceita ou rejeita o recurso em avaliação. As definições dessas políticas são uma versão simplificada das políticas comuns {admc-short-name}, contendo apenas os atributos `module`, `settings` e `contextAwareResources`. Esses elementos são necessários para que as políticas funcionem dentro de um grupo de políticas.
 
 Um nome único identifica cada política do grupo de políticas. Por exemplo, o seguinte trecho define três políticas: `signed_by_alice`, `signed_by_bob` e `reject_latest_tag`.
 

@@ -23,14 +23,14 @@ Gatekeeper 是一个针对 Kubernetes 的项目，提供开箱即用的集成功
 
 == 与现有策略的兼容性
 
-所有现有的 Gatekeeper 策略应与 {short-project-name} 兼容，如本章所述。
+所有现有的 Gatekeeper 策略应与 {admc-short-name} 兼容，如本章所述。
 
 [IMPORTANT]
 ====
-如果您发现这不成立，请报告您的 Gatekeeper 策略，我们将努力确保您的 Gatekeeper 策略与 {short-project-name} 兼容。
+如果您发现这不成立，请报告您的 Gatekeeper 策略，我们将努力确保您的 Gatekeeper 策略与 {admc-short-name} 兼容。
 ====
 
 
 策略需要使用`opa` CLI编译为`wasm`目标。
 
-有关策略执行的更多信息，您可以阅读关于Open Policy Agent的xref:tutorials/writing-policies/rego/02-builtin-support.adoc[内置支持]的内容，位于{short-project-name}。
+有关策略执行的更多信息，您可以阅读关于Open Policy Agent的xref:tutorials/writing-policies/rego/02-builtin-support.adoc[内置支持]的内容，位于{admc-short-name}。

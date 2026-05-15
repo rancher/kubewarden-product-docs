@@ -4,12 +4,12 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Who is this project for? The personas.
-:keywords: ["{project-name}", kubewarden, documentation, personas]
+:keywords: ["{admc-name}", kubewarden, documentation, personas]
 :doc-persona: [kubewarden-all]
 :doc-type: [explanation]
 :doc-topic: [explanation]
 
-## {project-name} personas
+## {admc-name} personas
 
 [cols="1,2", options="header"]
 |===
@@ -19,17 +19,17 @@ include::partial$variables.adoc[]
 |Someone who takes a policy and uses it in a cluster. They deploy policies and observe results. They configure the policy settings but do not write the policy internal code (if there is any).
 
 |**Operator**
-|Someone operating {short-project-name} in a cluster. Installs and maintains {short-project-name}.
+|Someone operating {admc-short-name} in a cluster. Installs and maintains {admc-short-name}.
 
 |**Policy distributor**
-|Someone who has written a policy and wants to share it with others. They want the policy consumed by the “policy user” role. A distributor of {short-project-name} policies, to places such as ArtifactHub or private OCI repositories.
+|Someone who has written a policy and wants to share it with others. They want the policy consumed by the “policy user” role. A distributor of {admc-short-name} policies, to places such as ArtifactHub or private OCI repositories.
 
 |**Policy developer**
-|A person designing and writing policies for {short-project-name} for others to consume.
+|A person designing and writing policies for {admc-short-name} for others to consume.
 
 |**Integrator**
-|Builds with, using, or on top of {short-project-name}. Perhaps a custom UI or a helper tool for generating policies.
+|Builds with, using, or on top of {admc-short-name}. Perhaps a custom UI or a helper tool for generating policies.
 
 |**Developer**
-|A person working on the {short-project-name} product set. Building {short-project-name} itself.
+|A person working on the {admc-short-name} product set. Building {admc-short-name} itself.
 |===

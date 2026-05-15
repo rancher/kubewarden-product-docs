@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura políticas conscientes del contexto para asegurar reglas de Ingress únicas entre hosts, evitando conflictos con las bibliotecas de extensiones CEL de {project-name}.
+:description: Configura políticas conscientes del contexto para asegurar reglas de Ingress únicas entre hosts, evitando conflictos con las bibliotecas de extensiones CEL de {admc-name}.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
 :doc-type: ["tutorial"]
@@ -11,9 +11,9 @@ include::partial$variables.adoc[]
 :sidebar_label: Políticas conscientes del contexto
 :current-version: {page-origin-branch}
 
-La {project-name} de `cel-policy` soporta la característica de xref:reference/spec/05-context-aware-policies.adoc[conciencia del contexto]. La política tiene la capacidad de leer información del clúster y tomar decisiones basadas en otros recursos existentes además del recurso que activó la evaluación de la política a través de la solicitud de admisión.
+La {admc-name} de `cel-policy` soporta la característica de xref:reference/spec/05-context-aware-policies.adoc[conciencia del contexto]. La política tiene la capacidad de leer información del clúster y tomar decisiones basadas en otros recursos existentes además del recurso que activó la evaluación de la política a través de la solicitud de admisión.
 
-Para lograr esto, podemos usar las https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[bibliotecas de extensiones CEL de {short-project-name} para capacidades de host] incluidas en la política.
+Para lograr esto, podemos usar las https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[bibliotecas de extensiones CEL de {admc-short-name} para capacidades de host] incluidas en la política.
 
 == Ejemplo: Ingress único
 
@@ -53,7 +53,7 @@ spec:
 
 ----
 
-Ahora, necesitamos escribir el código CEL que obtendrá los Ingresses existentes en el clúster. Para eso, usamos la [{short-project-name} biblioteca de extensiones CEL](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
+Ahora, necesitamos escribir el código CEL que obtendrá los Ingresses existentes en el clúster. Para eso, usamos la [{admc-short-name} biblioteca de extensiones CEL](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
 Particularmente, las `kw.k8s` capacidades de host, que nos permiten consultar el clúster por GroupVersionKinds. Puedes ver la documentación disponible para las funciones CEL [aquí](https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library).
 
 La biblioteca utiliza un patrón de constructor al igual que las extensiones CEL de Kubernetes upstream; llamar a un método de función CEL devuelve un objeto CEL que por sí mismo tiene métodos de función específicos. Esto simplifica tener certeza sobre el alcance y los valores de retorno de nuestro código CEL.

@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Capabilities call reference
 :description: List of all host capabilities calls.
-:keywords: ["{project-name}", kubernetes, policyserver, host-capabilities, capabilities, namespaced-policies, security]
+:keywords: ["{admc-name}", kubernetes, policyserver, host-capabilities, capabilities, namespaced-policies, security]
 :doc-persona: [kubewarden-operator, kubewarden-integrator]
 :doc-type: [reference]
 :doc-topic: [operator-manual, policy-servers, host-capabilities, namespaced-policies, security]

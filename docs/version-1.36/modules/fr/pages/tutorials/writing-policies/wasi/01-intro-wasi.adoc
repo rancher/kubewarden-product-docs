@@ -18,14 +18,14 @@ L'https://wasi.dev/[Interface Système WebAssembly (WASI)] est une norme WebAsse
 
 Les auteurs rédigeant des stratégies classiques ne devraient jamais utiliser les interfaces système WASI pour rédiger des stratégies.
 
-Cette page est destinée aux {project-name} mainteneurs ou aux auteurs de stratégies de bas niveau qui souhaitent expérimenter avec des plateformes WASM à la pointe de la technologie.
+Cette page est destinée aux {admc-name} mainteneurs ou aux auteurs de stratégies de bas niveau qui souhaitent expérimenter avec des plateformes WASM à la pointe de la technologie.
 ====
 
 
 En utilisant WASI, vous pouvez avoir un module WebAssembly qui interagit avec des primitives système telles que STDOUT, STDERR, STDIN, les variables d'environnement et plus encore.
 
-Beaucoup des compilateurs utilisés pour compiler des stratégies {short-project-name} produisent des modules WebAssembly qui ciblent les interfaces WASI.
-Cependant, les stratégies {short-project-name} utilisent le projet https://github.com/wapc[waPC] pour mettre en œuvre une communication bidirectionnelle entre la stratégie et le composant d'exécution de la stratégie (`kwctl` ou `policy-server`). L'utilisation du protocole de communication est décrite xref:reference/spec/01-intro-spec.adoc[ici].
+Beaucoup des compilateurs utilisés pour compiler des stratégies {admc-short-name} produisent des modules WebAssembly qui ciblent les interfaces WASI.
+Cependant, les stratégies {admc-short-name} utilisent le projet https://github.com/wapc[waPC] pour mettre en œuvre une communication bidirectionnelle entre la stratégie et le composant d'exécution de la stratégie (`kwctl` ou `policy-server`). L'utilisation du protocole de communication est décrite xref:reference/spec/01-intro-spec.adoc[ici].
 
 Il existe des cas particuliers où le projet waPC ne peut pas encore être utilisé.
 Dans ces circonstances, vous pouvez rédiger une stratégie en utilisant les interfaces fournies par WASI.
@@ -33,7 +33,7 @@ Dans ces circonstances, vous pouvez rédiger une stratégie en utilisant les int
 [IMPORTANT]
 ====
 
-{short-project-name} prend en charge les stratégies WASI à partir de la version {short-project-name} 1.7.0.
+{admc-short-name} prend en charge les stratégies WASI à partir de la version {admc-short-name} 1.7.0.
 ====
 
 
@@ -46,7 +46,7 @@ Vous ne devriez pas utiliser les stratégies WASI dans des circonstances normale
 
 Une communication bidirectionnelle entre la stratégie et l'hôte peut être réalisée, mais nécessite des modifications à apporter à l'intérieur du SDK de langage. Ceci est nécessaire pour utiliser les xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[capacités de l'hôte] et pour rédiger des stratégies xref:/explanations/context-aware-policies.adoc[conscientes du contexte].
 
-Actuellement, seuls les SDK Go et JavaScript/TypeScript de {short-project-name} les exposent aux stratégies WASI.
+Actuellement, seuls les SDK Go et JavaScript/TypeScript de {admc-short-name} les exposent aux stratégies WASI.
 
 Si cela vous intéresse, veuillez nous contacter. Nous pourrons alors prioriser l'effort.
 
@@ -63,7 +63,7 @@ Actuellement, (en juin 2023), la seule bonne raison de faire cela est d'utiliser
 Cependant, ces modules ne peuvent pas encore exporter des fonctions vers le composant d'exécution WebAssembly.
 Cette limitation, suivie par https://github.com/golang/go/issues/42372[ce problème dédié], empêche l'adoption du protocole waPC.
 
-L'équipe du projet {short-project-name} conseille d'écrire {short-project-name} des stratégies Go en utilisant le compilateur TinyGo, comme décrit xref:tutorials/writing-policies/go/01-intro-go.adoc[ici].
+L'équipe du projet {admc-short-name} conseille d'écrire {admc-short-name} des stratégies Go en utilisant le compilateur TinyGo, comme décrit xref:tutorials/writing-policies/go/01-intro-go.adoc[ici].
 
 Cependant, certaines bases de code Go complexes ne peuvent pas être compilées avec le compilateur TinyGo.
 Cela inclut, par exemple, des bases de code comme https://github.com/google/cel-go[CEL-go] ou https://github.com/kyverno/kyverno/[Kyverno].
@@ -123,7 +123,7 @@ Le format de l'objet `SettingsValidationResponse` et le processus de validation 
 
 == Métadonnées de la stratégie
 
-Chaque stratégie {short-project-name} doit être annotée via la commande `kwctl annotate`.
+Chaque stratégie {admc-short-name} doit être annotée via la commande `kwctl annotate`.
 Les métadonnées d'une stratégie WASI simple doivent avoir cette valeur :
 
 [subs="+attributes",yaml]

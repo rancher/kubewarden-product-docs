@@ -8,17 +8,17 @@ include::partial$variables.adoc[]
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
 :doc-topic: [“explanations”, “audit-scanner”, “policy-reports”]
 :doc-type: [“explanation”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “audit scanner”, "policy reports"]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “audit scanner”, "policy reports"]
 :sidebar_label: Policy Reports
 :current-version: {page-origin-branch}
 
-When using the {project-name} Audit Scanner, you store the results of policy
+When using the {admc-name} Audit Scanner, you store the results of policy
 scans using the https://openreports.io/[OpenReports] Custom Resources.
 
 [CAUTION]
 ====
 
-With {project-name} 1.33, the Audit Scanner feature saves the reports
+With {admc-name} 1.33, the Audit Scanner feature saves the reports
 into OpenReports CRDs from [openreports.io](https://openreports.io) by default.
 
 The
@@ -220,8 +220,8 @@ screenshot below:
 
 image::policy-reporter_dashboard.png[Policy Reporter dashboard example]
 
-{short-project-name} ships the Policy Reporter UI with a preconfigured filter
-that only shows {short-project-name} policies, along with expanded information:
+{admc-short-name} ships the Policy Reporter UI with a preconfigured filter
+that only shows {admc-short-name} policies, along with expanded information:
 
 image::policy-reporter_policyreports.png[Policy Reporter PolicyReports example]
 

@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Activez le traçage pour obtenir des détails précis sur les évaluations de stratégies et déboguer les problèmes liés au déploiement de {project-name}.
+:description: Activez le traçage pour obtenir des détails précis sur les évaluations de stratégies et déboguer les problèmes liés au déploiement de {admc-name}.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["opérateur-manuel", "extension UI", "traçage"]
 :doc-type: ["hosto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "tracing"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "tracing"]
 :current-version: {page-origin-branch}
 
 Le traçage permet de collecter des détails précis sur les évaluations de stratégies.
-C'est un outil utile pour déboguer les problèmes dans votre déploiement de {project-name} et dans vos stratégies.
+C'est un outil utile pour déboguer les problèmes dans votre déploiement de {admc-name} et dans vos stratégies.
 
-{short-project-name} utilise https://www.jaegertracing.io/[Jaeger] pour recevoir, stocker et visualiser les événements de traçage.
+{admc-short-name} utilise https://www.jaegertracing.io/[Jaeger] pour recevoir, stocker et visualiser les événements de traçage.
 
 *_Journaux de traçage de stratégie_* image:ui_policy_tracing.png[Journaux de traçage de stratégie UI]
 

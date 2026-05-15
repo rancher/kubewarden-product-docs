@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 将原始策略配置为通用策略评估引擎，使用 {project-name}。
+:description: 将原始策略配置为通用策略评估引擎，使用 {admc-name}。
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "raw policies"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "support", "raw policies"]
 :sidebar_label: 原始策略
 :sidebar_position: 60
 :current-version: {page-origin-branch}
 
-从 `v1.9.0` 开始，{project-name} 支持在 Kubernetes 集群外部编写和执行策略的能力，作为通用策略评估引擎。
-策略服务器公开了 `/validate_raw` 端点，可用于验证任意 JSON 文档与 {short-project-name} 策略的匹配。
+从 `v1.9.0` 开始，{admc-name} 支持在 Kubernetes 集群外部编写和执行策略的能力，作为通用策略评估引擎。
+策略服务器公开了 `/validate_raw` 端点，可用于验证任意 JSON 文档与 {admc-short-name} 策略的匹配。
 
 在本指南中，我们将使用以下原始策略：
 
@@ -87,9 +87,9 @@ NOTE: 标志 `--ignore-kubernetes-connection-failure=true` 是在没有 Kubernet
 但是，可以在 Kubernetes 中启动策略服务器并使用原始验证端点。
 原始策略可以访问上下文感知的 xref:../explanations/context-aware-policies.adoc[capabilities]，就像标准策略一样。
 
-== 在 Kubernetes 中运行策略服务器而不使用 {short-project-name} 控制器
+== 在 Kubernetes 中运行策略服务器而不使用 {admc-short-name} 控制器
 
-无法使用由 {short-project-name} 控制器管理的策略服务器实例来托管原始策略。
+无法使用由 {admc-short-name} 控制器管理的策略服务器实例来托管原始策略。
 控制器将不允许用户更改策略服务器 ConfigMap 以添加原始策略，因为它会试图协调并还原更改。
 因此，必须启动一个专用的策略服务器。
 
@@ -295,7 +295,7 @@ curl -X POST \
 
 == 编写原始策略
 
-与验证 Kubernetes 资源的策略类似，原始策略是使用 {short-project-name} SDK 在 WebAssembly 中编写的。
+与验证 Kubernetes 资源的策略类似，原始策略是使用 {admc-short-name} SDK 在 WebAssembly 中编写的。
 如果您有兴趣编写原始策略，请参考特定语言的文档以获取更多信息：
 
 * xref:../tutorials/writing-policies/go/10-raw-policies.adoc[转至]

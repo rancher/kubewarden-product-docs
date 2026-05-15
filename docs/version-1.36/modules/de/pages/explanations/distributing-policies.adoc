@@ -3,16 +3,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Richtlinien sicher über ein OCI-konformes Registry mit Tools wie kwctl verteilen und die Sicherheit des Clusters durch {project-name} Richtlinienmanagement gewährleisten.
+:description: Richtlinien sicher über ein OCI-konformes Registry mit Tools wie kwctl verteilen und die Sicherheit des Clusters durch {admc-name} Richtlinienmanagement gewährleisten.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:keywords: ["{admc-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-{project-name} Richtlinien sind WebAssembly (Wasm) Binärdateien, die vom {short-project-name} Policy Server ausgewertet werden.
+{admc-name} Richtlinien sind WebAssembly (Wasm) Binärdateien, die vom {admc-short-name} Policy Server ausgewertet werden.
 
-Der {short-project-name} Policy Server lädt Richtlinien aus diesen Quellen:
+Der {admc-short-name} Policy Server lädt Richtlinien aus diesen Quellen:
 
 * Lokales Dateisystem
 * HTTP(s) Server
@@ -23,7 +23,7 @@ Der {short-project-name} Policy Server lädt Richtlinien aus diesen Quellen:
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Google Container-Registry]
 
-{short-project-name} empfiehlt, {short-project-name} Richtlinien über ein reguläres OCI-konformes Registry zu verteilen. Container-Registries sind eine zwingende Voraussetzung für jeden Kubernetes-Cluster. Einen einzigen Ort zu haben, um alle Artefakte, die ein Cluster benötigt, zu speichern und zu sichern, ist vorteilhaft.
+{admc-short-name} empfiehlt, {admc-short-name} Richtlinien über ein reguläres OCI-konformes Registry zu verteilen. Container-Registries sind eine zwingende Voraussetzung für jeden Kubernetes-Cluster. Einen einzigen Ort zu haben, um alle Artefakte, die ein Cluster benötigt, zu speichern und zu sichern, ist vorteilhaft.
 
 == Richtlinien in ein OCI-konformes Registry pushen
 
@@ -31,19 +31,19 @@ Das https://github.com/opencontainers/image-spec[OCI-Imageformat]
 spezifiziert, dass beliebige binäre Blobs in einem regulären OCI-konformen
 Container-Registry gespeichert werden können.
 
-Das Ziel-OCI-konforme Registry *muss Artefakte* unterstützen, um erfolgreich eine {short-project-name} Richtlinie dorthin zu pushen.
+Das Ziel-OCI-konforme Registry *muss Artefakte* unterstützen, um erfolgreich eine {admc-short-name} Richtlinie dorthin zu pushen.
 
 Sie können die https://github.com/kubewarden/kwctl[`kwctl`] CLI verwenden, um eine
-{short-project-name} Richtlinie in ein OCI-konformes Registry zu pushen.
+{admc-short-name} Richtlinie in ein OCI-konformes Registry zu pushen.
 
 == Die Richtlinie annotieren
 
-Sie annotieren auch eine Richtlinie mit `kwctl`. Das Annotieren einer {short-project-name}
+Sie annotieren auch eine Richtlinie mit `kwctl`. Das Annotieren einer {admc-short-name}
 Richtlinie erfolgt durch das Hinzufügen von Wasm-Custom-Abschnitten zur Richtlinien-Binärdatei. Das bedeutet, dass die Richtlinie ihre eigenen Metadaten paketiert.
 
 Der `kwctl annotate` Befehl erfordert zwei Eingaben:
 
-* die {short-project-name} Richtlinie, die annotiert werden soll, eine lokale Datei im Dateisystem.
+* die {admc-short-name} Richtlinie, die annotiert werden soll, eine lokale Datei im Dateisystem.
 * die Annotationsdatei, eine Datei, die eine YAML-Beschreibung der Richtlinienmetadaten enthält.
 Diese Datei befindet sich normalerweise im Stammprojektordner Ihrer Richtlinie.
 
@@ -161,4 +161,4 @@ $ kwctl push annotated-policy.wasm \
 Es wird davon abgeraten, nicht annotierte Richtlinien zu pushen. Der Policy Server verwendet die
 Metadaten, die durch Anmerkungen bereitgestellt werden, um eine Richtlinie korrekt auszuführen. Standardmäßig weigert sich `kwctl push`, eine solche Richtlinie in eine OCI-Registry zu übertragen. Wenn Sie eine unannotierte Richtlinie benötigen, verwenden Sie das `-&#x200D;-&#x200D;force`-Flag von `kwctl push`.
 
-Sie können eine Richtlinie vom {short-project-name} Policy Server oder `kwctl` als `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1` referenzieren.
+Sie können eine Richtlinie vom {admc-short-name} Policy Server oder `kwctl` als `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1` referenzieren.

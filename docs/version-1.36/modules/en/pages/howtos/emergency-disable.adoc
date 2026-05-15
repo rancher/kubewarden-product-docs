@@ -6,19 +6,19 @@ include::partial$variables.adoc[]
 :sidebar_label: Emergency disable
 :sidebar_position: 31
 :title: Emergency disable
-:description: Learn how to disable the {project-name} in emergency situations, stopping and deleting related configurations, and then restore.
-:keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
+:description: Learn how to disable the {admc-name} in emergency situations, stopping and deleting related configurations, and then restore.
+:keywords: ["{admc-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
 :doc-persona: kubewarden-operator
 :doc-type: howto
 :doc-topic: operator-manual
 
-In an emergency, operations teams might need to perform actions that {project-name} would block.
+In an emergency, operations teams might need to perform actions that {admc-name} would block.
 
-This document explains how to disable {short-project-name} so operations teams can address cluster failures. After resolving the situation, operations teams can restart {short-project-name}.
+This document explains how to disable {admc-short-name} so operations teams can address cluster failures. After resolving the situation, operations teams can restart {admc-short-name}.
 
-== Disable {short-project-name}
+== Disable {admc-short-name}
 
-First, stop the {short-project-name} controller. You do this by scaling its Deployment to zero:
+First, stop the {admc-short-name} controller. You do this by scaling its Deployment to zero:
 
 [source,console]
 ----
@@ -29,28 +29,28 @@ kubectl scale deployment kubewarden-controller \
 
 [tip]
 ====
-Ensure you use the name of the Namespace where the {short-project-name} stack is deployed.
+Ensure you use the name of the Namespace where the {admc-short-name} stack is deployed.
 Here, the stack is deployed in the `kubewarden` Namespace.
 ====
 
 Next, delete all the `ValidatingWebhookConfigurations` and `MutatingWebhookConfigurations`
-created by {short-project-name}:
+created by {admc-short-name}:
 
 [source,console]
 ----
-# Delete all the ValidatingWebhookConfiguration created by {short-project-name}
+# Delete all the ValidatingWebhookConfiguration created by {admc-short-name}
 kubectl delete validatingwebhookconfigurations \
   -l app.kubernetes.io/part-of=kubewarden
 
-# Delete all the MutatingWebhookConfiguration created by {short-project-name}
+# Delete all the MutatingWebhookConfiguration created by {admc-short-name}
 kubectl delete mutatingwebhookconfigurations \
   -l app.kubernetes.io/part-of=kubewarden
 ----
 
-== Restore {short-project-name}
+== Restore {admc-short-name}
 
-When the emergency is over, restore the {short-project-name} stack by bringing back
-the {short-project-name} controller:
+When the emergency is over, restore the {admc-short-name} stack by bringing back
+the {admc-short-name} controller:
 
 [source,console]
 ----
@@ -61,7 +61,7 @@ kubectl scale deployment kubewarden-controller \
 
 [tip]
 ====
-- Ensure you use the name of the Namespace where the {short-project-name} stack is deployed.
+- Ensure you use the name of the Namespace where the {admc-short-name} stack is deployed.
   Here, the stack is deployed in the `kubewarden` Namespace.
 - Ensure you scale the controller back to its original value. This example assumes
   there's only one replica of the controller running.

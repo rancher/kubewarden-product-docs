@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Führen Sie ein Upgrade Ihres {project-name} Stacks unter Verwendung unterstützter Versionierungsstrategien und Kompatibilitätsregeln zwischen seinen Komponenten durch.
+:description: Führen Sie ein Upgrade Ihres {admc-name} Stacks unter Verwendung unterstützter Versionierungsstrategien und Kompatibilitätsregeln zwischen seinen Komponenten durch.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["operator-handbuch", "Upgrade-Pfad"]
 :doc-type: ["reference"]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== {project-name} Stack-Versionierung
+== {admc-name} Stack-Versionierung
 
-Das {short-project-name} Projekt verwendet https://semver.org/[Semantische Versionierung], um die "Stack"-Version aller seiner Komponenten zu definieren: die Version folgt dem `MAJOR.MINOR.PATCH` Schema. Die unterstützte Version ist die neueste Veröffentlichung.
+Das {admc-short-name} Projekt verwendet https://semver.org/[Semantische Versionierung], um die "Stack"-Version aller seiner Komponenten zu definieren: die Version folgt dem `MAJOR.MINOR.PATCH` Schema. Die unterstützte Version ist die neueste Veröffentlichung.
 
-Die {short-project-name} Komponenten, die die Regeln für die "Stack"-Version befolgen, sind:
+Die {admc-short-name} Komponenten, die die Regeln für die "Stack"-Version befolgen, sind:
 
 * `kubewarden-crds` Chart, in ihrem appVersion-Feld.
 
@@ -36,7 +36,7 @@ Daher, wenn die `kubewarden-controller` Version, die läuft, `1.1.2` ist, sollte
 
 == Helm-Chart-Versionen
 
-Helm-Charts definieren das `version` Feld und das `appVersion` Feld. Das `appVersion` Feld informiert über die {short-project-name} "Stack"-Version, wie zuvor erwähnt. Das `version` Feld folgt ebenfalls https://semver.org/[semantische Versionierung] und beschreibt rückwärtskompatible Änderungen in den Diagrammvorlagen und `values.yaml`.
+Helm-Charts definieren das `version` Feld und das `appVersion` Feld. Das `appVersion` Feld informiert über die {admc-short-name} "Stack"-Version, wie zuvor erwähnt. Das `version` Feld folgt ebenfalls https://semver.org/[semantische Versionierung] und beschreibt rückwärtskompatible Änderungen in den Diagrammvorlagen und `values.yaml`.
 
 == Upgrade-Möglichkeiten
 
@@ -49,16 +49,16 @@ include::latest@shared:en:partial$upg-path.adoc[]
 
 == Upgrade-Reihenfolge
 
-{short-project-name} Benutzer sollten den Stack upgraden, beginnend mit dem `kubewarden-crds` Chart, dann mit dem `kubewarden-controller` Chart. Danach upgraden Sie das `policy-server` (über das `kubewarden-defaults` Chart oder durch Erhöhen der Bilder von benutzerdefinierten) und `kwctl`.
+{admc-short-name} Benutzer sollten den Stack upgraden, beginnend mit dem `kubewarden-crds` Chart, dann mit dem `kubewarden-controller` Chart. Danach upgraden Sie das `policy-server` (über das `kubewarden-defaults` Chart oder durch Erhöhen der Bilder von benutzerdefinierten) und `kwctl`.
 
 == Downgrades
 
-Downgrades werden *nicht* unterstützt, und {short-project-name} testet sie nicht. Dennoch gibt es eine angemessene Erwartung, dass sie funktionieren sollten.
+Downgrades werden *nicht* unterstützt, und {admc-short-name} testet sie nicht. Dennoch gibt es eine angemessene Erwartung, dass sie funktionieren sollten.
 
 == SDKs, Richtlinien
 
-Die Richtlinien-SDKs für die verschiedenen Sprachen und Richtlinien, die vom {short-project-name} Team verwaltet werden, folgen ihrer eigenen semantischen Versionierung. {short-project-name} unterstützt die neueste Version. Es besteht keine Notwendigkeit für einen Upgrade-Pfad für sie, nur eine Aktualisierung auf die neueste Version.
+Die Richtlinien-SDKs für die verschiedenen Sprachen und Richtlinien, die vom {admc-short-name} Team verwaltet werden, folgen ihrer eigenen semantischen Versionierung. {admc-short-name} unterstützt die neueste Version. Es besteht keine Notwendigkeit für einen Upgrade-Pfad für sie, nur eine Aktualisierung auf die neueste Version.
 
-Änderungen am {short-project-name} Stack können bedeuten, dass Richtlinien und SDKs Updates erhalten, um die neuesten {short-project-name} Funktionen zu nutzen. {short-project-name} sorgt dafür, dass diese Updates auf eine rückwärtskompatible Weise durchgeführt werden.
+Änderungen am {admc-short-name} Stack können bedeuten, dass Richtlinien und SDKs Updates erhalten, um die neuesten {admc-short-name} Funktionen zu nutzen. {admc-short-name} sorgt dafür, dass diese Updates auf eine rückwärtskompatible Weise durchgeführt werden.
 
-Zum Beispiel bedeutet eine {short-project-name} Minor-Version, die Unterstützung für den Audit Scanner (`v1.7.0`) hinzufügt, dass Richtlinien ein neues `spec.backgroundAudit` Feld erhalten haben. Dies ist optional, rückwärtskompatibel und standardmäßig auf `true` gesetzt.
+Zum Beispiel bedeutet eine {admc-short-name} Minor-Version, die Unterstützung für den Audit Scanner (`v1.7.0`) hinzufügt, dass Richtlinien ein neues `spec.backgroundAudit` Feld erhalten haben. Dies ist optional, rückwärtskompatibel und standardmäßig auf `true` gesetzt.

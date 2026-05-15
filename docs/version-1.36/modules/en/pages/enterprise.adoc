@@ -4,14 +4,14 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Access centralized information on enterprise support for {project-name} solutions through various interfaces.
-:keywords: [ {project-name}, kubewarden, support, ]
+:description: Access centralized information on enterprise support for {admc-name} solutions through various interfaces.
+:keywords: [ {admc-name}, kubewarden, support, ]
 :doc-persona: [kubewarden-all]
 :doc-type: [explanation]
 :doc-topic: [support]
 
 ifeval::["{build-type}" == "community"]
-These organization(s) provide enterprise support for {project-name}:
+These organization(s) provide enterprise support for {admc-name}:
 
 [cols="1,1"]
 |===

@@ -18,15 +18,15 @@ Die https://wasi.dev/[WebAssembly Systemschnittstelle (WASI)] ist ein WebAssembl
 
 Autoren, die reguläre Richtlinien schreiben, sollten niemals einfache WASI-Systemschnittstellen verwenden, um Richtlinien zu schreiben.
 
-Diese Seite ist für {project-name} Maintainer oder Richtlinienautoren auf niedrigem Niveau, die mit den neuesten WASM-Plattformen experimentieren möchten.
+Diese Seite ist für {admc-name} Maintainer oder Richtlinienautoren auf niedrigem Niveau, die mit den neuesten WASM-Plattformen experimentieren möchten.
 ====
 
 
 Mit WASI können Sie ein WebAssembly-Modul haben, das mit Systemprimitiven wie STDOUT, STDERR, STDIN, Umgebungsvariablen und mehr interagiert.
 
-Viele der Compiler, die verwendet werden, um {short-project-name} Richtlinien zu kompilieren, erzeugen WebAssembly-Module, die auf WASI-Schnittstellen abzielen.
-Allerdings verwenden {short-project-name} Richtlinien das https://github.com/wapc[waPC] Projekt, um die bidirektionale Kommunikation zwischen der Richtlinie und der Richtlinienlaufzeit (`kwctl` oder `policy-server`) zu implementieren.
-{short-project-name} Die Verwendung des Kommunikationsprotokolls wird xref:reference/spec/01-intro-spec.adoc[hier] beschrieben.
+Viele der Compiler, die verwendet werden, um {admc-short-name} Richtlinien zu kompilieren, erzeugen WebAssembly-Module, die auf WASI-Schnittstellen abzielen.
+Allerdings verwenden {admc-short-name} Richtlinien das https://github.com/wapc[waPC] Projekt, um die bidirektionale Kommunikation zwischen der Richtlinie und der Richtlinienlaufzeit (`kwctl` oder `policy-server`) zu implementieren.
+{admc-short-name} Die Verwendung des Kommunikationsprotokolls wird xref:reference/spec/01-intro-spec.adoc[hier] beschrieben.
 
 Es gibt spezielle Fälle, in denen das waPC-Projekt noch nicht verwendet werden kann.
 Unter diesen Umständen können Sie eine Richtlinie unter Verwendung der von WASI bereitgestellten Schnittstellen schreiben.
@@ -34,7 +34,7 @@ Unter diesen Umständen können Sie eine Richtlinie unter Verwendung der von WAS
 [IMPORTANT]
 ====
 
-{short-project-name} unterstützt WASI-Richtlinien ab der {short-project-name} Version 1.7.0.
+{admc-short-name} unterstützt WASI-Richtlinien ab der {admc-short-name} Version 1.7.0.
 ====
 
 
@@ -49,7 +49,7 @@ Bidirektionale Kommunikation zwischen der Richtlinie und dem Host kann erreicht 
 erfordert jedoch Änderungen innerhalb des Sprach-SDKs. Dies ist erforderlich, um xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[Hostfähigkeiten] zu nutzen und um
 xref:/explanations/context-aware-policies.adoc[kontextbewusste] Richtlinien zu schreiben.
 
-Derzeit stellen nur die {short-project-name} Go- und JavaScript/TypeScript-SDKs diese für
+Derzeit stellen nur die {admc-short-name} Go- und JavaScript/TypeScript-SDKs diese für
 WASI-Richtlinien zur Verfügung.
 
 Wenn dies für Sie von Interesse ist, kontaktieren Sie uns bitte. Wir können dann den Aufwand priorisieren.
@@ -67,7 +67,7 @@ Seit der Version 1.21 kann der offizielle Go-Compiler WebAssembly-Module erstell
 Diese Module können jedoch noch keine Funktionen an die WebAssembly-Laufzeit exportieren.
 Diese Einschränkung, die durch https://github.com/golang/go/issues/42372[diese dedizierte Issue] verfolgt wird, verhindert die Annahme des waPC-Protokolls.
 
-Das {short-project-name} Projektteam empfiehlt, dass Sie {short-project-name} Go-Richtlinien mit dem TinyGo-Compiler schreiben, wie xref:tutorials/writing-policies/go/01-intro-go.adoc[hier] beschrieben.
+Das {admc-short-name} Projektteam empfiehlt, dass Sie {admc-short-name} Go-Richtlinien mit dem TinyGo-Compiler schreiben, wie xref:tutorials/writing-policies/go/01-intro-go.adoc[hier] beschrieben.
 
 Bestimmte komplexe Go-Codebasen können jedoch nicht mit dem TinyGo-Compiler kompiliert werden.
 Dazu gehören beispielsweise Codebasen wie https://github.com/google/cel-go[CEL-go] oder https://github.com/kyverno/kyverno/[Kyverno].
@@ -127,7 +127,7 @@ Das Format des `SettingsValidationResponse` und der Prozess zur Validierung der 
 
 == Richtlinienmetadaten
 
-Jede {short-project-name} Richtlinie muss über den `kwctl annotate` Befehl annotiert werden.
+Jede {admc-short-name} Richtlinie muss über den `kwctl annotate` Befehl annotiert werden.
 Die Metadaten der Richtlinie einer einfachen WASI-Richtlinie müssen diesen Wert haben:
 
 [subs="+attributes",yaml]

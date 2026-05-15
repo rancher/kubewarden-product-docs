@@ -40,9 +40,9 @@ enquanto uma usando `gjson` tem cerca de 300&nbsp;KB.
 
 Além do tamanho,
 a política usando objetos Kubernetes leva muito mais tempo durante a primeira execução.
-As invocações seguintes são rápidas porque {project-name} usa o recurso de cache do Wasmtime.
+As invocações seguintes são rápidas porque {admc-name} usa o recurso de cache do Wasmtime.
 A primeira execução pode levar cerca de 20 segundos com `kwctl`, execuções posteriores, de 1 a 2 segundos.
-Portanto, o {short-project-name} Policy Server tem um tempo de inicialização mais lento, mas os tempos de avaliação da política geralmente não são afetados pelo uso de objetos Kubernetes.
+Portanto, o {admc-short-name} Policy Server tem um tempo de inicialização mais lento, mas os tempos de avaliação da política geralmente não são afetados pelo uso de objetos Kubernetes.
 ====
 
 
@@ -325,7 +325,7 @@ O teste define novos cenários desta forma até `NOTE 2`.
 
 . Crie um objeto `BasicSettings` utilizando os dados fornecidos pelo `testCase`.
 . Crie um objeto `Pod` e atribua a ele os rótulos definidos em `testCase`.
-. Crie um objeto `payload`. Faça isso usando uma função auxiliar do SDK {short-project-name}: `kubewarden_testing.BuildValidationRequest`.
+. Crie um objeto `payload`. Faça isso usando uma função auxiliar do SDK {admc-short-name}: `kubewarden_testing.BuildValidationRequest`.
 Esta função recebe como entrada o objeto sobre o qual a solicitação se refere, o `Pod`, e o objeto que descreve as configurações, a instância `BasicSettings`.
 . Finalmente, o código invoca sua função `validate` e realiza uma verificação no resultado.
 
@@ -400,7 +400,7 @@ Você pode estar se perguntando por que a saída dos testes unitários apresenta
 
 As declarações `logger` na política produzem essa saída.
 Isso acontece apenas quando o código é executado fora do contexto do WebAssembly.
-Isso não acontece quando a política é avaliada em {short-project-name}, nesse contexto as declarações `logger` emitem eventos OpenTelemetry em vez disso.
+Isso não acontece quando a política é avaliada em {admc-short-name}, nesse contexto as declarações `logger` emitem eventos OpenTelemetry em vez disso.
 ====
 
 

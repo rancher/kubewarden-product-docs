@@ -5,26 +5,26 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Organização
 :sidebar_position: 75
-:description: Acesse documentação abrangente organizada em tutoriais, explicações, procedimentos e materiais de referência para o {project-name}.
-:keywords: ["gerente de política de admissão", "{project-name}", documentação, organização]
+:description: Acesse documentação abrangente organizada em tutoriais, explicações, procedimentos e materiais de referência para o {admc-name}.
+:keywords: ["gerente de política de admissão", "{admc-name}", documentação, organização]
 :doc-persona: [kubewarden-all]
 :doc-type: [explicação]
 :doc-topic: [explicação]
 
-{project-name} organiza a documentação do projeto da seguinte forma:
+{admc-name} organiza a documentação do projeto da seguinte forma:
 
 * xref:/introduction.adoc[Introdução]
 * xref:/quick-start.adoc[Início rápido]
 * _Tutoriais_—aprendendo por meio de exemplos.
 * _Explicações_—conceitos subjacentes.
-* _Procedimentos_—realizando tarefas {short-project-name}.
+* _Procedimentos_—realizando tarefas {admc-short-name}.
 * _Referência_
 * Organização—esta página
-* xref:/personas.adoc[Personas]—para quem é {short-project-name}?
+* xref:/personas.adoc[Personas]—para quem é {admc-short-name}?
 * xref:/disclosure.adoc[Segurança]
 * xref:/glossary.adoc[Glossário]
 
-A maior parte do material está nas quatro seções, _Tutoriais_, _Explicações_, _Procedimentos_ e _Referência_. Pode haver sobreposição, pois as seções não são mutuamente exclusivas. O projeto {short-project-name} tenta seguir a estrutura de documentação link:https://diataxis.fr/[Diátaxis].
+A maior parte do material está nas quatro seções, _Tutoriais_, _Explicações_, _Procedimentos_ e _Referência_. Pode haver sobreposição, pois as seções não são mutuamente exclusivas. O projeto {admc-short-name} tenta seguir a estrutura de documentação link:https://diataxis.fr/[Diátaxis].
 
 == Navegação
 

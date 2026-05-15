@@ -215,7 +215,7 @@ func validateCliSettings(settings *Settings) SettingsValidationResponse {
 }
 ----
 
-Vous devez également mettre à jour la structure `ValidationResponse` et la fonction `MutateRequest` dans `kw_sdk.go` pour supprimer les types spécifiques à Kubernetes et utiliser les types {short-project-name} à la place :
+Vous devez également mettre à jour la structure `ValidationResponse` et la fonction `MutateRequest` dans `kw_sdk.go` pour supprimer les types spécifiques à Kubernetes et utiliser les types {admc-short-name} à la place :
 
 [,go]
 ----

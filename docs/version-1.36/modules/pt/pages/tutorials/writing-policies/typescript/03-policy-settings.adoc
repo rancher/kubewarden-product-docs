@@ -3,10 +3,10 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Defina e implemente estruturas eficazes de configurações de políticas por meio das {project-name} políticas nos arquivos src/types.ts e src/index.ts.
-:keywords: "{project-name}", Kubewarden, kubernetes, definindo configurações de políticas, TypeScript
+:description: Defina e implemente estruturas eficazes de configurações de políticas por meio das {admc-name} políticas nos arquivos src/types.ts e src/index.ts.
+:keywords: "{admc-name}", Kubewarden, kubernetes, definindo configurações de políticas, TypeScript
 :doc-type: tutorial
-:doc-topic: {project-name}, Kubewarden, escrevendo-políticas, typescript, definindo-configurações-de-políticas
+:doc-topic: {admc-name}, Kubewarden, escrevendo-políticas, typescript, definindo-configurações-de-políticas
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Crítico: Não escreva informações de log no STDOUT.
 
-Escrever no STDOUT quebra as políticas. Em vez disso, use STDERR para logging ou a ferramenta de logging fornecida pelo {project-name} SDK. A saída da política para o STDOUT deve conter apenas a resposta de validação.
+Escrever no STDOUT quebra as políticas. Em vez disso, use STDERR para logging ou a ferramenta de logging fornecida pelo {admc-name} SDK. A saída da política para o STDOUT deve conter apenas a resposta de validação.
 ====
 
 Primeiro, defina a estrutura que contém as configurações de políticas em `src/types.ts`:
@@ -45,7 +45,7 @@ export interface KubernetesResource {
 
 == Construindo instâncias de Settings
 
-As {short-project-name} políticas usam duas funções que lidam com as configurações:
+As {admc-short-name} políticas usam duas funções que lidam com as configurações:
 
 * `validate`: Chamado durante a validação do objeto.
 * `validateSettings`: Chamado no momento do carregamento da política.

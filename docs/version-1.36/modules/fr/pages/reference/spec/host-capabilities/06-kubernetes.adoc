@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explorez les fonctionnalités de Kubernetes en utilisant les stratégies contextuelles de {project-name} et le protocole waPC pour accéder aux ressources du cluster.
+:description: Explorez les fonctionnalités de Kubernetes en utilisant les stratégies contextuelles de {admc-name} et le protocole waPC pour accéder aux ressources du cluster.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["rédaction de stratégies", "spécification", "capacités d'hôte", "capacités de Kubernetes"]
 :doc-type: ["reference"]
@@ -11,8 +11,8 @@ include::partial$variables.adoc[]
 :sidebar_label: Fonctionnalités de Kubernetes
 :current-version: {page-origin-branch}
 
-Les stratégies contextuelles de {project-name} nécessitent un accès aux ressources du cluster Kubernetes où elles s'exécutent.
-Pour cela, les SDK {short-project-name} exposent des fonctions qui utilisent le protocole de communication waPC pour communiquer avec le système hôte en demandant des données sur le cluster.
+Les stratégies contextuelles de {admc-name} nécessitent un accès aux ressources du cluster Kubernetes où elles s'exécutent.
+Pour cela, les SDK {admc-short-name} exposent des fonctions qui utilisent le protocole de communication waPC pour communiquer avec le système hôte en demandant des données sur le cluster.
 
 == Contrat du protocole waPC
 

@@ -3,12 +3,12 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura {project-name} para validar la integridad de las firmas de artefactos y las políticas de admisión.
+:description: Configura {admc-name} para validar la integridad de las firmas de artefactos y las políticas de admisión.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "secure-supply-chain"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "sistema de suministro seguro", "infraestructura"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "sistema de suministro seguro", "infraestructura"]
 :sidebar_label: Sistema de suministro seguro
 :sidebar_position: 40
 :current-version: {page-origin-branch}
@@ -17,9 +17,9 @@ Una infraestructura de sistema de suministro segura puede verificar la validez d
 
 El proyecto https://sigstore.dev/[Sigstore] proporciona herramientas e infraestructura para esto. Es para validar la integridad del sistema de suministro de artefactos.
 
-{short-project-name} utiliza https://github.com/sigstore/cosign[`cosign`] junto con la infraestructura https://github.com/SigStore/fulcio[fulcio] y https://github.com/sigstore/rekor[rekor] ofrecida por el proyecto Sigstore.
+{admc-short-name} utiliza https://github.com/sigstore/cosign[`cosign`] junto con la infraestructura https://github.com/SigStore/fulcio[fulcio] y https://github.com/sigstore/rekor[rekor] ofrecida por el proyecto Sigstore.
 
-Los operadores de clúster pueden configurar {project-name} para que solo ejecute políticas firmadas por entidades de confianza. Los desarrolladores de políticas pueden firmar sus políticas y publicarlas en un registro.
+Los operadores de clúster pueden configurar {admc-name} para que solo ejecute políticas firmadas por entidades de confianza. Los desarrolladores de políticas pueden firmar sus políticas y publicarlas en un registro.
 
 == Requisitos previos
 
@@ -31,7 +31,7 @@ La firma sin clave utiliza las instancias predeterminadas https://github.com/Sig
 
 == Firmar políticas
 
-{short-project-name} recomienda usar la utilidad https://github.com/sigstore/cosign[cosign] de Sigstore para firmar políticas. Esta sección muestra un método basado en claves para firmar políticas. Necesitas generar un par de claves privada-pública para esto. Las claves generadas ayudan a verificar si los artefactos firmados provienen del usuario esperado. Para generar este par de claves, utiliza este `cosign generate-key-pair` comando:
+{admc-short-name} recomienda usar la utilidad https://github.com/sigstore/cosign[cosign] de Sigstore para firmar políticas. Esta sección muestra un método basado en claves para firmar políticas. Necesitas generar un par de claves privada-pública para esto. Las claves generadas ayudan a verificar si los artefactos firmados provienen del usuario esperado. Para generar este par de claves, utiliza este `cosign generate-key-pair` comando:
 
 [subs="+attributes",bash]
 ----
@@ -68,7 +68,7 @@ Enter password for private key: ●●●●●●●●
 Pushing signature to: ghcr.io/kubewarden/policies/user-group-psp
 ----
 
-Este comando firma la política creando un nuevo objeto de firma. El objeto de firma se sube luego al registro, junto con la política. Ahora la política está lista para ser utilizada en una instalación {short-project-name} utilizando la verificación de firma.
+Este comando firma la política creando un nuevo objeto de firma. El objeto de firma se sube luego al registro, junto con la política. Ahora la política está lista para ser utilizada en una instalación {admc-short-name} utilizando la verificación de firma.
 
 La misma política puede ser firmada múltiples veces, por el mismo usuario o diferentes. Estas firmas se añaden al objeto de firma junto con la firma original.
 
@@ -109,9 +109,9 @@ Esto firma la política y la envía al repositorio. No se generan claves como su
 
 === Cómo firmar artefactos en flujos de trabajo de GitHub
 
-Al utilizar la firma sin claves, en una acción de GitHub, `cosign` no necesita que el usuario inicie sesión en un proveedor de OIDC. Un token de GitHub está disponible durante la ejecución del flujo de trabajo de GitHub. Se utiliza para autenticar al usuario y generar las claves efímeras. El proceso de firma es el mismo que se utiliza en el modo sin claves. Este es un ejemplo de cómo el proyecto {short-project-name} firma sus políticas:
+Al utilizar la firma sin claves, en una acción de GitHub, `cosign` no necesita que el usuario inicie sesión en un proveedor de OIDC. Un token de GitHub está disponible durante la ejecución del flujo de trabajo de GitHub. Se utiliza para autenticar al usuario y generar las claves efímeras. El proceso de firma es el mismo que se utiliza en el modo sin claves. Este es un ejemplo de cómo el proyecto {admc-short-name} firma sus políticas:
 
-.YAML que describe la firma de políticas de {short-project-name}
+.YAML que describe la firma de políticas de {admc-short-name}
 [%collapsible]
 ======
 
@@ -153,7 +153,7 @@ jobs:
 [NOTE]
 ====
 
-Los desarrolladores de políticas pueden utilizar las plantillas de políticas de {short-project-name}. Tienen acciones de GitHub para construir, probar, firmar y publicar políticas.
+Los desarrolladores de políticas pueden utilizar las plantillas de políticas de {admc-short-name}. Tienen acciones de GitHub para construir, probar, firmar y publicar políticas.
 
 ====
 
@@ -273,9 +273,9 @@ The following checks were performed on each of these signatures:
 
 == Configurando el servidor de políticas para comprobar las firmas de las políticas
 
-Puedes configurar {short-project-name} con un `ConfigMap` para ejecutar solo políticas de confianza. La estructura `ConfigMap` se describe en xref:reference/verification-config.adoc#_signature_configuration_reference[Referencia de Configuración de Firma]. Se utiliza para verificar una política utilizando `kwctl`. El `ConfigMap` debe definir las configuraciones permitidas bajo el campo `verification-config`.
+Puedes configurar {admc-short-name} con un `ConfigMap` para ejecutar solo políticas de confianza. La estructura `ConfigMap` se describe en xref:reference/verification-config.adoc#_signature_configuration_reference[Referencia de Configuración de Firma]. Se utiliza para verificar una política utilizando `kwctl`. El `ConfigMap` debe definir las configuraciones permitidas bajo el campo `verification-config`.
 
-Por ejemplo, quieres ejecutar políticas firmadas por la organización de GitHub {short-project-name}. Entonces, un ejemplo de `ConfigMap` para este escenario sería:
+Por ejemplo, quieres ejecutar políticas firmadas por la organización de GitHub {admc-short-name}. Entonces, un ejemplo de `ConfigMap` para este escenario sería:
 
 .$ cat kubewarden_signatures.yaml
 [%collapsible]
@@ -326,9 +326,9 @@ $ kwctl scaffold verification-config > verification_config.yaml
 ----
 $ kwctl scaffold verification-config > verification_config.yaml
 $ cat verification_config.yaml
-# Default {short-project-name} verification config
+# Default {admc-short-name} verification config
 #
-# With this config, the only valid policies are those signed by {short-project-name}
+# With this config, the only valid policies are those signed by {admc-short-name}
 # infrastructure.
 #
 # This config can be saved to its default location (for this OS) with:
@@ -368,9 +368,9 @@ $ kubectl get configmap -o yaml my-signatures-configuration
 apiVersion: v1
 data:
   verification-config: |+
-    # Default {short-project-name} verification config
+    # Default {admc-short-name} verification config
     #
-    # With this config, the only valid policies are those signed by {short-project-name}
+    # With this config, the only valid policies are those signed by {admc-short-name}
     # infrastructure.
     #
     # This config can be saved to its default location (for this OS) with:
@@ -571,7 +571,7 @@ Por ejemplo, el último fragmento, utilizando `genericIssuer`, podría reescribi
 Todos los tipos de firma pueden tener otros campos de validación opcionales, `annotations`.
 Estos campos son datos clave/valor añadidos durante el proceso de firma.
 
-Con {short-project-name}, puedes comprobar que la firma de la directiva proviene de usuarios de confianza *y* que tienen anotaciones específicas.
+Con {admc-short-name}, puedes comprobar que la firma de la directiva proviene de usuarios de confianza *y* que tienen anotaciones específicas.
 
 La siguiente validación comprueba 2 condiciones para la directiva:
 
@@ -611,7 +611,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-Este último ejemplo prueba si una directiva dada provino de la organización {short-project-name}:
+Este último ejemplo prueba si una directiva dada provino de la organización {admc-short-name}:
 
 [subs="+attributes",console]
 ----

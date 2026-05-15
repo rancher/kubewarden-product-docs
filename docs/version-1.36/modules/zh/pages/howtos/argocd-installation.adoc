@@ -7,12 +7,12 @@ include::partial$variables.adoc[]
 :sidebar_label: ArgoCD 安装
 :sidebar_position: 35
 :description: 通过安全地设置证书创建和续订的特定配置选项，配置您的 ArgoCD 应用程序以有效管理 Kubernetes 资源。
-:keywords: ["{project-name}", gitops, argocd]
+:keywords: ["{admc-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]
 :doc-topic: [argocd-installation]
 
-如果您使用 ArgoCD 来管理 Kubernetes 资源，您可能希望使用 ArgoCD 安装 {project-name}。这是可能的，但有一些注意事项。自 {short-project-name} v1.17.0 起，cert-manager 依赖项已被移除。现在有一个新的证书协调器，可以自动续订证书。这意味着 {short-project-name} 控制器负责为您创建和续订证书。这包括 root CA 和所有 webhook 证书。
+如果您使用 ArgoCD 来管理 Kubernetes 资源，您可能希望使用 ArgoCD 安装 {admc-name}。这是可能的，但有一些注意事项。自 {admc-short-name} v1.17.0 起，cert-manager 依赖项已被移除。现在有一个新的证书协调器，可以自动续订证书。这意味着 {admc-short-name} 控制器负责为您创建和续订证书。这包括 root CA 和所有 webhook 证书。
 
 初始 root CA 和 webhook 证书的创建是在使用可用 Helm 函数的 Helm chart 安装期间进行的。因此，在 Helm chart 渲染期间，安装检查证书是否已经创建，如果没有，则创建它们。
 
@@ -121,6 +121,6 @@ spec:
 [NOTE]
 ====
 
-在这个例子中，关键方面是 `ignoreDifferences` 配置，用于 {short-project-name} 控制器应用程序。其余内容提供了有关如何配置 ArgoCD 应用程序的背景信息，并提供了完整的示例。
+在这个例子中，关键方面是 `ignoreDifferences` 配置，用于 {admc-short-name} 控制器应用程序。其余内容提供了有关如何配置 ArgoCD 应用程序的背景信息，并提供了完整的示例。
 
 ====

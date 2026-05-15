@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}のポリシーデータの検証とシリアル化のためにポリシー設定を構成します。
+:description: {admc-name}のポリシーデータの検証とシリアル化のためにポリシー設定を構成します。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "settings"]
 :doc-type: ["reference"]
@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 
 ポリシーの動作は固定的ではなく、ランタイム時に設定の詳細をポリシーに提供することで柔軟に構成できます。ポリシーの著者は、ポリシー設定の構造を定義する自由があります。
 
-{project-name}はポリシー設定をJSONにシリアル化し、ポリシーが呼び出されるたびにそれを提供します。
+{admc-name}はポリシー設定をJSONにシリアル化し、ポリシーが呼び出されるたびにそれを提供します。
 
 == 設定の検証
 
@@ -41,7 +41,7 @@ include::partial$variables.adoc[]
 [NOTE]
 ====
 
-{short-project-name}のhttps://github.com/chimera-kube/policy-server[policy-server]は、起動時にユーザーが提供したすべてのポリシー設定を検証します。ポリシーサーバーは、少なくとも1つのポリシーが誤った設定パラメータを受け取った場合、直ちにエラーで終了します。
+{admc-short-name}のhttps://github.com/chimera-kube/policy-server[policy-server]は、起動時にユーザーが提供したすべてのポリシー設定を検証します。ポリシーサーバーは、少なくとも1つのポリシーが誤った設定パラメータを受け取った場合、直ちにエラーで終了します。
 
 ====
 

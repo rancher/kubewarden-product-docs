@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Durante la evaluación, comprende las capacidades del host ofrecidas por el entorno para {project-name} políticas.
+:description: Durante la evaluación, comprende las capacidades del host ofrecidas por el entorno para {admc-name} políticas.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "introduction"]
 :doc-type: ["reference"]
@@ -11,13 +11,13 @@ include::partial$variables.adoc[]
 :sidebar_label: Especificación de capacidades del host
 :current-version: {page-origin-branch}
 
-Durante la evaluación, {project-name} las políticas pueden acceder a capacidades adicionales ofrecidas por el entorno del host.
+Durante la evaluación, {admc-name} las políticas pueden acceder a capacidades adicionales ofrecidas por el entorno del host.
 Este mecanismo utiliza un enfoque similar al tradicional
 https://en.wikipedia.org/wiki/Remote_procedure_call[RPC].
 
-Esto es lo que sucede cuando se emite una solicitud por una {short-project-name} política:
+Esto es lo que sucede cuando se emite una solicitud por una {admc-short-name} política:
 
-* {short-project-name}Política:
+* {admc-short-name}Política:
  ** Invoca la capacidad ofrecida por el entorno del host.
  ** La invocación es una operación bloqueante,
 por lo tanto, el código de la política esperará hasta que el host proporcione una respuesta.
@@ -25,7 +25,7 @@ por lo tanto, el código de la política esperará hasta que el host proporcione
  ** Se recibe una invocación de capacidad.
  ** El host realiza la operación.
  ** El host proporciona una respuesta a la política, que puede ser un éxito o un fallo.
-* {short-project-name}Política:
+* {admc-short-name}Política:
  ** El código recibe la respuesta del host y reanuda la ejecución.
  ** La respuesta del host se maneja en consecuencia.
 

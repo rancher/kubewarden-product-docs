@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Découvrez les dépendances de {project-name}, y compris leurs contraintes de version.
+:description: Découvrez les dépendances de {admc-name}, y compris leurs contraintes de version.
 :doc-persona: [“kubewarden-all”]
 :doc-topic: [“manuel-opérateur”, “dépendances”]
 :doc-type: [“référence”]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
-Cette page liste les dépendances de {project-name}, avec leurs contraintes de version pertinentes. Les versions en dehors des plages fournies peuvent fonctionner mais ne sont pas testées.
+Cette page liste les dépendances de {admc-name}, avec leurs contraintes de version pertinentes. Les versions en dehors des plages fournies peuvent fonctionner mais ne sont pas testées.
 
 == OpenTelemetry, dépendances de métriques et de traçage
 
-Au moment de la rédaction, la pile https://opentelemetry.io[OpenTelemetry] continue de s'améliorer. Cependant, elle n'est pas encore stable, et des changements incompatibles avec les versions précédentes, non annoncés, se produisent encore. Les développeurs de {short-project-name} s'efforcent de suivre les changements de la pile OpenTelemetry et de s'y adapter. Le projet effectue des tests sur une plage fonctionnelle connue de la pile OpenTelemetry, des métriques et du traçage.
+Au moment de la rédaction, la pile https://opentelemetry.io[OpenTelemetry] continue de s'améliorer. Cependant, elle n'est pas encore stable, et des changements incompatibles avec les versions précédentes, non annoncés, se produisent encore. Les développeurs de {admc-short-name} s'efforcent de suivre les changements de la pile OpenTelemetry et de s'y adapter. Le projet effectue des tests sur une plage fonctionnelle connue de la pile OpenTelemetry, des métriques et du traçage.
 
 == Dépendances optionnelles
 
@@ -64,4 +64,4 @@ Nécessaires pour des fonctionnalités spécifiques.
 
 == Rancher
 
-Le projet {short-project-name} teste les charts Helm de surveillance et de traçage fournis dans le dépôt Rancher.
+Le projet {admc-short-name} teste les charts Helm de surveillance et de traçage fournis dans le dépôt Rancher.

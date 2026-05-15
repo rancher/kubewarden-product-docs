@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprende a distribuir directivas y acceder a información relacionada para {project-name}, incluyendo detalles de configuración.
+:description: Aprende a distribuir directivas y acceder a información relacionada para {admc-name}, incluyendo detalles de configuración.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]
@@ -19,4 +19,4 @@ Durante este tutorial has recreado el https://github.com/kubewarden/safe-labels-
 No hay nada especial que hacer en lo que respecta a distribuir una directiva.
 Si seguiste esta guía, ya has publicado tu directiva utilizando la acción de GitHub `release.yml` definida en el último capítulo.
 
-El tema de la distribución de directivas se cubre con mayor profundidad en la sección xref:/explanations/distributing-policies.adoc["distribuyendo directivas"] de la documentación de {project-name}.
+El tema de la distribución de directivas se cubre con mayor profundidad en la sección xref:/explanations/distributing-policies.adoc["distribuyendo directivas"] de la documentación de {admc-name}.

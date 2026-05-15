@@ -1,7 +1,8 @@
 include::partial$variables.adoc[]
+
 = Container registry capabilities
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
 :description: Explore container registry capabilities including calculating OCI manifest digests and fetching OCI object manifests.
 :doc-persona: ["kubewarden-policy-developer"]
@@ -13,10 +14,10 @@ include::partial$variables.adoc[]
 
 Container registries can be used to distribute many types of OCI objects.
 From well-known container images to generic OCI Artifacts.
-OCI Artifacts are used to store objects such as {project-name} policies,
+OCI Artifacts are used to store objects such as {admc-name} policies,
 Helm charts, and more.
 
-These are the capabilities exposed by the {short-project-name} host,
+These are the capabilities exposed by the {admc-short-name} host,
 to interact with container registries.
 
 == Get OCI manifest digest
@@ -27,13 +28,13 @@ opposed to `tags` which are mutable.
 
 === Caching
 
-Computing the digest involves a series of network requests between the {short-project-name} policy host and the remote registry.
+Computing the digest involves a series of network requests between the {admc-short-name} policy host and the remote registry.
 These operations can be time expensive,
 so the results are cached for 1 minute.
 
 === Authentication
 
-Interactions with private registries require the {short-project-name} policy host to authenticate against the remote registry.
+Interactions with private registries require the {admc-short-name} policy host to authenticate against the remote registry.
 
 The policy host will use the same set of credentials used to fetch policies
 from the remote registry.
@@ -74,13 +75,13 @@ platforms. Or a single image manifest for the image.
 
 === Caching
 
-Fetching this information involves network requests between the {short-project-name}
+Fetching this information involves network requests between the {admc-short-name}
 policy host and the remote registry. These operations can be time expensive so
 the results are cached for 1 minute.
 
 === Authentication
 
-Interactions with private registries require the {short-project-name} policy host to
+Interactions with private registries require the {admc-short-name} policy host to
 authenticate against the remote registry.
 
 The policy host uses the same set of credentials as that used to fetch policies
@@ -188,10 +189,10 @@ OR
 ----
 
 For example, when requesting the manifest of the
-`ghcr.io/kubewarden/policy-server:v1.10.0` image,
+`ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0` image,
 the payload would be:
 
-* Input payload: `"ghcr.io/kubewarden/policy-server:v1.10.0"`
+* Input payload: `"ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0"`
 * Output payload: the body of the successful response obtained from the
 registry.
 It can be an https://github.com/opencontainers/image-spec/blob/main/image-index.md[OCI index image]
@@ -206,13 +207,13 @@ configuration information used by the container runtime to run it.
 
 === Caching
 
-Fetching this information involves network requests between the {short-project-name}
+Fetching this information involves network requests between the {admc-short-name}
 policy host and the remote registry. These operations can be time expensive so
 the results are cached for 1 minute.
 
 === Authentication
 
-Interactions with private registries require the {short-project-name} policy host to
+Interactions with private registries require the {admc-short-name} policy host to
 authenticate against the remote registry.
 
 The policy host uses the same set of credentials as that used to fetch policies
@@ -338,9 +339,9 @@ string
 ----
 
 For example, when requesting the image manifest and configuration of the
-`ghcr.io/kubewarden/policy-server:v1.13.0` image, the payload would be:
+`ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0` image, the payload would be:
 
-* Input payload: `"ghcr.io/kubewarden/policy-server:v1.13.0"`
+* Input payload: `"ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0"`
 * Output payload: the body of the successful response obtained from the
 registry. It will contain the https://github.com/opencontainers/image-spec/blob/main/manifest.md[OCI image
 manifest]

@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-stratégie-développeur", "kubewarden-intégrateur"]
 :doc-topic: ["explications", "stratégies-conscientes-du-contexte"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "stratégie consciente du contexte", "stratégie d'admission de cluster", "stratégie d'admission", "demande d'admission", "administrateur de cluster"]
+:keywords: ["{admc-name}", "kubewarden", "stratégie consciente du contexte", "stratégie d'admission de cluster", "stratégie d'admission", "demande d'admission", "administrateur de cluster"]
 :sidebar_label: Stratégies conscientes du contexte
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -16,7 +16,7 @@ Les développeurs peuvent créer des stratégies qui récupèrent des informatio
 
 [NOTE]
 ====
-Les stratégies conscientes du contexte ne sont disponibles que dans les versions {project-name} ≥ v1.6.0.
+Les stratégies conscientes du contexte ne sont disponibles que dans les versions {admc-name} ≥ v1.6.0.
 ====
 
 Le contrôle des ressources auxquelles une stratégie peut accéder dans le cluster est assuré par le https://kubernetes.io/docs/concepts/security/service-accounts/[Compte de service] du serveur de stratégie. Un administrateur de cluster contrôle ce à quoi une stratégie peut accéder via les règles RBAC de Kubernetes. Les stratégies conscientes du contexte n'ont qu'un accès *lecture* aux ressources demandées.
@@ -28,7 +28,7 @@ Si un utilisateur non privilégié déploie une stratégie consciente du context
 - Bloque toutes les tentatives d'accès aux ressources Kubernetes.
 - Les signale à l'administrateur de cluster.
 
-Par défaut, {short-project-name} bloque toutes les ressources du cluster. Un administrateur {project-name} définit quelles ressources Kubernetes chaque stratégie consciente du contexte peut lire. `contextAwareResources` pour ce faire.
+Par défaut, {admc-short-name} bloque toutes les ressources du cluster. Un administrateur {admc-name} définit quelles ressources Kubernetes chaque stratégie consciente du contexte peut lire. `contextAwareResources` pour ce faire.
 
 L'exemple suivant déploie une stratégie qui nécessite un accès aux ressources `Deployment` et `Pod` :
 
@@ -60,12 +60,12 @@ spec:
 
 Une fois déployée, cette stratégie peut lire les données des ressources `deployment` et `pod`.
 
-Les auteurs de stratégies fournissent des listes de ressources Kubernetes pour leur stratégie consciente du contexte. Les auteurs de stratégies le font en annotant la stratégie. Les administrateurs {project-name} consultent les métadonnées de la stratégie en utilisant la commande `kwctl inspect`. Ils peuvent obtenir une liste des ressources auxquelles la stratégie doit avoir accès. Un administrateur utilise cette liste pour remplir la définition `ClusterAdmissionPolicy`.
+Les auteurs de stratégies fournissent des listes de ressources Kubernetes pour leur stratégie consciente du contexte. Les auteurs de stratégies le font en annotant la stratégie. Les administrateurs {admc-name} consultent les métadonnées de la stratégie en utilisant la commande `kwctl inspect`. Ils peuvent obtenir une liste des ressources auxquelles la stratégie doit avoir accès. Un administrateur utilise cette liste pour remplir la définition `ClusterAdmissionPolicy`.
 
 [WARNING]
 ====
 
-Pour prévenir les abus du système, les administrateurs {project-name} doivent examiner les ressources auxquelles la stratégie accède.
+Pour prévenir les abus du système, les administrateurs {admc-name} doivent examiner les ressources auxquelles la stratégie accède.
 
 Par exemple, une stratégie évaluant les objets d'ingress aurait de bonnes raisons de lire les ressources `Ingress` définies dans le cluster. La même stratégie ne peut pas justifier d'avoir accès aux ressources `Secret`.
 

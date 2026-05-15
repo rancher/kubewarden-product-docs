@@ -1,21 +1,21 @@
 include::partial$variables.adoc[]
-= {project-name} in einer großangelegten Umgebung
+= {admc-name} in einer großangelegten Umgebung
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie {project-name}s mit {project-name}, um hohe Verfügbarkeit und Leistung in anspruchsvollen großangelegten Umgebungen sicherzustellen.
-:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, produktion]
+:description: Konfigurieren Sie {admc-name}s mit {admc-name}, um hohe Verfügbarkeit und Leistung in anspruchsvollen großangelegten Umgebungen sicherzustellen.
+:keywords: [kubewarden, "{admc-name}", kubernetes, policyservers, produktion]
 :doc-persona: Kubewarden-operator, Kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-handbuch, policy-server, produktion
 :sidebar_label: Implementierung im großen Maßstab
 :sidebar_position: 21
 
-Dieser Abschnitt beschreibt eine reale Implementierung von {project-name} in einer anspruchsvollen, großangelegten Umgebung. Es wird veranschaulicht, wie man {short-project-name} für hohe Verfügbarkeit und Leistung konfiguriert und was man unter hoher Last erwarten kann.
+Dieser Abschnitt beschreibt eine reale Implementierung von {admc-name} in einer anspruchsvollen, großangelegten Umgebung. Es wird veranschaulicht, wie man {admc-short-name} für hohe Verfügbarkeit und Leistung konfiguriert und was man unter hoher Last erwarten kann.
 
 [IMPORTANT]
 ====
-Wenn Sie weitere Tipps sehen möchten, wie Sie {short-project-name} in der Produktion ausführen können, werfen Sie einen Blick in die xref:/howtos/production-deployments.adoc[Produktionsimplementierungen] Dokumentation.
+Wenn Sie weitere Tipps sehen möchten, wie Sie {admc-short-name} in der Produktion ausführen können, werfen Sie einen Blick in die xref:/howtos/production-deployments.adoc[Produktionsimplementierungen] Dokumentation.
 ====
 
 == Umgebungsübersicht
@@ -31,9 +31,9 @@ Die Infrastruktur besteht aus etwa 20 Kubernetes-Clustern. Die größten dieser 
 ** Implementierungen: 8.000
 ** Services: 13.000
 
-== Die {short-project-name}-Konfiguration
+== Die {admc-short-name}-Konfiguration
 
-Um den Anforderungen dieser Umgebung gerecht zu werden, wird {short-project-name} mit einem Fokus auf Arbeitslastisolierung und hohe Verfügbarkeit konfiguriert.
+Um den Anforderungen dieser Umgebung gerecht zu werden, wird {admc-short-name} mit einem Fokus auf Arbeitslastisolierung und hohe Verfügbarkeit konfiguriert.
 
 * Richtliniendurchsetzung: 22 `ClusterAdmissionPolicies` werden in den Clustern durchgesetzt, ohne Namespace-spezifische `AdmissionPolicies`.
 * PolicyServer Architecture: Zwei separate `PolicyServer` Implementierungen werden verwendet, um Arbeitslasten zu isolieren:

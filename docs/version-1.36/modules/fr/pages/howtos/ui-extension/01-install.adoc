@@ -3,18 +3,18 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Apprenez à installer l'UI {project-name} en tant qu'extension de Rancher Manager avec un guide étape par étape à travers le processus d'installation.
+:description: Apprenez à installer l'UI {admc-name} en tant qu'extension de Rancher Manager avec un guide étape par étape à travers le processus d'installation.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["manuel-opérateur", "extension-ui", "installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "extension-ui-rancher"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "extension-ui-rancher"]
 :current-version: {page-origin-branch}
 
-Cette section décrit l'installation de l'UI {project-name} en tant qu'extension de https://github.com/rancher/rancher[Rancher Manager].
+Cette section décrit l'installation de l'UI {admc-name} en tant qu'extension de https://github.com/rancher/rancher[Rancher Manager].
 
-== Installer {short-project-name} l'extension UI
+== Installer {admc-short-name} l'extension UI
 
-Vous installez l'UI {short-project-name} en tant qu'extension globale, cependant, vous installez le contrôleur {short-project-name} via l'UI Rancher en tant que ressource à portée de cluster.
+Vous installez l'UI {admc-short-name} en tant qu'extension globale, cependant, vous installez le contrôleur {admc-short-name} via l'UI Rancher en tant que ressource à portée de cluster.
 
 [NOTE]
 ====
@@ -24,16 +24,16 @@ Pour les installations isolées physiquement, suivez xref:howtos/airgap/02-insta
 ====
 
 
-Dans la page des extensions, sélectionnez le bouton "Activer" et choisissez l'option d'ajouter le dépôt d'extensions Rancher. Une fois activé, l'élément d'extension "{short-project-name}" apparaît automatiquement. Sélectionnez cet élément pour installer l'extension. Une fois installé, vous pouvez installer {short-project-name} dans le cluster requis.
+Dans la page des extensions, sélectionnez le bouton "Activer" et choisissez l'option d'ajouter le dépôt d'extensions Rancher. Une fois activé, l'élément d'extension "{admc-short-name}" apparaît automatiquement. Sélectionnez cet élément pour installer l'extension. Une fois installé, vous pouvez installer {admc-short-name} dans le cluster requis.
 
-=== Installez {short-project-name}
+=== Installez {admc-short-name}
 
-Après avoir suivi les étapes précédentes, un nouvel élément apparaît dans le menu latéral pour {short-project-name} au sein de votre cluster. Cette page de tableau de bord vous guide à travers le processus d'installation, en complétant les prérequis.
+Après avoir suivi les étapes précédentes, un nouvel élément apparaît dans le menu latéral pour {admc-short-name} au sein de votre cluster. Cette page de tableau de bord vous guide à travers le processus d'installation, en complétant les prérequis.
 
 [NOTE]
 ====
 
-Lors de l'étape "Installation de l'application" de l'assistant d'installation, le bouton "Installer {short-project-name}" peut rester grisé. Si cela se produit, actualisez la page et revenez à cette étape.
+Lors de l'étape "Installation de l'application" de l'assistant d'installation, le bouton "Installer {admc-short-name}" peut rester grisé. Si cela se produit, actualisez la page et revenez à cette étape.
 
 ====
 
@@ -54,7 +54,7 @@ Après avoir installé le chart, vous pouvez voir les détails du serveur de str
 
 === Création de stratégies
 
-Lors de la création de stratégies, vous avez initialement l'option "Stratégie personnalisée" dans la grille de stratégies. Fournissez les informations requises pour le nom, le module et les règles de votre stratégie. Il est recommandé d'ajouter le dépôt du catalogue de stratégies pour accéder aux stratégies officielles de {short-project-name}.
+Lors de la création de stratégies, vous avez initialement l'option "Stratégie personnalisée" dans la grille de stratégies. Fournissez les informations requises pour le nom, le module et les règles de votre stratégie. Il est recommandé d'ajouter le dépôt du catalogue de stratégies pour accéder aux stratégies officielles de {admc-short-name}.
 
 *_Création d'une stratégie personnalisée_* image:ui_policy_custom.png[UI Liste blanche de stratégies]
 
@@ -64,9 +64,9 @@ Suivez les instructions pour inclure xref:howtos/ui-extension/02-metrics.adoc[Su
 
 == Installation isolée physiquement
 
-Comme {short-project-name} est une extension officielle de Rancher, l'équipe de Rancher fournit un mécanisme pour générer automatiquement une image de catalogue d'extension. Ceci est ajouté au fichier `rancher-images.txt` lors de https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[l'installation de Rancher Manager] pour les instances isolées physiquement.
+Comme {admc-short-name} est une extension officielle de Rancher, l'équipe de Rancher fournit un mécanisme pour générer automatiquement une image de catalogue d'extension. Ceci est ajouté au fichier `rancher-images.txt` lors de https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/other-installation-methods/air-gapped-helm-cli-install/publish-images#1-find-the-required-assets-for-your-rancher-version[l'installation de Rancher Manager] pour les instances isolées physiquement.
 
-Une fois que cette image est mise en miroir vers un dépôt accessible à votre cluster isolé, vous pouvez importer l'image dans l'UI Rancher. Cela crée un dépôt Helm local avec le chart UI {short-project-name} pour l'installation.
+Une fois que cette image est mise en miroir vers un dépôt accessible à votre cluster isolé, vous pouvez importer l'image dans l'UI Rancher. Cela crée un dépôt Helm local avec le chart UI {admc-short-name} pour l'installation.
 
 === Procédure d'installation
 
@@ -78,5 +78,5 @@ Une fois que cette image est mise en miroir vers un dépôt accessible à votre 
 . Sélectionnez le secret que vous venez de créer dans le menu déroulant *Pull Secrets*. image:ui_airgap_03.png[Entrez les informations du catalogue]
 . Cliquez sur *Charger*. L'extension sera maintenant *En attente*.
 . Retournez à la page *Extensions*.
-. Sélectionnez l'onglet *Disponible*, puis cliquez sur le bouton *Recharger* pour vous assurer que la liste des extensions est à jour. image:ui_airgap_04.png[Installer {short-project-name}]
-. Trouvez l'extension {short-project-name} que vous venez d'ajouter, et sélectionnez le bouton *Installer*.
+. Sélectionnez l'onglet *Disponible*, puis cliquez sur le bouton *Recharger* pour vous assurer que la liste des extensions est à jour. image:ui_airgap_04.png[Installer {admc-short-name}]
+. Trouvez l'extension {admc-short-name} que vous venez d'ajouter, et sélectionnez le bouton *Installer*.

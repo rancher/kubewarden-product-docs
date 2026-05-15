@@ -4,20 +4,20 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用 Hauler 在隔离的环境中安装 {project-name}。
-:keywords: ["{project-name}", kubewarden, kubernetes, 隔离安装, Hauler]
+:description: 使用 Hauler 在隔离的环境中安装 {admc-name}。
+:keywords: ["{admc-name}", kubewarden, kubernetes, 隔离安装, Hauler]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: HOWTO
 :doc-topic: 操作手册，隔离，安装，Hauler
 
-本指南展示了如何使用 link:https://docs.hauler.dev/docs/intro[Hauler] 在隔离的环境中安装 {project-name}。Hauler 是一个帮助用户在隔离的环境中运行工作负载的工具。它将 APP 所需的资源移动到这些隔离环境中。
+本指南展示了如何使用 link:https://docs.hauler.dev/docs/intro[Hauler] 在隔离的环境中安装 {admc-name}。Hauler 是一个帮助用户在隔离的环境中运行工作负载的工具。它将 APP 所需的资源移动到这些隔离环境中。
 
-{short-project-name} 提供一个清单文件，包含在私有环境中运行 {short-project-name} 所需的所有资源。本文档描述了您如何使用它。请参考 Hauler 文档以了解更多信息。
+{admc-short-name} 提供一个清单文件，包含在私有环境中运行 {admc-short-name} 所需的所有资源。本文档描述了您如何使用它。请参考 Hauler 文档以了解更多信息。
 
 使用 Hauler 清单的基本工作流程是：
 
-. 从 {short-project-name} 发布页面获取它
-. 将运行 {short-project-name} 所需的所有资源加载到本地存储中
+. 从 {admc-short-name} 发布页面获取它
+. 将运行 {admc-short-name} 所需的所有资源加载到本地存储中
 . 将它们导出到一个文件中
 . 将文件移动到私有环境中
 . 将资源加载到在私有环境中运行的 Hauler 中
@@ -25,7 +25,7 @@ include::partial$variables.adoc[]
 
 == 从 Helm 图表发布页面下载 Hauler 清单
 
-从 `hauler_manifest.yml` 的 {short-project-name} 下载 link:https://github.com/kubewarden/helm-charts/releases/[发布页面]。
+从 `hauler_manifest.yml` 的 {admc-short-name} 下载 link:https://github.com/kubewarden/helm-charts/releases/[发布页面]。
 
 将清单中定义的资源同步到您的 Hauler 存储中：
 
@@ -36,7 +36,7 @@ hauler store sync --filename hauler_manifest.yaml
 
 Hauler 从清单中下载所有资源到本地存储。此过程需要几分钟。完成后，您可以使用 `hauler store info` 命令查看同步的资源。
 
-== 生成包含所有 {short-project-name} 资源的 tarball 文件。
+== 生成包含所有 {admc-short-name} 资源的 tarball 文件。
 
 运行 Hauler 命令将之前加载到存储中的所有资源导出到文件：
 
@@ -48,7 +48,7 @@ hauler store save --filename kubewarden-resources.tar.zst
 [NOTE]
 ====
 
-{short-project-name} 容器镜像支持 x86_64 和 Arm 架构。因此，当您将资源保存到文件中时，您可能会看到类似这样的警告信息：
+{admc-short-name} 容器镜像支持 x86_64 和 Arm 架构。因此，当您将资源保存到文件中时，您可能会看到类似这样的警告信息：
 
 [source,shell]
 ----
@@ -66,7 +66,7 @@ hauler store save --filename kubewarden-resources.tar.zst
 
 == 将 tarball 转移到您的隔离环境中。
 
-现在您在 {short-project-name} 中拥有所有 `kubewarden-resources.tar.zst` 资源，将其复制到您的隔离环境中并加载到 Hauler 存储中：
+现在您在 {admc-short-name} 中拥有所有 `kubewarden-resources.tar.zst` 资源，将其复制到您的隔离环境中并加载到 Hauler 存储中：
 
 [source,shell]
 ----
@@ -75,7 +75,7 @@ hauler store load --filename kubewarden-resources.tar.zst
 hauler store info
 ----
 
-现在安装 {short-project-name} 所需的所有资源都在您隔离环境中的 Hauler 存储中。
+现在安装 {admc-short-name} 所需的所有资源都在您隔离环境中的 Hauler 存储中。
 
 == 填充私有注册表。
 
@@ -109,13 +109,13 @@ hauler store copy registry://localhost:5000
 hauler store serve registry
 ----
 
-这将在 `localhost:5000` 地址启动一个储存库。从此时起，您可以使用其他命令，如 Skopeo，将 {short-project-name} 使用的所有容器镜像、策略模块和 Helm 图表复制到您的私有储存库中。
+这将在 `localhost:5000` 地址启动一个储存库。从此时起，您可以使用其他命令，如 Skopeo，将 {admc-short-name} 使用的所有容器镜像、策略模块和 Helm 图表复制到您的私有储存库中。
 
-== 安装 {short-project-name}
+== 安装 {admc-short-name}
 
-现在您的私有储存库拥有所需的一切，您可以安装 {short-project-name}。与标准 {short-project-name} 安装的不同之处在于，您需要将容器镜像和策略中的注册表更改为私有注册表。此外，您需要从 OCI 工件安装 Helm 图表。
+现在您的私有储存库拥有所需的一切，您可以安装 {admc-short-name}。与标准 {admc-short-name} 安装的不同之处在于，您需要将容器镜像和策略中的注册表更改为私有注册表。此外，您需要从 OCI 工件安装 Helm 图表。
 
-安装 {short-project-name} 堆栈：
+安装 {admc-short-name} 堆栈：
 
 [source,shell]
 ----
@@ -155,7 +155,7 @@ helm install --wait -n kubewarden \
 
 最后，配置每个策略服务器以从您的私有储存库中获取策略。请参见文档的 xref:/howtos/policy-servers/02-private-registry.adoc[使用私有储存库] 部分。
 
-现在在您的集群中创建 {short-project-name} 策略。策略必须在您的私有储存库中可用。
+现在在您的集群中创建 {admc-short-name} 策略。策略必须在您的私有储存库中可用。
 
 [source,yaml]
 ----

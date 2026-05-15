@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl CLI
-:description: Explora la herramienta de línea de comandos \`kwctl` para gestionar directivas de {project-name} y realizar tareas como cargar directivas.
+:description: Explora la herramienta de línea de comandos \`kwctl` para gestionar directivas de {admc-name} y realizar tareas como cargar directivas.
 :keywords: cli, referencia, kwctl
 :doc-persona: kubewarden-operator
 :doc-type: referencia
@@ -44,28 +44,28 @@ Este documento contiene el contenido de ayuda para el programa de línea de coma
 [[kwctl]]
 === `kwctl`
 
-Herramienta para gestionar directivas de {project-name}
+Herramienta para gestionar directivas de {admc-name}
 
 *Uso:* `kwctl [OPTIONS] <COMMAND>`
 
 ==== Subcomandos
 
-* `annotate` — Añadir metadatos de {short-project-name} a un módulo WebAssembly
-* `bench` — Realiza pruebas de rendimiento de una directiva de {short-project-name}
+* `annotate` — Añadir metadatos de {admc-short-name} a un módulo WebAssembly
+* `bench` — Realiza pruebas de rendimiento de una directiva de {admc-short-name}
 * `completions` — Genera completaciones de shell
 * `digest` — Obtiene el resumen del manifiesto OCI de una directiva
 * `docs` — Genera la documentación en markdown para los comandos de kwctl
 * `info` — Muestra información del sistema
-* `inspect` — Inspecciona la directiva de {short-project-name}
+* `inspect` — Inspecciona la directiva de {admc-short-name}
 * `load` — Carga políticas desde un archivo tar.gz
 * `policies` — Lista todas las políticas descargadas
-* `pull` — Extrae una directiva de {short-project-name} desde una URI dada
-* `push` — Envía una directiva {short-project-name} a un registro OCI
-* `rm` — Elimina una directiva {short-project-name} de la tienda
-* `run` — Ejecuta una directiva {short-project-name} desde una URI dada
+* `pull` — Extrae una directiva de {admc-short-name} desde una URI dada
+* `push` — Envía una directiva {admc-short-name} a un registro OCI
+* `rm` — Elimina una directiva {admc-short-name} de la tienda
+* `run` — Ejecuta una directiva {admc-short-name} desde una URI dada
 * `save` — Guarda directivas en un archivo tar.gz
 * `scaffold` — Crea un recurso o archivo de configuración de Kubernetes
-* `verify` — Verifica una directiva {short-project-name} desde una URI dada usando Sigstore
+* `verify` — Verifica una directiva {admc-short-name} desde una URI dada usando Sigstore
 
 ==== Opciones
 
@@ -75,7 +75,7 @@ Herramienta para gestionar directivas de {project-name}
 [[kwctl-annotate]]
 === `kwctl annotate`
 
-Añadir {short-project-name} metadatos a un módulo WebAssembly
+Añadir {admc-short-name} metadatos a un módulo WebAssembly
 
 *Uso:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
 
@@ -92,21 +92,21 @@ Añadir {short-project-name} metadatos a un módulo WebAssembly
 [[kwctl-bench]]
 === `kwctl bench`
 
-Evalúa una directiva {short-project-name}.
+Evalúa una directiva {admc-short-name}.
 
 La directiva se puede especificar de las siguientes maneras:
 - URI: p. ej., `registry://ghcr.io/kubewarden/policies/psp-policy:latest` o `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - Prefijo SHA: p. ej., `c3b80a10f9c3` (requiere que la directiva ya esté descargada)
 - Archivo WASM local: p. ej., `file://home/tux/new-policy/psp-policy.wasm`
-- Archivo YAML local: p. ej., `file://home/tux/cluster-admission-policy.yaml` (contiene declaraciones de Recursos Personalizados {short-project-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Archivo YAML local: p. ej., `file://home/tux/cluster-admission-policy.yaml` (contiene declaraciones de Recursos Personalizados {admc-short-name} como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Comportamiento por defecto:
 Si se omite el esquema, se asume `file://`, enraizado en el directorio actual.
 
-Notas sobre Recursos Personalizados {short-project-name}:
+Notas sobre Recursos Personalizados {admc-short-name}:
 - Las banderas `--request-path`, `--settings-path` y `--settings-json` son ignoradas; los ajustes se leen de la definición del Recurso Personalizado.
 - La bandera `--execution-mode` se aplica a todas las directivas en el archivo YAML.
-- La bandera `--raw` no se puede usar, ya que los Recursos Personalizados de {short-project-name} no soportan directivas `raw`.
+- La bandera `--raw` no se puede usar, ya que los Recursos Personalizados de {admc-short-name} no soportan directivas `raw`.
 
 Solo se evalúan los siguientes atributos de la Definición de Recurso Personalizado (CRD):
 - Módulo de directiva
@@ -121,7 +121,7 @@ Un archivo YAML puede contener múltiples declaraciones de Recursos Personalizad
 
 ==== Argumentos
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la directiva, prefijo SHA o archivo YAML que contiene recursos de directiva {short-project-name}. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la directiva, prefijo SHA o archivo YAML que contiene recursos de directiva {admc-short-name}. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
 
 ==== Opciones
 
@@ -201,7 +201,7 @@ Mostrar información del sistema
 [[kwctl-inspect]]
 === `kwctl inspect`
 
-Inspeccionar la directiva {short-project-name}
+Inspeccionar la directiva {admc-short-name}
 
 *Uso:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
 
@@ -238,7 +238,7 @@ Lista todas las directivas descargadas
 [[kwctl-pull]]
 === `kwctl pull`
 
-Extrae una directiva {short-project-name} desde una URI dada
+Extrae una directiva {admc-short-name} desde una URI dada
 
 *Uso:* `kwctl pull [OPTIONS] <uri>`
 
@@ -253,7 +253,7 @@ Extrae una directiva {short-project-name} desde una URI dada
 * `--docker-config-json-path <DOCKER_CONFIG>` — Ruta a un directorio que contiene el archivo 'config.json' de Docker. Se puede usar para indicar detalles de autenticación del registro
 * `--github-owner <VALUE>` — Propietario de GitHub esperado en los certificados generados en las canalizaciones de CD
 * `--github-repo <VALUE>` — Repositorio de GitHub esperado en los certificados generados en las canalizaciones de CD
-* `-o`, `--output-path <PATH>` — Archivo de salida. Si no se proporciona, se descargará en la tienda {short-project-name}
+* `-o`, `--output-path <PATH>` — Archivo de salida. Si no se proporciona, se descargará en la tienda {admc-short-name}
 * `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
 * `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
 * `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
@@ -263,7 +263,7 @@ Extrae una directiva {short-project-name} desde una URI dada
 [[kwctl-push]]
 === `kwctl push`
 
-Envía una directiva {short-project-name} a un registro OCI
+Envía una directiva {admc-short-name} a un registro OCI
 
 *Uso:* `kwctl push [OPTIONS] <policy> <uri>`
 
@@ -288,7 +288,7 @@ La anotación 'io.kubewarden.policy.source' se propaga como 'org.opencontainers.
 [[kwctl-rm]]
 === `kwctl rm`
 
-Elimina una directiva {short-project-name} del almacén
+Elimina una directiva {admc-short-name} del almacén
 
 *Uso:* `kwctl rm <uri_or_sha_prefix>`
 
@@ -299,21 +299,21 @@ Elimina una directiva {short-project-name} del almacén
 [[kwctl-run]]
 === `kwctl run`
 
-Ejecuta una o más {short-project-name} directivas localmente.
+Ejecuta una o más {admc-short-name} directivas localmente.
 
 La directiva se puede especificar de las siguientes maneras:
 - URI: p. ej., `registry://ghcr.io/kubewarden/policies/psp-policy:latest` o `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - Prefijo SHA: p. ej., `c3b80a10f9c3` (requiere que la directiva ya esté descargada)
 - Archivo WASM local: p. ej., `file://home/tux/new-policy/psp-policy.wasm`
-- Archivo YAML local: p. ej., `file://home/tux/cluster-admission-policy.yaml` (contiene declaraciones de {short-project-name} Recursos Personalizados como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Archivo YAML local: p. ej., `file://home/tux/cluster-admission-policy.yaml` (contiene declaraciones de {admc-short-name} Recursos Personalizados como `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Comportamiento por defecto:
 Si se omite el esquema, se asume `file://`, enraizado en el directorio actual.
 
-Notas sobre Recursos Personalizados {short-project-name}:
+Notas sobre Recursos Personalizados {admc-short-name}:
 - Las banderas `--request-path`, `--settings-path` y `--settings-json` son ignoradas; los ajustes se leen de la definición del Recurso Personalizado.
 - La bandera `--execution-mode` se aplica a todas las directivas en el archivo YAML.
-- La bandera `--raw` no se puede usar, ya que los Recursos Personalizados de {short-project-name} no soportan directivas `raw`.
+- La bandera `--raw` no se puede usar, ya que los Recursos Personalizados de {admc-short-name} no soportan directivas `raw`.
 
 Solo se evalúan los siguientes atributos de la Definición de Recurso Personalizado (CRD):
 - Módulo de directiva
@@ -328,7 +328,7 @@ Un archivo YAML puede contener múltiples declaraciones de Recursos Personalizad
 
 ==== Argumentos
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la directiva, prefijo SHA o archivo YAML que contiene recursos de directiva {short-project-name}. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la directiva, prefijo SHA o archivo YAML que contiene recursos de directiva {admc-short-name}. Esquemas soportados: registry://, https://, file://. Si se omite el esquema, se asume file://, enraizado en el directorio actual.
 
 ==== Opciones
 
@@ -381,7 +381,7 @@ Genera un recurso de Kubernetes o un archivo de configuración
 * `admission-request` — Crea un objeto AdmissionRequest
 * `artifacthub` — Genera un archivo artifacthub-pkg.yml a partir de un archivo metadata.yml
 * `manifest` — Genera un manifiesto de recurso de Kubernetes
-* `vap` — Convierte un `ValidatingAdmissionPolicy` de Kubernetes en un {short-project-name} `ClusterAdmissionPolicy`
+* `vap` — Convierte un `ValidatingAdmissionPolicy` de Kubernetes en un {admc-short-name} `ClusterAdmissionPolicy`
 * `verification-config` — Generar un archivo de configuración de verificación de Sigstore por defecto
 
 [[kwctl-scaffold-admission-request]]
@@ -395,7 +395,7 @@ Crear un objeto AdmissionRequest
 
 * `--object <PATH>` — El archivo que contiene el nuevo objeto que se admite
 * `--old-object <PATH>` — El archivo que contiene el objeto existente
-* `-o`, `--operation <TYPE>` — {short-project-name} Tipo de Recurso Personalizado +
+* `-o`, `--operation <TYPE>` — {admc-short-name} Tipo de Recurso Personalizado +
   Valores posibles: `CREATE`
 
 [[kwctl-scaffold-artifacthub]]
@@ -438,7 +438,7 @@ Generar un manifiesto de recurso de Kubernetes
 * `--sigstore-trust-config <PATH>` — Archivo en formato JSON que se ajusta al mensaje ClientTrustConfig en las especificaciones protobuf de Sigstore. Este archivo configura todo el estado de la instancia de Sigstore, incluyendo las URIs utilizadas para acceder a los servicios de CA y transparencia de artefactos, así como la raíz de confianza criptográfica en sí.
 * `--sources-path <PATH>` — Archivo YAML que contiene información de origen (https, hosts inseguros de registro, CA personalizadas...)
 * `--title <VALUE>` — Título de la directiva
-* `-t`, `--type <VALUE>` — {short-project-name} Tipo de Recurso Personalizado +
+* `-t`, `--type <VALUE>` — {admc-short-name} Tipo de Recurso Personalizado +
   Valores posibles: `ClusterAdmissionPolicy`, `AdmissionPolicy`
 * `-a`, `--verification-annotation <KEY=VALUE>` — Anotación en formato clave=valor. Puede repetirse múltiples veces
 * `--verification-config-path <PATH>` — Archivo YAML que contiene información de configuración de verificación (firmas, claves públicas...)
@@ -447,7 +447,7 @@ Generar un manifiesto de recurso de Kubernetes
 [[kwctl-scaffold-vap]]
 === `kwctl scaffold vap`
 
-Convertir un `ValidatingAdmissionPolicy` de Kubernetes en un {short-project-name} `ClusterAdmissionPolicy`
+Convertir un `ValidatingAdmissionPolicy` de Kubernetes en un {admc-short-name} `ClusterAdmissionPolicy`
 
 *Uso:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
 
@@ -468,7 +468,7 @@ Genera un archivo de configuración de verificación de Sigstore por defecto
 [[kwctl-verify]]
 === `kwctl verify`
 
-Verifica una directiva de {short-project-name} desde una URI dada utilizando Sigstore
+Verifica una directiva de {admc-short-name} desde una URI dada utilizando Sigstore
 
 *Uso:* `kwctl verify [OPTIONS] <uri>`
 

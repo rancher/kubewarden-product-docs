@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Stratégies de vérification de signature
 :current-version: {page-origin-branch}
 
-{project-name} implémente le support pour le projet
+{admc-name} implémente le support pour le projet
 https://www.sigstore.dev/[Sigstore].
 Cela permet de mettre en œuvre une "Chaîne d'Approvisionnement Sécurisée" pour votre cluster.
 
@@ -23,7 +23,7 @@ xref:/howtos/security-hardening/secure-supply-chain.adoc[comment nous mettons en
 Les signatures Sigstore sont stockées dans des registres de conteneurs,
 à côté de l'objet OCI étant signé.
 Elles peuvent être une image de conteneur ou un artefact OCI plus générique,
-comme une {short-project-name} stratégie.
+comme une {admc-short-name} stratégie.
 Lorsqu'un objet est signé,
 ses signatures sont stockées comme des couches d'un objet OCI créé par Sigstore.
 Les stratégies nécessitant de vérifier les signatures des conteneurs doivent vérifier ces couches,
@@ -31,11 +31,11 @@ et doivent extraire les couches de signature pour vérifier les signatures elles
 
 L'obtention et l'exploitation de ces couches OCI doivent se faire en dehors de l'invité WebAssembly (la stratégie).
 Ainsi, cela est effectué par le composant d'exécution WebAssembly,
-le {short-project-name} `policy-server` ou `kwctl`.
+le {admc-short-name} `policy-server` ou `kwctl`.
 
-Les différents SDK de langage pour les stratégies {short-project-name} s'occupent de cela.
+Les différents SDK de langage pour les stratégies {admc-short-name} s'occupent de cela.
 Ils fournissent des fonctions pour la vérification des images de conteneurs,
-des stratégies {short-project-name}, des graphiques Helm et d'autres types d'artefacts OCI.
+des stratégies {admc-short-name}, des graphiques Helm et d'autres types d'artefacts OCI.
 Cela garantit un chemin de code sûr et testé pour la vérification.
 
 Extraire des données d'un registre et vérifier cryptographiquement les signatures peut être coûteux en temps et en ressources informatiques, donc le composant d'exécution WebAssembly (PolicyServer, `kwctl`) garantit que les extractions de signatures et les calculs de vérification sont mis en cache.
@@ -82,7 +82,7 @@ Il est désormais de la responsabilité de la stratégie de s'assurer que les co
 
 == Un exemple
 
-L'équipe {short-project-name} https://github.com/kubewarden/verify-image-signatures[fournit une stratégie de vérification] qui impose les signatures Sigstore pour tous les conteneurs.
+L'équipe {admc-short-name} https://github.com/kubewarden/verify-image-signatures[fournit une stratégie de vérification] qui impose les signatures Sigstore pour tous les conteneurs.
 Il est construit en utilisant Rust et avec le SDK Rust.
 La stratégie garantit que les conteneurs sont signés, et optionnellement, modifie les requêtes. La mutation ajoute la somme de contrôle vérifiée à l'étiquette de l'image.
 Consultez la documentation pour des détails spécifiques.

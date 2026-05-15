@@ -1,37 +1,37 @@
 include::partial$variables.adoc[]
-= Migration des stratégies de Gatekeeper vers {project-name}
+= Migration des stratégies de Gatekeeper vers {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurez une stratégie {project-name} en migrant une stratégie Gatekeeper existante à travers deux étapes principales : compiler le code Rego en WebAssembly.
-:keywords: ["{project-name}", kubewarden, gatekeeper]
+:description: Configurez une stratégie {admc-name} en migrant une stratégie Gatekeeper existante à travers deux étapes principales : compiler le code Rego en WebAssembly.
+:keywords: ["{admc-name}", kubewarden, gatekeeper]
 :doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 :doc-type: [howto]
 :doc-topic: [operator-manual]
 
-Ce guide vous montre comment convertir une stratégie Gatekeeper existante en une stratégie {project-name}. Ce processus implique deux étapes principales :
+Ce guide vous montre comment convertir une stratégie Gatekeeper existante en une stratégie {admc-name}. Ce processus implique deux étapes principales :
 . Compilez le programme Rego en un module WebAssembly (Wasm).
-. Distribuez le module WebAssembly en tant que stratégie {short-project-name}.
+. Distribuez le module WebAssembly en tant que stratégie {admc-short-name}.
 
-Le tutoriel xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[politiques Rego] couvre la plupart du processus de construction pour compiler le code Rego en un module WebAssembly. Ce guide se concentre sur le processus étape par étape d'extraction des définitions de ressources personnalisées (CRD) de Gatekeeper et de leur migration vers une stratégie {short-project-name} fonctionnelle. Il utilise une stratégie de démonstration de base de Gatekeeper.
+Le tutoriel xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[politiques Rego] couvre la plupart du processus de construction pour compiler le code Rego en un module WebAssembly. Ce guide se concentre sur le processus étape par étape d'extraction des définitions de ressources personnalisées (CRD) de Gatekeeper et de leur migration vers une stratégie {admc-short-name} fonctionnelle. Il utilise une stratégie de démonstration de base de Gatekeeper.
 
 == Conditions préalables
 
 * link:https://github.com/open-policy-agent/opa/releases[opa] : vous utilisez cet outil pour compiler le code en wasm. Ce guide a été rédigé en utilisant la version `v1.5.1`.
-* link:https://github.com/kubewarden/kwctl/releases[`kwctl`] : outil que vous utilisez pour préparer et exécuter le module WebAssembly {short-project-name}.
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`] : outil que vous utilisez pour préparer et exécuter le module WebAssembly {admc-short-name}.
 * link:https://github.com/bats-core/bats-core[`bats`] : outil utilisé pour exécuter des tests de bout en bout. Si vous avez décidé d'écrire ce type de tests
 * link:https://github.com/mikefarah/yq[`yq`] : outil utilisé pour extraire des données des fichiers yaml.
 
 == Avant de migrer vos stratégies
 
-Avant de commencer le processus de migration des stratégies de Gatekeeper, envisagez d'utiliser les stratégies déjà disponibles dans le {short-project-name} link:https://artifacthub.io/packages/search?kind=13[catalogue]. Certaines des link:https://github.com/kubewarden/rego-policies-library[stratégies] sont des stratégies OPA et Gatekeeper publiquement disponibles migrées vers {short-project-name}.
+Avant de commencer le processus de migration des stratégies de Gatekeeper, envisagez d'utiliser les stratégies déjà disponibles dans le {admc-short-name} link:https://artifacthub.io/packages/search?kind=13[catalogue]. Certaines des link:https://github.com/kubewarden/rego-policies-library[stratégies] sont des stratégies OPA et Gatekeeper publiquement disponibles migrées vers {admc-short-name}.
 
-De plus, jetez un œil à notre documentation xref:/explanations/comparisons/opa-comparison.adoc[comparaison] entre {short-project-name} et Gatekeeper.
+De plus, jetez un œil à notre documentation xref:/explanations/comparisons/opa-comparison.adoc[comparaison] entre {admc-short-name} et Gatekeeper.
 
-== Étape 1 : Initialisez votre projet de stratégie {short-project-name}
+== Étape 1 : Initialisez votre projet de stratégie {admc-short-name}
 
-Tout d'abord, utilisez le {short-project-name} Gatekeeper
+Tout d'abord, utilisez le {admc-short-name} Gatekeeper
 link:https://github.com/kubewarden/gatekeeper-policy-template[modèle] pour créer
 une structure de projet de stratégie de base. Cela fournit des cibles Makefile pour construire
 et tester votre stratégie. Après avoir créé le code de la stratégie à partir du modèle,
@@ -54,11 +54,11 @@ PASS: 2/2
 == Étape 2 : Migrez le code de stratégie Gatekeeper
 
 Maintenant, commencez à migrer la stratégie Gatekeeper. Cela implique de convertir un
-`ConstraintTemplate` et ses ressources associées `Constraint` en une stratégie {short-project-name}. Dans un contexte {short-project-name}, considérez le `ConstraintTemplate` comme le code de stratégie noyau, tandis que les instances `Constraint` se traduisent par des instances de stratégie
-fonctionnant au sein de {short-project-name}.
+`ConstraintTemplate` et ses ressources associées `Constraint` en une stratégie {admc-short-name}. Dans un contexte {admc-short-name}, considérez le `ConstraintTemplate` comme le code de stratégie noyau, tandis que les instances `Constraint` se traduisent par des instances de stratégie
+fonctionnant au sein de {admc-short-name}.
 
 Tout d'abord, copiez le code Rego de votre `ConstraintTemplate` dans le fichier `policy.rego`
-que le modèle {short-project-name} a généré. Pour cet exemple, vous devez utiliser la
+que le modèle {admc-short-name} a généré. Pour cet exemple, vous devez utiliser la
 suivante link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[stratégie de démonstration]
 du dépôt Gatekeeper.
 
@@ -108,10 +108,10 @@ Copiez le extrait de code Rego du champ `rego` dans votre fichier `policy.rego` 
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== Adaptez le code Rego pour {short-project-name}
+=== Adaptez le code Rego pour {admc-short-name}
 
 Vous devez vous assurer que le nom `package` utilisé à l'intérieur du code Rego est `policy`.
-C'est la valeur attendue à de nombreux endroits par le modèle Gatekeeper {short-project-name}.
+C'est la valeur attendue à de nombreux endroits par le modèle Gatekeeper {admc-short-name}.
 
 Si vous ne le changez pas, vous aurez des erreurs lors de la construction de la stratégie et de l'exécution de ses tests de bout en bout.
 
@@ -198,7 +198,7 @@ Ce que cela signifie pour vous :
 
 Bien que fortement recommandé, les auteurs de stratégies peuvent omettre de créer des tests pour la version initiale d'une stratégie. Si cela vous concerne, vous devrez désactiver les cibles Makefile utilisées pour exécuter les tests. Vous ne pouvez pas supprimer ces cibles entièrement, car les travaux CI par défaut s'attendent à ce qu'elles soient définies. Au lieu de cela, vous devriez remplacer les commandes qui appellent `opa` et `bats` par une opération "no-op". Par exemple, vous pouvez utiliser une commande `echo` pour imprimer une explication sur pourquoi les tests ne sont pas exécutés.
 
-Le modèle Gatekeeper {short-project-name} inclut à la fois des tests unitaires Rego et des tests de bout en bout (e2e) utilisant Bats et `kwctl`. Si vous prévoyez d'inclure des tests, les deux ensembles doivent être adaptés à votre stratégie.
+Le modèle Gatekeeper {admc-short-name} inclut à la fois des tests unitaires Rego et des tests de bout en bout (e2e) utilisant Bats et `kwctl`. Si vous prévoyez d'inclure des tests, les deux ensembles doivent être adaptés à votre stratégie.
 
 Si votre stratégie Gatekeeper a déjà des tests Rego, vous pouvez les copier dans le fichier `policy_test.rego`. Ils s'exécutent automatiquement lorsque vous exécutez la commande `make test`.
 
@@ -409,7 +409,7 @@ spec:
 
 === Définir les paramètres de la stratégie
 
-Cette stratégie a des paramètres, que Gatekeeper définit dans le `Constraint`. Vous devez mettre à jour la section `settings` dans le manifeste de stratégie {short-project-name} généré pour inclure ces paramètres requis. Dans l'exemple suivant, au-delà de la définition des paramètres, vous pouvez tester la stratégie depuis le registre OCI :
+Cette stratégie a des paramètres, que Gatekeeper définit dans le `Constraint`. Vous devez mettre à jour la section `settings` dans le manifeste de stratégie {admc-short-name} généré pour inclure ces paramètres requis. Dans l'exemple suivant, au-delà de la définition des paramètres, vous pouvez tester la stratégie depuis le registre OCI :
 
 [source,yaml]
 ----

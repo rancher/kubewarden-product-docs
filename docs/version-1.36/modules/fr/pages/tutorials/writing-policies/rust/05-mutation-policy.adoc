@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurer une nouvelle stratégie de mutation {project-name} pour muter les objets entrants avec des annotations personnalisées, puis la tester.
+:description: Configurer une nouvelle stratégie de mutation {admc-name} pour muter les objets entrants avec des annotations personnalisées, puis la tester.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "rédaction-de-stratégies", "rust", "nouvelle-stratégie-de-mutation"]
 :doc-type: ["tutorial"]
@@ -19,7 +19,7 @@ Elles peuvent :
 * Accepter une demande sans changer l'objet entrant
 * Muter l'objet entrant selon leurs besoins et accepter la demande
 
-Écrire une stratégie de mutation {project-name} est simple.
+Écrire une stratégie de mutation {admc-name} est simple.
 Vous utiliserez la stratégie de validation créée dans les sections précédentes, et avec quelques modifications, la transformerez en stratégie de mutation.
 
 Votre stratégie utilise la même logique de validation définie précédemment, mais elle ajoute également une annotation à tous les Pods qui ont un nom valide.

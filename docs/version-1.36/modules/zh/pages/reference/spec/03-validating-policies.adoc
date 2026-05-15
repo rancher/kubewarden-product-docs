@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: 验证策略
 :current-version: {page-origin-branch}
 
-{project-name} 策略服务器接收：
+{admc-name} 策略服务器接收：
 
 * Kubernetes
 https://godoc.org/k8s.io/api/admission/v1#AdmissionReview[`AdmissionReview`]

@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Siga estas etapas essenciais para construir e distribuir políticas de forma eficaz para sua configuração {project-name}.
+:description: Siga estas etapas essenciais para construir e distribuir políticas de forma eficaz para sua configuração {admc-name}.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
 :doc-type: ["tutorial"]
@@ -36,16 +36,16 @@ policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
 
 == Distribuindo a política
 
-{project-name} documenta a distribuição de políticas na seção
+{admc-name} documenta a distribuição de políticas na seção
 xref:../../../explanations/distributing-policies.adoc[distribuindo políticas].
 
 == Mais exemplos
 
-Você pode encontrar mais políticas Rust {short-project-name} no espaço do GitHub de {short-project-name}.
+Você pode encontrar mais políticas Rust {admc-short-name} no espaço do GitHub de {admc-short-name}.
 https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Esta consulta]
 pode ajudá-lo a encontrá-las.
 
-Os repositórios de políticas {short-project-name}, mostrados por essa consulta, têm Ações do GitHub que automatizam as seguintes tarefas:
+Os repositórios de políticas {admc-short-name}, mostrados por essa consulta, têm Ações do GitHub que automatizam as seguintes tarefas:
 
 * Executar testes unitários e linting de código em pull requests e após fusões de código na ramificação principal.
 * Construir a política em modo `release` e enviá-la para um registro OCI como um artefato.

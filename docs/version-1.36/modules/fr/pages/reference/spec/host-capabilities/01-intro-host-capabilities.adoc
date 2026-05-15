@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Lors de l'évaluation, comprenez les capacités de l'hôte offertes par l'environnement pour les stratégies {project-name}.
+:description: Lors de l'évaluation, comprenez les capacités de l'hôte offertes par l'environnement pour les stratégies {admc-name}.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["rédaction-des-stratégies", "spécification", "capacités-de-l'hôte", "introduction"]
 :doc-type: ["reference"]
@@ -11,19 +11,19 @@ include::partial$variables.adoc[]
 :sidebar_label: Spécification des capacités de l'hôte
 :current-version: {page-origin-branch}
 
-Lors de l'évaluation, les stratégies {project-name} peuvent accéder à des capacités supplémentaires offertes par l'environnement hôte.
+Lors de l'évaluation, les stratégies {admc-name} peuvent accéder à des capacités supplémentaires offertes par l'environnement hôte.
 Ce mécanisme utilise une approche similaire à celle du traditionnel https://en.wikipedia.org/wiki/Remote_procedure_call[RPC].
 
-Voici ce qui se passe lorsqu'une demande est émise par une stratégie {short-project-name} :
+Voici ce qui se passe lorsqu'une demande est émise par une stratégie {admc-short-name} :
 
-* Stratégie {short-project-name} :
+* Stratégie {admc-short-name} :
  ** Invoque la capacité offerte par l'environnement hôte.
  ** L'invocation est une opération bloquante, donc le code de la stratégie attendra jusqu'à ce que l'hôte fournisse une réponse.
 * Environnement hôte :
  ** Une invocation de capacité est reçue.
  ** L'hôte effectue l'opération.
  ** L'hôte fournit une réponse à la stratégie, qui peut être soit un succès, soit un échec.
-* Stratégie {short-project-name} :
+* Stratégie {admc-short-name} :
  ** Le code reçoit la réponse de l'hôte et reprend l'exécution.
  ** La réponse de l'hôte est traitée en conséquence.
 

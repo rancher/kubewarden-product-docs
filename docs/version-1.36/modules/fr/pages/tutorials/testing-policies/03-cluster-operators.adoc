@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "opérateurs de cluster", "tests"]
 :current-version: {page-origin-branch}
 
-En tant qu'opérateur de cluster Kubernetes, vous souhaiterez effectuer des tests pour les stratégies {project-name} que vous souhaitez utiliser.
+En tant qu'opérateur de cluster Kubernetes, vous souhaiterez effectuer des tests pour les stratégies {admc-name} que vous souhaitez utiliser.
 
 Vous aurez des questions comme :
 
@@ -21,12 +21,12 @@ Vous aurez des questions comme :
  ** Modifiez les paramètres de configuration de la stratégie ?
  ** et ainsi de suite ?
 
-{short-project-name} dispose d'un utilitaire, https://github.com/kubewarden/kwctl[`kwctl`], qui permet de tester les stratégies en dehors de Kubernetes.
+{admc-short-name} dispose d'un utilitaire, https://github.com/kubewarden/kwctl[`kwctl`], qui permet de tester les stratégies en dehors de Kubernetes.
 
 Pour utiliser `kwctl`, vous l'invoquez avec les entrées suivantes :
 
 . Un URI de fichier binaire WebAssembly de la stratégie à exécuter.
-La stratégie {short-project-name} peut charger depuis le :
+La stratégie {admc-short-name} peut charger depuis le :
  ** système de fichiers local `file://`
  ** un serveur HTTP(s) `https://`
  ** un registre OCI `registry://`.

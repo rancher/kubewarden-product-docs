@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Entenda a {project-name} pilha aprendendo a implantar e gerenciar seus principais componentes, incluindo PolicyServers e recursos de ClusterAdmissionPolicy.
+:description: Entenda a {admc-name} pilha aprendendo a implantar e gerenciar seus principais componentes, incluindo PolicyServers e recursos de ClusterAdmissionPolicy.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]
-:keywords: ["{project-name}", "instalação", "início rápido", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "instalação", "início rápido", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Início rápido
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -18,19 +18,19 @@ include::partial$variables.adoc[]
 </head>
 ++++
 
-A pilha {project-name} é composta por:
+A pilha {admc-name} é composta por:
 
 * Um ou mais recursos {cluster-admission-policy}: isso define políticas para clusters Kubernetes.
-* Um ou mais recursos {policy-server}: representando uma implantação de um {short-project-name} `PolicyServer`. O {short-project-name} `PolicyServer` carrega e avalia as políticas do seu administrador.
+* Um ou mais recursos {policy-server}: representando uma implantação de um {admc-short-name} `PolicyServer`. O {admc-short-name} `PolicyServer` carrega e avalia as políticas do seu administrador.
 * Um ou mais recursos {admission-policy}: políticas para um namespace definido.
-* Uma implantação de um `kubewarden-controller`: este controlador monitora os recursos {cluster-admission-policy} e interage com os componentes {short-project-name} {policy-server}.
+* Uma implantação de um `kubewarden-controller`: este controlador monitora os recursos {cluster-admission-policy} e interage com os componentes {admc-short-name} {policy-server}.
 
 [TIP]
 ====
 
-{short-project-name} descreve suas Definições de Recursos Personalizados (CRDs) do Kubernetes xref:reference/CRDs.adoc[aqui].
+{admc-short-name} descreve suas Definições de Recursos Personalizados (CRDs) do Kubernetes xref:reference/CRDs.adoc[aqui].
 
-{short-project-name} Os CRDs mencionados neste tutorial e no restante da documentação têm nomes curtos, que são mais fáceis de usar. Estes são os nomes curtos para os CRDs:
+{admc-short-name} Os CRDs mencionados neste tutorial e no restante da documentação têm nomes curtos, que são mais fáceis de usar. Estes são os nomes curtos para os CRDs:
 
 [cols="1,1"]
 |===
@@ -64,7 +64,7 @@ A pilha {project-name} é composta por:
 
 :gh-pat-url: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
-Você pode recuperar políticas {short-project-name} do registro de contêiner do GitHub em https://ghcr.io.. Você precisa de autenticação para usar o repositório com o CLI {short-project-name}, usando um {gh-pat-url}[token de acesso pessoal do GitHub] (PAT). A documentação deles orienta você a criar um se você ainda não o fez.
+Você pode recuperar políticas {admc-short-name} do registro de contêiner do GitHub em https://ghcr.io.. Você precisa de autenticação para usar o repositório com o CLI {admc-short-name}, usando um {gh-pat-url}[token de acesso pessoal do GitHub] (PAT). A documentação deles orienta você a criar um se você ainda não o fez.
 Então você autentica com um comando como:
 
 [subs="+attributes",console]
@@ -75,7 +75,7 @@ echo $PAT | docker login ghcr.io --username <my-gh-username> --password-stdin
 ====
 
 
-Implante a pilha {short-project-name} usando os gráficos `helm` da seguinte forma:
+Implante a pilha {admc-short-name} usando os gráficos `helm` da seguinte forma:
 
 [subs="+attributes",console]
 ----
@@ -90,7 +90,7 @@ helm repo update kubewarden
 Instale os seguintes gráficos Helm no namespace `kubewarden` em seu cluster Kubernetes:
 
 * `kubewarden-crds`, que registra as definições de recursos personalizados {cluster-admission-policy}, {admission-policy} e {policy-server}. Além disso, as definições de recursos personalizados {report} usadas pelo scanner de auditoria.
-* `kubewarden-controller`, que instala o controlador {short-project-name} e o scanner de auditoria.
+* `kubewarden-controller`, que instala o controlador {admc-short-name} e o scanner de auditoria.
 +
 [NOTE]
 ====
@@ -130,7 +130,7 @@ Os valores de configuração padrão são suficientes para a maioria das implant
 
 == Componentes principais
 
-{short-project-name} possui três componentes principais com os quais você interage:
+{admc-short-name} possui três componentes principais com os quais você interage:
 
 * O {policy-server}
 * O {cluster-admission-policy}
@@ -138,9 +138,9 @@ Os valores de configuração padrão são suficientes para a maioria das implant
 
 === `PolicyServer`
 
-O `kubewarden-controller` gerencia um {short-project-name} `PolicyServer`. Você pode implantar múltiplos {policy-server}s no mesmo cluster Kubernetes.
+O `kubewarden-controller` gerencia um {admc-short-name} `PolicyServer`. Você pode implantar múltiplos {policy-server}s no mesmo cluster Kubernetes.
 
-Um `PolicyServer` valida as requisições recebidas executando políticas {short-project-name} contra elas.
+Um `PolicyServer` valida as requisições recebidas executando políticas {admc-short-name} contra elas.
 
 Esta é a configuração padrão do `PolicyServer`:
 
@@ -198,7 +198,7 @@ Alterar qualquer um desses atributos causa uma implantação do `PolicyServer` c
 
 === ClusterAdmissionPolicy
 
-O recurso {cluster-admission-policy} é o kernel da pilha {short-project-name}. Ele define como as políticas avaliam as requisições.
+O recurso {cluster-admission-policy} é o kernel da pilha {admc-short-name}. Ele define como as políticas avaliam as requisições.
 
 Impor políticas é a operação mais comum que um administrador Kubernetes realiza. Você pode declarar quantas políticas quiser, cada uma direciona um ou mais recursos do Kubernetes (ou seja, `pods`, `Custom Resource` e outros). Você também especifica o tipo de operações aplicadas aos recursos direcionados. As operações disponíveis são `CREATE`, `UPDATE`, `DELETE` e `CONNECT`.
 
@@ -240,7 +240,7 @@ Visão geral dos atributos do recurso {cluster-admission-policy}:
 
 | Y (S)
 | `module`
-| A localização da política de {short-project-name}. Os seguintes esquemas são permitidos:
+| A localização da política de {admc-short-name}. Os seguintes esquemas são permitidos:
 
 | N
 |
@@ -302,7 +302,7 @@ Além disso, não há diferenças funcionais entre os recursos {admission-policy
 [IMPORTANT]
 ====
 
-{admission-policy} requer Kubernetes 1.21.0 ou superior. Isso ocorre porque {short-project-name} usa o rótulo `kubernetes.io/metadata.name`, introduzido no Kubernetes 1.21.0.
+{admission-policy} requer Kubernetes 1.21.0 ou superior. Isso ocorre porque {admc-short-name} usa o rótulo `kubernetes.io/metadata.name`, introduzido no Kubernetes 1.21.0.
 
 ====
 
@@ -453,7 +453,7 @@ helm uninstall --namespace kubewarden kubewarden-controller
 helm uninstall --namespace kubewarden kubewarden-crds
 ----
 
-Após a remoção dos charts do `helm`, remova o namespace do Kubernetes usado para implantar a pilha {short-project-name}:
+Após a remoção dos charts do `helm`, remova o namespace do Kubernetes usado para implantar a pilha {admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -463,12 +463,12 @@ kubectl delete namespace kubewarden
 [CAUTION]
 ====
 
-{short-project-name} contém um hook de pré-exclusão do helm que remove todos os `PolicyServer`s e `kubewarden-controller`s. Então o `kubewarden-controller` exclui todos os recursos, por isso é importante que o `kubewarden-controller` esteja em execução quando o helm uninstall for executado.
+{admc-short-name} contém um hook de pré-exclusão do helm que remove todos os `PolicyServer`s e `kubewarden-controller`s. Então o `kubewarden-controller` exclui todos os recursos, por isso é importante que o `kubewarden-controller` esteja em execução quando o helm uninstall for executado.
 
 ====
 
 
-{short-project-name} exclui {validating-webhook-configuration}s e {mutating-webhook-configuration}s. Verifique isso com:
+{admc-short-name} exclui {validating-webhook-configuration}s e {mutating-webhook-configuration}s. Verifique isso com:
 
 [subs="+attributes",console]
 ----
@@ -498,7 +498,7 @@ kubectl delete -l "kubewarden" mutatingwebhookconfigurations.admissionregistrati
 
 == Próximos passos
 
-Agora, você está pronto para implantar {short-project-name}! Dê uma olhada nas políticas em https://artifacthub.io/packages/search?kind=13[artifacthub.io], em https://github.com/topics/kubewarden-policy[GitHub], ou reutilize políticas Rego existentes, conforme mostrado nos xref:tutorials/writing-policies/rego/01-intro-rego.adoc[capítulos seguintes].
+Agora, você está pronto para implantar {admc-short-name}! Dê uma olhada nas políticas em https://artifacthub.io/packages/search?kind=13[artifacthub.io], em https://github.com/topics/kubewarden-policy[GitHub], ou reutilize políticas Rego existentes, conforme mostrado nos xref:tutorials/writing-policies/rego/01-intro-rego.adoc[capítulos seguintes].
 
 .Lista completa de políticas disponíveis no ArtifactHub
 [%collapsible,subs="+macros"]

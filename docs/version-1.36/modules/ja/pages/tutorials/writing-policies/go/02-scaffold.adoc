@@ -93,7 +93,7 @@ module <path to your repository>
 必要なツールが整っている場合、`make test`コマンドはDockerを使用してTinyGoコンパイラのイメージをプルし、それを使用してポリシーテンプレートをビルドおよびテストします。
 
 デフォルトの`make`コマンドは、`policy.wasm`ターゲットをビルドします。次に、`make test`が定義されたGoテストを実行します。
-コマンド`make e2e-tests`は、https://github.com/bats-core/bats-core[bats]を使用して{short-project-name}クラスター内でテストを実行します。
+コマンド`make e2e-tests`は、https://github.com/bats-core/bats-core[bats]を使用して{admc-short-name}クラスター内でテストを実行します。
 `go-policy-template`をクローンした後、これらのコマンドを実行すると、チュートリアルに必要なツールが揃っているか確認できます。
 
 .`make`コマンドからの出力

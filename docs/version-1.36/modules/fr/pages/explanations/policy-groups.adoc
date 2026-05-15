@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-topic: ["explications", "groupe de stratégies"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "groupes de stratégies", "groupe de stratégies d'admission de cluster", "groupe de stratégies d'admission"]
+:keywords: ["{admc-name}", "kubewarden", "groupes de stratégies", "groupe de stratégies d'admission de cluster", "groupe de stratégies d'admission"]
 :sidebar_label: Groupes de stratégies
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -85,7 +85,7 @@ Cette section couvre les principaux champs de configuration d'un groupe de strat
 
 === Attribut `policies`
 
-Le champ des stratégies est un mappage de stratégies ordinaires. {project-name} appelle les stratégies par le groupe de stratégies, pour déterminer s'il faut accepter ou rejeter la ressource en cours d'évaluation. Les définitions de ces stratégies sont une version simplifiée des stratégies ordinaires {short-project-name}, contenant uniquement les attributs `module`, `settings` et `contextAwareResources`. Ces éléments sont nécessaires au bon fonctionnement des stratégies au sein d'un groupe de stratégies.
+Le champ des stratégies est un mappage de stratégies ordinaires. {admc-name} appelle les stratégies par le groupe de stratégies, pour déterminer s'il faut accepter ou rejeter la ressource en cours d'évaluation. Les définitions de ces stratégies sont une version simplifiée des stratégies ordinaires {admc-short-name}, contenant uniquement les attributs `module`, `settings` et `contextAwareResources`. Ces éléments sont nécessaires au bon fonctionnement des stratégies au sein d'un groupe de stratégies.
 
 Un nom unique identifie chaque stratégie du groupe de stratégies. Par exemple, le snippet suivant définit trois stratégies : `signed_by_alice`, `signed_by_bob` et `reject_latest_tag`.
 

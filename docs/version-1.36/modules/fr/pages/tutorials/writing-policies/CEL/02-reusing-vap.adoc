@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Découvrez comment réutiliser et valider des stratégies d'admission dans Kubernetes en utilisant {project-name} (cel-policy).
+:description: Découvrez comment réutiliser et valider des stratégies d'admission dans Kubernetes en utilisant {admc-name} (cel-policy).
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "ValidatingAdmissionPolicies"]
 :doc-type: ["tutorial"]
@@ -16,7 +16,7 @@ Les politiques vanilla de Kubernetes https://kubernetes.io/docs/reference/access
 * ValidatingAdmissionPolicy : décrit la logique en CEL. Elle accepte également en option des paramètres dans `spec.paramKind`.
 * ValidatingAdmissionPolicyBinding : délimite la portée de la stratégie.
 
-Voyons un exemple concret. Celles-ci et d'autres peuvent être réutilisées avec {project-name} `cel-policy` avec peu d'effort.
+Voyons un exemple concret. Celles-ci et d'autres peuvent être réutilisées avec {admc-name} `cel-policy` avec peu d'effort.
 
 == ValidatingAdmissionPolicy
 
@@ -85,9 +85,9 @@ data:
   overrideReplicas: "3"
 ----
 
-Ici, nous avons une stratégie équivalente {short-project-name} :
+Ici, nous avons une stratégie équivalente {admc-short-name} :
 
-### {short-project-name} de `cel-policy`
+### {admc-short-name} de `cel-policy`
 
 ../cel-policy-example.yaml
 [,yaml]
@@ -159,22 +159,22 @@ Remarquez les numéros commentés sur les deux manifestes YAML. Développons-les
 
 | 1   | `failurePolicy`                   | `settings.failurePolicy`                 | Comportement CEL, pour lorsque l'expression CEL évalue à faux, il y a des erreurs d'exécution CEL, ou il y a des CEL invalides ou mal configurés. Par exemple, une expression CEL retournant faux, des paramètres manquants, ou des variables manquantes. À ne pas confondre avec (6).
 | 2   | `matchConstraints`                | `rules`                                  | Les deux acceptent le même https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#rulewithoperations-v1-admissionregistration[RuleWithOperations] qui informe sur le type de Ressource auquel la stratégie s'applique.
-| 3   | `variables`                       | `settings.variables`                     | Dans {short-project-name} de `cel-policy`, les expressions qui définissent des variables sont dans `settings.variables`. À part cela, elles sont équivalentes.
-| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | Dans {short-project-name} de `cel-policy`, les définitions de paramètres sont dans `settings.paramKind`, `settings.paramRef`. À part cela, elles sont équivalentes.
-| 5   | `validations`                     | `settings.validations`                   | Dans {short-project-name} de `cel-policy`, les expressions qui définissent des validations sont dans `settings.validations`. À part cela, elles sont équivalentes.
+| 3   | `variables`                       | `settings.variables`                     | Dans {admc-short-name} de `cel-policy`, les expressions qui définissent des variables sont dans `settings.variables`. À part cela, elles sont équivalentes.
+| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | Dans {admc-short-name} de `cel-policy`, les définitions de paramètres sont dans `settings.paramKind`, `settings.paramRef`. À part cela, elles sont équivalentes.
+| 5   | `validations`                     | `settings.validations`                   | Dans {admc-short-name} de `cel-policy`, les expressions qui définissent des validations sont dans `settings.validations`. À part cela, elles sont équivalentes.
 | 6   | `---`                             | `failurePolicy`                          | Comportement du Webhook, pour l'erreur ou le délai d'attente de l'API Kubernetes Webhook, ou pour l'évaluation des matchConditions. À ne pas confondre avec (1).
-| 7   | `validationActions`               | `mode`                                   | `mode` a comme options `protect` et `monitor`. L'audit est plus complet dans {short-project-name}, voir (9).
-| 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Définir des moyens de contrainte en utilisant des sélecteurs. {short-project-name}'s policies have them as `namespaceSelector` and `objectSelector`.
-| 9   | `auditAnnotations` (non illustré) | `backgroundAudit`, annotations           | Utilisez les champs {short-project-name} à la place pour définir l'utilisation de la stratégie dans xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], ainsi que sa catégorie et sa gravité pour OpenReports.
-|10|`---`|`contextAwareResources` autorisations|Les stratégies de {short-project-name} ont des autorisations granulaires pour la lecture des ressources du cluster. Ici, il est utilisé pour lire les paramètres.
-|     | `matchConditions`                 | `matchConditions`                        | Les stratégies de {short-project-name} ont `matchConditions` (non illustré dans cet exemple).
-|     | `---`                             | {short-project-name}Fonctionnalités réservées à                 | Pour d'autres fonctionnalités, consultez le reste des exemples de tutoriel CEL.
+| 7   | `validationActions`               | `mode`                                   | `mode` a comme options `protect` et `monitor`. L'audit est plus complet dans {admc-short-name}, voir (9).
+| 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Définir des moyens de contrainte en utilisant des sélecteurs. {admc-short-name}'s policies have them as `namespaceSelector` and `objectSelector`.
+| 9   | `auditAnnotations` (non illustré) | `backgroundAudit`, annotations           | Utilisez les champs {admc-short-name} à la place pour définir l'utilisation de la stratégie dans xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], ainsi que sa catégorie et sa gravité pour OpenReports.
+|10|`---`|`contextAwareResources` autorisations|Les stratégies de {admc-short-name} ont des autorisations granulaires pour la lecture des ressources du cluster. Ici, il est utilisé pour lire les paramètres.
+|     | `matchConditions`                 | `matchConditions`                        | Les stratégies de {admc-short-name} ont `matchConditions` (non illustré dans cet exemple).
+|     | `---`                             | {admc-short-name}Fonctionnalités réservées à                 | Pour d'autres fonctionnalités, consultez le reste des exemples de tutoriel CEL.
 |===
 
 [TIP]
 ====
 
-Vous pouvez utiliser l'outil `kwctl` pour migrer une stratégie VAP vers {short-project-name}.
+Vous pouvez utiliser l'outil `kwctl` pour migrer une stratégie VAP vers {admc-short-name}.
 
 Ce xref:howtos/vap-migration.adoc[procédure de migration VAP] décrit comment procéder.
 
@@ -187,9 +187,9 @@ Il existe certaines fonctionnalités VAP qui ne sont pas encore mises en œuvre.
 
 * VAP https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz[bibliothèque d'autorisation].
 * VAP https://kubernetes.io/docs/reference/labels-annotations-taints/audit-annotations/[Annotations d'audit] (ValidatingAdmissionPolicy `spec.auditAnnotations` lorsque ValidatingAdmissionPolicyBinding `spec.validationActions` est défini sur "Audit").
-Cela est couvert par {short-project-name} et xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] ainsi que par PolicyReports, qui permettent d'auditer les ressources déjà dans le cluster.
+Cela est couvert par {admc-short-name} et xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] ainsi que par PolicyReports, qui permettent d'auditer les ressources déjà dans le cluster.
 * CEL https://kubernetes.io/docs/reference/using-api/cel/#resource-constraints[contraintes de ressources et limite de coût estimée].
-Cela est couvert par la protection générale de {short-project-name}, avec xref:reference/policy-evaluation-timeout.adoc[délai d'expiration de la stratégie].
+Cela est couvert par la protection générale de {admc-short-name}, avec xref:reference/policy-evaluation-timeout.adoc[délai d'expiration de la stratégie].
 
 == Application de la stratégie
 

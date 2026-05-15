@@ -13,20 +13,20 @@ include::partial$variables.adoc[]
 
 https://opentelemetry.io/[OpenTelemetry] es un marco de la Cloud Native Computing Foundation (CNCF) para la observabilidad. Permite que tus microservicios proporcionen métricas, registros y trazas.
 
-Los componentes de {project-name}, utilizando el SDK de OpenTelemetry, informan datos a un recolector de OpenTelemetry — llamado el agente.
+Los componentes de {admc-name}, utilizando el SDK de OpenTelemetry, informan datos a un recolector de OpenTelemetry — llamado el agente.
 
 Esta guía explica cómo desplegar el recolector de OpenTelemetry en modo `sidecar` utilizando el chart oficial de Helm de Kubernetes.
 
 Este es un patrón de despliegue simple utilizando OpenTelemetry. Su configuración final se ve así:
 
-* Cada Pod de la pila {short-project-name} (PolicyServer, Controller) tiene un sidecar de OpenTelemetry.
-* El sidecar recibe información de trazado y monitoreo del componente {short-project-name} a través del Protocolo de OpenTelemetry (OTLP)
+* Cada Pod de la pila {admc-short-name} (PolicyServer, Controller) tiene un sidecar de OpenTelemetry.
+* El sidecar recibe información de trazado y monitoreo del componente {admc-short-name} a través del Protocolo de OpenTelemetry (OTLP)
 * El recolector de OpenTelemetry:
  ** Envía los eventos de trazado a una instancia central de Jaeger
  ** Expone métricas de Prometheus en un puerto específico
 
-El chart de Helm de {short-project-name} no cubre todos los posibles escenarios de despliegue del recolector de OpenTelemetry. También es posible configurar
-{short-project-name} para enviar datos a un recolector de OpenTelemetry. La documentación
+El chart de Helm de {admc-short-name} no cubre todos los posibles escenarios de despliegue del recolector de OpenTelemetry. También es posible configurar
+{admc-short-name} para enviar datos a un recolector de OpenTelemetry. La documentación
 para ese escenario se encuentra en la xref:./40-custom-otel-collector.adoc[guía personalizada de OpenTelemetry].
 
 Primero despliegas OpenTelemetry en un clúster de Kubernetes, para que puedas usarlo en

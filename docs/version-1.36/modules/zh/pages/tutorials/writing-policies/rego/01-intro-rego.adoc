@@ -18,7 +18,7 @@ Rego 支持可从以下版本获得：
 * kwctl: v0.2.0
 * policy-server: v0.2.0
 
-Rego 策略支持来自 {project-name} 1.9 版本的上下文感知数据。
+Rego 策略支持来自 {admc-name} 1.9 版本的上下文感知数据。
 ====
 
 
@@ -27,7 +27,7 @@ Rego 语言是一种领域特定语言，用于实现代码中的策略。https:
 有两种方法可以编写 Rego 策略以在 Kubernetes 中实现代码中的策略，Open Policy Agent 和 Gatekeeper。
 
 接下来的几个部分展示了这两个框架的不同之处，尽管使用的是相同的语言。
-如果您对 {short-project-name} 实现更感兴趣，您可以直接访问下面链接的框架特定文档。
+如果您对 {admc-short-name} 实现更感兴趣，您可以直接访问下面链接的框架特定文档。
 
 * xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[开放政策代理]
 * xref:tutorials/writing-policies/rego/gatekeeper/01-intro.adoc[Gatekeeper]
@@ -72,11 +72,11 @@ OPA 和 Gatekeeper 策略都使用 Rego 将策略描述为代码。
 
 上下文感知策略的概念也可以扩展到自定义资源，因此您的策略可能还希望根据当前使用的自定义资源来评估请求。
 
-OPA 和 Gatekeeper 从 {short-project-name} 1.9 版本开始支持上下文感知策略。
+OPA 和 Gatekeeper 从 {admc-short-name} 1.9 版本开始支持上下文感知策略。
 
 有关上下文感知策略的更多细节在xref:reference/spec/05-context-aware-policies.adoc[这里]。
 
 === 变更策略
 
-Gatekeeper 支持变更策略，但 {short-project-name} 尚未实现与 Gatekeeper 兼容的变更策略。
-您可以使用 {short-project-name} SDK 编写变更策略，但目前无法在 {short-project-name} 中运行 Gatekeeper 变更策略。
+Gatekeeper 支持变更策略，但 {admc-short-name} 尚未实现与 Gatekeeper 兼容的变更策略。
+您可以使用 {admc-short-name} SDK 编写变更策略，但目前无法在 {admc-short-name} 中运行 Gatekeeper 变更策略。

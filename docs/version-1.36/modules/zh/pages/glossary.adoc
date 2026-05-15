@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 探索与{project-name}策略相关的关键资源和配置，以获取更多信息。
+:description: 探索与{admc-name}策略相关的关键资源和配置，以获取更多信息。
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["glossary"]
 :doc-type: ["explanation"]
@@ -38,8 +38,8 @@ include::partial$variables.adoc[]
 
 === MutatingWebhookConfiguration
 
-一个https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes资源]由{short-project-name}控制器创建，以让Kubernetes知道将`AdmissionReview`发送到哪里。
-换句话说，这就是{short-project-name}控制器如何通知Kubernetes在哪里找到资源变更策略。
+一个https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes资源]由{admc-short-name}控制器创建，以让Kubernetes知道将`AdmissionReview`发送到哪里。
+换句话说，这就是{admc-short-name}控制器如何通知Kubernetes在哪里找到资源变更策略。
 
 == P
 
@@ -50,14 +50,14 @@ include::partial$variables.adoc[]
 [#_policy_server]
 === PolicyServer
 
-一个PolicyServer通过对请求执行{short-project-name}策略来验证传入请求。
+一个PolicyServer通过对请求执行{admc-short-name}策略来验证传入请求。
 
 == 价值
 
 === ValidatingWebhookConfiguration
 
-一个https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes资源]由{short-project-name}控制器创建，以让Kubernetes知道将`AdmissionReview`发送到哪里。
-换句话说，这就是{short-project-name}如何通知Kubernetes在哪里找到资源验证策略。
+一个https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes资源]由{admc-short-name}控制器创建，以让Kubernetes知道将`AdmissionReview`发送到哪里。
+换句话说，这就是{admc-short-name}如何通知Kubernetes在哪里找到资源验证策略。
 
 == 周三
 

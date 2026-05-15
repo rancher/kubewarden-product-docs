@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["manuel-opérateur", "stratégies"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "stratégies", "ClusterAdmissionPolicies", "AdmissionPolicies", "configuration", "espaces de noms"]
+:keywords: ["{admc-name}", "stratégies", "ClusterAdmissionPolicies", "AdmissionPolicies", "configuration", "espaces de noms"]
 :sidebar_label: Configuration des stratégies
 :sidebar_position: 90
 :current-version: {page-origin-branch}

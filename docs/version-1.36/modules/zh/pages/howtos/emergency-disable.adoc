@@ -6,19 +6,19 @@ include::partial$variables.adoc[]
 :sidebar_label: 紧急禁用
 :sidebar_position: 31
 :title: 紧急禁用
-:description: 了解如何在紧急情况下禁用{project-name}，停止并删除相关配置，然后恢复。
-:keywords: ["{project-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
+:description: 了解如何在紧急情况下禁用{admc-name}，停止并删除相关配置，然后恢复。
+:keywords: ["{admc-name}", kubewarden, ClusterAdmissionPolicies, AdmissionPolicies, configuration]
 :doc-persona: kubewarden-operator
 :doc-type: HOWTO
 :doc-topic: 操作手册
 
-在紧急情况下，运维团队可能需要执行那些{project-name}通常会阻止的操作。
+在紧急情况下，运维团队可能需要执行那些{admc-name}通常会阻止的操作。
 
-本文档解释了如何禁用{short-project-name}，以便运维团队可以处理集群故障。解决情况后，运维团队可以重新启动{short-project-name}。
+本文档解释了如何禁用{admc-short-name}，以便运维团队可以处理集群故障。解决情况后，运维团队可以重新启动{admc-short-name}。
 
-== 禁用{short-project-name}
+== 禁用{admc-short-name}
 
-首先，停止{short-project-name}控制器。您可以通过将其部署缩减为零来实现：
+首先，停止{admc-short-name}控制器。您可以通过将其部署缩减为零来实现：
 
 [source,console]
 ----
@@ -29,26 +29,26 @@ kubectl scale deployment kubewarden-controller \
 
 [tip]
 ====
-确保使用{short-project-name}堆栈部署所在名称空间的名称。
+确保使用{admc-short-name}堆栈部署所在名称空间的名称。
 在这里，堆栈部署在`kubewarden`名称空间中。
 ====
 
-接下来，删除所有由{short-project-name}创建的`ValidatingWebhookConfigurations`和`MutatingWebhookConfigurations`：
+接下来，删除所有由{admc-short-name}创建的`ValidatingWebhookConfigurations`和`MutatingWebhookConfigurations`：
 
 [source,console]
 ----
-# Delete all the ValidatingWebhookConfiguration created by {short-project-name}
+# Delete all the ValidatingWebhookConfiguration created by {admc-short-name}
 kubectl delete validatingwebhookconfigurations \
   -l app.kubernetes.io/part-of=kubewarden
 
-# Delete all the MutatingWebhookConfiguration created by {short-project-name}
+# Delete all the MutatingWebhookConfiguration created by {admc-short-name}
 kubectl delete mutatingwebhookconfigurations \
   -l app.kubernetes.io/part-of=kubewarden
 ----
 
-== 恢复{short-project-name}
+== 恢复{admc-short-name}
 
-当紧急情况结束时，通过恢复{short-project-name}控制器来恢复{short-project-name}堆栈：
+当紧急情况结束时，通过恢复{admc-short-name}控制器来恢复{admc-short-name}堆栈：
 
 [source,console]
 ----
@@ -59,7 +59,7 @@ kubectl scale deployment kubewarden-controller \
 
 [tip]
 ====
-- 确保使用{short-project-name}堆栈部署所在名称空间的名称。
+- 确保使用{admc-short-name}堆栈部署所在名称空间的名称。
   在这里，堆栈部署在`kubewarden`名称空间中。
 - 确保将控制器的规模恢复到其原始值。此示例假设控制器仅运行一个副本。
 ====

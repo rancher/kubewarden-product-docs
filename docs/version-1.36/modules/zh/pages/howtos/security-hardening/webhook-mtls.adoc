@@ -5,18 +5,18 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: 启用 K3s 的双向 TLS
 :description: 在您的 SUSE Kubernetes 发行版中，为 K3s 的安全 Webhook 实现双向传输层安全性 (mTLS) 协议。
-:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:keywords: ["{admc-name}", kubewarden, kubernetes, security]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: HOWTO
 :doc-topic: operator-manual, security
 
-本指南向您展示如何在使用 https://k3s.io/[K3s] 作为 Kubernetes 发行版时，为 {project-name} 堆栈 Webhook 启用双向传输层安全性 (mTLS)。
+本指南向您展示如何在使用 https://k3s.io/[K3s] 作为 Kubernetes 发行版时，为 {admc-name} 堆栈 Webhook 启用双向传输层安全性 (mTLS)。
 
 有关如何加强 Webhook 的更多信息，请参阅 xref:/reference/security-hardening/webhooks-hardening.adoc[参考页面]。
 
 == 先决条件
 
-在安装 K3s 之前，您需要创建一个证书颁发机构 (CA) 和一个客户端证书。您用来保护 {short-project-name} Webhook 与 Kubernetes API 服务器之间的通信。
+在安装 K3s 之前，您需要创建一个证书颁发机构 (CA) 和一个客户端证书。您用来保护 {admc-short-name} Webhook 与 Kubernetes API 服务器之间的通信。
 
 第一步，创建 `/etc/rancher/k3s/admission/certs` 目录：
 
@@ -140,11 +140,11 @@ curl -sfL https://get.k3s.io | sh -
 
 等待安装完成。
 
-== 安装 {short-project-name} 堆栈
+== 安装 {admc-short-name} 堆栈
 
 === 先决条件
 
-颁发 Kubernetes 客户端证书的根 CA 证书需要在 {short-project-name} 堆栈中可用。
+颁发 Kubernetes 客户端证书的根 CA 证书需要在 {admc-short-name} 堆栈中可用。
 
 根 CA 可在 Kubernetes 节点的 `/etc/rancher/k3s/admission/certs/rootCA.crt` 处找到。您需要将其内容存放在 `ConfigMap` 命名空间下的 `kubewarden` 中。您将 `rootCA.crt` 文件的内容存储在名为 `client-ca.crt` 的密钥中。
 
@@ -165,9 +165,9 @@ kubectl create configmap -n kubewarden api-server-mtls \
 
 生成的 `ConfigMap` 名称为 `api-server-mtls`。
 
-=== 安装 {short-project-name} 堆栈
+=== 安装 {admc-short-name} 堆栈
 
-按照 xref:/quick-start.adoc[快速入门指南] 中描述的方式安装 {short-project-name} 堆栈。遵循所有步骤，但在安装 `kubewarden-controller` Helm 图表时，请确保启用以下值：
+按照 xref:/quick-start.adoc[快速入门指南] 中描述的方式安装 {admc-short-name} 堆栈。遵循所有步骤，但在安装 `kubewarden-controller` Helm 图表时，请确保启用以下值：
 
 * `mTLS.enable`：必须为 `true`。
 * `mTLS.configMapName`：必须是之前创建的 `ConfigMap` 的名称。
@@ -181,4 +181,4 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
     --set mTLS.configMapName=api-server-mtls
 ----
 
-一旦此命令完成，mTLS 将确保 {short-project-name} 堆栈及其 Webhook 的安装安全。
+一旦此命令完成，mTLS 将确保 {admc-short-name} 堆栈及其 Webhook 的安装安全。

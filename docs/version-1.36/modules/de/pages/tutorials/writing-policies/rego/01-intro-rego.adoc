@@ -18,7 +18,7 @@ Rego-Unterstützung ist in diesen Versionen verfügbar:
 * kwctl: v0.2.0
 * policy-server: v0.2.0
 
-Rego-Richtlinien unterstützen kontextabhängige Daten ab Version {project-name} 1.9.
+Rego-Richtlinien unterstützen kontextabhängige Daten ab Version {admc-name} 1.9.
 ====
 
 
@@ -31,7 +31,7 @@ Open Policy Agent und Gatekeeper zu implementieren.
 
 Die nächsten Abschnitte zeigen, wie sich die beiden Frameworks unterscheiden,
 obwohl sie dieselbe Sprache verwenden.
-Wenn Sie mehr an der {short-project-name} Implementierung interessiert sind,
+Wenn Sie mehr an der {admc-short-name} Implementierung interessiert sind,
 können Sie direkt die spezifische Dokumentation des Frameworks besuchen, die unten verlinkt ist.
 
 * xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
@@ -80,13 +80,13 @@ Ein weiteres Beispiel wäre eine Richtlinie, die `Ingress` Ressourcen bewertet, 
 
 Die Idee der kontextabhängigen Richtlinien kann auch auf benutzerdefinierte Ressourcen ausgeweitet werden, sodass Ihre Richtlinie möglicherweise eine Anfrage basierend auf den aktuell verwendeten benutzerdefinierten Ressourcen bewerten möchte.
 
-Sowohl OPA als auch Gatekeeper unterstützen kontextabhängige Richtlinien, beginnend mit Version {short-project-name} 1.9.
+Sowohl OPA als auch Gatekeeper unterstützen kontextabhängige Richtlinien, beginnend mit Version {admc-short-name} 1.9.
 
 Weitere Details zu kontextabhängigen Richtlinien finden Sie
 xref:reference/spec/05-context-aware-policies.adoc[hier].
 
 === Mutierende Richtlinien
 
-Gatekeeper unterstützt mutierende Richtlinien, aber {short-project-name} hat mutierende Richtlinien mit Gatekeeper-Kompatibilität noch nicht implementiert.
-Sie können Richtlinien verwenden, die das {short-project-name} SDK nutzen, um mutierende Richtlinien zu schreiben,
-aber derzeit können Sie mutierende Gatekeeper-Richtlinien in {short-project-name} nicht ausführen.
+Gatekeeper unterstützt mutierende Richtlinien, aber {admc-short-name} hat mutierende Richtlinien mit Gatekeeper-Kompatibilität noch nicht implementiert.
+Sie können Richtlinien verwenden, die das {admc-short-name} SDK nutzen, um mutierende Richtlinien zu schreiben,
+aber derzeit können Sie mutierende Gatekeeper-Richtlinien in {admc-short-name} nicht ausführen.

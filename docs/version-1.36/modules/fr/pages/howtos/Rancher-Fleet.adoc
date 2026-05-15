@@ -1,24 +1,24 @@
 include::partial$variables.adoc[]
-= Gérer {project-name} avec Rancher Fleet
+= Gérer {admc-name} avec Rancher Fleet
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Gérez {project-name} les charts Helm en utilisant Rancher Fleet et les CRDs Kubernetes pour mettre en œuvre une approche GitOps.
+:description: Gérez {admc-name} les charts Helm en utilisant Rancher Fleet et les CRDs Kubernetes pour mettre en œuvre une approche GitOps.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["opérateur-manuel", "rancher-fleet"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}","kubernetes", "kubewarden", "Rancher Fleet"]
+:keywords: ["{admc-name}","kubernetes", "kubewarden", "Rancher Fleet"]
 :sidebar_label: Rancher Fleet
 :sidebar_position: 130
 :current-version: {page-origin-branch}
 
-Vous pouvez gérer les charts Helm {project-name}, comme d'autres charts Helm, avec https://fleet.rancher.io/[Rancher Fleet].
+Vous pouvez gérer les charts Helm {admc-name}, comme d'autres charts Helm, avec https://fleet.rancher.io/[Rancher Fleet].
 Rancher Fleet utilise les CRDs Kubernetes pour définir une approche GitOps pour la gestion des clusters Kubernetes.
 Cela se fait en définissant https://fleet.rancher.io/concepts[Fleet Bundles].
 
 == Installation
 
-Les charts {short-project-name} sont des charts standard, ils dépendent transitivement les uns des autres :
+Les charts {admc-short-name} sont des charts standard, ils dépendent transitivement les uns des autres :
 
 `kubewarden-crds` ← `kubewarden-controller` ← `kubewarden-defaults`
 
@@ -41,10 +41,10 @@ Ces erreurs ne signifient pas qu'il y a un problème, et une fois que les charts
 [CAUTION]
 ====
 
-Lors de la suppression du GitRepo, tous les 3 charts {short-project-name} sont supprimés en même temps.
+Lors de la suppression du GitRepo, tous les 3 charts {admc-short-name} sont supprimés en même temps.
 Cela signifie que le chart `kubewarden-crds` est supprimé.
 
-{short-project-name} utilise un job de hook helm pré-suppression dans le chart `kubewarden-controller` qui supprime le PolicyServer par défaut.
+{admc-short-name} utilise un job de hook helm pré-suppression dans le chart `kubewarden-controller` qui supprime le PolicyServer par défaut.
 Ce hook pré-suppression est nécessaire pour libérer les webhooks des stratégies avant de supprimer le PolicyServer.
 C'est vrai pour tout moteur de stratégie.
 Sinon, le cluster peut avoir des webhooks pour des stratégies qui n'existent plus, ce qui entraîne un rejet de tout et un état d'échec.
@@ -60,8 +60,8 @@ Pour effectuer une suppression correcte, assurez-vous d'abord de supprimer le Bu
 Faites cela en engageant ces modifications dans le dépôt contenant la configuration de Fleet, puis attendez qu'elles soient appliquées.
 Ensuite, supprimez `kubewarden-controller` de la même manière, et enfin, supprimez `kubewarden-crds`.
 
-Une autre option est d'ajouter 2 GitRepos, un uniquement pour les CRDs, et un autre pour le reste des charts {short-project-name}.
-Cela vous permet de supprimer d'abord les charts {short-project-name}, puis, en dernier, les CRDs {short-project-name}.
+Une autre option est d'ajouter 2 GitRepos, un uniquement pour les CRDs, et un autre pour le reste des charts {admc-short-name}.
+Cela vous permet de supprimer d'abord les charts {admc-short-name}, puis, en dernier, les CRDs {admc-short-name}.
 
 == Par exemple :
 

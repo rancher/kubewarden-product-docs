@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Saiba mais sobre como reutilizar e validar políticas de admissão no Kubernetes usando o {project-name} (cel-policy).
+:description: Saiba mais sobre como reutilizar e validar políticas de admissão no Kubernetes usando o {admc-name} (cel-policy).
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "ValidatingAdmissionPolicies"]
 :doc-type: ["tutorial"]
@@ -16,7 +16,7 @@ O Kubernetes vanilla https://kubernetes.io/docs/reference/access-authn-authz/val
 * ValidatingAdmissionPolicy: descreve a lógica em CEL. Opcionalmente, também aceita parâmetros em `spec.paramKind`.
 * ValidatingAdmissionPolicyBinding: delimita a política.
 
-Vamos ver um exemplo concreto. Essas e outras podem ser reutilizadas com {project-name}'s `cel-policy` com pouco esforço.
+Vamos ver um exemplo concreto. Essas e outras podem ser reutilizadas com {admc-name}'s `cel-policy` com pouco esforço.
 
 == Política de Validação de Admissão
 
@@ -85,9 +85,9 @@ data:
   overrideReplicas: "3"
 ----
 
-Aqui, temos uma política equivalente {short-project-name}:
+Aqui, temos uma política equivalente {admc-short-name}:
 
-### {short-project-name}'s `cel-policy`
+### {admc-short-name}'s `cel-policy`
 
 ../cel-policy-example.yaml
 [,yaml]
@@ -159,22 +159,22 @@ Observe os números comentados em ambos os manifests YAML. Vamos expandir sobre 
 
 | 1   | `failurePolicy`                   | `settings.failurePolicy`                 | Comportamento CEL, para quando a expressão CEL avalia como falsa, há erros de runtime CEL, ou há CEL inválido ou mal configurado. Por exemplo, uma expressão CEL retornando falso, parâmetros ausentes ou variáveis ausentes. Não confundir com (6).
 | 2   | `matchConstraints`                | `rules`                                  | Ambos aceitam o mesmo https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.28/#rulewithoperations-v1-admissionregistration[RuleWithOperations] que informa sobre que tipo de Recurso a política se aplica.
-| 3   | `variables`                       | `settings.variables`                     | Em {short-project-name}'s `cel-policy`, expressões que definem variáveis estão em `settings.variables`. Além disso, eles são equivalentes.
-| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | Em {short-project-name}'s `cel-policy`, definições de parâmetros estão em `settings.paramKind`, `settings.paramRef`. Além disso, eles são equivalentes.
-| 5   | `validations`                     | `settings.validations`                   | Em {short-project-name}'s `cel-policy`, expressões que definem validações estão em `settings.validations`. Além disso, eles são equivalentes.
+| 3   | `variables`                       | `settings.variables`                     | Em {admc-short-name}'s `cel-policy`, expressões que definem variáveis estão em `settings.variables`. Além disso, eles são equivalentes.
+| 4   | `paramKind`,`paramRef`            | `settings.paramKind`,`settings.paramRef` | Em {admc-short-name}'s `cel-policy`, definições de parâmetros estão em `settings.paramKind`, `settings.paramRef`. Além disso, eles são equivalentes.
+| 5   | `validations`                     | `settings.validations`                   | Em {admc-short-name}'s `cel-policy`, expressões que definem validações estão em `settings.validations`. Além disso, eles são equivalentes.
 | 6   | `---`                             | `failurePolicy`                          | Comportamento do Webhook, para erro ou timeout da API do Kubernetes Webhook, ou para avaliação de matchConditions. Não confundir com (1).
-| 7   | `validationActions`               | `mode`                                   | `mode` tem como opções `protect` e `monitor`. A auditoria é mais completa em {short-project-name}, veja (9).
-| 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Defina maneiras de restringir usando Seletores. As políticas de {short-project-name} têm como `namespaceSelector` e `objectSelector`.
-| 9   | `auditAnnotations` (não ilustrado) | `backgroundAudit`, anotações           | Use campos {short-project-name} em vez disso para definir o uso da política em xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], e sua categoria e severidade para OpenReports.
-|10|`---`|`contextAwareResources` permissões|As políticas de {short-project-name}'s têm permissões detalhadas para leitura dos Recursos do cluster. Aqui é usado para ler os parâmetros.
-|     | `matchConditions`                 | `matchConditions`                        | As políticas de {short-project-name}'s têm `matchConditions` (não ilustrado neste exemplo).
-|     | `---`                             | Recursos exclusivos para {short-project-name}                 | Para outros recursos, veja o restante dos exemplos do tutorial CEL.
+| 7   | `validationActions`               | `mode`                                   | `mode` tem como opções `protect` e `monitor`. A auditoria é mais completa em {admc-short-name}, veja (9).
+| 8   | `matchResources`                  | `namespaceSelector`, `objectSelector`    | Defina maneiras de restringir usando Seletores. As políticas de {admc-short-name} têm como `namespaceSelector` e `objectSelector`.
+| 9   | `auditAnnotations` (não ilustrado) | `backgroundAudit`, anotações           | Use campos {admc-short-name} em vez disso para definir o uso da política em xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner], e sua categoria e severidade para OpenReports.
+|10|`---`|`contextAwareResources` permissões|As políticas de {admc-short-name}'s têm permissões detalhadas para leitura dos Recursos do cluster. Aqui é usado para ler os parâmetros.
+|     | `matchConditions`                 | `matchConditions`                        | As políticas de {admc-short-name}'s têm `matchConditions` (não ilustrado neste exemplo).
+|     | `---`                             | Recursos exclusivos para {admc-short-name}                 | Para outros recursos, veja o restante dos exemplos do tutorial CEL.
 |===
 
 [TIP]
 ====
 
-Você pode usar a ferramenta `kwctl` para migrar uma política VAP para {short-project-name}.
+Você pode usar a ferramenta `kwctl` para migrar uma política VAP para {admc-short-name}.
 
 Este xref:howtos/vap-migration.adoc[procedimento de migração VAP] descreve como fazê-lo.
 
@@ -187,9 +187,9 @@ Existem alguns recursos VAP que ainda não foram implementados. Se você está a
 
 * VAP https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz[biblioteca de autorizador].
 * VAP https://kubernetes.io/docs/reference/labels-annotations-taints/audit-annotations/[Anotações de Auditoria] (ValidatingAdmissionPolicy `spec.auditAnnotations` quando ValidatingAdmissionPolicyBinding `spec.validationActions` está definido como "Audit").
-Isso é coberto pelo {short-project-name}'s xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] e PolicyReports, que permite auditar recursos já no cluster.
+Isso é coberto pelo {admc-short-name}'s xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner] e PolicyReports, que permite auditar recursos já no cluster.
 * CEL https://kubernetes.io/docs/reference/using-api/cel/#resource-constraints[restrições de recursos e limite de custo estimado].
-Isso é coberto pelo {short-project-name}'s xref:reference/policy-evaluation-timeout.adoc[proteção geral de tempo limite da política].
+Isso é coberto pelo {admc-short-name}'s xref:reference/policy-evaluation-timeout.adoc[proteção geral de tempo limite da política].
 
 == Aplicando a política
 

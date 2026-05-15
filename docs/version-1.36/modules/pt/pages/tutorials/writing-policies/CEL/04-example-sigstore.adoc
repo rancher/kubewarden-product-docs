@@ -19,7 +19,7 @@ Esta política verificará todas as imagens de contêiner no Pod do Sigstore e c
 
 Neste caso, iremos verificar uma assinatura sem chave do Sigstore realizada no GitHub Actions. Esse tipo de assinatura sem chave está vinculado ao emissor OIDC do GitHub ao criar os certificados criptográficos, então só precisaremos saber a organização do GitHub sob a qual a imagem do contêiner está publicada. Você pode ler mais sobre as capacidades do host para o Sigstore xref:reference/spec/host-capabilities/02-signature-verifier-policies.adoc[aqui].
 
-Para alcançar isso no CEL, usamos as https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[bibliotecas de extensão CEL do {project-name} para capacidades do host] na política, particularmente a https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[função `githubAction`].
+Para alcançar isso no CEL, usamos as https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[bibliotecas de extensão CEL do {admc-name} para capacidades do host] na política, particularmente a https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[função `githubAction`].
 
 Como sempre, podemos começar com `kwctl`:
 

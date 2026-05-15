@@ -2,36 +2,36 @@ include::partial$variables.adoc[]
 
 = Common tasks
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Manage policies in your Kubernetes cluster with {project-name} using the kwctl CLI tool.
+:description: Manage policies in your Kubernetes cluster with {admc-name} using the kwctl CLI tool.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "kwctl", "policy", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :current-version: {page-origin-branch}
 
 This describes common tasks for after you
-xref:quick-start.adoc#installation[install {project-name}] in your Kubernetes
+xref:quick-start.adoc#installation[install {admc-name}] in your Kubernetes
 cluster.
 
 The separate tasks are in a logical ordering.
 
 == Test Policies
 
-{short-project-name} uses two tools to help you find policies and test them
+{admc-short-name} uses two tools to help you find policies and test them
 locally:
 
 * https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact
-  Hub], using their package filter for {short-project-name} policies
-* https://github.com/kubewarden/kwctl[`kwctl`], a CLI tool
+  Hub], using their package filter for {admc-short-name} policies
+* xref:/howtos/install-kwctl.adoc[`kwctl`], a CLI tool
 
 === Artifact hub
 
 Artifact hub hosts policies contributed by the community. For example, you can
 find substitutes to the
 https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[deprecated
-Kubernetes Pod Security Policies], created by the {short-project-name}
+Kubernetes Pod Security Policies], created by the {admc-short-name}
 developers.
 
 As shown in the screenshot below, once you find a policy of interest, select
@@ -42,8 +42,8 @@ image::tasks-artifact-hub.png[Artifact Hub]
 [NOTE]
 ====
 
-Previously, {short-project-name} policies could be found at the
-https://hub.kubewarden.io[{short-project-name} Policy Hub]. This has been
+Previously, {admc-short-name} policies could be found at the
+https://hub.kubewarden.io[{admc-short-name} Policy Hub]. This has been
 https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retired].
 Policies are now available from
 https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
@@ -53,7 +53,7 @@ https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://art
 
 === `kwctl` CLI tool
 
-`kwctl` is {short-project-name}'s CLI tool for policy authors and cluster
+`kwctl` is {admc-short-name}'s CLI tool for policy authors and cluster
 administrators to test policies before application to a Kubernetes
 cluster.
 
@@ -89,8 +89,8 @@ _As a cluster administrator_
 ==== Installation
 
 `kwctl` binaries for the stable releases are available from the
-https://github.com/kubewarden/kwctl/releases[GitHub repository]. To build
-`kwctl` from the GitHub https://github.com/kubewarden/kwctl[repo], you
+xref:/howtos/install-kwctl.adoc[install kwctl page]. To build
+`kwctl` from the GitHub https://github.com/kubewarden/adm-controller[repository], you
 need a https://www.rust-lang.org/tools/install[Rust] development environment.
 
 ==== Usage
@@ -102,8 +102,8 @@ command:
 ----
 $ kwctl --help
 kwctl 0.2.5
-{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage {short-project-name} policies
+{admc-short-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {admc-short-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -114,18 +114,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add {short-project-name} metadata to a WebAssembly module
+    annotate       Add {admc-short-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect {short-project-name} policy
+    inspect        Inspect {admc-short-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a {short-project-name} policy from a given URI
-    push           Pushes a {short-project-name} policy to an OCI registry
-    rm             Removes a {short-project-name} policy from the store
-    run            Runs a {short-project-name} policy from a given URI
+    pull           Pulls a {admc-short-name} policy from a given URI
+    push           Pushes a {admc-short-name} policy to an OCI registry
+    rm             Removes a {admc-short-name} policy from the store
+    run            Runs a {admc-short-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+    verify         Verify a {admc-short-name} policy from a given URI using Sigstore
 ----
 
 Here are a few command usage examples:
@@ -300,7 +300,7 @@ cluster are evaluated by the policy if they're within the policy scope.
 
 * xref:tutorials/writing-policies/index.adoc[Writing Policies] explains how to
   write policies in different languages and generate WebAssembly binaries, so
-  they can be used by {short-project-name}.
+  they can be used by {admc-short-name}.
 * xref:../explanations/distributing-policies.adoc[Distributing Policies]
   explains how to publish policies to
   https://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCI

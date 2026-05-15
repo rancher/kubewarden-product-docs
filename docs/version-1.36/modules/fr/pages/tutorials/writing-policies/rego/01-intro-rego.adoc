@@ -18,7 +18,7 @@ Le support de Rego est disponible à partir de ces versions :
 * kwctl : v0.2.0
 * serveur de stratégie : v0.2.0
 
-Les stratégies Rego prennent en charge des données contextuelles à partir de la version {project-name} 1.9.
+Les stratégies Rego prennent en charge des données contextuelles à partir de la version {admc-name} 1.9.
 ====
 
 
@@ -31,7 +31,7 @@ Open Policy Agent et Gatekeeper.
 
 Les deux sections suivantes montrent comment les deux frameworks diffèrent,
 même s'ils utilisent le même langage.
-Si vous êtes plus intéressé par l'implémentation {short-project-name},
+Si vous êtes plus intéressé par l'implémentation {admc-short-name},
 vous pouvez directement consulter la documentation spécifique au framework liée ci-dessous.
 
 * xref:tutorials/writing-policies/rego/open-policy-agent/01-intro.adoc[Open Policy Agent]
@@ -90,7 +90,7 @@ L'idée des stratégies sensibles au contexte peut également s'étendre aux res
 donc votre stratégie pourrait vouloir évaluer une demande en fonction des ressources personnalisées actuellement utilisées.
 
 Les deux OPA et Gatekeeper prennent en charge les stratégies sensibles au contexte,
-à partir de la version {short-project-name} 1.9.
+à partir de la version {admc-short-name} 1.9.
 
 Plus de détails sur les stratégies sensibles au contexte sont
 xref:reference/spec/05-context-aware-policies.adoc[ici].
@@ -98,6 +98,6 @@ xref:reference/spec/05-context-aware-policies.adoc[ici].
 === Stratégies de mutation
 
 Gatekeeper prend en charge les stratégies de mutation,
-mais {short-project-name} n'a pas encore mis en œuvre de stratégies de mutation avec la compatibilité Gatekeeper.
-Vous pouvez utiliser des stratégies qui utilisent le SDK {short-project-name} pour écrire des stratégies de mutation,
-mais actuellement, vous ne pouvez pas exécuter des stratégies de mutation Gatekeeper dans {short-project-name}.
+mais {admc-short-name} n'a pas encore mis en œuvre de stratégies de mutation avec la compatibilité Gatekeeper.
+Vous pouvez utiliser des stratégies qui utilisent le SDK {admc-short-name} pour écrire des stratégies de mutation,
+mais actuellement, vous ne pouvez pas exécuter des stratégies de mutation Gatekeeper dans {admc-short-name}.

@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurez les capacités de journalisation pour votre stratégie en utilisant l'intégration de {project-name} avec la bibliothèque SLOG et en l'initialisant.
+:description: Configurez les capacités de journalisation pour votre stratégie en utilisant l'intégration de {admc-name} avec la bibliothèque SLOG et en l'initialisant.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "rédaction-de-stratégies", "rust", "journalisation"]
 :doc-type: ["tutorial"]
-:keywords: ["{project-name}", kubewarden, "kubernetes", "journalisation"]
+:keywords: ["{admc-name}", kubewarden, "kubernetes", "journalisation"]
 :sidebar_label: Consignation
 :current-version: {page-origin-branch}
 
@@ -15,7 +15,7 @@ Vous pouvez faire en sorte que votre stratégie effectue une journalisation.
 Le `policy-server` ou le `kwctl` transmet ces entrées de journal avec les informations appropriées.
 
 La bibliothèque de journalisation choisie pour le SDK Rust est https://github.com/slog-rs/slog[`slog`].
-C'est une crate populaire, bien connue et s'intègre proprement avec {project-name}.
+C'est une crate populaire, bien connue et s'intègre proprement avec {admc-name}.
 
 == Initialisez le journaliseur
 

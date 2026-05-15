@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 8
 :current-version: {page-origin-branch}
 
-Wenn Sie ein Problem mit der {short-project-name}Dokumentation bemerken oder neuen Inhalt vorschlagen möchten, eröffnen Sie ein Issue. Sie benötigen lediglich Zugriff auf ein https://github.com/join[GitHub-Konto] und einen Browser.
+Wenn Sie ein Problem mit der {admc-short-name}Dokumentation bemerken oder neuen Inhalt vorschlagen möchten, eröffnen Sie ein Issue. Sie benötigen lediglich Zugriff auf ein https://github.com/join[GitHub-Konto] und einen Browser.
 
-In der Regel beginnt jede neue Dokumentationsarbeit für {short-project-name} mit einem Issue in GitHub.
+In der Regel beginnt jede neue Dokumentationsarbeit für {admc-short-name} mit einem Issue in GitHub.
 ifeval::["{build-type}" == "community"]
-Das https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name} Dokumentationsteam] überprüft, kategorisiert und kennzeichnet sie.
+Das https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{admc-short-name} Dokumentationsteam] überprüft, kategorisiert und kennzeichnet sie.
 endif::[]
 ifeval::["{build-type}" == "product"]
-Das https://github.com/orgs/rancher/teams/docs[{short-project-name} Dokumentationsteam] überprüft, kategorisiert und kennzeichnet sie.
+Das https://github.com/orgs/rancher/teams/docs[{admc-short-name} Dokumentationsteam] überprüft, kategorisiert und kennzeichnet sie.
 endif::[]
 Jeder ist willkommen, an jedem Issue zu arbeiten, einschließlich des Melders, aber Sie sollten es sich selbst zuweisen, bevor Sie mit der Arbeit beginnen, um doppelte Arbeit zu vermeiden.
 
@@ -29,10 +29,10 @@ Um Verbesserungen an bestehenden Dokumentationsinhalten vorzuschlagen oder einen
 
 * Klicken Sie auf das GitHub Octocat-Symbol oben. Dies leitet Sie zu der
 ifeval::["{build-type}" == "community"]
-  https://github.com/kubewarden/docs[Dokumentations-Repository für {short-project-name}].
+  https://github.com/kubewarden/docs[Dokumentations-Repository für {admc-short-name}].
 endif::[]
 ifeval::["{build-type}" == "product"]
-  https://github.com/rancher/kubewarden-product-docs[Dokumentations-Repository für {short-project-name}].
+  https://github.com/rancher/kubewarden-product-docs[Dokumentations-Repository für {admc-short-name}].
 endif::[]
 * Navigieren Sie zur Registerkarte "Issues" und klicken Sie auf *Neues Issue*.
 * Beschreiben Sie das Issue oder den Verbesserungsvorschlag. Je mehr Details, desto besser.

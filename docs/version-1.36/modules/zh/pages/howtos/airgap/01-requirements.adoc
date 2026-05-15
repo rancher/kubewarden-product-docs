@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 
-= 在隔离的安装中安装 {project-name} 的要求
+= 在隔离的安装中安装 {admc-name} 的要求
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 了解在隔离的环境中安装 {project-name} 的要求，包括支持的私有注册表和兼容性细节。
+:description: 了解在隔离的环境中安装 {admc-name} 的要求，包括支持的私有注册表和兼容性细节。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "air gap", "requirements"]
 :doc-type: ["howto"]

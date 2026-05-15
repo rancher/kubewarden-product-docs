@@ -24,7 +24,7 @@ korrekt funktioniert.
 ====
 
 
-Tracing ermöglicht es Ihnen, detaillierte Informationen über die Richtlinienbewertungen zu sammeln. Es kann ein nützliches Werkzeug zur Fehlersuche bei Problemen in Ihrer {project-name} Bereitstellung
+Tracing ermöglicht es Ihnen, detaillierte Informationen über die Richtlinienbewertungen zu sammeln. Es kann ein nützliches Werkzeug zur Fehlersuche bei Problemen in Ihrer {admc-name} Bereitstellung
 und den Richtlinien sein.
 
 Sie verwenden https://www.jaegertracing.io/[Jaeger] --, um Trace-Ereignisse zu empfangen, zu speichern und
@@ -82,9 +82,9 @@ EOF
 Nach der Erstellung der Jaeger-Operator-Ressourcen haben Sie einen Service unter
 `my-open-telemetry-collector.jaeger.svc.cluster.local`. Die Jaeger Query UI wird durch den `my-open-telemetry-query` Service im `jaeger` Namespace bereitgestellt.
 
-== Installieren Sie {short-project-name}
+== Installieren Sie {admc-short-name}
 
-Jetzt können Sie mit der Bereitstellung von {short-project-name} auf die übliche Weise fortfahren.
+Jetzt können Sie mit der Bereitstellung von {admc-short-name} auf die übliche Weise fortfahren.
 
 [NOTE]
 ====
@@ -93,14 +93,14 @@ Das `cert-manager` ist eine Voraussetzung für OpenTelemetry, aber Sie haben es 
 
 ====
 
-Als ersten Schritt fügen Sie das Helm-Repository hinzu, das {short-project-name} enthält:
+Als ersten Schritt fügen Sie das Helm-Repository hinzu, das {admc-short-name} enthält:
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Dann installieren Sie die benutzerdefinierten Ressourcenbeschreibungen (CRDs), die von {short-project-name} definiert sind:
+Dann installieren Sie die benutzerdefinierten Ressourcenbeschreibungen (CRDs), die von {admc-short-name} definiert sind:
 
 [subs="+attributes",console]
 ----
@@ -110,7 +110,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Jetzt können Sie den Rest des {short-project-name} Stacks bereitstellen. Das offizielle `kubewarden-defaults` Helm-Chart erstellt einen PolicyServer mit dem Namen `default`. Sie möchten, dass diese PolicyServer-Instanz das Tracing aktiviert hat.
+Jetzt können Sie den Rest des {admc-short-name} Stacks bereitstellen. Das offizielle `kubewarden-defaults` Helm-Chart erstellt einen PolicyServer mit dem Namen `default`. Sie möchten, dass diese PolicyServer-Instanz das Tracing aktiviert hat.
 
 Um das zu tun, müssen Sie einige zusätzliche Werte für das `kubewarden-controller` Chart angeben. Sie sollten eine `values.yaml` Datei mit folgendem Inhalt erstellen:
 

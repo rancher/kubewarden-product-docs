@@ -23,14 +23,14 @@ Gatekeeper ist ein Projekt, das auf Kubernetes abzielt und sofort einsatzbereite
 
 == Kompatibilität mit vorhandenen Richtlinien
 
-Alle bestehenden Gatekeeper-Richtlinien sollten mit {short-project-name} kompatibel sein, wie in diesem Kapitel erklärt.
+Alle bestehenden Gatekeeper-Richtlinien sollten mit {admc-short-name} kompatibel sein, wie in diesem Kapitel erklärt.
 
 [IMPORTANT]
 ====
-Wenn Sie feststellen, dass dies für Ihre Gatekeeper-Richtlinien nicht zutrifft, melden Sie dies bitte, und wir werden daran arbeiten, sicherzustellen, dass Ihre Gatekeeper-Richtlinien mit {short-project-name} funktionieren.
+Wenn Sie feststellen, dass dies für Ihre Gatekeeper-Richtlinien nicht zutrifft, melden Sie dies bitte, und wir werden daran arbeiten, sicherzustellen, dass Ihre Gatekeeper-Richtlinien mit {admc-short-name} funktionieren.
 ====
 
 
 Richtlinien müssen mit der `opa` Kommandozeilenschnittstelle für das Ziel `wasm` kompiliert werden.
 
-Für die Ausführung von Richtlinien können Sie mehr über den Open Policy Agent und seine xref:tutorials/writing-policies/rego/02-builtin-support.adoc[integrierte Unterstützung] in {short-project-name} lesen.
+Für die Ausführung von Richtlinien können Sie mehr über den Open Policy Agent und seine xref:tutorials/writing-policies/rego/02-builtin-support.adoc[integrierte Unterstützung] in {admc-short-name} lesen.

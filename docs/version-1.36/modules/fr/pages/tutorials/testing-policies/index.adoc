@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Apprenez à créer et à tester des stratégies {project-name} avec {project-name} pour une gestion sécurisée des clusters.
+:description: Apprenez à créer et à tester des stratégies {admc-name} avec {admc-name} pour une gestion sécurisée des clusters.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "introduction"]
 :doc-type: ["tutorial"]
@@ -13,11 +13,11 @@ include::partial$variables.adoc[]
 
 == Personas de test des stratégies
 
-Cette section traite du sujet des tests des stratégies {project-name}.
+Cette section traite du sujet des tests des stratégies {admc-name}.
 Il y a deux personas intéressés par le test des stratégies :
 
-* *Développeur de stratégie* : vous rédigez une stratégie {short-project-name} et vous souhaitez vous assurer que votre code se comporte comme vous l'attendez.
-* *Opérateur de cluster* : vous avez trouvé une stratégie {short-project-name} et vous souhaitez tester et ajuster les paramètres de la stratégie avant de la déployer.
+* *Développeur de stratégie* : vous rédigez une stratégie {admc-short-name} et vous souhaitez vous assurer que votre code se comporte comme vous l'attendez.
+* *Opérateur de cluster* : vous avez trouvé une stratégie {admc-short-name} et vous souhaitez tester et ajuster les paramètres de la stratégie avant de la déployer.
 Vous souhaitez continuer à tester ces paramètres dans vos pipelines CI/CD et d'autres tâches administratives.
 
-Les sections suivantes de la documentation montrent comment ces personas peuvent tester des stratégies {short-project-name}.
+Les sections suivantes de la documentation montrent comment ces personas peuvent tester des stratégies {admc-short-name}.

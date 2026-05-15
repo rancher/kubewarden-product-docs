@@ -23,7 +23,7 @@ de cette documentation. C'est nécessaire pour que cette section fonctionne corr
 ====
 
 
-Le traçage vous permet de collecter des détails précis sur les évaluations de stratégies. Cela peut être un outil utile pour déboguer des problèmes dans votre {project-name} déploiement et stratégies.
+Le traçage vous permet de collecter des détails précis sur les évaluations de stratégies. Cela peut être un outil utile pour déboguer des problèmes dans votre {admc-name} déploiement et stratégies.
 
 Vous utilisez https://www.jaegertracing.io/[Jaeger] -- qui sert à recevoir, stocker et visualiser les événements de traçage.
 
@@ -79,9 +79,9 @@ EOF
 
 Après la création des ressources Jaeger Operator, vous avez un Service sous `my-open-telemetry-collector.jaeger.svc.cluster.local`. L'interface utilisateur de Jaeger Query est exposée par le Service `my-open-telemetry-query` dans l'espace de noms `jaeger`.
 
-== Installez {short-project-name}
+== Installez {admc-short-name}
 
-Vous pouvez maintenant procéder au déploiement de {short-project-name} de la manière habituelle.
+Vous pouvez maintenant procéder au déploiement de {admc-short-name} de la manière habituelle.
 
 [NOTE]
 ====
@@ -90,14 +90,14 @@ Le `cert-manager` est une exigence d'OpenTelemetry, mais vous l'avez déjà inst
 
 ====
 
-Comme première étape, vous ajoutez le dépôt Helm qui contient {short-project-name} :
+Comme première étape, vous ajoutez le dépôt Helm qui contient {admc-short-name} :
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Ensuite, vous installez les définitions de ressources personnalisées (CRDs) définies par {short-project-name} :
+Ensuite, vous installez les définitions de ressources personnalisées (CRDs) définies par {admc-short-name} :
 
 [subs="+attributes",console]
 ----
@@ -107,7 +107,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Vous pouvez maintenant déployer le reste de la pile {short-project-name}. Le chart Helm officiel `kubewarden-defaults` crée un PolicyServer nommé `default`. Vous souhaitez que cette instance de PolicyServer ait le traçage activé.
+Vous pouvez maintenant déployer le reste de la pile {admc-short-name}. Le chart Helm officiel `kubewarden-defaults` crée un PolicyServer nommé `default`. Vous souhaitez que cette instance de PolicyServer ait le traçage activé.
 
 Pour ce faire, vous devez spécifier quelques valeurs supplémentaires pour le chart `kubewarden-controller`. Vous devez créer un fichier `values.yaml` avec le contenu suivant :
 

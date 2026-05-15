@@ -15,7 +15,7 @@ include::partial$variables.adoc[]
 
 托管策略的策略服务器检索Kubernetes资源。应用于策略服务器服务账户的RBAC规则调节对Kubernetes的访问。
 
-由{project-name} Helm图表部署的`default`策略服务器可以访问以下Kubernetes资源：
+由{admc-name} Helm图表部署的`default`策略服务器可以访问以下Kubernetes资源：
 
 * 名称空间
 * 服务
@@ -41,23 +41,23 @@ include::partial$variables.adoc[]
 
 | Rego
 | ✅
-| 自{short-project-name} 1.9版本发布以来
+| 自{admc-short-name} 1.9版本发布以来
 
 | WASI
 | ✅
-| 自{short-project-name} 1.10.0版本发布以来，仅适用于Go SDK
+| 自{admc-short-name} 1.10.0版本发布以来，仅适用于Go SDK
 |===
 
 == 约束
 
-{short-project-name}的优先事项是减少对Kubernetes API服务器的查询次数。{short-project-name}考虑了两个限制：
+{admc-short-name}的优先事项是减少对Kubernetes API服务器的查询次数。{admc-short-name}考虑了两个限制：
 
 * 内存使用：策略服务器进程在内存中缓存从Kubernetes获取的数据。获取的数据越多，策略服务器Pod消耗的内存就越多。
 * 一致性：由策略服务器维护的缓存可能包含过时的数据。新的资源可能缺失，已删除的资源可能仍然可用，而已更改的资源可能包含旧数据。这可能会影响策略评估。
 
 === 列出多个资源
 
-{short-project-name} 策略可以同时获取多个资源。例如，它们可以发出类似于 "获取在 `default` 名称空间中定义的所有 Pods，且标签 `color` 设置为 ``green`` 的查询。"
+{admc-short-name} 策略可以同时获取多个资源。例如，它们可以发出类似于 "获取在 `default` 名称空间中定义的所有 Pods，且标签 `color` 设置为 ``green`` 的查询。"
 
 通过这样的查询，策略服务器获取所有符合用户标准的资源。资源获取是分批进行的，以减少对Kubernetes API服务器的负载。在将资源存储到内存之前，策略服务器会删除每个资源的 `managedFields` 属性，以减少内存消耗。该属性对策略没有用处，并占用大量内存。
 
@@ -68,11 +68,11 @@ include::partial$variables.adoc[]
 * `kubectl get pods -n default`
 * `kubectl get pods -n default -l color=green`
 
-策略服务器创建两个 watch，并复制第二个查询的所有 Pods。此限制将在未来的 {short-project-name} 版本中移除。
+策略服务器创建两个 watch，并复制第二个查询的所有 Pods。此限制将在未来的 {admc-short-name} 版本中移除。
 
 === 获取特定资源
 
-{short-project-name} 策略可以获取在集群中定义的特定资源。
+{admc-short-name} 策略可以获取在集群中定义的特定资源。
 例如，它们可以发出类似于 "获取在 `psql-0` 名称空间中定义的名为 `db` 的 Pod 的查询。"
 
 默认情况下，此查询获取对象并将其存储在内存缓存中，缓存五秒钟。在这五秒内，策略接收缓存的数据。
@@ -80,7 +80,7 @@ include::partial$variables.adoc[]
 策略作者还可以决定直接查询，跳过缓存。
 始终提供最新数据。这会对Kubernetes API服务器造成更大的负载（取决于策略触发的频率），并在评估准入请求时引入更多延迟。
 
-直接或缓存的查询行为由策略作者在每个查询级别上使用{short-project-name} SDK进行配置。
+直接或缓存的查询行为由策略作者在每个查询级别上使用{admc-short-name} SDK进行配置。
 
 == ClusterAdmissionPolicies
 

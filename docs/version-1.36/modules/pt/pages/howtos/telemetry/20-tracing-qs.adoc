@@ -24,7 +24,7 @@ corretamente.
 ====
 
 
-O rastreamento permite coletar detalhes granulares sobre avaliações de políticas. Pode ser uma ferramenta útil para depurar problemas em sua {project-name} implantação e políticas.
+O rastreamento permite coletar detalhes granulares sobre avaliações de políticas. Pode ser uma ferramenta útil para depurar problemas em sua {admc-name} implantação e políticas.
 
 Você usa https://www.jaegertracing.io/[Jaeger] -- para receber, armazenar e visualizar eventos de rastreamento.
 
@@ -82,9 +82,9 @@ Após a criação dos recursos do Jaeger Operator, você tem um Serviço sob
 `my-open-telemetry-collector.jaeger.svc.cluster.local`. A interface do usuário de consulta do Jaeger é
 exposta pelo Serviço `my-open-telemetry-query` no namespace `jaeger`.
 
-== Instale o {short-project-name}
+== Instale o {admc-short-name}
 
-Agora você pode prosseguir com a implantação do {short-project-name} da maneira habitual.
+Agora você pode prosseguir com a implantação do {admc-short-name} da maneira habitual.
 
 [NOTE]
 ====
@@ -93,14 +93,14 @@ O `cert-manager` é um requisito do OpenTelemetry, mas você já o instalou em u
 
 ====
 
-Como primeiro passo, você adiciona o repositório Helm que contém o {short-project-name}:
+Como primeiro passo, você adiciona o repositório Helm que contém o {admc-short-name}:
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Em seguida, você instala as Definições de Recursos Personalizados (CRDs) definidas pelo {short-project-name}:
+Em seguida, você instala as Definições de Recursos Personalizados (CRDs) definidas pelo {admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -110,7 +110,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Agora você pode implantar o restante da pilha do {short-project-name}. O Helm chart oficial do `kubewarden-defaults` cria um PolicyServer chamado `default`. Você quer que esta instância do PolicyServer tenha rastreamento habilitado.
+Agora você pode implantar o restante da pilha do {admc-short-name}. O Helm chart oficial do `kubewarden-defaults` cria um PolicyServer chamado `default`. Você quer que esta instância do PolicyServer tenha rastreamento habilitado.
 
 Para fazer isso, você precisa especificar alguns valores extras para o gráfico do `kubewarden-controller`. Você deve criar um arquivo `values.yaml` com o seguinte conteúdo:
 

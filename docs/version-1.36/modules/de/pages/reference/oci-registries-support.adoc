@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= OCI-Registry-Support für {short-project-name}
+= OCI-Registry-Support für {admc-short-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verteilen Sie {project-name}-Richtlinien als OCI-Artefakte über reguläre Open Container Initiative (OCI)-Registries.
+:description: Verteilen Sie {admc-name}-Richtlinien als OCI-Artefakte über reguläre Open Container Initiative (OCI)-Registries.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 70 US-Dollar
 :current-version: {page-origin-branch}
 
-Sie verteilen Ihre {project-name}-Richtlinien als https://opencontainers.org[OCI-Artefakte] unter Verwendung regulärer Open Container Initiative (OCI)-Registries.
+Sie verteilen Ihre {admc-name}-Richtlinien als https://opencontainers.org[OCI-Artefakte] unter Verwendung regulärer Open Container Initiative (OCI)-Registries.
 
-Die Speicherung der {short-project-name}-Richtlinien erfolgt neben Container-Images.
+Die Speicherung der {admc-short-name}-Richtlinien erfolgt neben Container-Images.
 Sie erfordern keine zusätzliche Einrichtung oder Wartung, außer der, die für reguläre Container-Images erforderlich ist.
 
 [NOTE]
 ====
-Sie können eine OCI-Registry hinzufügen, die mit {short-project-name} funktioniert, oder Ungenauigkeiten in der Registry korrigieren, indem Sie die Schaltfläche "Diese Seite bearbeiten" am Ende der Seite verwenden.
+Sie können eine OCI-Registry hinzufügen, die mit {admc-short-name} funktioniert, oder Ungenauigkeiten in der Registry korrigieren, indem Sie die Schaltfläche "Diese Seite bearbeiten" am Ende der Seite verwenden.
 ====
 
 
@@ -42,7 +42,7 @@ Sie können eine OCI-Registry hinzufügen, die mit {short-project-name} funktion
 
 == Werkzeuge, die mit OCI-Registries arbeiten
 
-Das {short-project-name}-Projekt empfiehlt:
+Das {admc-short-name}-Projekt empfiehlt:
 
 * https://github.com/kubewarden/kwctl[`kwctl`] (unsere Kommandozeilenschnittstelle).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
@@ -52,7 +52,7 @@ Das {short-project-name}-Projekt empfiehlt:
 
 === Docker Hub
 
-Derzeit unterstützt Docker Hub keine OCI-Artefakte, sodass es nicht verwendet werden kann, um {short-project-name}-Richtlinien zu speichern.
+Derzeit unterstützt Docker Hub keine OCI-Artefakte, sodass es nicht verwendet werden kann, um {admc-short-name}-Richtlinien zu speichern.
 Docker Inc. hat angekündigt, dass Docker Hub in der https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[Zukunft] OCI-Artefakte unterstützen wird.
 
 === JFrog

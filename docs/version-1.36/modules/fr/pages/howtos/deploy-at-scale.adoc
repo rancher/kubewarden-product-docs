@@ -1,21 +1,21 @@
 include::partial$variables.adoc[]
-= {project-name} dans un environnement à grande échelle
+= {admc-name} dans un environnement à grande échelle
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurer les {project-name} avec {project-name} pour garantir une haute disponibilité et des performances dans des environnements à grande échelle exigeants.
-:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, production]
+:description: Configurer les {admc-name} avec {admc-name} pour garantir une haute disponibilité et des performances dans des environnements à grande échelle exigeants.
+:keywords: [kubewarden, "{admc-name}", kubernetes, policyservers, production]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: manuel de l'opérateur, serveurs de stratégies, production
 :sidebar_label: Déploiement à grande échelle
 :sidebar_position: 21
 
-Cette section détaille un déploiement réel de {project-name} dans un environnement exigeant à grande échelle. Elle illustre comment configurer {short-project-name} pour une haute disponibilité et des performances, et ce à quoi s'attendre sous une charge importante.
+Cette section détaille un déploiement réel de {admc-name} dans un environnement exigeant à grande échelle. Elle illustre comment configurer {admc-short-name} pour une haute disponibilité et des performances, et ce à quoi s'attendre sous une charge importante.
 
 [IMPORTANT]
 ====
-Si vous souhaitez voir plus de conseils sur la façon d'exécuter {short-project-name} en production, consultez la documentation sur les xref:/howtos/production-deployments.adoc[Déploiements en production].
+Si vous souhaitez voir plus de conseils sur la façon d'exécuter {admc-short-name} en production, consultez la documentation sur les xref:/howtos/production-deployments.adoc[Déploiements en production].
 ====
 
 == Aperçu de l'environnement
@@ -31,9 +31,9 @@ L'infrastructure se compose d'environ 20 clusters Kubernetes. Les plus grands de
 ** Déploiements : 8 000
 ** Services : 13 000
 
-== {short-project-name} Configuration
+== {admc-short-name} Configuration
 
-Pour répondre aux exigences de cet environnement, {short-project-name} est configuré avec un accent sur l'isolation des charges de travail et la haute disponibilité.
+Pour répondre aux exigences de cet environnement, {admc-short-name} est configuré avec un accent sur l'isolation des charges de travail et la haute disponibilité.
 
 * Application des stratégies : 22 `ClusterAdmissionPolicies` sont appliquées à travers les clusters, sans `AdmissionPolicies` spécifique à un espace de noms.
 * Architecture du serveur de stratégies : Deux déploiements `PolicyServer` distincts sont utilisés pour isoler les charges de travail :

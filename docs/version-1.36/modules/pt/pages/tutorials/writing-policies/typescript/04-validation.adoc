@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Escreva a lógica de validação para recursos do Kubernetes no arquivo src/index.ts, acessando os dados da solicitação recebida para retornar uma resposta.
-:keywords: "{project-name}", kubewarden, kubernetes, escrevendo políticas, typescript
+:keywords: "{admc-name}", kubewarden, kubernetes, escrevendo políticas, typescript
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, escrevendo-políticas, typescript, lógica-de-validação
+:doc-topic: {admc-name}, kubewarden, escrevendo-políticas, typescript, lógica-de-validação
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Crítico: Não escreva informações de log no STDOUT.
 
-Escrever no STDOUT quebra as políticas. Em vez disso, use STDERR para log ou a funcionalidade de log fornecida pelo {project-name} SDK. A saída da política para o STDOUT deve conter apenas a resposta de validação.
+Escrever no STDOUT quebra as políticas. Em vez disso, use STDERR para log ou a funcionalidade de log fornecida pelo {admc-name} SDK. A saída da política para o STDOUT deve conter apenas a resposta de validação.
 ====
 
 A lógica de validação vai no arquivo `src/index.ts`.
@@ -25,7 +25,7 @@ Sua lógica de validação precisa:
 * Retornar uma resposta com base na entrada e nas configurações da política.
 
 A solicitação recebida contém um objeto JSON com o recurso do Kubernetes a ser validado.
-Você pode acessar os dados deste objeto JSON através das funções auxiliares do {short-project-name} SDK.
+Você pode acessar os dados deste objeto JSON através das funções auxiliares do {admc-short-name} SDK.
 
 == A função `validate`
 
@@ -174,4 +174,4 @@ switch (action) {
 }
 ----
 
-O {short-project-name} Javy plug-in fornece a função `policyAction()` indicando se a política deve validar um recurso ou validar suas configurações.
+O {admc-short-name} Javy plug-in fornece a função `policyAction()` indicando se a política deve validar um recurso ou validar suas configurações.

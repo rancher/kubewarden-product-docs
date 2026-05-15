@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurer des stratégies contextuelles pour garantir des règles d'Ingress uniques entre les hôtes, évitant ainsi les conflits avec les bibliothèques d'extensions CEL de {project-name}.
+:description: Configurer des stratégies contextuelles pour garantir des règles d'Ingress uniques entre les hôtes, évitant ainsi les conflits avec les bibliothèques d'extensions CEL de {admc-name}.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "rédaction-de-politiques", "cel", "contextuel", "contexte", "conscient", "ingress"]
 :doc-type: ["tutorial"]
@@ -11,9 +11,9 @@ include::partial$variables.adoc[]
 :sidebar_label: Politiques contextuelles
 :current-version: {page-origin-branch}
 
-La {project-name} de `cel-policy` prend en charge la fonctionnalité xref:reference/spec/05-context-aware-policies.adoc[conscience du contexte]. La stratégie a la capacité de lire les informations du cluster et de prendre des décisions basées sur d'autres ressources existantes en plus de la ressource qui a déclenché l'évaluation de la stratégie via la demande d'admission.
+La {admc-name} de `cel-policy` prend en charge la fonctionnalité xref:reference/spec/05-context-aware-policies.adoc[conscience du contexte]. La stratégie a la capacité de lire les informations du cluster et de prendre des décisions basées sur d'autres ressources existantes en plus de la ressource qui a déclenché l'évaluation de la stratégie via la demande d'admission.
 
-Pour y parvenir, nous pouvons utiliser les https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[bibliothèques d'extensions CEL de {short-project-name} pour les capacités des hôtes] incluses dans la stratégie.
+Pour y parvenir, nous pouvons utiliser les https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[bibliothèques d'extensions CEL de {admc-short-name} pour les capacités des hôtes] incluses dans la stratégie.
 
 == Exemple : Ingress unique
 
@@ -53,7 +53,7 @@ spec:
 
 ----
 
-Maintenant, nous devons écrire le code CEL qui récupérera les Ingress existants dans le cluster. Pour cela, nous utilisons la [{short-project-name}bibliothèque d'extensions CEL](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
+Maintenant, nous devons écrire le code CEL qui récupérera les Ingress existants dans le cluster. Pour cela, nous utilisons la [{admc-short-name}bibliothèque d'extensions CEL](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
 Particulièrement, les capacités d'hôte `kw.k8s`, qui nous permettent d'interroger le cluster pour les GroupVersionKinds. Vous pouvez voir la documentation disponible pour les fonctions CEL [ici](https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library).
 
 La bibliothèque utilise un modèle de constructeur tout comme les extensions Kubernetes CEL en amont ; appeler une méthode de fonction CEL renvoie un objet CEL qui, à lui seul, possède des méthodes de fonction spécifiques. Cela facilite l'assurance quant à la portée et aux valeurs de retour de notre code CEL.

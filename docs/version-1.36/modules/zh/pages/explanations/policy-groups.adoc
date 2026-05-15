@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-topic: ["explanations", "policy-group"]
 :doc-type: ["explanation"]
 :doctype: book
-:keywords: ["{project-name}", "Kubewarden", "策略组", "集群准入策略组", "准入策略组"]
+:keywords: ["{admc-name}", "Kubewarden", "策略组", "集群准入策略组", "准入策略组"]
 :sidebar_label: 策略组
 :sidebar_position: 21
 :current-version: {page-origin-branch}
@@ -85,7 +85,7 @@ spec:
 
 === `policies` 属性
 
-策略字段是普通策略的映射。{project-name} 通过策略组调用策略，以确定是否接受或拒绝正在评估的资源。这些策略的定义是普通 {short-project-name} 策略的简化版本，仅包含 `module`、`settings` 和 `contextAwareResources` 属性。这些元素对于策略在策略组中正常工作是必要的。
+策略字段是普通策略的映射。{admc-name} 通过策略组调用策略，以确定是否接受或拒绝正在评估的资源。这些策略的定义是普通 {admc-short-name} 策略的简化版本，仅包含 `module`、`settings` 和 `contextAwareResources` 属性。这些元素对于策略在策略组中正常工作是必要的。
 
 一个唯一的名称标识组策略中的每个策略。例如，以下代码片段定义了三个策略：`signed_by_alice`、`signed_by_bob` 和 `reject_latest_tag`.
 

@@ -13,9 +13,9 @@ include::partial$variables.adoc[]
 
 Los registros de contenedores se pueden utilizar para distribuir muchos tipos de objetos OCI.
 Desde imágenes de contenedores bien conocidas hasta artefactos OCI genéricos.
-Los artefactos OCI se utilizan para almacenar objetos como {project-name} directivas, gráficos de Helm y más.
+Los artefactos OCI se utilizan para almacenar objetos como {admc-name} directivas, gráficos de Helm y más.
 
-Estas son las capacidades expuestas por el {short-project-name} anfitrión, para interactuar con los registros de contenedores.
+Estas son las capacidades expuestas por el {admc-short-name} anfitrión, para interactuar con los registros de contenedores.
 
 == Obtener el resumen del manifiesto OCI
 
@@ -23,12 +23,12 @@ Esta devolución de llamada calcula el resumen de un manifiesto OCI. El resumen 
 
 === Almacenamiento en el caché.
 
-Calcular el resumen implica una serie de solicitudes de red entre el {short-project-name} anfitrión de directivas y el registro remoto.
+Calcular el resumen implica una serie de solicitudes de red entre el {admc-short-name} anfitrión de directivas y el registro remoto.
 Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
 
 === Autenticación
 
-Las interacciones con registros privados requieren que el {short-project-name} anfitrión de directivas se autentique contra el registro remoto.
+Las interacciones con registros privados requieren que el {admc-short-name} anfitrión de directivas se autentique contra el registro remoto.
 
 El anfitrión de directivas utilizará el mismo conjunto de credenciales que se usaron para obtener directivas del registro remoto.
 
@@ -65,11 +65,11 @@ Esta llamada obtiene el manifiesto de los objetos OCI. Cuando esté disponible, 
 
 === Almacenamiento en el caché.
 
-Obtener esta información implica solicitudes de red entre el {short-project-name} anfitrión de directivas y el registro remoto. Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
+Obtener esta información implica solicitudes de red entre el {admc-short-name} anfitrión de directivas y el registro remoto. Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
 
 === Autenticación
 
-Las interacciones con registros privados requieren que el {short-project-name} anfitrión de directivas se autentique contra el registro remoto.
+Las interacciones con registros privados requieren que el {admc-short-name} anfitrión de directivas se autentique contra el registro remoto.
 
 El anfitrión de directivas utiliza el mismo conjunto de credenciales que se utilizó para obtener directivas del registro remoto.
 
@@ -187,11 +187,11 @@ Esta llamada obtiene el manifiesto de imágenes OCI y su configuración. Esta in
 
 === Almacenamiento en el caché.
 
-Obtener esta información implica solicitudes de red entre el {short-project-name} anfitrión de directivas y el registro remoto. Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
+Obtener esta información implica solicitudes de red entre el {admc-short-name} anfitrión de directivas y el registro remoto. Estas operaciones pueden ser costosas en tiempo, por lo que los resultados se almacenan en caché durante 1 minuto.
 
 === Autenticación
 
-Las interacciones con registros privados requieren que el {short-project-name} anfitrión de directivas se autentique contra el registro remoto.
+Las interacciones con registros privados requieren que el {admc-short-name} anfitrión de directivas se autentique contra el registro remoto.
 
 El anfitrión de directivas utiliza el mismo conjunto de credenciales que se utilizó para obtener directivas del registro remoto.
 

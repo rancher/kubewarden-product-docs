@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Publish {project-name} policies to Artifact Hub by creating a well-formatted Git repository layout and configuring GitHub Actions for automated packaging, facilitating continuous integration.
+:description: Publish {admc-name} policies to Artifact Hub by creating a well-formatted Git repository layout and configuring GitHub Actions for automated packaging, facilitating continuous integration.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]
@@ -15,7 +15,7 @@ include::partial$variables.adoc[]
 https://artifacthub.io/[Artifact Hub] is a website where users can find,
 install, and publish packages and configurations for https://cncf.io[CNCF] projects.
 
-{project-name} policies can be published on Artifact Hub and made
+{admc-name} policies can be published on Artifact Hub and made
 discoverable to the wide audience of CNCF users.
 
 [NOTE]
@@ -30,7 +30,7 @@ host your policies.
 ====
 
 
-This document focuses on the steps required to make a {short-project-name} policy
+This document focuses on the steps required to make a {admc-short-name} policy
 discoverable on Artifact Hub.
 
 == Prepare your Git repository
@@ -104,7 +104,7 @@ panel context"_.
 
 Then press the _"Add"_ button and fill the form:
 
-* Choose _"{short-project-name} policies"_ as kind.
+* Choose _"{admc-short-name} policies"_ as kind.
 * Enter a _"Name"_ and _"Display name"_ of your choice.
 * Enter the URL to your Git repository.
 * Enter `artifacthub` as the branch to track.

@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= Support du registre OCI pour {short-project-name}
+= Support du registre OCI pour {admc-short-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Distribuez les stratégies {project-name} en tant qu'artefacts OCI via des registres Open Container Initiative (OCI) réguliers.
+:description: Distribuez les stratégies {admc-name} en tant qu'artefacts OCI via des registres Open Container Initiative (OCI) réguliers.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-Vous distribuez vos stratégies {project-name} en tant que https://opencontainers.org[artefacts OCI] en utilisant des registres Open Container Initiative (OCI) réguliers.
+Vous distribuez vos stratégies {admc-name} en tant que https://opencontainers.org[artefacts OCI] en utilisant des registres Open Container Initiative (OCI) réguliers.
 
-Le stockage des stratégies {short-project-name} se fait aux côtés des images de conteneurs.
+Le stockage des stratégies {admc-short-name} se fait aux côtés des images de conteneurs.
 Ils ne nécessitent pas de configuration ou de maintenance supplémentaires, en dehors de celles nécessaires pour les images de conteneurs régulières.
 
 [NOTE]
 ====
-Vous pouvez ajouter un registre qui fonctionne avec {short-project-name} ou corriger toute inexactitude de registre en utilisant le bouton "Modifier cette page" en bas de la page.
+Vous pouvez ajouter un registre qui fonctionne avec {admc-short-name} ou corriger toute inexactitude de registre en utilisant le bouton "Modifier cette page" en bas de la page.
 ====
 
 
@@ -42,7 +42,7 @@ Vous pouvez ajouter un registre qui fonctionne avec {short-project-name} ou corr
 
 == Outils qui fonctionnent avec les registres OCI
 
-Le projet {short-project-name} recommande :
+Le projet {admc-short-name} recommande :
 
 * https://github.com/kubewarden/kwctl[`kwctl`] (notre outil CLI).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
@@ -52,7 +52,7 @@ Le projet {short-project-name} recommande :
 
 === Docker Hub
 
-Actuellement, Docker Hub ne prend pas en charge les artefacts OCI, il ne peut donc pas être utilisé pour stocker les stratégies {short-project-name}.
+Actuellement, Docker Hub ne prend pas en charge les artefacts OCI, il ne peut donc pas être utilisé pour stocker les stratégies {admc-short-name}.
 Docker Inc. a annoncé que Docker Hub prendra en charge les artefacts OCI dans le https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[futur].
 
 === JFrog

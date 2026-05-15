@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: 加密能力
 :current-version: {page-origin-branch}
 
-由于撰写时Wasm的限制，某些加密库无法编译为Wasm。与此同时，{project-name}需要这些库的策略可以执行回调，以在主机端评估加密功能。它们接收结果，并继续执行任务。
+由于撰写时Wasm的限制，某些加密库无法编译为Wasm。与此同时，{admc-name}需要这些库的策略可以执行回调，以在主机端评估加密功能。它们接收结果，并继续执行任务。
 
 == 行为
 

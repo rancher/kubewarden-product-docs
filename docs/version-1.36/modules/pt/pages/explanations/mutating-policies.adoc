@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["mutating-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "políticas mutantes", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "políticas mutantes", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Políticas mutantes
 :sidebar_position: 10
 :current-version: {page-origin-branch}
@@ -25,7 +25,7 @@ No entanto, se você definir o campo `ClusterAdmissionPolicy.mutating` como `fal
 [WARNING]
 ====
 
-Para prevenir abusos do sistema, os administradores {project-name} devem revisar as políticas mutantes. Políticas mutantes poderiam, por exemplo, modificar uma carga de trabalho, de modo que permita a criação de contêineres privilegiados.
+Para prevenir abusos do sistema, os administradores {admc-name} devem revisar as políticas mutantes. Políticas mutantes poderiam, por exemplo, modificar uma carga de trabalho, de modo que permita a criação de contêineres privilegiados.
 
 ====
 
@@ -182,4 +182,4 @@ EOF
 Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
 ----
 
-Em conclusão, você pode ver que {short-project-name} replica o mesmo comportamento das Políticas de Segurança de Pod do Kubernetes (PSP) que foram descontinuadas.
+Em conclusão, você pode ver que {admc-short-name} replica o mesmo comportamento das Políticas de Segurança de Pod do Kubernetes (PSP) que foram descontinuadas.

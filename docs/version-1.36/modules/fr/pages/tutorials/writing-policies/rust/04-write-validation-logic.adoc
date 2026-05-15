@@ -116,7 +116,7 @@ fn validate(payload: &[u8]) -> CallResult {
 
 Enfin, vous pouvez créer des tests unitaires pour vérifier que le code de validation fonctionne comme prévu.
 
-Le fichier `lib.rs` a déjà des tests définis en bas du fichier, et comme vous pouvez le voir, le SDK Rust de {short-project-name} fournit également des helpers de test.
+Le fichier `lib.rs` a déjà des tests définis en bas du fichier, et comme vous pouvez le voir, le SDK Rust de {admc-short-name} fournit également des helpers de test.
 
 De plus, le projet de scaffolding est déjà livré avec des https://en.wikipedia.org/wiki/Test_fixture#Software[fixtures de test] par défaut dans le répertoire `test_data`. Vous allez utiliser ces demandes d'admission enregistrées pour écrire vos tests unitaires.
 

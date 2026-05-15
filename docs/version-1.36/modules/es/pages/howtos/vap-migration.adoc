@@ -3,22 +3,22 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Migra un ValidatingAdmissionPolicy a {project-name} a través de los pasos de migración del comando kwctl para una transición de política fluida.
+:description: Migra un ValidatingAdmissionPolicy a {admc-name} a través de los pasos de migración del comando kwctl para una transición de política fluida.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 A partir de Kubernetes v1.26, el https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy] proporciona una forma de escribir políticas de admisión personalizadas en Kubernetes. Las políticas se escriben con el https://cel.dev/[Common Expression Language (CEL)], ampliadas con algunas https://kubernetes.io/docs/reference/using-api/cel/[extensiones específicas de Kubernetes].
 ValidatingAdmissionPolicy alcanzó la estabilidad en Kubernetes v1.30.
 
-{project-name} proporciona una política CEL que es capaz de ejecutar políticas VAP de Kubernetes sin ninguna modificación.
-Puedes leer más sobre la política CEL en xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[esta sección] de la documentación de {short-project-name}.
-xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Este párrafo] explica los beneficios de ejecutar políticas VAP utilizando {short-project-name}.
+{admc-name} proporciona una política CEL que es capaz de ejecutar políticas VAP de Kubernetes sin ninguna modificación.
+Puedes leer más sobre la política CEL en xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[esta sección] de la documentación de {admc-short-name}.
+xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Este párrafo] explica los beneficios de ejecutar políticas VAP utilizando {admc-short-name}.
 
-Esta guía explica cómo usar la herramienta `kwctl` para migrar una política VAP a {short-project-name}.
+Esta guía explica cómo usar la herramienta `kwctl` para migrar una política VAP a {admc-short-name}.
 
 == Pasos de migración
 
@@ -82,7 +82,7 @@ spec:
 
 ======
 
-Puedes migrar la política a {short-project-name} siguiendo estos pasos:
+Puedes migrar la política a {admc-short-name} siguiendo estos pasos:
 
 .Comando `kwctl` para la migración de la política
 [%collapsible]

@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura directivas en bruto como un motor de evaluación de directivas genérico utilizando {project-name}.
+:description: Configura directivas en bruto como un motor de evaluación de directivas genérico utilizando {admc-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "raw policies"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "support", "raw policies"]
 :sidebar_label: Directivas en bruto
 :sidebar_position: 60
 :current-version: {page-origin-branch}
 
-Desde `v1.9.0` en adelante, {project-name} admite la capacidad de escribir y ejecutar directivas fuera de un clúster de Kubernetes, como un motor de evaluación de directivas genérico.
-El Servidor de Directivas expone el endpoint `/validate_raw` que se puede utilizar para validar documentos JSON arbitrarios contra una directiva {short-project-name}.
+Desde `v1.9.0` en adelante, {admc-name} admite la capacidad de escribir y ejecutar directivas fuera de un clúster de Kubernetes, como un motor de evaluación de directivas genérico.
+El Servidor de Directivas expone el endpoint `/validate_raw` que se puede utilizar para validar documentos JSON arbitrarios contra una directiva {admc-short-name}.
 
 Para esta guía, utilizaremos las siguientes directivas en bruto:
 
@@ -87,9 +87,9 @@ NOTE: la bandera `--ignore-kubernetes-connection-failure=true` es necesaria para
 Sin embargo, es posible iniciar el Servidor de Directivas con/dentro de Kubernetes y utilizar el endpoint de validación en bruto.
 Las directivas en bruto pueden acceder a xref:../explanations/context-aware-policies.adoc[capabilities] orientadas al contexto, al igual que las directivas estándar.
 
-== Ejecutando un Servidor de Directivas dentro de Kubernetes sin el controlador {short-project-name}
+== Ejecutando un Servidor de Directivas dentro de Kubernetes sin el controlador {admc-short-name}
 
-No es posible utilizar una instancia del Servidor de Directivas gestionada por el controlador {short-project-name} para alojar directivas en bruto.
+No es posible utilizar una instancia del Servidor de Directivas gestionada por el controlador {admc-short-name} para alojar directivas en bruto.
 El controlador no permitirá al usuario cambiar el ConfigMap del Servidor de Directivas para añadir una directiva en bruto, ya que intentará reconciliarlo revirtiendo los cambios.
 Debido a ello, se debe iniciar un Servidor de Directivas dedicado.
 
@@ -295,7 +295,7 @@ La solicitud será mutada y la respuesta contendrá un JSONPatch:
 
 == Escribiendo directivas en bruto
 
-De manera similar a las directivas que validan recursos de Kubernetes, las directivas en bruto se escriben en WebAssembly utilizando SDKs de {short-project-name}.
+De manera similar a las directivas que validan recursos de Kubernetes, las directivas en bruto se escriben en WebAssembly utilizando SDKs de {admc-short-name}.
 Si estás interesado en escribir directivas en bruto, consulta la documentación específica del lenguaje para más información:
 
 * xref:../tutorials/writing-policies/go/10-raw-policies.adoc[Ir]

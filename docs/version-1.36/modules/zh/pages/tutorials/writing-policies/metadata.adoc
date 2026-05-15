@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "Kubernetes 策略开发", "策略元数据"]
 :current-version: {page-origin-branch}
 
-{project-name} 元数据文件 `metadata.yaml` 是一个配置文件，包含与 {short-project-name} 中使用的策略相关的重要信息和设置。
+{admc-name} 元数据文件 `metadata.yaml` 是一个配置文件，包含与 {admc-short-name} 中使用的策略相关的重要信息和设置。
 本文档概述了元数据文件的用途及使用方法。
 
 策略 `metadata.yaml` 文件具有策略的默认值，以及由策略作者设置的元数据，如作者和描述。
