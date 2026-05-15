@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erfahren Sie, wie Sie den Swift-Compiler mit WebAssembly-Unterstützung über SwiftWasm verwenden, um Werkzeuge zum Erstellen von {project-name} Richtlinien zu nutzen.
+:description: Erfahren Sie, wie Sie den Swift-Compiler mit WebAssembly-Unterstützung über SwiftWasm verwenden, um Werkzeuge zum Erstellen von {admc-name} Richtlinien zu nutzen.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "Richtlinien schreiben", "swift"]
 :doc-type: ["tutorial"]
@@ -22,7 +22,7 @@ ____
 Der Swift-Compiler hat noch keine WebAssembly-Unterstützung, jedoch bietet das https://swiftwasm.org/[SwiftWasm] Projekt einen gepatchten Compiler mit dieser Fähigkeit.
 
 Das SwiftWasm-Team arbeitet daran, diese Änderungen in das Swift-Projekt zu integrieren.
-In der Zwischenzeit können Sie die vom SwiftWasm-Projekt bereitgestellte Toolchain verwenden, um {project-name} Richtlinien zu erstellen.
+In der Zwischenzeit können Sie die vom SwiftWasm-Projekt bereitgestellte Toolchain verwenden, um {admc-name} Richtlinien zu erstellen.
 
 [NOTE]
 ====
@@ -35,8 +35,8 @@ Sie benötigen kein Apple-System, um Swift-Code zu schreiben oder auszuführen. 
 
 Richtlinienautoren können die folgenden Ressourcen nutzen:
 
-* https://github.com/kubewarden/policy-sdk-swift[{short-project-name} Swift SDK]: dies bietet eine Reihe von ``struct``s und Funktionen, die den Prozess des Schreibens von Richtlinien vereinfachen.
-* https://github.com/kubewarden/swift-policy-template[{short-project-name} Swift-Vorlagenprojekt]: verwenden Sie diese Vorlage, um eine auf Swift basierende Richtlinie zu erstellen.
+* https://github.com/kubewarden/policy-sdk-swift[{admc-short-name} Swift SDK]: dies bietet eine Reihe von ``struct``s und Funktionen, die den Prozess des Schreibens von Richtlinien vereinfachen.
+* https://github.com/kubewarden/swift-policy-template[{admc-short-name} Swift-Vorlagenprojekt]: verwenden Sie diese Vorlage, um eine auf Swift basierende Richtlinie zu erstellen.
 Die Vorlage enthält eine funktionierende Richtlinie und eine Reihe von GitHub Actions, um ihren Lebenszyklus zu automatisieren.
 
 Es gibt keine schwerwiegenden Einschränkungen mit Swift, nur einige kleinere Probleme:
@@ -49,4 +49,4 @@ Die vom Template-Repository bereitgestellte GitHub-Aktion kümmert sich bereits 
 
 == Weitere Beispiele
 
-https://github.com/kubewarden/pod-runtime-class-policy/tree/swift-implementation[Dieser Branch des GitHub-Repositories] hat eine {short-project-name} Richtlinie, die in Swift geschrieben ist.
+https://github.com/kubewarden/pod-runtime-class-policy/tree/swift-implementation[Dieser Branch des GitHub-Repositories] hat eine {admc-short-name} Richtlinie, die in Swift geschrieben ist.

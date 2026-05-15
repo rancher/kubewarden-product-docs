@@ -21,7 +21,7 @@ include::partial$variables.adoc[]
 ====
 
 
-トレーシングを使用すると、ポリシー評価に関する詳細な情報を収集できます。これは、{project-name}のデプロイメントおよびポリシーの問題をデバッグするための便利なツールとなる可能性があります。
+トレーシングを使用すると、ポリシー評価に関する詳細な情報を収集できます。これは、{admc-name}のデプロイメントおよびポリシーの問題をデバッグするための便利なツールとなる可能性があります。
 
 https://www.jaegertracing.io/[Jaeger] --を使用して、トレースイベントを受信、保存、視覚化します。
 
@@ -73,9 +73,9 @@ EOF
 
 Jaeger Operatorリソースを作成した後、`my-open-telemetry-collector.jaeger.svc.cluster.local`の下にサービスがあります。Jaeger Query UIは、`jaeger`ネームスペースの`my-open-telemetry-query`サービスによって公開されます。
 
-== {short-project-name}をインストールします。
+== {admc-short-name}をインストールします。
 
-これで、通常の方法で{short-project-name}のデプロイメントを進めることができます。
+これで、通常の方法で{admc-short-name}のデプロイメントを進めることができます。
 
 [NOTE]
 ====
@@ -84,14 +84,14 @@ Jaeger Operatorリソースを作成した後、`my-open-telemetry-collector.jae
 
 ====
 
-最初のステップとして、{short-project-name}を含むHelmリポジトリを追加します：
+最初のステップとして、{admc-short-name}を含むHelmリポジトリを追加します：
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-次に、{short-project-name}によって定義されたカスタムリソース定義をインストールします：
+次に、{admc-short-name}によって定義されたカスタムリソース定義をインストールします：
 
 [subs="+attributes",console]
 ----
@@ -101,7 +101,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-これで、{short-project-name}スタックの残りをデプロイすることができます。公式の`kubewarden-defaults` Helmチャートは、`default`という名前のPolicyServerを作成します。このPolicyServerインスタンスにはトレーシングを有効にしたいです。
+これで、{admc-short-name}スタックの残りをデプロイすることができます。公式の`kubewarden-defaults` Helmチャートは、`default`という名前のPolicyServerを作成します。このPolicyServerインスタンスにはトレーシングを有効にしたいです。
 
 そのためには、`kubewarden-controller`チャートにいくつかの追加の値を指定する必要があります。次の内容が含まれる`values.yaml`ファイルを作成する必要があります：
 

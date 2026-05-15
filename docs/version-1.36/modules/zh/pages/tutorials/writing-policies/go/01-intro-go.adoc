@@ -21,7 +21,7 @@ Go 对 WebAssembly 的支持正在快速发展。
 
 自 v1.21 起，官方 Go 编译器可以生成 WebAssembly 二进制文件，以便在浏览器外执行。
 
-还有另一个 Go 编译器可以构建可用于 {project-name} 的 WebAssembly 二进制文件。
+还有另一个 Go 编译器可以构建可用于 {admc-name} 的 WebAssembly 二进制文件。
 该编译器项目是 https://tinygo.org/[TinyGo]：
 
 ____
@@ -33,7 +33,7 @@ TinyGo 还可以生成非常紧凑的 WebAssembly (Wasm) 代码。
 您可以为网页浏览器编译程序，也可以为支持 WebAssembly 系统接口 (WASI) 系列接口的服务器和边缘计算环境编译程序。
 ____
 
-{short-project-name} 项目目前建议出于两个原因使用 TinyGo：
+{admc-short-name} 项目目前建议出于两个原因使用 TinyGo：
 
 * 二进制文件更小
 * 通过能够将函数导出到运行时来支持 https://wapc.io[waPC]
@@ -44,13 +44,13 @@ TinyGo 还不支持所有 Go 特性，请参阅 TinyGo 语言支持 https://tiny
 目前，它最大的限制是缺乏完全支持的 `reflect` 软件包。
 这意味着官方 Kubernetes Go API 类型（例如：`k8s.io/api/core/v1`）无法编译。
 
-{short-project-name} 策略需要处理 JSON 数据，例如策略设置和 Kubernetes 接收到的请求。
+{admc-short-name} 策略需要处理 JSON 数据，例如策略设置和 Kubernetes 接收到的请求。
 
-尽管 TinyGo 目前存在一些限制，但使用它编写 {short-project-name} 验证策略仍然很简单。
+尽管 TinyGo 目前存在一些限制，但使用它编写 {admc-short-name} 验证策略仍然很简单。
 
 == 工具
 
-编写 {short-project-name} 策略需要使用版本高于 `v0.28.1` 的 TinyGo。
+编写 {admc-short-name} 策略需要使用版本高于 `v0.28.1` 的 TinyGo。
 然而，使用最新版本可以获得最佳效果。
 
 [CAUTION]
@@ -59,9 +59,9 @@ TinyGo 还不支持所有 Go 特性，请参阅 TinyGo 语言支持 https://tiny
 ====
 
 
-在编写 {short-project-name} 策略时，这些 Go 库非常有用：
+在编写 {admc-short-name} 策略时，这些 Go 库非常有用：
 
-* https://github.com/kubewarden/policy-sdk-go[{short-project-name} Go SDK]：
+* https://github.com/kubewarden/policy-sdk-go[{admc-short-name} Go SDK]：
 提供结构和函数，减少所需代码量。
 它还提供测试助手。
 * https://github.com/kubewarden/k8s-objects[Kubernetes Go 类型]：
@@ -72,9 +72,9 @@ https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io[官方 K
 该库不使用由 Go 的 `stdlib` 提供的 `encoding/json` 包，因此可以与 TinyGo 一起使用。
 * https://github.com/deckarep/golang-set[mapset]：
 提供 https://en.wikipedia.org/wiki/Set_(abstract_data_type)[集合] 数据结构的 Go 实现。
-该库减少了编写代码的数量，因为在 {short-project-name} 策略中，像 Set `union`、`intersection`、`difference` 这样的操作是常见操作。
+该库减少了编写代码的数量，因为在 {admc-short-name} 策略中，像 Set `union`、`intersection`、`difference` 这样的操作是常见操作。
 
-最后，{short-project-name} 项目提供了一个 https://github.com/kubewarden/go-policy-template[模板 Go 策略项目]，您可以用它来创建 {short-project-name} Go 策略。
+最后，{admc-short-name} 项目提供了一个 https://github.com/kubewarden/go-policy-template[模板 Go 策略项目]，您可以用它来创建 {admc-short-name} Go 策略。
 
 == 获取 TinyGo 依赖项。
 
@@ -91,5 +91,5 @@ https://github.com/kubernetes/kubernetes/tree/master/staging/src/k8s.io[官方 K
 您将使用官方 TinyGo 容器镜像中提供的编译器。
 * https://github.com/bats-core/bats-core[bats]：用于编写测试并自动执行它们。
 * https://github.com/kubewarden/kwctl/releases[`kwctl`]：
-由 {short-project-name} 提供的 CLI 工具，用于在 Kubernetes 之外运行其策略以及其他操作。
+由 {admc-short-name} 提供的 CLI 工具，用于在 Kubernetes 之外运行其策略以及其他操作。
 在文档的xref:tutorials/testing-policies/index.adoc[本节]中进行了介绍。

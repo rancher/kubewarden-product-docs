@@ -116,7 +116,7 @@ fn validate(payload: &[u8]) -> CallResult {
 
 Finalmente, você pode criar testes de unidade para verificar se o código de validação funciona como esperado.
 
-O arquivo `lib.rs` já possui testes definidos na parte inferior do arquivo e, como você pode ver, o SDK Rust do {short-project-name} também fornece auxiliares de teste.
+O arquivo `lib.rs` já possui testes definidos na parte inferior do arquivo e, como você pode ver, o SDK Rust do {admc-short-name} também fornece auxiliares de teste.
 
 Além disso, o projeto de esqueleto já vem com os https://en.wikipedia.org/wiki/Test_fixture#Software[test fixtures] padrão no diretório `test_data`. Você vai usar estas solicitações de admissão gravadas para escrever seus testes de unidade.
 

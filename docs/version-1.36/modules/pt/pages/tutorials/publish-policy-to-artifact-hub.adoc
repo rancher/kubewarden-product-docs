@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Publique {project-name} políticas no Artifact Hub criando um layout de repositório Git bem formatado e configurando o GitHub Actions para empacotamento automatizado, facilitando a integração contínua.
+:description: Publique {admc-name} políticas no Artifact Hub criando um layout de repositório Git bem formatado e configurando o GitHub Actions para empacotamento automatizado, facilitando a integração contínua.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 
 https://artifacthub.io/[Artifact Hub] é um site onde os usuários podem encontrar, instalar e publicar pacotes e configurações para https://cncf.io[CNCF] projetos.
 
-As políticas {project-name} podem ser publicadas no Artifact Hub e tornadas descobríveis para o amplo público de usuários do CNCF.
+As políticas {admc-name} podem ser publicadas no Artifact Hub e tornadas descobríveis para o amplo público de usuários do CNCF.
 
 [NOTE]
 ====
@@ -25,7 +25,7 @@ Consulte a seção xref:explanations/distributing-policies.adoc[distributing pol
 ====
 
 
-Este documento foca nos passos necessários para tornar uma política {short-project-name} descobrível no Artifact Hub.
+Este documento foca nos passos necessários para tornar uma política {admc-short-name} descobrível no Artifact Hub.
 
 == Prepare seu repositório Git
 
@@ -67,7 +67,7 @@ Decida se deseja publicar a política como um usuário ou sob uma organização 
 
 Em seguida, pressione o botão _"Adicionar"_ e preencha o formulário:
 
-* Escolha _"{short-project-name} políticas"_ como tipo.
+* Escolha _"{admc-short-name} políticas"_ como tipo.
 * Digite um _"Nome"_ e _"Nome de exibição"_ de sua escolha.
 * Digite a URL do seu repositório Git.
 * Digite `artifacthub` como o branch a ser rastreado.

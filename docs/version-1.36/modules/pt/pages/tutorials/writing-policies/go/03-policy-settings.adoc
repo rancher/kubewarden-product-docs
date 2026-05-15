@@ -102,11 +102,11 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == Construindo instâncias de `Settings`
 
-Uma política {short-project-name} expõe duas funções diferentes que recebem as configurações de política como entrada:
+Uma política {admc-short-name} expõe duas funções diferentes que recebem as configurações de política como entrada:
 
 * `validate`: Use esta função quando o objeto Kubernetes requer validação pela política.
 As configurações são parte de um objeto https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`].
-* `validate_settings`: Chame esta função quando a política for carregada pela primeira vez por {short-project-name}.
+* `validate_settings`: Chame esta função quando a política for carregada pela primeira vez por {admc-short-name}.
 A função recebe as configurações de política como entrada e verifica a validade.
 
 Você precisa criar uma função auxiliar que cria um objeto `Settings` a partir do payload JSON :
@@ -136,7 +136,7 @@ Veja https://github.com/WebAssembly/threads[proposta oficial] para mais detalhes
 
 == Implementando a validação de `Settings`
 
-Todas as políticas de {short-project-name} devem implementar a validação de configurações.
+Todas as políticas de {admc-short-name} devem implementar a validação de configurações.
 
 Você faz isso adicionando um método `Valid` às instâncias de `Settings`:
 
@@ -191,7 +191,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 }
 ----
 
-Você pode ver que a função aproveita as funções auxiliares fornecidas pelo SDK de https://github.com/kubewarden/policy-sdk-go[{short-project-name}.]
+Você pode ver que a função aproveita as funções auxiliares fornecidas pelo SDK de https://github.com/kubewarden/policy-sdk-go[{admc-short-name}.]
 
 == Testando o código de configurações
 

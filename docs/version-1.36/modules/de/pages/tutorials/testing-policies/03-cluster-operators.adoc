@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
 :current-version: {page-origin-branch}
 
-Als Kubernetes-Cluster-Betreiber möchten Sie Tests für {project-name} Richtlinien durchführen, die Sie verwenden möchten.
+Als Kubernetes-Cluster-Betreiber möchten Sie Tests für {admc-name} Richtlinien durchführen, die Sie verwenden möchten.
 
 Sie werden Fragen haben wie:
 
@@ -21,12 +21,12 @@ Sie werden Fragen haben wie:
  ** die Konfigurationsparameter der Richtlinie ändern?
  ** usw.?
 
-{short-project-name} hat ein Dienstprogramm, https://github.com/kubewarden/kwctl[`kwctl`], das das Testen der Richtlinien außerhalb von Kubernetes ermöglicht.
+{admc-short-name} hat ein Dienstprogramm, https://github.com/kubewarden/kwctl[`kwctl`], das das Testen der Richtlinien außerhalb von Kubernetes ermöglicht.
 
 Um `kwctl` zu verwenden, rufen Sie es mit folgenden Eingaben auf:
 
 . Eine URI einer WebAssembly-Binärdatei der auszuführenden Richtlinie.
-Die {short-project-name} Richtlinie kann von folgendem laden:
+Die {admc-short-name} Richtlinie kann von folgendem laden:
  ** lokales Dateisystem `file://`
  ** einem HTTP(s) Server `https://`
  ** einer OCI-Registry `registry://`.

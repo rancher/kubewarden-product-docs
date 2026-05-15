@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}のSLOGライブラリとの統合機能を利用して、ポリシーのログ記録機能を構成・初期化します。
+:description: {admc-name}のSLOGライブラリとの統合機能を利用して、ポリシーのログ記録機能を構成・初期化します。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
 :doc-type: ["tutorial"]
-:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
+:keywords: ["{admc-name}", kubewarden, "kubernetes", "logging"]
 :sidebar_label: ログ記録
 :current-version: {page-origin-branch}
 
@@ -15,7 +15,7 @@ include::partial$variables.adoc[]
 `policy-server`または`kwctl`は、適切な情報を付加したログエントリを転送します。
 
 Rust SDKに選ばれたログライブラリは、https://github.com/slog-rs/slog[`slog`]です。
-これは人気があり、よく知られたクレートで、{project-name}とクリーンに統合されます。
+これは人気があり、よく知られたクレートで、{admc-name}とクリーンに統合されます。
 
 == ロガーを初期化します。
 

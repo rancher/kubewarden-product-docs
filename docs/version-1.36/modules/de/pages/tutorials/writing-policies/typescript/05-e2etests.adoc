@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Erfahren Sie, wie Sie umfassende End-to-End-Tests für das Verhalten von Richtlinien mit BATS und kwctl schreiben und ausführen.
-:keywords: "{project-name}", kubewarden, kubernetes, Richtlinien testen, typescript, e2e-Tests
+:keywords: "{admc-name}", kubewarden, kubernetes, Richtlinien testen, typescript, e2e-Tests
 :doc-type: Anleitung
-:doc-topic: {project-name}, kubewarden, Richtlinien schreiben, typescript, End-to-End-Tests
+:doc-topic: {admc-name}, kubewarden, Richtlinien schreiben, typescript, End-to-End-Tests
 :doc-persona: Kubewarden-Richtlinienentwickler
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ In diesem Abschnitt wird gezeigt, wie Sie End-to-End-Tests schreiben können, di
 Denken Sie daran, dass Sie diese Werkzeuge auf Ihrem Entwicklungsrechner benötigen:
 
 * `bats`: Wird verwendet, um die Tests zu schreiben und deren Ausführung zu automatisieren.
-* `kwctl` >= v1.30: CLI-Tool, das von {project-name} bereitgestellt wird, um seine Richtlinien außerhalb von Kubernetes auszuführen, unter anderem. Es wird im xref:/tutorials/testing-policies/index.adoc[Abschnitt über die Testrichtlinien] der Dokumentation behandelt.
+* `kwctl` >= v1.30: CLI-Tool, das von {admc-name} bereitgestellt wird, um seine Richtlinien außerhalb von Kubernetes auszuführen, unter anderem. Es wird im xref:/tutorials/testing-policies/index.adoc[Abschnitt über die Testrichtlinien] der Dokumentation behandelt.
 
 == Tests schreiben
 
@@ -252,9 +252,9 @@ Die `echo "output = $\{output}"`-Anweisungen in jedem Test helfen beim Debuggen,
 
 == Fazit
 
-Die End-to-End-Tests bieten eine umfassende Abdeckung des Verhaltens der Richtlinie, indem sie gegen das tatsächliche WebAssembly-Binärformat getestet werden. Dies stellt sicher, dass die Richtlinie korrekt funktioniert, wenn sie in {short-project-name} bereitgestellt wird, und nicht nur in der TypeScript-Entwicklungsumgebung.
+Die End-to-End-Tests bieten eine umfassende Abdeckung des Verhaltens der Richtlinie, indem sie gegen das tatsächliche WebAssembly-Binärformat getestet werden. Dies stellt sicher, dass die Richtlinie korrekt funktioniert, wenn sie in {admc-short-name} bereitgestellt wird, und nicht nur in der TypeScript-Entwicklungsumgebung.
 
 [TIP]
 ====
-Für umfassendere Beispiele von End-to-End-Tests können Sie den https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js Quellcode] erkunden, der umfangreiche e2e-Tests enthält, die jede der {short-project-name}-Host-Funktionen demonstrieren. Diese Tests können als Inspiration für das Testen fortschrittlicherer Richtlinienfunktionen wie Netzwerkfunktionen, kryptografische Operationen und OCI-Registry-Interaktionen dienen.
+Für umfassendere Beispiele von End-to-End-Tests können Sie den https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js Quellcode] erkunden, der umfangreiche e2e-Tests enthält, die jede der {admc-short-name}-Host-Funktionen demonstrieren. Diese Tests können als Inspiration für das Testen fortschrittlicherer Richtlinienfunktionen wie Netzwerkfunktionen, kryptografische Operationen und OCI-Registry-Interaktionen dienen.
 ====

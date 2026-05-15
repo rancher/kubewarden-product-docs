@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用支持的版本策略和组件之间的兼容性规则来升级您的{project-name}堆栈。
+:description: 使用支持的版本策略和组件之间的兼容性规则来升级您的{admc-name}堆栈。
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["operator-manual", "upgrade-path"]
 :doc-type: ["reference"]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== {project-name}堆栈版本控制
+== {admc-name}堆栈版本控制
 
-{short-project-name}项目使用https://semver.org/[语义版本控制]来定义所有组件的"堆栈"版本：版本遵循`MAJOR.MINOR.PATCH`模式。支持的版本是最新发布的版本。
+{admc-short-name}项目使用https://semver.org/[语义版本控制]来定义所有组件的"堆栈"版本：版本遵循`MAJOR.MINOR.PATCH`模式。支持的版本是最新发布的版本。
 
-遵循"堆栈"版本规则的{short-project-name}组件有：
+遵循"堆栈"版本规则的{admc-short-name}组件有：
 
 * `kubewarden-crds`图表，在其appVersion字段中。
 
@@ -36,7 +36,7 @@ include::partial$variables.adoc[]
 
 == Helm 图表版本
 
-Helm 图表定义了`version`字段和`appVersion`字段。`appVersion`字段指示了{short-project-name}中提到的"堆栈"版本。`version`字段也遵循https://semver.org/[语义版本控制]，并描述图表模板和`values.yaml`中的向后兼容更改。
+Helm 图表定义了`version`字段和`appVersion`字段。`appVersion`字段指示了{admc-short-name}中提到的"堆栈"版本。`version`字段也遵循https://semver.org/[语义版本控制]，并描述图表模板和`values.yaml`中的向后兼容更改。
 
 == 升级路径
 
@@ -49,16 +49,16 @@ include::latest@shared:en:partial$upg-path.adoc[]
 
 == 升级顺序
 
-{short-project-name}用户应从`kubewarden-crds`图表开始升级堆栈，然后是`kubewarden-controller`图表。之后，升级`policy-server`（通过`kubewarden-defaults`图表或更新自定义图像）和`kwctl`。
+{admc-short-name}用户应从`kubewarden-crds`图表开始升级堆栈，然后是`kubewarden-controller`图表。之后，升级`policy-server`（通过`kubewarden-defaults`图表或更新自定义图像）和`kwctl`。
 
 == 降级
 
-降级是*不*支持的，并且{short-project-name}不会对它们进行测试。然而，合理预期它们应该可以工作。
+降级是*不*支持的，并且{admc-short-name}不会对它们进行测试。然而，合理预期它们应该可以工作。
 
 == SDK，策略
 
-不同语言和策略的策略 SDK 由 {short-project-name} 团队维护，遵循各自的语义版本控制。{short-project-name} 支持最新版本。它们不需要升级路径，只需更新到最新版本。
+不同语言和策略的策略 SDK 由 {admc-short-name} 团队维护，遵循各自的语义版本控制。{admc-short-name} 支持最新版本。它们不需要升级路径，只需更新到最新版本。
 
-对 {short-project-name} 堆栈的更改可能意味着策略和 SDK 收到更新，以使用最新的 {short-project-name} 功能。{short-project-name} 负责以向后兼容的方式执行这些更新。
+对 {admc-short-name} 堆栈的更改可能意味着策略和 SDK 收到更新，以使用最新的 {admc-short-name} 功能。{admc-short-name} 负责以向后兼容的方式执行这些更新。
 
-例如，添加对审计扫描器（`v1.7.0`）支持的 {short-project-name} 次要版本意味着策略获得了一个新的 `spec.backgroundAudit` 字段。这是可选的，向后兼容，并默认设置为 `true`。
+例如，添加对审计扫描器（`v1.7.0`）支持的 {admc-short-name} 次要版本意味着策略获得了一个新的 `spec.backgroundAudit` 字段。这是可选的，向后兼容，并默认设置为 `true`。

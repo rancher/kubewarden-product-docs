@@ -15,7 +15,7 @@ El `policy-server` tiene la capacidad de exponer información del clúster a las
 
 El servidor de políticas que aloja la política recupera recursos de Kubernetes. Las reglas de RBAC aplicadas a la cuenta de servicio del servidor de políticas regulan el acceso a Kubernetes.
 
-El `default` servidor de políticas desplegado por {project-name} gráficos de Helm tiene acceso a los siguientes recursos de Kubernetes:
+El `default` servidor de políticas desplegado por {admc-name} gráficos de Helm tiene acceso a los siguientes recursos de Kubernetes:
 
 * Espacios de nombres
 * Servicios
@@ -41,23 +41,23 @@ El servidor de políticas realiza la caché de los resultados obtenidos del serv
 
 | Rego
 | ✅
-| Desde la versión {short-project-name} 1.9
+| Desde la versión {admc-short-name} 1.9
 
 | WASI
 | ✅
-| Desde la versión {short-project-name} 1.10.0, solo para el SDK de Go
+| Desde la versión {admc-short-name} 1.10.0, solo para el SDK de Go
 |===
 
 == Restricciones
 
-La prioridad de {short-project-name} es reducir el número de consultas contra el servidor API de Kubernetes. {short-project-name} considera dos restricciones:
+La prioridad de {admc-short-name} es reducir el número de consultas contra el servidor API de Kubernetes. {admc-short-name} considera dos restricciones:
 
 * Utilización de la memoria: El proceso del servidor de políticas almacena en caché los datos obtenidos de Kubernetes en memoria. Cuantos más datos se obtienen, más memoria consumen los Pods del Servidor de Políticas.
 * Consistencia: La caché mantenida por el Servidor de Políticas podría contener datos obsoletos. Recursos nuevos podrían estar ausentes, recursos eliminados podrían seguir disponibles y los cambiados podrían tener datos antiguos. Esto podría afectar la evaluación de políticas.
 
 === Listando múltiples recursos
 
-Las políticas {short-project-name} pueden obtener múltiples recursos al mismo tiempo. Por ejemplo, pueden hacer una consulta como "obtener todos los Pods definidos dentro del espacio de nombres `default` que tienen la etiqueta `color` establecida en ``green``."
+Las políticas {admc-short-name} pueden obtener múltiples recursos al mismo tiempo. Por ejemplo, pueden hacer una consulta como "obtener todos los Pods definidos dentro del espacio de nombres `default` que tienen la etiqueta `color` establecida en ``green``."
 
 Con tal consulta, el Servidor de Políticas obtiene todos los recursos que coinciden con los criterios del usuario. La obtención de recursos se realiza en lotes para reducir la carga en el servidor API de Kubernetes. Antes de almacenar los recursos en memoria, el Servidor de Políticas elimina el atributo `managedFields` de cada recurso para reducir la cantidad de memoria consumida. Este atributo no es útil para las políticas y consume una cantidad significativa de memoria.
 
@@ -68,11 +68,11 @@ Finalmente, el código actual tiene la siguiente limitación. Dadas estas dos co
 * `kubectl get pods -n default`
 * `kubectl get pods -n default -l color=green`
 
-El Servidor de Políticas crea dos watches y duplica todos los Pods de la segunda consulta. Esta limitación se eliminará en futuras versiones de {short-project-name}.
+El Servidor de Políticas crea dos watches y duplica todos los Pods de la segunda consulta. Esta limitación se eliminará en futuras versiones de {admc-short-name}.
 
 === Obteniendo un recurso específico
 
-Las {short-project-name} políticas pueden obtener un recurso específico definido dentro del clúster.
+Las {admc-short-name} políticas pueden obtener un recurso específico definido dentro del clúster.
 Por ejemplo, pueden hacer una consulta como "obtener el Pod llamado `psql-0` definido dentro del espacio de nombres `db`."
 
 Por defecto, esta consulta recupera el objeto y lo almacena en una caché en memoria durante cinco segundos. Durante estos cinco segundos, las políticas reciben datos en caché.
@@ -80,7 +80,7 @@ Por defecto, esta consulta recupera el objeto y lo almacena en una caché en mem
 El autor de la política también puede decidir hacer una consulta directa, omitiendo la caché.
 Siempre se sirven datos frescos. Esto causa más carga en el servidor API de Kubernetes (dependiendo de la frecuencia de activación de la política) e introduce más latencia al evaluar una solicitud de admisión.
 
-El comportamiento de consulta directa o en caché se configura a nivel de cada consulta por el autor de la política utilizando los SDKs {short-project-name}.
+El comportamiento de consulta directa o en caché se configura a nivel de cada consulta por el autor de la política utilizando los SDKs {admc-short-name}.
 
 == ClusterAdmissionPolicies
 

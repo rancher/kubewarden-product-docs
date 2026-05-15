@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Aprenda a escrever e executar testes de ponta a ponta abrangentes para o comportamento da sua política usando BATS e kwctl.
-:keywords: "{project-name}", kubewarden, kubernetes, testes de políticas, typescript, testes e2e
+:keywords: "{admc-name}", kubewarden, kubernetes, testes de políticas, typescript, testes e2e
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, escrita de políticas, typescript, teste-de-ponta-a-ponta
+:doc-topic: {admc-name}, kubewarden, escrita de políticas, typescript, teste-de-ponta-a-ponta
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ Esta seção mostra como você pode escrever testes de ponta a ponta executados 
 Lembre-se, você precisa dessas ferramentas em sua máquina de desenvolvimento:
 
 * `bats`: Usado para escrever os testes e automatizar sua execução.
-* `kwctl` >= v1.30: Ferramenta CLI fornecida por {project-name} para executar suas políticas fora do Kubernetes, entre outras ações. Está coberto na seção xref:/tutorials/testing-policies/index.adoc[de testes de políticas] da documentação.
+* `kwctl` >= v1.30: Ferramenta CLI fornecida por {admc-name} para executar suas políticas fora do Kubernetes, entre outras ações. Está coberto na seção xref:/tutorials/testing-policies/index.adoc[de testes de políticas] da documentação.
 
 == Escrevendo testes
 
@@ -252,9 +252,9 @@ As declarações `echo "output = $\{output}"` em cada teste ajudam na depuraçã
 
 == Conclusão
 
-Os testes de ponta a ponta fornecem uma cobertura abrangente do comportamento da política testando contra o binário WebAssembly real. Isso garante que a política funcione corretamente quando implantada em {short-project-name}, não apenas no ambiente de desenvolvimento TypeScript.
+Os testes de ponta a ponta fornecem uma cobertura abrangente do comportamento da política testando contra o binário WebAssembly real. Isso garante que a política funcione corretamente quando implantada em {admc-short-name}, não apenas no ambiente de desenvolvimento TypeScript.
 
 [TIP]
 ====
-Para exemplos mais abrangentes de testes de ponta a ponta, você pode explorar o código-fonte https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js], que inclui testes e2e extensivos demonstrando cada uma das capacidades de host de {short-project-name}. Esses testes podem servir de inspiração para testar recursos de política mais avançados, como rede, operações criptográficas e interações com o registro OCI.
+Para exemplos mais abrangentes de testes de ponta a ponta, você pode explorar o código-fonte https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js], que inclui testes e2e extensivos demonstrando cada uma das capacidades de host de {admc-short-name}. Esses testes podem servir de inspiração para testar recursos de política mais avançados, como rede, operações criptográficas e interações com o registro OCI.
 ====

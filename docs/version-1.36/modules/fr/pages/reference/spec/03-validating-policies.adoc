@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Validation des stratégies
 :current-version: {page-origin-branch}
 
-Le {project-name} serveur de stratégie reçoit :
+Le {admc-name} serveur de stratégie reçoit :
 
 * Kubernetes
 https://godoc.org/k8s.io/api/admission/v1#AdmissionReview[`AdmissionReview`]

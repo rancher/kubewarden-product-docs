@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: 在 src/index.ts 文件中为 Kubernetes 资源编写验证逻辑，访问传入的请求数据以返回响应。
-:keywords: "{project-name}", kubewarden, kubernetes, 编写策略, typescript
+:keywords: "{admc-name}", kubewarden, kubernetes, 编写策略, typescript
 :doc-type: 教程
-:doc-topic: {project-name}, kubewarden, 编写策略, typescript, 验证逻辑
+:doc-topic: {admc-name}, kubewarden, 编写策略, typescript, 验证逻辑
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 重要：不要将日志信息写入 STDOUT。
 
-写入 STDOUT 会违反策略。相反，请使用 STDERR 进行日志记录或使用 {project-name} SDK 提供的日志记录功能。策略输出到 STDOUT 只能包含验证响应。
+写入 STDOUT 会违反策略。相反，请使用 STDERR 进行日志记录或使用 {admc-name} SDK 提供的日志记录功能。策略输出到 STDOUT 只能包含验证响应。
 ====
 
 验证逻辑应放在 `src/index.ts` 文件中。
@@ -25,7 +25,7 @@ include::partial$variables.adoc[]
 * 根据输入和策略设置返回响应。
 
 传入的请求包含一个 JSON 对象，其中包含要验证的 Kubernetes 资源。
-您可以通过 {short-project-name} SDK 的辅助函数访问此 JSON 对象数据。
+您可以通过 {admc-short-name} SDK 的辅助函数访问此 JSON 对象数据。
 
 == `validate` 函数
 
@@ -174,4 +174,4 @@ switch (action) {
 }
 ----
 
-{short-project-name} Javy 插件提供 `policyAction()` 函数，指示策略是否应验证资源或验证其设置。
+{admc-short-name} Javy 插件提供 `policyAction()` 函数，指示策略是否应验证资源或验证其设置。

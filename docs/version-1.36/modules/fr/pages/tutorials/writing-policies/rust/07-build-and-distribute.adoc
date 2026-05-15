@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Suivez ces étapes essentielles pour créer et distribuer des stratégies efficacement pour votre configuration {project-name}.
+:description: Suivez ces étapes essentielles pour créer et distribuer des stratégies efficacement pour votre configuration {admc-name}.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "rédaction de stratégies", "rust", "créer et distribuer"]
 :doc-type: ["tutorial"]
@@ -36,16 +36,16 @@ policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
 
 == Distribution de la stratégie
 
-{project-name} documente la distribution de la stratégie dans la section
+{admc-name} documente la distribution de la stratégie dans la section
 xref:../../../explanations/distributing-policies.adoc[distribution de la stratégie].
 
 == Plus d'exemples
 
-Vous pouvez trouver plus de stratégies Rust {short-project-name} dans l'espace GitHub de {short-project-name}.
+Vous pouvez trouver plus de stratégies Rust {admc-short-name} dans l'espace GitHub de {admc-short-name}.
 https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Cette requête]
 peut vous aider à les trouver.
 
-Les dépôts de stratégies {short-project-name}, affichés par cette requête, ont des actions GitHub qui automatisent les tâches suivantes :
+Les dépôts de stratégies {admc-short-name}, affichés par cette requête, ont des actions GitHub qui automatisent les tâches suivantes :
 
 * Exécuter des tests unitaires et du linting de code sur les demandes de tirage et après les fusions de code dans la branche principale.
 * Créer la stratégie en mode `release` et la pousser vers un registre OCI en tant qu'artéfact.

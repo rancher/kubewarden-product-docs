@@ -1,21 +1,21 @@
 include::partial$variables.adoc[]
-= {project-name}大規模環境における
+= {admc-name}大規模環境における
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}を{project-name}で構成し、要求の厳しい大規模環境において高可用性とパフォーマンスを確保します。
-:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, production]
+:description: {admc-name}を{admc-name}で構成し、要求の厳しい大規模環境において高可用性とパフォーマンスを確保します。
+:keywords: [kubewarden, "{admc-name}", kubernetes, policyservers, production]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: HOWTO(操作方法)
 :doc-topic: operator-manual, policy-servers, production
 :sidebar_label: 大規模環境でのデプロイメント
 :sidebar_position: 21
 
-このセクションでは、要求の厳しい大規模環境における{project-name}の実際のデプロイメントについて詳述します。高可用性とパフォーマンスのために{short-project-name}を構成する方法と、重負荷時に何を期待するかを示しています。
+このセクションでは、要求の厳しい大規模環境における{admc-name}の実際のデプロイメントについて詳述します。高可用性とパフォーマンスのために{admc-short-name}を構成する方法と、重負荷時に何を期待するかを示しています。
 
 [IMPORTANT]
 ====
-本番環境で{short-project-name}を運用するためのヒントをもっと見たい場合は、xref:/howtos/production-deployments.adoc[本番デプロイメント]のドキュメントをチェックしてください。
+本番環境で{admc-short-name}を運用するためのヒントをもっと見たい場合は、xref:/howtos/production-deployments.adoc[本番デプロイメント]のドキュメントをチェックしてください。
 ====
 
 == 環境の概要
@@ -31,9 +31,9 @@ include::partial$variables.adoc[]
 ** デプロイメント:8,000
 ** サービス:13,000
 
-== {short-project-name}の設定
+== {admc-short-name}の設定
 
-この環境の要求に応えるために、{short-project-name}はワークロードの分離と高可用性に重点を置いて構成されています。
+この環境の要求に応えるために、{admc-short-name}はワークロードの分離と高可用性に重点を置いて構成されています。
 
 * ポリシーの実施：22 `ClusterAdmissionPolicies`がクラスター全体で実施されており、ネームスペース特有の`AdmissionPolicies`はありません。
 * ポリシーサーバーアーキテクチャ：ワークロードを分離するために、2つの別々の`PolicyServer`デプロイメントが使用されています：

@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explora las métricas y patrones del clúster con las métricas de plataforma expuestas de {project-name} para informar los procesos de toma de decisiones.
+:description: Explora las métricas y patrones del clúster con las métricas de plataforma expuestas de {admc-name} para informar los procesos de toma de decisiones.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name} expone métricas relevantes de la plataforma que permiten a los administradores del clúster y a los desarrolladores de directivas identificar patrones y posibles problemas.
+{admc-short-name} expone métricas relevantes de la plataforma que permiten a los administradores del clúster y a los desarrolladores de directivas identificar patrones y posibles problemas.
 
 == Servidor de Directivas
 

@@ -4,29 +4,29 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Gestiona políticas en tu clúster de Kubernetes con {project-name} utilizando la herramienta CLI kwctl.
+:description: Gestiona políticas en tu clúster de Kubernetes con {admc-name} utilizando la herramienta CLI kwctl.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "directiva", "servidordirectiva", "directivadeadmisióncluster", "directivadeadmisión"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "kwctl", "directiva", "servidordirectiva", "directivadeadmisióncluster", "directivadeadmisión"]
 :current-version: {page-origin-branch}
 
 Esto describe tareas habituales para después de que tú
-xref:quick-start.adoc#installation[instales {project-name}] en tu clúster de Kubernetes.
+xref:quick-start.adoc#installation[instales {admc-name}] en tu clúster de Kubernetes.
 
 Las tareas separadas están en un orden lógico.
 
 == Probar directivas
 
-{short-project-name} utiliza dos herramientas para ayudarte a encontrar políticas y probarlas
+{admc-short-name} utiliza dos herramientas para ayudarte a encontrar políticas y probarlas
 localmente:
 
-* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Hub de Artefactos], utilizando su filtro de paquetes para políticas de {short-project-name}
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Hub de Artefactos], utilizando su filtro de paquetes para políticas de {admc-short-name}
 * https://github.com/kubewarden/kwctl[`kwctl`], una herramienta CLI
 
 === Hub de Artefactos
 
-El Hub de Artefactos alberga políticas contribuidas por la comunidad. Por ejemplo, puedes encontrar sustitutos a las https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[Directivas de Seguridad de Pods de Kubernetes obsoletas], creadas por los desarrolladores de {short-project-name}.
+El Hub de Artefactos alberga políticas contribuidas por la comunidad. Por ejemplo, puedes encontrar sustitutos a las https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[Directivas de Seguridad de Pods de Kubernetes obsoletas], creadas por los desarrolladores de {admc-short-name}.
 
 Como se muestra en la captura de pantalla a continuación, una vez que encuentres una directiva de interés, selecciona el botón `Install` y utiliza `kwctl` para obtener la directiva para tu clúster.
 
@@ -35,7 +35,7 @@ image::tasks-artifact-hub.png[Hub de Artefactos]
 [NOTE]
 ====
 
-Anteriormente, las directivas de {short-project-name} podían encontrarse en el https://hub.kubewarden.io[{short-project-name} Hub de Políticas]. Esto ha sido
+Anteriormente, las directivas de {admc-short-name} podían encontrarse en el https://hub.kubewarden.io[{admc-short-name} Hub de Políticas]. Esto ha sido
 https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retirado].
 Las políticas ahora están disponibles desde
 https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
@@ -45,7 +45,7 @@ https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://art
 
 === `kwctl`Herramienta CLI de
 
-`kwctl` es la herramienta CLI de {short-project-name} para autores de directivas y administradores de clústeres para probar directivas antes de aplicarlas a un clúster de Kubernetes.
+`kwctl` es la herramienta CLI de {admc-short-name} para autores de directivas y administradores de clústeres para probar directivas antes de aplicarlas a un clúster de Kubernetes.
 
 Esta herramienta tiene una interfaz similar a la herramienta `docker` CLI.
 
@@ -79,8 +79,8 @@ Puedes listar todas las opciones y subcomandos `kwctl` ejecutando el siguiente c
 ----
 $ kwctl --help
 kwctl 0.2.5
-{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage {short-project-name} policies
+{admc-short-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {admc-short-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -91,18 +91,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add {short-project-name} metadata to a WebAssembly module
+    annotate       Add {admc-short-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect {short-project-name} policy
+    inspect        Inspect {admc-short-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a {short-project-name} policy from a given URI
-    push           Pushes a {short-project-name} policy to an OCI registry
-    rm             Removes a {short-project-name} policy from the store
-    run            Runs a {short-project-name} policy from a given URI
+    pull           Pulls a {admc-short-name} policy from a given URI
+    push           Pushes a {admc-short-name} policy to an OCI registry
+    rm             Removes a {admc-short-name} policy from the store
+    run            Runs a {admc-short-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+    verify         Verify a {admc-short-name} policy from a given URI using Sigstore
 ----
 
 Aquí tienes algunos ejemplos de uso de comandos:
@@ -266,5 +266,5 @@ Después de desplegar el `ClusterAdmissionPolicy`, todas las solicitudes enviada
 
 == Pasos siguientes
 
-* xref:tutorials/writing-policies/index.adoc[Escribiendo Directivas] explica cómo escribir directivas en diferentes lenguajes y generar binarios de WebAssembly, para que puedan ser utilizados por {short-project-name}.
+* xref:tutorials/writing-policies/index.adoc[Escribiendo Directivas] explica cómo escribir directivas en diferentes lenguajes y generar binarios de WebAssembly, para que puedan ser utilizados por {admc-short-name}.
 * xref:../explanations/distributing-policies.adoc[Distribuyendo Directivas] explica cómo publicar directivas en https://github.com/opencontainers/distribution-spec/blob/main/spec.md[registros de OCI].

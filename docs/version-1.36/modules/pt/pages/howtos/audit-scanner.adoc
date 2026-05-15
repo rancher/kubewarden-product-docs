@@ -4,16 +4,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verifique o estado de conformidade de seus clusters usando o recurso Scanner de Auditoria dentro de {project-name}, para garantir sua configuração adequada.
+:description: Verifique o estado de conformidade de seus clusters usando o recurso Scanner de Auditoria dentro de {admc-name}, para garantir sua configuração adequada.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "audit scanner"]
 :sidebar_label: Scanner de Auditoria
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-A partir da versão `v1.7.0`, {project-name} possui um novo recurso chamado "Scanner de Auditoria". Um novo componente, chamado "Scanner de Auditoria", verifica constantemente os recursos declarados no cluster, sinalizando aqueles que não estão em conformidade com as políticas {project-name} implantadas e salvando esses resultados em recursos customizados de relatório específicos.
+A partir da versão `v1.7.0`, {admc-name} possui um novo recurso chamado "Scanner de Auditoria". Um novo componente, chamado "Scanner de Auditoria", verifica constantemente os recursos declarados no cluster, sinalizando aqueles que não estão em conformidade com as políticas {admc-name} implantadas e salvando esses resultados em recursos customizados de relatório específicos.
 
 As políticas evoluem ao longo do tempo: você implanta novas políticas e atualiza as políticas existentes. Tanto a versão quanto as configurações mudam. Isso pode levar a situações em que recursos já no cluster não estão mais em conformidade.
 
@@ -23,7 +23,7 @@ O Scanner de Auditoria pode salvar seus resultados tanto em definições de recu
 
 == Instalação
 
-O componente Scanner de Auditoria está disponível desde {short-project-name} `v1.7.0`.
+O componente Scanner de Auditoria está disponível desde {admc-short-name} `v1.7.0`.
 Portanto, certifique-se de que está instalando o gráfico do Helm com a versão do app `v1.7.0` ou superior.
 
 . Instale o gráfico do Helm `kubewarden-crds`. O gráfico instala os CRDs necessários `PolicyReport` por padrão.
@@ -71,7 +71,7 @@ O Scanner de Auditoria está habilitado por padrão. Para desabilitá-lo, defina
 Se você quiser que o Scanner de Auditoria salve seus relatórios nos CRDs do PolicyReports (marcados como descontinuados) em vez dos CRDs padrão do OpenReports, defina `auditScanner.reportCRDsKind="policyreport"`.
 ====
 
-Para mais informações sobre a instalação de {short-project-name}, consulte o xref:quick-start.adoc[Guia de Início Rápido].
+Para mais informações sobre a instalação de {admc-short-name}, consulte o xref:quick-start.adoc[Guia de Início Rápido].
 
 Por padrão, a implementação do Scanner de Auditoria é como um https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob] acionado a cada 60 minutos. Você pode ajustar isso e outras configurações do Scanner de Auditoria alterando o gráfico do kubewarden-controller https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml].
 

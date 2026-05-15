@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verstehen Sie während der Bewertung die von der Hostumgebung für {project-name} Richtlinien angebotenen Hostfähigkeiten.
+:description: Verstehen Sie während der Bewertung die von der Hostumgebung für {admc-name} Richtlinien angebotenen Hostfähigkeiten.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["Richtlinien schreiben", "Spezifikation", "Hostfähigkeiten", "Einführung"]
 :doc-type: ["reference"]
@@ -11,19 +11,19 @@ include::partial$variables.adoc[]
 :sidebar_label: Spezifikation der Hostfähigkeiten
 :current-version: {page-origin-branch}
 
-Während der Bewertung können {project-name} Richtlinien auf zusätzliche Fähigkeiten zugreifen, die von der Hostumgebung angeboten werden.
+Während der Bewertung können {admc-name} Richtlinien auf zusätzliche Fähigkeiten zugreifen, die von der Hostumgebung angeboten werden.
 Dieser Mechanismus verwendet einen Ansatz, der dem traditionellen https://en.wikipedia.org/wiki/Remote_procedure_call[RPC] ähnlich ist.
 
-Das passiert, wenn eine Anfrage von einer {short-project-name} Richtlinie gestellt wird:
+Das passiert, wenn eine Anfrage von einer {admc-short-name} Richtlinie gestellt wird:
 
-* {short-project-name} Richtlinie:
+* {admc-short-name} Richtlinie:
  ** Ruft die von der Hostumgebung angebotene Fähigkeit auf.
  ** Der Aufruf ist eine blockierende Operation, daher wartet der Richtliniencode, bis der Host eine Antwort bereitstellt.
 * Hostumgebung:
  ** Ein Aufruf einer Fähigkeit wird empfangen.
  ** Der Host führt die Operation aus.
  ** Der Host gibt der Richtlinie eine Antwort, die entweder ein Erfolg oder ein Fehler sein kann.
-* {short-project-name} Richtlinie:
+* {admc-short-name} Richtlinie:
  ** Der Code erhält die Antwort vom Host und setzt die Ausführung fort.
  ** Die Antwort des Hosts wird entsprechend behandelt.
 

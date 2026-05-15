@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Actualiza tu {project-name} pila utilizando estrategias de versionado y reglas de compatibilidad entre sus componentes.
+:description: Actualiza tu {admc-name} pila utilizando estrategias de versionado y reglas de compatibilidad entre sus componentes.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["operator-manual", "upgrade-path"]
 :doc-type: ["reference"]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== {project-name} Versionado de la pila
+== {admc-name} Versionado de la pila
 
-El proyecto {short-project-name} utiliza https://semver.org/[Versionado semántico] para definir la versión de la "pila" de todos sus componentes: la versión sigue el patrón `MAJOR.MINOR.PATCH`. La versión soportada es la última versión publicada.
+El proyecto {admc-short-name} utiliza https://semver.org/[Versionado semántico] para definir la versión de la "pila" de todos sus componentes: la versión sigue el patrón `MAJOR.MINOR.PATCH`. La versión soportada es la última versión publicada.
 
-Los componentes {short-project-name} que siguen las reglas para la versión de la "pila" son:
+Los componentes {admc-short-name} que siguen las reglas para la versión de la "pila" son:
 
 * `kubewarden-crds` gráfico, en su campo appVersion.
 
@@ -36,7 +36,7 @@ Por lo tanto, si la versión `kubewarden-controller` en ejecución es `1.1.2`, l
 
 == Versiones de gráficos de Helm
 
-Los gráficos de Helm definen el campo `version` y el campo `appVersion`. El campo `appVersion` informa sobre la versión de la pila {short-project-name} mencionada anteriormente. El campo `version` también sigue https://semver.org/[versionado semántico] y describe los cambios compatibles con versiones anteriores en las plantillas de gráficos y `values.yaml`.
+Los gráficos de Helm definen el campo `version` y el campo `appVersion`. El campo `appVersion` informa sobre la versión de la pila {admc-short-name} mencionada anteriormente. El campo `version` también sigue https://semver.org/[versionado semántico] y describe los cambios compatibles con versiones anteriores en las plantillas de gráficos y `values.yaml`.
 
 == Opciones de actualización
 
@@ -49,16 +49,16 @@ include::latest@shared:en:partial$upg-path.adoc[]
 
 == Orden de actualizar versión
 
-Los usuarios {short-project-name} deben actualizar la pila comenzando con el gráfico `kubewarden-crds`, luego con el gráfico `kubewarden-controller`. Después de eso, actualiza el `policy-server` (a través del gráfico `kubewarden-defaults` o actualizando las imágenes de los personalizados) y `kwctl`.
+Los usuarios {admc-short-name} deben actualizar la pila comenzando con el gráfico `kubewarden-crds`, luego con el gráfico `kubewarden-controller`. Después de eso, actualiza el `policy-server` (a través del gráfico `kubewarden-defaults` o actualizando las imágenes de los personalizados) y `kwctl`.
 
 == Degradaciones
 
-Las degradaciones *no* están soportadas, y {short-project-name} no las prueba. No obstante, hay una expectativa razonable de que deberían funcionar.
+Las degradaciones *no* están soportadas, y {admc-short-name} no las prueba. No obstante, hay una expectativa razonable de que deberían funcionar.
 
 == SDKs, directivas
 
-Los SDKs de directivas para los diferentes lenguajes y directivas mantenidos por el equipo {short-project-name} siguen su propio versionado semántico. {short-project-name} soporta la última versión. No hay necesidad de una vía de actualizar versión para ellos, solo un salto a la última versión.
+Los SDKs de directivas para los diferentes lenguajes y directivas mantenidos por el equipo {admc-short-name} siguen su propio versionado semántico. {admc-short-name} soporta la última versión. No hay necesidad de una vía de actualizar versión para ellos, solo un salto a la última versión.
 
-Los cambios en la pila {short-project-name} pueden significar que las directivas y los SDKs reciban actualizaciones para utilizar las últimas características de {short-project-name}. {short-project-name} se encarga de realizar estas actualizaciones de manera compatible con versiones anteriores.
+Los cambios en la pila {admc-short-name} pueden significar que las directivas y los SDKs reciban actualizaciones para utilizar las últimas características de {admc-short-name}. {admc-short-name} se encarga de realizar estas actualizaciones de manera compatible con versiones anteriores.
 
-Por ejemplo, una versión menor de {short-project-name} que añade soporte para el Escáner de Auditoría (`v1.7.0`) significa que las directivas ganaron un nuevo campo `spec.backgroundAudit`. Esto es opcional, compatible con versiones anteriores y se establece en `true` por defecto.
+Por ejemplo, una versión menor de {admc-short-name} que añade soporte para el Escáner de Auditoría (`v1.7.0`) significa que las directivas ganaron un nuevo campo `spec.backgroundAudit`. Esto es opcional, compatible con versiones anteriores y se establece en `true` por defecto.

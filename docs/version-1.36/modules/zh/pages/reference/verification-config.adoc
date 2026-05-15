@@ -31,7 +31,7 @@ include::partial$variables.adoc[]
 这两个根密钥接受类型为 `kind` 的密钥数组。根据不同用例接受的密钥的完整列表如下：
 
 * `pubKey`：对于使用传统公钥/私钥密码学进行的签名。
-* `githubAction`：对于在 GitHub Actions 中使用 Sigstore 的无密钥工作流进行的签名。{short-project-name} 将此信息与由 GitHub 的 OpenID Connect 创建的 x509 证书扩展 `workflow_repository` 进行检查，而不仅仅是 `issuer` 和 `subject`。如果处理 GitHub Actions，您应使用此 `kind`。
+* `githubAction`：对于在 GitHub Actions 中使用 Sigstore 的无密钥工作流进行的签名。{admc-short-name} 将此信息与由 GitHub 的 OpenID Connect 创建的 x509 证书扩展 `workflow_repository` 进行检查，而不仅仅是 `issuer` 和 `subject`。如果处理 GitHub Actions，您应使用此 `kind`。
 * `genericIssuer`：对于使用 Sigstore 的无密钥工作流进行的签名，用户需要自行验证证书 `issuer` 和 `subject`。它接受一个 `subject`，可以是：
 
 ** `equal`：此处传递的值必须与签名证书中的 `subject` 完全匹配。
@@ -225,7 +225,7 @@ anyOf: # at least `+anyOf.minimumMatches+` are required to match
 所有签名类型都可以有其他可选的验证字段，`annotations`。
 这些字段是在签署过程中添加的键/值数据。
 
-使用{short-project-name}，您可以验证策略签名是否来自受信任的用户*和*并具有特定的注释。
+使用{admc-short-name}，您可以验证策略签名是否来自受信任的用户*和*并具有特定的注释。
 
 下一个验证检查策略的两个条件：
 
@@ -264,7 +264,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-最后这个例子测试给定策略是否来自{short-project-name}组织：
+最后这个例子测试给定策略是否来自{admc-short-name}组织：
 
 [subs="+attributes",console]
 ----

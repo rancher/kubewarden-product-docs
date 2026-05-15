@@ -31,7 +31,7 @@ La configuración tiene 2 claves raíz:
 Estas dos claves raíz aceptan un array de claves de tipo `kind`. Una lista completa de claves aceptadas según diferentes casos de uso se encuentra a continuación:
 
 * `pubKey`: Para firmas realizadas con criptografía tradicional de clave pública/privada.
-* `githubAction`: Para firmas realizadas con el flujo de trabajo sin clave de Sigstore dentro de GitHub Actions. {short-project-name} verifica esta información contra la extensión del certificado x509 `workflow_repository` creada por el OpenID Connect de GitHub, y no solo contra el `issuer` y el `subject`. Deberías utilizar este `kind` si trabajas con GitHub Actions.
+* `githubAction`: Para firmas realizadas con el flujo de trabajo sin clave de Sigstore dentro de GitHub Actions. {admc-short-name} verifica esta información contra la extensión del certificado x509 `workflow_repository` creada por el OpenID Connect de GitHub, y no solo contra el `issuer` y el `subject`. Deberías utilizar este `kind` si trabajas con GitHub Actions.
 * `genericIssuer`: Para firmas realizadas con el flujo de trabajo sin clave de Sigstore, donde el usuario necesita validar el certificado `issuer` y `subject` por su cuenta. Acepta un `subject`, que puede ser:
 
 ** `equal`: El valor pasado aquí debe coincidir exactamente con el `subject` en el certificado de firma.
@@ -225,7 +225,7 @@ Por ejemplo, el último fragmento, utilizando `genericIssuer`, podría reescribi
 Todos los tipos de firma pueden tener otros campos de validación opcionales, `annotations`.
 Estos campos son datos clave/valor añadidos durante el proceso de firma.
 
-Con {short-project-name}, puedes verificar que las firmas de directivas provienen de usuarios de confianza *y* tienen anotaciones específicas.
+Con {admc-short-name}, puedes verificar que las firmas de directivas provienen de usuarios de confianza *y* tienen anotaciones específicas.
 
 La siguiente validación comprueba dos condiciones para la directiva:
 
@@ -265,7 +265,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-Este último ejemplo prueba si una directiva dada provino de la organización {short-project-name}:
+Este último ejemplo prueba si una directiva dada provino de la organización {admc-short-name}:
 
 [subs="+attributes",console]
 ----

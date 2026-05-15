@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Write the validation logic for Kubernetes resources in the src/index.ts file, accessing the incoming request data to return a response.
-:keywords: "{project-name}", kubewarden, kubernetes, writing policies, typescript
+:keywords: "{admc-name}", kubewarden, kubernetes, writing policies, typescript
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, writing-policies, typescript, validation-logic
+:doc-topic: {admc-name}, kubewarden, writing-policies, typescript, validation-logic
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Critical: Don't write logging information to STDOUT.
 
-Writing to STDOUT breaks policies. Instead, use STDERR for logging or the logging facility provided by the {project-name} SDK. The policy's output to STDOUT must only contain the validation response.
+Writing to STDOUT breaks policies. Instead, use STDERR for logging or the logging facility provided by the {admc-name} SDK. The policy's output to STDOUT must only contain the validation response.
 ====
 
 The validation logic goes in the `src/index.ts` file.
@@ -25,7 +25,7 @@ Your validation logic needs to:
 * Return a response based on the input and the policy settings.
 
 The incoming request contains a JSON object with the Kubernetes resource to validate.
-You can access this JSON object data through the {short-project-name} SDK's helper functions.
+You can access this JSON object data through the {admc-short-name} SDK's helper functions.
 
 == The `validate` function
 
@@ -174,4 +174,4 @@ switch (action) {
 }
 ----
 
-The {short-project-name} Javy plug-in provides the `policyAction()` function indicating whether the policy should validate a resource or validate its settings.
+The {admc-short-name} Javy plug-in provides the `policyAction()` function indicating whether the policy should validate a resource or validate its settings.

@@ -1,13 +1,13 @@
 include::partial$variables.adoc[]
-= Utiliser l'admission de sécurité des pods avec {project-name}
+= Utiliser l'admission de sécurité des pods avec {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurer l'admission de sécurité des pods dans un cluster Kubernetes avec {project-name} pour sécuriser les pods.
+:description: Configurer l'admission de sécurité des pods dans un cluster Kubernetes avec {admc-name} pour sécuriser les pods.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-admission-with-kubewarden"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "admission de sécurité des pods", "politique de sécurité des pods", "kubernetes"]
+:keywords: ["{admc-name}", "kubewarden", "admission de sécurité des pods", "politique de sécurité des pods", "kubernetes"]
 :sidebar_label: Admission de sécurité des pods
 :sidebar_position: 30
 :current-version: {page-origin-branch}
@@ -32,13 +32,13 @@ Au moment de la rédaction, avec Kubernetes 1.28, le contrôleur PSA a les limit
 * Pas de capacités de mutation
 * Les objets de niveau supérieur (comme `Deployment`, `Job`) ne sont évalués que lorsque les modes `audit` ou `warn` sont activés.
 
-{short-project-name} peut être utilisé pour *intégrer* un profil PSA afin d'éviter ces limitations.
+{admc-short-name} peut être utilisé pour *intégrer* un profil PSA afin d'éviter ces limitations.
 
 [NOTE]
 ====
 
-Vous pourriez utiliser {short-project-name} pour remplacer l'ancienne configuration PSP comme indiqué dans xref:howtos/psp-migration.adoc[migration PSP].
-Cependant, l'objectif de cet article est de montrer comment {short-project-name} peut compléter le nouveau PSA.
+Vous pourriez utiliser {admc-short-name} pour remplacer l'ancienne configuration PSP comme indiqué dans xref:howtos/psp-migration.adoc[migration PSP].
+Cependant, l'objectif de cet article est de montrer comment {admc-short-name} peut compléter le nouveau PSA.
 ====
 
 
@@ -200,14 +200,14 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-h4bx7 -o json | jq 
 ]
 ----
 
-C'est ici que {short-project-name} peut aider.
+C'est ici que {admc-short-name} peut aider.
 Vous pouvez utiliser la stratégie https://artifacthub.io/packages/kubewarden/user-group-psp/user-group-psp[`user-group-policy`] pour modifier la définition du déploiement.
 Cela configure un utilisateur par défaut pour les conteneurs en omettant cette information.
 
 [NOTE]
 ====
 
-Vous avez besoin de la pile {short-project-name} dans le cluster Kubernetes pour cet exemple.
+Vous avez besoin de la pile {admc-short-name} dans le cluster Kubernetes pour cet exemple.
 Voir le xref:quick-start.adoc[QuickStart] pour plus de détails.
 ====
 
@@ -306,7 +306,7 @@ EOF
 
 ======
 
-Maintenant, le déploiement est modifié par la stratégie de {short-project-name} qui permet au Pod de démarrer.
+Maintenant, le déploiement est modifié par la stratégie de {admc-short-name} qui permet au Pod de démarrer.
 Le conteneur défini à l'intérieur du Pod a une valeur par défaut de `runAsUser` :
 
 [subs="+attributes",shell]
@@ -327,10 +327,10 @@ kubectl get pods -n my-namespace nginx-deployment-57d8568bbb-nv8fj -o json | jq 
 }
 ----
 
-L'intégration {short-project-name} peut faire plus dans ce scénario.
+L'intégration {admc-short-name} peut faire plus dans ce scénario.
 Elle peut vérifier la valeur du `runAsUser` fourni.
 
-Cette ressource est rejetée par la stratégie {short-project-name} mentionnée précédemment :
+Cette ressource est rejetée par la stratégie {admc-short-name} mentionnée précédemment :
 
 .Commande kubectl pour montrer le rejet de la ressource
 [%collapsible]
@@ -394,4 +394,4 @@ kubectl get deploy -n my-namespace nginx-deployment -o json | jq ".status.condit
 PSA fournit un moyen facile de sécuriser les clusters Kubernetes.
 L'objectif principal de PSA est la simplicité et il n'a pas la puissance et la flexibilité de l'ancien PSP.
 
-Utiliser {short-project-name} avec PSA aide à combler cette lacune.
+Utiliser {admc-short-name} avec PSA aide à combler cette lacune.

@@ -3,14 +3,14 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie das Monitoring für Rancher-Umgebungen, indem Sie mit dem {project-name} und Prometheus integrieren.
+:description: Konfigurieren Sie das Monitoring für Rancher-Umgebungen, indem Sie mit dem {admc-name} und Prometheus integrieren.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "Benutzeroberflächen-Erweiterung", "metriken", "monitoring"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "Benutzeroberflächen-Erweiterung", "metriken", "monitoring"]
 :current-version: {page-origin-branch}
 
-Rancher verfügt über ein Cluster-Tool für das Monitoring, das Grafana und Prometheus verwendet. Sie können dieses Tool verwenden, indem Sie es mit {project-name} integrieren, um die Gesamtmetriken für einen Policy Server oder die Metriken für eine bestimmte Richtlinie anzuzeigen.
+Rancher verfügt über ein Cluster-Tool für das Monitoring, das Grafana und Prometheus verwendet. Sie können dieses Tool verwenden, indem Sie es mit {admc-name} integrieren, um die Gesamtmetriken für einen Policy Server oder die Metriken für eine bestimmte Richtlinie anzuzeigen.
 
 [CAUTION]
 ====
@@ -29,7 +29,7 @@ Sie benötigen den Prometheus Operator. Befolgen Sie xref:howtos/telemetry/30-me
 === Erstellen Sie die ServiceMonitors.
 
 * Importieren Sie das Manifest, um die ServiceMonitors zu erstellen.
-* Sie müssen den {short-project-name} Installationsnamespace angeben.
+* Sie müssen den {admc-short-name} Installationsnamespace angeben.
 
 Diese Schritte sind eine Anpassung der xref:howtos/telemetry/30-metrics-qs.adoc[Anweisungen zu Telemetrie-Metriken].
 
@@ -108,4 +108,4 @@ In der Detailansicht für einen Policy Server oder eine spezifische Richtlinie:
 * Befolgen Sie die Aufforderung zur Erstellung des ConfigMap.
 * Laden Sie die Seite neu, um die Grafana-Ansicht zu aktualisieren (Grafana kann bei der Bestätigung des neuen Dashboards langsam reagieren).
 
-Sie sollten in der Lage sein, die Metriken für einen Policy Server oder eine bestimmte Richtlinie auf der Detailseite der jeweiligen Ressource anzuzeigen. Sie können auch die {short-project-name} Dashboards innerhalb der Grafana-Benutzeroberfläche oder die Ereignisse aus der Prometheus-Benutzeroberfläche anzeigen.
+Sie sollten in der Lage sein, die Metriken für einen Policy Server oder eine bestimmte Richtlinie auf der Detailseite der jeweiligen Ressource anzuzeigen. Sie können auch die {admc-short-name} Dashboards innerhalb der Grafana-Benutzeroberfläche oder die Ereignisse aus der Prometheus-Benutzeroberfläche anzeigen.

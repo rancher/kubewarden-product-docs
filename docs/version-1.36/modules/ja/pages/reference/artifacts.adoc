@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
-:title: {project-name} アーティファクト
-:description: {project-name} アーティファクトを確認し、関連するバイナリやHelmチャートにアクセスして、効率的なセキュリティ管理を行います。
+:title: {admc-name} アーティファクト
+:description: {admc-name} アーティファクトを確認し、関連するバイナリやHelmチャートにアクセスして、効率的なセキュリティ管理を行います。
 :keywords: [アーティファクト, サポート, エアギャップ, 画像]
 :doc-persona: [kubewarden-operator]
 :doc-type: [リファレンス]
@@ -11,10 +11,10 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 
-== {project-name} 確認中
+== {admc-name} 確認中
 
 xref:/tutorials/verifying-kubewarden.adoc[verifying
-{short-project-name}]を示すチュートリアルがあり、{short-project-name} アーティファクトを確認する方法を説明しています。
+{admc-short-name}]を示すチュートリアルがあり、{admc-short-name} アーティファクトを確認する方法を説明しています。
 
 == バイナリ
 
@@ -31,4 +31,4 @@ Open Container Initiative (OCI) アーティファクトについて、プロジ
 
 == HTTPS経由のHelmチャート
 
-{short-project-name}は、https://charts.kubewarden.io.のHelmチャートHTTPSリポジトリにHelmチャートを公開します。SLSAや署名はありませんが、このタイプのHelmリポジトリは検索機能を提供します。
+{admc-short-name}は、https://charts.kubewarden.io.のHelmチャートHTTPSリポジトリにHelmチャートを公開します。SLSAや署名はありませんが、このタイプのHelmリポジトリは検索機能を提供します。

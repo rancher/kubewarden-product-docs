@@ -4,15 +4,15 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurez un registre privé avec {project-name} des images et des stratégies pour installer {project-name} dans un environnement isolé physiquement.
+:description: Configurez un registre privé avec {admc-name} des images et des stratégies pour installer {admc-name} dans un environnement isolé physiquement.
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
 :doc-topic: [“manuel-opérateur”, “isolation physique”, “installation”]
 :doc-type: [“howto”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “installation en isolation physique”]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “installation en isolation physique”]
 :current-version: {page-origin-branch}
 
-Pour une installation en isolation physique de {project-name}, vous avez besoin d'un registre Open Container Initiative (OCI) privé accessible par votre cluster Kubernetes.
-Les stratégies {short-project-name} sont des modules WebAssembly, vous pouvez donc les stocker dans un registre conforme à l'OCI en tant qu'artefacts OCI. Vous devez ajouter les images et les stratégies de {short-project-name} à ce registre OCI. Vous pouvez consulter une liste des artefacts {short-project-name} sur la page xref:/reference/artifacts.adoc[Référence des artefacts]. Les sections suivantes décrivent le processus.
+Pour une installation en isolation physique de {admc-name}, vous avez besoin d'un registre Open Container Initiative (OCI) privé accessible par votre cluster Kubernetes.
+Les stratégies {admc-short-name} sont des modules WebAssembly, vous pouvez donc les stocker dans un registre conforme à l'OCI en tant qu'artefacts OCI. Vous devez ajouter les images et les stratégies de {admc-short-name} à ce registre OCI. Vous pouvez consulter une liste des artefacts {admc-short-name} sur la page xref:/reference/artifacts.adoc[Référence des artefacts]. Les sections suivantes décrivent le processus.
 
 [NOTE]
 ====
@@ -63,7 +63,7 @@ cat */imagelist.txt > kubewarden-images.txt
 ----
 
 . Téléchargez `kubewarden-save-images.sh` et `kubewarden-load-images.sh` depuis le https://github.com/kubewarden/utils[dépôt des utilitaires].
-. Enregistrez les images de conteneurs {short-project-name} dans un fichier `.tar.gz` :
+. Enregistrez les images de conteneurs {admc-short-name} dans un fichier `.tar.gz` :
 +
 [,shell]
 ----
@@ -83,7 +83,7 @@ Docker commence à télécharger les images utilisées pour une installation en 
 cat */policylist.txt > policies.txt
 ----
 +
-Un fichier contenant une liste de stratégies par défaut se trouve dans les {short-project-name} https://github.com/kubewarden/helm-charts/releases/[page de version].
+Un fichier contenant une liste de stratégies par défaut se trouve dans les {admc-short-name} https://github.com/kubewarden/helm-charts/releases/[page de version].
 
 . Téléchargez `kubewarden-save-policies.sh` et `kubewarden-load-policies.sh` depuis le https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller` dépôt].
 
@@ -118,7 +118,7 @@ Déplacez ces fichiers vers un environnement isolé physiquement :
 * `kubewarden-load-policies.sh` et
 * `policies.txt`
 
-. Chargez les images {short-project-name} dans le registre privé. Vous devez authentifier le client Docker contre le registre local.
+. Chargez les images {admc-short-name} dans le registre privé. Vous devez authentifier le client Docker contre le registre local.
 +
 [,shell]
 ----
@@ -128,7 +128,7 @@ Déplacez ces fichiers vers un environnement isolé physiquement :
    --registry <REGISTRY.YOURDOMAIN.COM:PORT>
 ----
 
-. Chargez {short-project-name} stratégies dans le registre privé. Vous devez vous authentifier `kwctl` dans le registre local (`kwctl` utilise le même mécanisme d'authentification que `docker`, un fichier `~/.docker/config.json`)
+. Chargez {admc-short-name} stratégies dans le registre privé. Vous devez vous authentifier `kwctl` dans le registre local (`kwctl` utilise le même mécanisme d'authentification que `docker`, un fichier `~/.docker/config.json`)
 +
 [,shell]
 ----
@@ -153,11 +153,11 @@ Référez-vous à xref:howtos/custom-certificate-authorities.adoc[la section sur
 ====
 
 
-== Installez {short-project-name}
+== Installez {admc-short-name}
 
-Maintenant que votre registre privé a tout ce qu'il faut, vous pouvez installer {short-project-name}. La seule différence avec une installation standard de {short-project-name} est que vous devez modifier le registre dans les images de conteneurs et les stratégies pour qu'il soit le registre privé.
+Maintenant que votre registre privé a tout ce qu'il faut, vous pouvez installer {admc-short-name}. La seule différence avec une installation standard de {admc-short-name} est que vous devez modifier le registre dans les images de conteneurs et les stratégies pour qu'il soit le registre privé.
 
-Installez le stack {short-project-name} :
+Installez le stack {admc-short-name} :
 
 [,shell]
 ----
@@ -223,7 +223,7 @@ Si la configuration `recommendedPolicies.defaultPoliciesRegistry` n'est pas déf
 
 Enfin, vous devez configurer le serveur de stratégies pour récupérer les stratégies de votre registre privé. Veuillez vous référer à la section de la documentation xref:howtos/policy-servers/02-private-registry.adoc[utilisant un registre privé].
 
-Vous pouvez maintenant créer {short-project-name} stratégies dans votre cluster. Les stratégies doivent être disponibles dans votre registre privé.
+Vous pouvez maintenant créer {admc-short-name} stratégies dans votre cluster. Les stratégies doivent être disponibles dans votre registre privé.
 
 [,console]
 ----

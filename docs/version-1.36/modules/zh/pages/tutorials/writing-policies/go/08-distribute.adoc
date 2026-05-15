@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 了解如何分发策略并获取与{project-name}相关的信息，包括配置细节。
+:description: 了解如何分发策略并获取与{admc-name}相关的信息，包括配置细节。
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]
@@ -19,4 +19,4 @@ include::partial$variables.adoc[]
 在分发策略时没有特别需要做的事情。
 如果你遵循本指南，你已经使用上一章中定义的 GitHub `release.yml` 操作发布了你的策略。
 
-分发策略的主题在{project-name}的文档的xref:/explanations/distributing-policies.adoc["分发策略"]部分中有更深入的讨论。
+分发策略的主题在{admc-name}的文档的xref:/explanations/distributing-policies.adoc["分发策略"]部分中有更深入的讨论。

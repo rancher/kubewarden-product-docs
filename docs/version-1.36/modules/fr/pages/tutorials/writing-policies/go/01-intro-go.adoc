@@ -21,7 +21,7 @@ Cette page a été révisée pour la dernière fois en décembre 2023.
 
 Le compilateur Go officiel peut produire des binaires WebAssembly, pour une exécution en dehors d'un navigateur, depuis la version v1.21.
 
-Il existe un autre compilateur Go qui peut construire des binaires WebAssembly utilisables par {project-name}.
+Il existe un autre compilateur Go qui peut construire des binaires WebAssembly utilisables par {admc-name}.
 Ce projet de compilateur est https://tinygo.org/[TinyGo]:
 
 ____
@@ -33,7 +33,7 @@ TinyGo peut également produire du code WebAssembly (Wasm) qui est très compact
 Vous pouvez compiler des programmes pour les navigateurs web, ainsi que pour les environnements de calcul serveur et edge computing qui prennent en charge la famille d'interfaces WebAssembly System Interface (WASI).
 ____
 
-Le projet {short-project-name} suggère actuellement d'utiliser TinyGo pour deux raisons :
+Le projet {admc-short-name} suggère actuellement d'utiliser TinyGo pour deux raisons :
 
 * les binaires sont plus petits
 * support pour https://wapc.io[waPC] grâce à la capacité d'exporter des fonctions vers le composant d'exécution
@@ -44,13 +44,13 @@ TinyGo ne prend pas encore en charge toutes les fonctionnalités de Go, consulte
 Actuellement, sa plus grande limitation est l'absence d'un paquet `reflect` entièrement pris en charge.
 Cela signifie que les types d'API Go Kubernetes officiels (par exemple : `k8s.io/api/core/v1`) ne se compilent pas.
 
-Les stratégies {short-project-name} doivent traiter des données JSON telles que les paramètres de stratégie et la demande reçue par Kubernetes.
+Les stratégies {admc-short-name} doivent traiter des données JSON telles que les paramètres de stratégie et la demande reçue par Kubernetes.
 
-Malgré les limitations actuelles de TinyGo, il est toujours facile d'écrire des stratégies de validation {short-project-name} avec cet outil.
+Malgré les limitations actuelles de TinyGo, il est toujours facile d'écrire des stratégies de validation {admc-short-name} avec cet outil.
 
 == Outils
 
-L'écriture de stratégies {short-project-name} nécessite une version de TinyGo supérieure à `v0.28.1`.
+L'écriture de stratégies {admc-short-name} nécessite une version de TinyGo supérieure à `v0.28.1`.
 Cependant, utilisez la dernière version pour obtenir les meilleurs résultats.
 
 [CAUTION]
@@ -59,9 +59,9 @@ L'utilisation de versions plus anciennes de TinyGo entraîne des erreurs d'exéc
 ====
 
 
-Ces bibliothèques Go sont utiles lors de l'écriture d'une stratégie {short-project-name} :
+Ces bibliothèques Go sont utiles lors de l'écriture d'une stratégie {admc-short-name} :
 
-* https://github.com/kubewarden/policy-sdk-go[{short-project-name} SDK Go] :
+* https://github.com/kubewarden/policy-sdk-go[{admc-short-name} SDK Go] :
 Fournit des structures et des fonctions réduisant la quantité de code nécessaire.
 Elle fournit également des helpers de test.
 * https://github.com/kubewarden/k8s-objects[types Go Kubernetes] :
@@ -72,9 +72,9 @@ Cela fournit un langage de requête pour une navigation rapide dans les document
 Cette bibliothèque n'utilise pas le paquet `encoding/json` fourni par le `stdlib` de Go, donc elle est utilisable avec TinyGo.
 * https://github.com/deckarep/golang-set[mapset] :
 Fournit une implémentation Go de la structure de données https://en.wikipedia.org/wiki/Set_(abstract_data_type)[Set].
-Cette bibliothèque réduit la quantité de code à écrire, car des opérations telles que Set `union`, `intersection`, `difference` sont des opérations courantes dans les stratégies {short-project-name}.
+Cette bibliothèque réduit la quantité de code à écrire, car des opérations telles que Set `union`, `intersection`, `difference` sont des opérations courantes dans les stratégies {admc-short-name}.
 
-Enfin, le projet {short-project-name} fournit un https://github.com/kubewarden/go-policy-template[projet de stratégie Go template] que vous pouvez utiliser pour créer des stratégies Go {short-project-name}.
+Enfin, le projet {admc-short-name} fournit un https://github.com/kubewarden/go-policy-template[projet de stratégie Go template] que vous pouvez utiliser pour créer des stratégies Go {admc-short-name}.
 
 == Obtenir les dépendances de TinyGo
 
@@ -91,5 +91,5 @@ Au cours de ce tutoriel, vous aurez besoin de ces outils sur votre machine de d�
 Vous utiliserez le compilateur fourni avec l'image de conteneur officielle TinyGo.
 * https://github.com/bats-core/bats-core[bats] : utilisé pour écrire les tests et automatiser leur exécution.
 * https://github.com/kubewarden/kwctl/releases[`kwctl`] :
-Outil CLI fourni par {short-project-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions.
+Outil CLI fourni par {admc-short-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions.
 C'est couvert dans xref:tutorials/testing-policies/index.adoc[cette section] de la documentation.

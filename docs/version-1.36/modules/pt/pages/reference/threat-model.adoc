@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 80
 :current-version: {page-origin-branch}
 
-O https://github.com/kubernetes/community/tree/master/sig-security[Grupo de Interesse Especial (SIG) de Segurança do Kubernetes] definiu um Modelo de Ameaça de Controle de Admissão para o Kubernetes. A equipe {project-name} avalia continuamente {short-project-name} em relação a este modelo de ameaça e trabalha para fornecer padrões seguros. Recomenda-se que os administradores {short-project-name} leiam e entendam o modelo de ameaça e o utilizem para elaborar seu próprio modelo de ameaça específico para a circunstância, conforme necessário.
+O https://github.com/kubernetes/community/tree/master/sig-security[Grupo de Interesse Especial (SIG) de Segurança do Kubernetes] definiu um Modelo de Ameaça de Controle de Admissão para o Kubernetes. A equipe {admc-name} avalia continuamente {admc-short-name} em relação a este modelo de ameaça e trabalha para fornecer padrões seguros. Recomenda-se que os administradores {admc-short-name} leiam e entendam o modelo de ameaça e o utilizem para elaborar seu próprio modelo de ameaça específico para a circunstância, conforme necessário.
 
 Detalhes sobre cada ameaça estão no https://github.com/kubernetes/sig-security/tree/main/sig-security-docs/papers/admission-control[documento publicado pelo SIG de Segurança].
 
@@ -27,10 +27,10 @@ Um atacante que tem acesso ao endpoint do Webhook, no nível da rede, pode envia
 ==== Mitigação
 
 O webhook falha de forma fechada. Se o webhook não responder a tempo, por qualquer motivo, o servidor API deve rejeitar a solicitação.
-Esse é o comportamento padrão de {short-project-name}.
+Esse é o comportamento padrão de {admc-short-name}.
 
-Falha fechada significa que, se, por qualquer motivo, {short-project-name} parar de responder ou travar, o servidor API rejeita a solicitação por padrão.
-Mesmo que a solicitação seja normalmente aceita por {short-project-name}.
+Falha fechada significa que, se, por qualquer motivo, {admc-short-name} parar de responder ou travar, o servidor API rejeita a solicitação por padrão.
+Mesmo que a solicitação seja normalmente aceita por {admc-short-name}.
 
 === Ameaça 2 - Atacante passa cargas de trabalho que requerem processamento complexo, causando timeouts.
 
@@ -41,7 +41,7 @@ Um atacante, que pode acessar o controlador de admissão em um nível de rede, e
 ==== Mitigação
 
 O webhook falha de forma fechada e autentica os chamadores.
-Esse é o comportamento padrão de {short-project-name}.
+Esse é o comportamento padrão de {admc-short-name}.
 
 === Ameaça 3 - Atacante explora a má configuração do webhook para contornar
 
@@ -65,7 +65,7 @@ Os direitos do RBAC devem ser rigorosamente controlados.
 
 ==== A fazer
 
-A maior parte do RBAC não está dentro do escopo da discussão atual. No entanto, o seguinte está por vir, para ajudar os usuários {short-project-name}:
+A maior parte do RBAC não está dentro do escopo da discussão atual. No entanto, o seguinte está por vir, para ajudar os usuários {admc-short-name}:
 
 * Diretrizes sobre o mínimo de RBAC a ser implementado.
 * Provisionamento e documentação de uma política que detecta e pode bloquear alterações no RBAC.
@@ -79,7 +79,7 @@ Um atacante ganha acesso a credenciais de cliente válidas para o webhook do con
 ==== Mitigação
 
 O webhook falha de forma fechada.
-Esse é o comportamento padrão de {short-project-name}.
+Esse é o comportamento padrão de {admc-short-name}.
 
 === Ameaça 6 - Atacante ganha acesso a uma credencial de administrador do cluster
 
@@ -99,7 +99,7 @@ Um atacante que tem acesso à rede de contêineres é capaz de espionar o tráfe
 
 ==== Mitigação
 
-Como o webhook utiliza criptografia TLS para todo o tráfego, {short-project-name} é seguro.
+Como o webhook utiliza criptografia TLS para todo o tráfego, {admc-short-name} é seguro.
 
 === Ameaça 8 - O atacante realiza um ataque MITM no webhook
 
@@ -109,7 +109,7 @@ Um atacante na rede do contêiner, que tem acesso à capacidade NET_RAW, pode te
 
 ==== Mitigação
 
-Configure o cluster com autenticação mTLS para os Webhooks e ative o recurso mTLS na pilha {short-project-name}. Alternativamente, configure o mTLS usando um CNI que suporte Políticas de Rede. Consulte xref:/reference/security-hardening/webhooks-hardening.adoc["Webhooks seguros com TLS mútuo"] para mais informações.
+Configure o cluster com autenticação mTLS para os Webhooks e ative o recurso mTLS na pilha {admc-short-name}. Alternativamente, configure o mTLS usando um CNI que suporte Políticas de Rede. Consulte xref:/reference/security-hardening/webhooks-hardening.adoc["Webhooks seguros com TLS mútuo"] para mais informações.
 
 Use a política https://artifacthub.io/packages/kubewarden/capabilities-psp/capabilities-psp[capabilities-psp] e configure-a para remover as capacidades NET_RAW.
 
@@ -121,7 +121,7 @@ Um atacante é capaz de redirecionar o tráfego do servidor da API pretendido, p
 
 ==== Mitigação
 
-Configure o cluster com autenticação mTLS para os Webhooks e ative o recurso mTLS na pilha {short-project-name}. Alternativamente, configure o mTLS usando um CNI que suporte Políticas de Rede. Consulte xref:/reference/security-hardening/webhooks-hardening.adoc["Webhooks seguros com TLS mútuo"] para mais informações.
+Configure o cluster com autenticação mTLS para os Webhooks e ative o recurso mTLS na pilha {admc-short-name}. Alternativamente, configure o mTLS usando um CNI que suporte Políticas de Rede. Consulte xref:/reference/security-hardening/webhooks-hardening.adoc["Webhooks seguros com TLS mútuo"] para mais informações.
 
 === Ameaça 10 - Abusando de uma regra de mutação para criar um contêiner privilegiado
 
@@ -145,7 +145,7 @@ Os direitos RBAC são estritamente controlados
 
 ==== A fazer
 
-A maior parte do RBAC está fora do escopo em relação a esta decisão. No entanto, a equipe {short-project-name} tem como objetivo:
+A maior parte do RBAC está fora do escopo em relação a esta decisão. No entanto, a equipe {admc-short-name} tem como objetivo:
 
 * Avisar os usuários por meio de nossa documentação e _sugerir_ o mínimo de RBAC a ser utilizado.
 * Fornecer uma política que detecte mudanças no RBAC e *talvez* bloqueie-as.
@@ -223,28 +223,28 @@ Um atacante é capaz de configurar uma política que escuta solicitações de ad
 
 ==== Mitigação
 
-* Configure o cluster com autenticação mTLS para os Webhooks e ative o recurso mTLS na pilha {short-project-name}. Alternativamente, configure o mTLS usando um CNI que suporte Políticas de Rede.
+* Configure o cluster com autenticação mTLS para os Webhooks e ative o recurso mTLS na pilha {admc-short-name}. Alternativamente, configure o mTLS usando um CNI que suporte Políticas de Rede.
 
-* Por padrão, as políticas do {short-project-name} não têm acesso à rede e operam em um ambiente restritivo, controlando estritamente o acesso externo aos Webhooks.
+* Por padrão, as políticas do {admc-short-name} não têm acesso à rede e operam em um ambiente restritivo, controlando estritamente o acesso externo aos Webhooks.
 
-== {short-project-name} Ameaças
+== {admc-short-name} Ameaças
 
-=== {short-project-name} Ameaça 1 - Inicialização da confiança para o controlador de admissão
+=== {admc-short-name} Ameaça 1 - Inicialização da confiança para o controlador de admissão
 
 ==== Cenário
 
-Assumindo um cluster Kubernetes confiável, mas novo, um atacante é capaz de comprometer a pilha {short-project-name} antes da implantação e da aplicação de qualquer uma das políticas de proteção.
+Assumindo um cluster Kubernetes confiável, mas novo, um atacante é capaz de comprometer a pilha {admc-short-name} antes da implantação e da aplicação de qualquer uma das políticas de proteção.
 
 Por exemplo, por:
 
 * usar imagens não assinadas e maliciosas para:
- ** {short-project-name}-controlador
+ ** {admc-short-name}-controlador
  ** servidor-de-política
- ** qualquer uma das {short-project-name} dependências
+ ** qualquer uma das {admc-short-name} dependências
  ** quaisquer dependências opcionais (Grafana, Prometheus e outras)
 * comprometendo a carga útil dos Helm charts
 
 ==== Mitigação
 
-. {short-project-name} fornece um Software Bill Of Materials, que lista todas as imagens necessárias. Isso ajuda com Zero-Trust. O Administrador do Kubernetes deve verificar {short-project-name} as imagens, as imagens de suas dependências e os charts fora do cluster Kubernetes, em um ambiente confiável. Você pode fazer isso com `cosign`, por exemplo. A propósito, isso faz parte da implementação necessária para instalações air-gapped.
-. Use Helm charts assinados e digests verificados em vez de tags para {short-project-name} imagens nesses Helm charts. No entanto, isso não garante a segurança das dependências.
+. {admc-short-name} fornece um Software Bill Of Materials, que lista todas as imagens necessárias. Isso ajuda com Zero-Trust. O Administrador do Kubernetes deve verificar {admc-short-name} as imagens, as imagens de suas dependências e os charts fora do cluster Kubernetes, em um ambiente confiável. Você pode fazer isso com `cosign`, por exemplo. A propósito, isso faz parte da implementação necessária para instalações air-gapped.
+. Use Helm charts assinados e digests verificados em vez de tags para {admc-short-name} imagens nesses Helm charts. No entanto, isso não garante a segurança das dependências.

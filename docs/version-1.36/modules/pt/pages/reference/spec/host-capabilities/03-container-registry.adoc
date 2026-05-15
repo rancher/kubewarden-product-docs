@@ -13,9 +13,9 @@ include::partial$variables.adoc[]
 
 Registros de contêiner podem ser usados para distribuir muitos tipos de objetos OCI.
 Desde imagens de contêiner bem conhecidas até artefatos OCI genéricos.
-Artefatos OCI são usados para armazenar objetos como {project-name} políticas, charts Helm e mais.
+Artefatos OCI são usados para armazenar objetos como {admc-name} políticas, charts Helm e mais.
 
-Estas são as capacidades expostas pelo {short-project-name} host para interagir com registros de contêiner.
+Estas são as capacidades expostas pelo {admc-short-name} host para interagir com registros de contêiner.
 
 == Obter digest de manifesto OCI
 
@@ -23,12 +23,12 @@ Este callback calcula o digest de manifesto OCI. O digest pode ser usado para id
 
 === Armazenamento em cache
 
-Calcular o digest envolve uma série de requisições de rede entre o {short-project-name} host de política e o registro remoto.
+Calcular o digest envolve uma série de requisições de rede entre o {admc-short-name} host de política e o registro remoto.
 Essas operações podem ser custosas em termos de tempo, então os resultados são armazenados em cache por 1 minuto.
 
 === Autenticação
 
-Interações com registros privados exigem que o {short-project-name} host de política se autentique contra o registro remoto.
+Interações com registros privados exigem que o {admc-short-name} host de política se autentique contra o registro remoto.
 
 O host de política usará o mesmo conjunto de credenciais que foram usadas para buscar políticas do registro remoto.
 
@@ -65,11 +65,11 @@ Este callback busca o manifesto dos objetos OCI. Quando disponível, essa inform
 
 === Armazenamento em cache
 
-Buscar essa informação envolve requisições de rede entre o {short-project-name} host de política e o registro remoto. Essas operações podem ser custosas em termos de tempo, então os resultados são armazenados em cache por 1 minuto.
+Buscar essa informação envolve requisições de rede entre o {admc-short-name} host de política e o registro remoto. Essas operações podem ser custosas em termos de tempo, então os resultados são armazenados em cache por 1 minuto.
 
 === Autenticação
 
-Interações com registros privados requerem que o {short-project-name} host de política se autentique contra o registro remoto.
+Interações com registros privados requerem que o {admc-short-name} host de política se autentique contra o registro remoto.
 
 O host de política usa o mesmo conjunto de credenciais que foi usado para buscar políticas do registro remoto.
 
@@ -187,11 +187,11 @@ Este callback busca o manifesto da imagem OCI e sua configuração. Essa informa
 
 === Armazenamento em cache
 
-Buscar essa informação envolve requisições de rede entre o {short-project-name} host de política e o registro remoto. Essas operações podem ser custosas em termos de tempo, então os resultados são armazenados em cache por 1 minuto.
+Buscar essa informação envolve requisições de rede entre o {admc-short-name} host de política e o registro remoto. Essas operações podem ser custosas em termos de tempo, então os resultados são armazenados em cache por 1 minuto.
 
 === Autenticação
 
-Interações com registros privados requerem que o {short-project-name} host de política se autentique no registro remoto.
+Interações com registros privados requerem que o {admc-short-name} host de política se autentique no registro remoto.
 
 O host de política usa o mesmo conjunto de credenciais que é usado para buscar políticas do registro remoto.
 

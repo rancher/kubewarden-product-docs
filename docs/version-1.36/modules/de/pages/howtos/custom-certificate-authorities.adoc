@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie benutzerdefinierte CA für den Einsatz in {project-name}-Installationen, um eine sichere Kommunikation und Authentifizierung zu gewährleisten.
+:description: Konfigurieren Sie benutzerdefinierte CA für den Einsatz in {admc-name}-Installationen, um eine sichere Kommunikation und Authentifizierung zu gewährleisten.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "custom-certificate-authorities"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "benutzerdefinierte CA"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "benutzerdefinierte CA"]
 :sidebar_label: Benutzerdefinierte CA
 :sidebar_position: 50
 :current-version: {page-origin-branch}
@@ -17,7 +17,7 @@ Sie können Richtlinien nur an OCI-Registries senden.
 Standardmäßig wird HTTPS mit TLS-Überprüfung des Hosts verwendet.
 
 Der CA-Speicher des Systems wird verwendet, um die vertrauenswürdige Kette von Zertifikaten aus dem OCI-Registry zu validieren.
-In einer Standard-{project-name}-Installation verwendet `policy-server` die CA, die mit seinem Linux-Container geliefert wird.
+In einer Standard-{admc-name}-Installation verwendet `policy-server` die CA, die mit seinem Linux-Container geliefert wird.
 Auf der Client-Seite verwendet `kwctl` die CA Ihres Betriebssystems.
 
 Wenn Sie den https://github.com/kubewarden/kubewarden-controller[Controller] verwenden, können Sie den PolicyServer über seine xref:/howtos/policy-servers/01-custom-cas.adoc[`spec` Felder] konfigurieren.

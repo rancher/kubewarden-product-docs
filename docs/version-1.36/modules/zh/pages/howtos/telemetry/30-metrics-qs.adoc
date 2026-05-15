@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用 Prometheus 和通过 Helm 图表启用的 {project-name} 在策略服务器上配置指标报告以进行数据收集。
+:description: 使用 Prometheus 和通过 Helm 图表启用的 {admc-name} 在策略服务器上配置指标报告以进行数据收集。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]
@@ -88,9 +88,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== 安装 {short-project-name}
+== 安装 {admc-short-name}
 
-您现在可以以推荐的方式使用 Helm 图表安装 {short-project-name}。
+您现在可以以推荐的方式使用 Helm 图表安装 {admc-short-name}。
 
 [NOTE]
 ====
@@ -100,14 +100,14 @@ helm install --wait --create-namespace \
 ====
 
 
-首先，您应该添加包含 {short-project-name} 的 Helm 储存库：
+首先，您应该添加包含 {admc-short-name} 的 Helm 储存库：
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-然后您安装由 {short-project-name} 定义的自定义资源定义（CRD）：
+然后您安装由 {admc-short-name} 定义的自定义资源定义（CRD）：
 
 [subs="+attributes",console]
 ----
@@ -116,9 +116,9 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-现在您可以部署其余的 {short-project-name} 堆栈。官方 Helm 图表创建一个名为 `default` 的 PolicyServer。
+现在您可以部署其余的 {admc-short-name} 堆栈。官方 Helm 图表创建一个名为 `default` 的 PolicyServer。
 
-您应该配置 Helm 图表，以便在 {short-project-name} 中启用指标。`kubewarden-values.yaml` 文件应包含以下内容：
+您应该配置 Helm 图表，以便在 {admc-short-name} 中启用指标。`kubewarden-values.yaml` 文件应包含以下内容：
 
 [subs="+attributes",yaml]
 ----
@@ -183,9 +183,9 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 
 您现在可以使用默认用户名 `admin` 和密码 `prom-operator` 登录。
 
-=== 使用 {short-project-name} Grafana 仪表板
+=== 使用 {admc-short-name} Grafana 仪表板
 
-{short-project-name} 拥有一个 Grafana 仪表板，提供基本指标，概述 {short-project-name} 在集群中的表现。该仪表板可在 {short-project-name} policy-server 储存库的 GitHub 发布中作为 https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSON 文件] 或在 https://grafana.com/grafana/dashboards/15314[Grafana 网站] 上获取。
+{admc-short-name} 拥有一个 Grafana 仪表板，提供基本指标，概述 {admc-short-name} 在集群中的表现。该仪表板可在 {admc-short-name} policy-server 储存库的 GitHub 发布中作为 https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSON 文件] 或在 https://grafana.com/grafana/dashboards/15314[Grafana 网站] 上获取。
 
 要将仪表板导入到您的环境中，您可以从 Grafana 网站或储存库下载 JSON 文件：
 
@@ -208,7 +208,7 @@ curl https://github.com/kubewarden/policy-server/releases/latest/download/kubewa
 . 单击 `load` 按钮。
 . 导入仪表板后，定义要使用的 Prometheus 数据源并完成导入过程。
 
-Grafana 仪表板有面板显示由 {short-project-name} 管理的所有策略的状态。它还具有特定于策略的面板。
+Grafana 仪表板有面板显示由 {admc-short-name} 管理的所有策略的状态。它还具有特定于策略的面板。
 
 您可以通过更改 `policy_name` 变量的值以匹配所需策略的名称来获取特定策略的详细指标。
 

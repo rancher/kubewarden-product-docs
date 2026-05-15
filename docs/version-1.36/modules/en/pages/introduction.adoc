@@ -1,9 +1,10 @@
 include::partial$variables.adoc[]
-= What is {project-name}?
+
+= What is {admc-name}?
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Learn about {project-name}'s role in Kubernetes policy management, which includes enforcing compliance and optimizing resources.
+:description: Learn about {admc-name}'s role in Kubernetes policy management, which includes enforcing compliance and optimizing resources.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["introduction"]
 :doc-type: ["explanation"]
@@ -13,14 +14,14 @@ include::partial$variables.adoc[]
 :slug: /
 :current-version: {page-origin-branch}
 
-{project-name} is a Kubernetes Policy Engine.
+{admc-name} is a Kubernetes Policy Engine.
 It aims to be the Universal Policy Engine for Kubernetes.
 
 {intro-paragraph}
 
-== How does {project-name} help?
+== How does {admc-name} help?
 
-{short-project-name} offers flexibility for policy admission and enforcement in
+{admc-short-name} offers flexibility for policy admission and enforcement in
 a Kubernetes environment.
 
 === Benefits and value
@@ -30,10 +31,10 @@ a Kubernetes environment.
 - Reuse of policies from other policy engines without the need for rewriting them.
 - Distribute policies using standard and secure mechanisms such as https://opencontainers.org[OCI] compliant registries.
 - Policy enforcement at admission ensures only compliant workloads run.
-- The {short-project-name} audit scanner actively and continuously checks policy enforcement over time.
+- The {admc-short-name} audit scanner actively and continuously checks policy enforcement over time.
 - Verify policies using https://slsa.dev[SLSA] (Supply Chain Levels for Software Artifacts) tools and practices.
-- {project-name} provides a comprehensive approach to admission policy management.
-- CNCF membership and a growing open source community and ecosystem help {short-project-name} with transparency, collaboration and improvement.
+- {admc-name} provides a comprehensive approach to admission policy management.
+- CNCF membership and a growing open source community and ecosystem help {admc-short-name} with transparency, collaboration and improvement.
 
 === Use cases
 
@@ -46,9 +47,9 @@ a Kubernetes environment.
 There is further documentation of use cases on the xref:use-cases.adoc[use
 cases] page.
 
-== New to {short-project-name}?
+== New to {admc-short-name}?
 
-If new to the {short-project-name} project start with the xref:quick-start.adoc[Quick
+If new to the {admc-short-name} project start with the xref:quick-start.adoc[Quick
 start guide] and the xref:explanations/architecture.adoc[architecture] page.
 Then it depends where your interests take you. For policy developers there are
 language specific sections in the tutorials. For integrators and administrators
@@ -86,7 +87,7 @@ can lint and test them and you can plug them into current CI and CD workflows.
 
 == Policy distribution
 
-You can serve {short-project-name} policies using a standard web server or, better,
+You can serve {admc-short-name} policies using a standard web server or, better,
 you can publish them in an OCI compliant registry as
 https://github.com/opencontainers/artifacts[OCI artifacts].
 
@@ -94,7 +95,7 @@ ifeval::["{build-type}" == "community"]
 
 == Vendor neutrality
 
-{short-project-name} is a
+{admc-short-name} is a
 link:https://contribute.cncf.io/maintainers/community/vendor-neutrality/[vendor
 neutral] project as defined by the CNCF.
 

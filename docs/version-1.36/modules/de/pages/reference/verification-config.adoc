@@ -31,7 +31,7 @@ Die Konfiguration hat 2 Root-Schlüssel:
 Diese beiden Root-Schlüssel akzeptieren ein Array von Schlüsseln des Typs `kind`. Eine vollständige Liste der akzeptierten Schlüssel basierend auf verschiedenen Anwendungsfällen finden Sie unten:
 
 * `pubKey`: Für Signaturen, die mit traditioneller öffentlicher/privater Schlüssel-Kryptographie durchgeführt werden.
-* `githubAction`: Für Signaturen, die mit Sigstore's schlüssellosem Workflow innerhalb von GitHub Actions durchgeführt werden. {short-project-name} überprüft diese Informationen gegen die x509-Zertifikatserweiterung `workflow_repository`, die durch das OpenID Connect von GitHub erstellt wurde, und nicht nur gegen die `issuer` und `subject`. Sie sollten dieses `kind` verwenden, wenn Sie mit GitHub Actions arbeiten.
+* `githubAction`: Für Signaturen, die mit Sigstore's schlüssellosem Workflow innerhalb von GitHub Actions durchgeführt werden. {admc-short-name} überprüft diese Informationen gegen die x509-Zertifikatserweiterung `workflow_repository`, die durch das OpenID Connect von GitHub erstellt wurde, und nicht nur gegen die `issuer` und `subject`. Sie sollten dieses `kind` verwenden, wenn Sie mit GitHub Actions arbeiten.
 * `genericIssuer`: Für Signaturen, die mit Sigstore's schlüssellosem Workflow durchgeführt werden, bei dem der Benutzer das Zertifikat `issuer` und `subject` selbst validieren muss. Es akzeptiert ein `subject`, das sein kann:
 
 ** `equal`: Der hier übergebene Wert muss genau mit dem `subject` im Signierungszertifikat übereinstimmen.
@@ -225,7 +225,7 @@ Zum Beispiel könnte der letzte Ausschnitt, der `genericIssuer` verwendet, umges
 Alle Signaturtypen können andere optionale Validierungsfelder haben, `annotations`.
 Diese Felder sind Schlüssel/Wert-Daten, die während des Signierungsprozesses hinzugefügt werden.
 
-Mit {short-project-name} können Sie überprüfen, ob die Signatur der Richtlinie von vertrauenswürdigen Benutzern *und* spezifische Annotationen hat.
+Mit {admc-short-name} können Sie überprüfen, ob die Signatur der Richtlinie von vertrauenswürdigen Benutzern *und* spezifische Annotationen hat.
 
 Die nächste Validierung überprüft zwei Bedingungen für die Richtlinie:
 
@@ -265,7 +265,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-Dieses letzte Beispiel testet, ob eine gegebene Richtlinie von der {short-project-name}-Organisation stammt:
+Dieses letzte Beispiel testet, ob eine gegebene Richtlinie von der {admc-short-name}-Organisation stammt:
 
 [subs="+attributes",console]
 ----

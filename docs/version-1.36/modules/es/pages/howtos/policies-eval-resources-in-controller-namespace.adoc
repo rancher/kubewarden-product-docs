@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-type: ["howto"]
 :doc-topic: ["operator-manual", "policies"]
 
-Por defecto, el Controlador de Admisión no permite que las políticas evalúen recursos en su propio espacio de nombres. Esto previene configuraciones incorrectas que podrían romper la instalación de {short-project-name}.
+Por defecto, el Controlador de Admisión no permite que las políticas evalúen recursos en su propio espacio de nombres. Esto previene configuraciones incorrectas que podrían romper la instalación de {admc-short-name}.
 
 Esta medida de seguridad se implementa en dos capas. La primera capa está controlada por la bandera `--always-accept-admission-reviews-on-deployments-namespace` de la CLI.
 Esta bandera, que está habilitada por defecto en los gráficos de Helm, hace que el controlador configure la `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` variable de entorno en las ampliaciones de PolicyServer. Esta variable indica al servidor de políticas que siempre acepte revisiones de admisión del espacio de nombres definido en la variable. La segunda capa es el propio controlador de admisión, que por defecto añade un selector de espacio de nombres a las políticas de clúster para omitir el espacio de nombres donde se ejecuta el controlador.
@@ -19,7 +19,7 @@ Sin embargo, en algunos escenarios, los administradores de clúster pueden quere
 
 El primer paso es configurar el controlador para no establecer la `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` variable de entorno en las ampliaciones de PolicyServer.
 
-Para hacer esto, actualiza la versión de tu instalación de {short-project-name} y establece el valor `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` del `kubewarden-controller` gráfico de Helm a `false`:
+Para hacer esto, actualiza la versión de tu instalación de {admc-short-name} y establece el valor `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` del `kubewarden-controller` gráfico de Helm a `false`:
 
 [source,console]
 ----
@@ -29,7 +29,7 @@ helm upgrade -n kubewarden
 ----
 
 Este cambio permite a los servidores de políticas evaluar recursos de cualquier espacio de nombres.
-Una vez hecho esto, se pueden configurar políticas para evaluar revisiones de admisión del {short-project-name} espacio de nombres.
+Una vez hecho esto, se pueden configurar políticas para evaluar revisiones de admisión del {admc-short-name} espacio de nombres.
 
 == Configura políticas para evaluar recursos en el espacio de nombres del Controlador de Admisión
 
@@ -73,5 +73,5 @@ Esta opción de configuración, que es `false` por defecto, hace que el controla
 [NOTE]
 .¿Qué pasa con mis selectores de espacio de nombres personalizados?
 ====
-Los CRDs de políticas también permiten a los usuarios definir sus propios selectores de espacio de nombres. Estos selectores no se modifican. Esto significa que si un usuario define un selector que omite el {short-project-name} espacio de nombres, la directiva seguirá ignorando ese espacio de nombres como se esperaba.
+Los CRDs de políticas también permiten a los usuarios definir sus propios selectores de espacio de nombres. Estos selectores no se modifican. Esto significa que si un usuario define un selector que omite el {admc-short-name} espacio de nombres, la directiva seguirá ignorando ese espacio de nombres como se esperaba.
 ====

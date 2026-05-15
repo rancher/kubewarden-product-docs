@@ -1,24 +1,24 @@
 include::partial$variables.adoc[]
-= Gestionando {project-name} con Rancher Fleet
+= Gestionando {admc-name} con Rancher Fleet
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Gestiona los gráficos Helm de {project-name} utilizando Rancher Fleet y las definiciones de recursos personalizadas (CRDs) de Kubernetes para implementar un enfoque GitOps.
+:description: Gestiona los gráficos Helm de {admc-name} utilizando Rancher Fleet y las definiciones de recursos personalizadas (CRDs) de Kubernetes para implementar un enfoque GitOps.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher-fleet"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}","kubernetes", "kubewarden", "rancher fleet"]
+:keywords: ["{admc-name}","kubernetes", "kubewarden", "rancher fleet"]
 :sidebar_label: Fleet con Rancher
 :sidebar_position: 130
 :current-version: {page-origin-branch}
 
-Puedes gestionar los gráficos Helm de {project-name}, como otros gráficos Helm, con https://fleet.rancher.io/[Rancher Fleet].
+Puedes gestionar los gráficos Helm de {admc-name}, como otros gráficos Helm, con https://fleet.rancher.io/[Rancher Fleet].
 Rancher Fleet utiliza CRDs de Kubernetes para definir un enfoque GitOps para gestionar clústeres de Kubernetes.
 Esto se hace definiendo https://fleet.rancher.io/concepts[Fleet Bundles].
 
 == Instalación
 
-Los gráficos de {short-project-name} son gráficos estándar, dependen transitivamente unos de otros:
+Los gráficos de {admc-short-name} son gráficos estándar, dependen transitivamente unos de otros:
 
 `kubewarden-crds` ← `kubewarden-controller` ← `kubewarden-defaults`
 
@@ -41,10 +41,10 @@ Estos errores no indican un problema, y una vez que los gráficos hayan finaliza
 [CAUTION]
 ====
 
-Al eliminar el GitRepo, todos los 3 gráficos de {short-project-name} se eliminan a la vez.
+Al eliminar el GitRepo, todos los 3 gráficos de {admc-short-name} se eliminan a la vez.
 Esto significa que el gráfico `kubewarden-crds` se elimina.
 
-{short-project-name} utiliza un trabajo de hook de Helm pre-delete en el gráfico `kubewarden-controller` que elimina el PolicyServer por defecto.
+{admc-short-name} utiliza un trabajo de hook de Helm pre-delete en el gráfico `kubewarden-controller` que elimina el PolicyServer por defecto.
 Este gancho pre-eliminar es necesario para liberar los webhooks de las políticas antes de eliminar el PolicyServer.
 Esto es cierto para cualquier Motor de Políticas.
 Si no, el clúster puede tener webhooks para políticas que ya no existen, por lo que se rechaza todo y se queda en un estado fallido.
@@ -60,8 +60,8 @@ Para realizar una eliminación correcta, asegúrate de primero eliminar el Bundl
 Haz esto comprometiendo esos cambios en el repositorio que contiene la configuración de Fleet y luego espera hasta que se aplique.
 Luego elimina `kubewarden-controller` de la misma manera, y por último, elimina `kubewarden-crds`.
 
-Otra opción es añadir 2 GitRepos, uno solo para los CRDs, y otro para el resto de los gráficos {short-project-name}.
-Esto te permite eliminar primero los gráficos {short-project-name} y los CRDs {short-project-name} al final.
+Otra opción es añadir 2 GitRepos, uno solo para los CRDs, y otro para el resto de los gráficos {admc-short-name}.
+Esto te permite eliminar primero los gráficos {admc-short-name} y los CRDs {admc-short-name} al final.
 
 == Ejemplo
 

@@ -1,7 +1,8 @@
 include::partial$variables.adoc[]
+
 = Testing for cluster operators
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
 :description: Test cluster operator policies with kwctl using different configurations and validation request objects to validate policy settings.
 :doc-persona: ["kubewarden-policy-developer"]
@@ -10,7 +11,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "cluster operators", "testing"]
 :current-version: {page-origin-branch}
 
-As a Kubernetes cluster operator, you'll want to perform testing for {project-name} policies you want to use.
+As a Kubernetes cluster operator, you'll want to perform testing for {admc-name} policies you want to use.
 
 You'll have questions like:
 
@@ -21,13 +22,13 @@ You'll have questions like:
  ** change the configuration parameters of the policy?
  ** and so forth?
 
-{short-project-name} has a utility, https://github.com/kubewarden/kwctl[`kwctl`],
+{admc-short-name} has a utility, xref:/reference/kwctl-cli.adoc[`kwctl`],
 that permits testing of the policies outside of Kubernetes.
 
 To use `kwctl` you invoke it with following inputs:
 
 . A WebAssembly binary file URI of the policy to be run.
-The {short-project-name} policy can load from the:
+The {admc-short-name} policy can load from the:
  ** local filesystem `file://`
  ** a HTTP(s) server `https://`
  ** an OCI registry `registry://`.
@@ -39,8 +40,8 @@ Or a JSON, or a YAML file, loaded from the file system via `--settings-path`.
 
 After the test `kwctl`, prints the `ValidationResponse` object to the standard output.
 
-You can download pre-built binaries of `kwctl`
-https://github.com/kubewarden/kwctl/releases[here].
+Learn how to install `kwctl` in the
+xref:/howtos/install-kwctl.adoc[install `kwctl`] documentation.
 
 == A testing example
 

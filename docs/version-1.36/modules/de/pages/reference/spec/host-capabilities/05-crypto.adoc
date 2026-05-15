@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Kryptografische Fähigkeiten
 :current-version: {page-origin-branch}
 
-Aufgrund der Wasm-Einschränkungen zum Zeitpunkt des Schreibens können einige kryptografische Bibliotheken nicht in Wasm kompiliert werden. In der Zwischenzeit können {project-name} Richtlinien, die diese Bibliotheken benötigen, Rückrufe durchführen, um die kryptografischen Funktionen auf der Host-Seite zu bewerten. Sie erhalten das Ergebnis und setzen ihre Aufgaben fort.
+Aufgrund der Wasm-Einschränkungen zum Zeitpunkt des Schreibens können einige kryptografische Bibliotheken nicht in Wasm kompiliert werden. In der Zwischenzeit können {admc-name} Richtlinien, die diese Bibliotheken benötigen, Rückrufe durchführen, um die kryptografischen Funktionen auf der Host-Seite zu bewerten. Sie erhalten das Ergebnis und setzen ihre Aufgaben fort.
 
 == Verhalten
 

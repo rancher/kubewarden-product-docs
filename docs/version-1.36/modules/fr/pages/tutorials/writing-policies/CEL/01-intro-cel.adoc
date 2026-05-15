@@ -27,12 +27,12 @@ Les règles de validation Kubernetes CEL ont accès à plusieurs bibliothèques 
 * https://pkg.go.dev/github.com/google/cel-go/ext#Strings[Bibliothèque de fonctions de chaîne étendue CEL]
 * https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-cel-libraries[Bibliothèques d'extension Kubernetes CEL], avec des fonctions supplémentaires pour les listes, les regex, les URL, les autorisateurs, les quantités, les types optionnels, les comparaisons numériques, etc.
 
-== CEL dans {project-name} : `cel-policy`
+== CEL dans {admc-name} : `cel-policy`
 
-{short-project-name} fournit https://github.com/kubewarden/cel-policy[cel-policy].
+{admc-short-name} fournit https://github.com/kubewarden/cel-policy[cel-policy].
 Il s'agit d'une stratégie qui construit et regroupe l'interpréteur https://pkg.go.dev/github.com/google/cel-go[cel-go] en amont, ainsi que les différentes bibliothèques énumérées ci-dessus et disponibles pour CEL dans Kubernetes à partir de `apiextensions-apiserver`.
 
-De plus, `cel-policy` regroupe une *{short-project-name} bibliothèque d'extension CEL* qui expose les capacités d'hôte de {short-project-name}https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native CEL]https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities :
+De plus, `cel-policy` regroupe une *{admc-short-name} bibliothèque d'extension CEL* qui expose les capacités d'hôte de {admc-short-name}https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native CEL]https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities :
 
 * Vérification de Sigstore
 * Interaction OCI
@@ -40,19 +40,19 @@ De plus, `cel-policy` regroupe une *{short-project-name} bibliothèque d'extensi
 * Opérations réseau
 * Accès aux ressources Kubernetes
 
-Cela signifie que `cel-policy` est un sur-ensemble de Kubernetes CEL, et rétrocompatible. On peut réutiliser le CEL écrit pour Kubernetes standard, et/ou utiliser les fonctionnalités ajoutées par {short-project-name}.
+Cela signifie que `cel-policy` est un sur-ensemble de Kubernetes CEL, et rétrocompatible. On peut réutiliser le CEL écrit pour Kubernetes standard, et/ou utiliser les fonctionnalités ajoutées par {admc-short-name}.
 
 Le `cel-policy` est livré compilé et se comporte comme un interpréteur CEL. Les utilisateurs de la stratégie passent les expressions CEL souhaitées dans le `spec.settings` de la (Cluster)AdmissionPolicy, et grâce aux fonctionnalités de CEL, l'expression est compilée et vérifiée pour sa validité lors de la création ou de la mise à jour de la (Cluster)AdmissionPolicy. Cela signifie qu'il n'est pas nécessaire de créer des versions personnalisées du `cel-policy`.
 
-=== Avantages de {short-project-name}`cel-policy` par rapport aux ValidatingAdmissionPolicies
+=== Avantages de {admc-short-name}`cel-policy` par rapport aux ValidatingAdmissionPolicies
 
-Le {short-project-name} `cel-policy`:
+Le {admc-short-name} `cel-policy`:
 
 * Son code CEL est rétrocompatible avec les ValidatingAdmissionPolicies.
-* Contrairement aux ValidatingAdmissionPolicies, il n'a pas besoin d'une liaison telle que ValidatingAdmissionPolicyBinding, car cela est inclus dans les définitions des (Cluster)Admissionpolicies de {short-project-name}.
+* Contrairement aux ValidatingAdmissionPolicies, il n'a pas besoin d'une liaison telle que ValidatingAdmissionPolicyBinding, car cela est inclus dans les définitions des (Cluster)Admissionpolicies de {admc-short-name}.
 * Peut être déployé sur des clusters qui ne prennent pas en charge les ValidatingAdmissionPolicies.
-* Est conscient du contexte et utilise les autorisations granulaires de {short-project-name} pour xref:../../../reference/spec/05-context-aware-policies.adoc[la connaissance du contexte].
+* Est conscient du contexte et utilise les autorisations granulaires de {admc-short-name} pour xref:../../../reference/spec/05-context-aware-policies.adoc[la connaissance du contexte].
 * Est déployé en tant que (Cluster)AdmissionPolicy.
-* Bénéficie de la traçabilité et de la télémétrie de {short-project-name} sur les stratégies.
+* Bénéficie de la traçabilité et de la télémétrie de {admc-short-name} sur les stratégies.
 * Cela sera pris en compte par le Scanner d'Audit.
 * Peut être développé et testé en dehors du cluster grâce à kwctl.

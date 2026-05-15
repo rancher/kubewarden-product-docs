@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie die Metrikberichterstattung auf dem Policy Server mit Prometheus und {project-name}, das über Helm-Charts für die Datenerfassung aktiviert ist.
+:description: Konfigurieren Sie die Metrikberichterstattung auf dem Policy Server mit Prometheus und {admc-name}, das über Helm-Charts für die Datenerfassung aktiviert ist.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]
@@ -90,9 +90,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== Installieren Sie {short-project-name}
+== Installieren Sie {admc-short-name}
 
-Sie können jetzt {short-project-name} auf die empfohlene Weise mit Helm-Charts installieren.
+Sie können jetzt {admc-short-name} auf die empfohlene Weise mit Helm-Charts installieren.
 
 [NOTE]
 ====
@@ -102,14 +102,14 @@ Die `cert-manager` ist eine Voraussetzung von OpenTelemetry, aber Sie haben sie 
 ====
 
 
-Zuerst sollten Sie das Helm-Repository hinzufügen, das {short-project-name} enthält:
+Zuerst sollten Sie das Helm-Repository hinzufügen, das {admc-short-name} enthält:
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Dann installieren Sie die von {short-project-name} definierten benutzerdefinierten Ressourcenbeschreibungen (CRDs):
+Dann installieren Sie die von {admc-short-name} definierten benutzerdefinierten Ressourcenbeschreibungen (CRDs):
 
 [subs="+attributes",console]
 ----
@@ -118,9 +118,9 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Jetzt können Sie den Rest des {short-project-name} Stacks bereitstellen. Das offizielle Helm-Chart erstellt einen PolicyServer mit dem Namen `default`.
+Jetzt können Sie den Rest des {admc-short-name} Stacks bereitstellen. Das offizielle Helm-Chart erstellt einen PolicyServer mit dem Namen `default`.
 
-Sie sollten das Helm-Chart so konfigurieren, dass Sie Metriken in {short-project-name} aktiviert haben. Die `kubewarden-values.yaml` Datei sollte die folgenden Inhalte haben:
+Sie sollten das Helm-Chart so konfigurieren, dass Sie Metriken in {admc-short-name} aktiviert haben. Die `kubewarden-values.yaml` Datei sollte die folgenden Inhalte haben:
 
 [subs="+attributes",yaml]
 ----
@@ -185,9 +185,9 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 
 Sie können sich jetzt mit dem Standardbenutzernamen `admin` und dem Passwort `prom-operator` anmelden.
 
-=== Verwendung des {short-project-name} Grafana-Dashboards
+=== Verwendung des {admc-short-name} Grafana-Dashboards
 
-{short-project-name} hat ein Grafana-Dashboard mit grundlegenden Metriken, das einen Überblick darüber gibt, wie sich {short-project-name} im Cluster verhält. Dieses Dashboard ist in den GitHub-Releases des {short-project-name} policy-server-Repositorys als https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSON-Datei] oder auf der https://grafana.com/grafana/dashboards/15314[Grafana-Website] verfügbar.
+{admc-short-name} hat ein Grafana-Dashboard mit grundlegenden Metriken, das einen Überblick darüber gibt, wie sich {admc-short-name} im Cluster verhält. Dieses Dashboard ist in den GitHub-Releases des {admc-short-name} policy-server-Repositorys als https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSON-Datei] oder auf der https://grafana.com/grafana/dashboards/15314[Grafana-Website] verfügbar.
 
 Um das Dashboard in Ihre Umgebung zu importieren, können Sie die JSON-Datei von der Grafana-Website oder dem Repository herunterladen:
 
@@ -210,7 +210,7 @@ Eine weitere Möglichkeit ist, es direkt von der grafana.com-Website zu importie
 . Klicken Sie auf die Schaltfläche `load`.
 . Nach dem Import des Dashboards definieren Sie die zu verwendende Prometheus-Datenquelle und beenden den Importprozess.
 
-Das Grafana-Dashboard hat Bereiche, die den Zustand aller von {short-project-name} verwalteten Richtlinien anzeigen. Es hat auch richtlinienspezifische Panels.
+Das Grafana-Dashboard hat Bereiche, die den Zustand aller von {admc-short-name} verwalteten Richtlinien anzeigen. Es hat auch richtlinienspezifische Panels.
 
 Sie können detaillierte Metriken für eine bestimmte Richtlinie erhalten, indem Sie den Wert der `policy_name` Variablen ändern, um den Namen der erforderlichen Richtlinie anzupassen.
 

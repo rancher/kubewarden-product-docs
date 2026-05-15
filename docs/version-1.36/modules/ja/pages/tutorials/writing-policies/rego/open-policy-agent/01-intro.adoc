@@ -36,4 +36,4 @@ OPAサーバーは、KubernetesからのAdmission Reviewリクエストを受け
 
 すべてのポリシーは、公式の`opa` CLIツールを使用して`wasm`ターゲット（WebAssembly）にコンパイルできます。
 
-ポリシーの実行に関しては、{short-project-name}に実装されたxref:tutorials/writing-policies/rego/02-builtin-support.adoc[OPA ビルトインサポート]についてさらに読むことができます。
+ポリシーの実行に関しては、{admc-short-name}に実装されたxref:tutorials/writing-policies/rego/02-builtin-support.adoc[OPA ビルトインサポート]についてさらに読むことができます。

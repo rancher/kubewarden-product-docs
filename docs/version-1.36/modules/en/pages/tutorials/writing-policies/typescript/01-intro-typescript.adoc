@@ -1,9 +1,10 @@
 include::partial$variables.adoc[]
+
 = Writing policies in TypeScript/JavaScript
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Learn how to write effective {project-name} validation policies using TypeScript/JavaScript.
+:description: Learn how to write effective {admc-name} validation policies using TypeScript/JavaScript.
 :keywords: kubewarden, kubernetes, writing policies in TypeScript, writing policies in JavaScript
 :doc-type: tutorial
 :doc-topic: kubewarden, writing-policies, typescript, javascript, introduction
@@ -24,7 +25,7 @@ TypeScript extends JavaScript by adding types.
 By understanding JavaScript, TypeScript saves you time catching errors and
 providing fixes before you run code.
 
-{project-name} uses https://github.com/bytecodealliance/javy[Javy] (a Bytecode Alliance project) to build WebAssembly binaries from JavaScript and TypeScript.
+{admc-name} uses https://github.com/bytecodealliance/javy[Javy] (a Bytecode Alliance project) to build WebAssembly binaries from JavaScript and TypeScript.
 
 [quote]
 Javy takes your JavaScript code and executes it in a WebAssembly context.
@@ -33,7 +34,7 @@ It features an embedded QuickJS engine compiled to WebAssembly that can execute 
 
 The project provides both a CLI and a set of APIs for embedding and customizing the behavior when running JavaScript in WebAssembly.
 
-The {short-project-name} project currently uses Javy for these reasons:
+The {admc-short-name} project currently uses Javy for these reasons:
 
 * Mature JavaScript engine (QuickJS) compiled to WebAssembly.
 * Support for xref:/tutorials/writing-policies/wasi/01-intro-wasi.adoc[WASI interface] through custom host functions.
@@ -49,7 +50,7 @@ Javy runs JavaScript in a sandboxed WebAssembly environment with certain constra
 * *Limited standard library*: Only core JavaScript features and explicitly enabled APIs are accessible.
 * *Single-threaded execution*: No support for Web Workers or multi-threading.
 
-Despite these limitations, Javy provides sufficient capabilities for writing effective {short-project-name} validation policies through the hosts capabilities system.
+Despite these limitations, Javy provides sufficient capabilities for writing effective {admc-short-name} validation policies through the hosts capabilities system.
 
 [WARNING]
 ====
@@ -58,7 +59,7 @@ Writing to STDOUT breaks policies - use STDERR for logging instead.
 
 == Tooling
 
-Writing {short-project-name} policies requires:
+Writing {admc-short-name} policies requires:
 
 * *Node.js*: JavaScript runtime.
 * *npm*: For dependency management.
@@ -69,16 +70,16 @@ Writing {short-project-name} policies requires:
 Ensure you're using Node.js 18 or higher. Older versions may not be compatible with the compilation toolchain.
 ====
 
-These TypeScript/JavaScript libraries are useful when writing a {short-project-name} policy:
+These TypeScript/JavaScript libraries are useful when writing a {admc-short-name} policy:
 
-* https://github.com/kubewarden/policy-sdk-js[{short-project-name} JavaScript SDK]: Provides structures and functions reducing the amount of code necessary. It also provides test helpers and access to all host capabilities.
+* https://github.com/kubewarden/policy-sdk-js[{admc-short-name} JavaScript SDK]: Provides structures and functions reducing the amount of code necessary. It also provides test helpers and access to all host capabilities.
 * https://github.com/silverlyra/kubernetes-types[Kubernetes TypeScript types]: Provides TypeScript definitions for all Kubernetes resources, enabling type-safe policy development.
 
-The {short-project-name} project provides a https://github.com/kubewarden/js-policy-template[template JavaScript/TypeScript policy project] you can use to create {short-project-name} policies.
+The {admc-short-name} project provides a https://github.com/kubewarden/js-policy-template[template JavaScript/TypeScript policy project] you can use to create {admc-short-name} policies.
 
 == Getting the toolchain
 
-The easiest way to get the toolchain is by using the {short-project-name} JavaScript SDK, which includes the Javy compilation plug-in:
+The easiest way to get the toolchain is by using the {admc-short-name} JavaScript SDK, which includes the Javy compilation plug-in:
 
 [source,console]
 ----
@@ -98,5 +99,5 @@ During this tutorial you need these tools on your development machine:
 
 * *Node.js*: Version 18 or higher with npm for dependency management.
 * https://github.com/bats-core/bats-core[`bats`]: Used to write the tests and automate their execution.
-* https://github.com/kubewarden/kwctl/releases[`kwctl` ≥ v1.30]: CLI tool provided by {short-project-name} to run its policies outside of Kubernetes, among other actions. It's covered in xref:/tutorials/testing-policies/index.adoc[the testing policies section] of the documentation.
+* xref:/howtos/install-kwctl.adoc[`kwctl` ≥ v1.30]: CLI tool provided by {admc-short-name} to run its policies outside of Kubernetes, among other actions. It's covered in xref:/tutorials/testing-policies/index.adoc[the testing policies section] of the documentation.
 * https://github.com/bytecodealliance/javy[`javy` ≥ 6.0.0]: CLI tool for compiling JavaScript code to WebAssembly modules.

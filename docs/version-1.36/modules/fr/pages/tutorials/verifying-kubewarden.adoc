@@ -1,22 +1,22 @@
 include::partial$variables.adoc[]
-= Vérification {project-name}
+= Vérification {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Vérifiez les différents artefacts produits par l'équipe {project-name} pour garantir une chaîne d'approvisionnement sécurisée grâce à l'utilisation de SBOMs et de fichiers de provenance.
+:description: Vérifiez les différents artefacts produits par l'équipe {admc-name} pour garantir une chaîne d'approvisionnement sécurisée grâce à l'utilisation de SBOMs et de fichiers de provenance.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["sécurité", "vérification-kubewarden"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "kubernetes", "sécurité", "vérification"]
 :current-version: {page-origin-branch}
 
-La pile {project-name} fournit différentes attestations et garanties :
+La pile {admc-name} fournit différentes attestations et garanties :
 
 - Attestations de provenance : Informe sur le processus de build, les dépendances de build, et aide à reproduire les builds. Implémentez la norme https://slsa.dev/spec/v1.0/[SLSA] (niveau 3 dans notre cas).
-- Attestations SBOM : Contiennent les dépendances logicielles. Aidez les consommateurs en aval à déterminer les vulnérabilités de {short-project-name} et de ses dépendances.
+- Attestations SBOM : Contiennent les dépendances logicielles. Aidez les consommateurs en aval à déterminer les vulnérabilités de {admc-short-name} et de ses dépendances.
 - Artefacts signés : Indiquent si un artefact est authentique ou non, fournissant une sécurité de la chaîne d'approvisionnement. Cela inclut les livrables, mais aussi les attestations de provenance et de SBOM.
 
-Les artefacts {short-project-name}, les attestations de provenance et les SBOM sont signés en utilisant https://docs.sigstore.dev[Sigstore], avec le flux de travail sans clé. Cela signifie que le certificat de signature contient les informations suivantes, où `*` correspond à tous les caractères suivants :
+Les artefacts {admc-short-name}, les attestations de provenance et les SBOM sont signés en utilisant https://docs.sigstore.dev[Sigstore], avec le flux de travail sans clé. Cela signifie que le certificat de signature contient les informations suivantes, où `*` correspond à tous les caractères suivants :
 
 * émetteur : `https://token.actions.githubusercontent.com`
 * sujet : `https://github.com/kubewarden/*`
@@ -35,12 +35,12 @@ https://github.com/kubewarden/policy-server/.github/workflows/container-image.ym
 Notez que l'URL inclut le chemin complet du dépôt, le chemin du fichier de workflow, et le tag de version. Si vous suivez cette meilleure pratique, vous pouvez utiliser l'option `--certificate-identity` de la CLI cosign avec l'URL complète.
 ====
 
-L'équipe {short-project-name} s'efforce également d'améliorer la chaîne d'approvisionnement sécurisée et de rendre l'ensemble de la pile conforme au niveau 3 SLSA. Par conséquent, les principaux artefacts incluent également des fichiers SBOM et de provenance. Dans les sections suivantes, nous montrerons comment vérifier les différents artefacts produits par l'équipe {short-project-name} et comment garantir la chaîne d'approvisionnement sécurisée des artefacts en utilisant des fichiers SBOM et de provenance.
+L'équipe {admc-short-name} s'efforce également d'améliorer la chaîne d'approvisionnement sécurisée et de rendre l'ensemble de la pile conforme au niveau 3 SLSA. Par conséquent, les principaux artefacts incluent également des fichiers SBOM et de provenance. Dans les sections suivantes, nous montrerons comment vérifier les différents artefacts produits par l'équipe {admc-short-name} et comment garantir la chaîne d'approvisionnement sécurisée des artefacts en utilisant des fichiers SBOM et de provenance.
 
 [#container-images]
 == Images de conteneur
 
-Pour vérifier les images de conteneur signées sans clé produites par l'équipe {short-project-name}, vous pouvez utiliser la CLI `cosign`. Par exemple, pour vérifier l'image `kubewarden/policy-server`, vous pouvez exécuter la commande suivante :
+Pour vérifier les images de conteneur signées sans clé produites par l'équipe {admc-short-name}, vous pouvez utiliser la CLI `cosign`. Par exemple, pour vérifier l'image `kubewarden/policy-server`, vous pouvez exécuter la commande suivante :
 
 [source, console]
 ----
@@ -67,14 +67,14 @@ Par exemple, pour la version 1.30.0 :
 slsactl verify ghcr.io/kubewarden/policy-server:v1.30.0
 ----
 
-Il en va de même pour toutes les autres images produites par l'équipe {short-project-name}, telles que `kubewarden/kubewarden-controller` et `kubewarden/audit-scanner`.
+Il en va de même pour toutes les autres images produites par l'équipe {admc-short-name}, telles que `kubewarden/kubewarden-controller` et `kubewarden/audit-scanner`.
 
 Toutes les images de conteneurs ont également des fichiers SBOM et de provenance qui peuvent être utilisés pour garantir la chaîne d'approvisionnement sécurisée des images. Vous pouvez trouver des fichiers d'attestation sur la page de publication du composant ou attachés à l'image de conteneur dans le registre OCI.
 
 Nous utilisons Docker pour construire les images et leurs attestations. Cependant, la commande cosign https://github.com/sigstore/cosign/issues/2688[ne prend pas encore en charge] la vérification des attestations générées par Docker à partir du registre OCI.
 Pour cette raison, vous devez télécharger les fichiers depuis la page de version ou le registre et les vérifier localement. Si vous souhaitez télécharger les fichiers d'attestation depuis le registre OCI, vous pouvez suivre la https://docs.docker.com/build/metadata/attestations/attestation-storage/[documentation Docker] et utiliser des outils comme `crane` ou `docker` lui-même pour télécharger les fichiers depuis le registre.
 
-Lors du téléchargement des fichiers d'attestation depuis la page de version des {short-project-name} composants, vérifiez-les :
+Lors du téléchargement des fichiers d'attestation depuis la page de version des {admc-short-name} composants, vérifiez-les :
 
 [,console]
 ----
@@ -97,7 +97,7 @@ slsactl download sbom ghcr.io/kubewarden/policy-server:v1.30.0
 
 == Charts Helm
 
-Vous pouvez trouver {short-project-name} charts Helm dans notre `https://` dépôt Helm traditionnel sous https://charts.kubewarden.io.
+Vous pouvez trouver {admc-short-name} charts Helm dans notre `https://` dépôt Helm traditionnel sous https://charts.kubewarden.io.
 
 Les mêmes charts Helm sont signés via la signature sans clé de Sigstore et poussés vers un registre OCI qui contient à la fois le chart Helm et son attestation de provenance en tant qu'artefacts OCI.
 
@@ -131,9 +131,9 @@ Vous pouvez ensuite vérifier que le certificat dans le JSON retourné contient 
 
 Les attestations de chart sont poussées vers le registre OCI en tant que couche d'artefact. Voir la section xref:#container-images[images de conteneurs] sur la façon de les vérifier.
 
-Les charts {short-project-name} incluent `imagelist.txt` et (`policylist.txt` lorsque cela est pertinent) à l'intérieur du chart. Ainsi, si vous avez déjà vérifié le chart, vous pouvez utiliser ces listes pour vérifier les images de conteneurs consommées et les stratégies.
+Les charts {admc-short-name} incluent `imagelist.txt` et (`policylist.txt` lorsque cela est pertinent) à l'intérieur du chart. Ainsi, si vous avez déjà vérifié le chart, vous pouvez utiliser ces listes pour vérifier les images de conteneurs consommées et les stratégies.
 
-{short-project-name} suit également les pratiques habituelles concernant les charts Helm. Ainsi, on peut également trouver toutes les images dans les charts Helm avec un plugin tel que https://github.com/cvila84/helm-image[helm-image], ou avec le script suivant :
+{admc-short-name} suit également les pratiques habituelles concernant les charts Helm. Ainsi, on peut également trouver toutes les images dans les charts Helm avec un plugin tel que https://github.com/cvila84/helm-image[helm-image], ou avec le script suivant :
 
 [subs="+attributes",bash]
 ----
@@ -181,7 +181,7 @@ L'attestation de provenance pour `kwctl` est vérifiée en utilisant https://cli
 
 == Stratégies
 
-Les stratégies maintenues par l'équipe {short-project-name} sont également signées en utilisant le projet Sigstore. Tout comme les images de conteneurs habituelles, on peut les vérifier en utilisant `cosign` :
+Les stratégies maintenues par l'équipe {admc-short-name} sont également signées en utilisant le projet Sigstore. Tout comme les images de conteneurs habituelles, on peut les vérifier en utilisant `cosign` :
 
 ----
 cosign verify ghcr.io/kubewarden/policies/verify-image-signatures:v0.2.5 \

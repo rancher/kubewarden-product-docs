@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 :title: PodSecurityPolicyマイグレーション
-:description: Kubernetesクラスターで{project-name}ポリシーを設定し、PodSecurityPolicy (PSP)のポリシー設定を細かく制御するためのポリシー設定を行います。
+:description: Kubernetesクラスターで{admc-name}ポリシーを設定し、PodSecurityPolicy (PSP)のポリシー設定を細かく制御するためのポリシー設定を行います。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "appvia", "psp", "ポッドセキュリティポリシー"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "appvia", "psp", "ポッドセキュリティポリシー"]
 :sidebar_label: PSPマイグレーション
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -15,13 +15,13 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 
 Kubernetes ≥ v1.25の場合。
-https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy] (PSP)は削除されます。これで、Kubernetesクラスターの入場制御に{project-name}を使用できます。
+https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy] (PSP)は削除されます。これで、Kubernetesクラスターの入場制御に{admc-name}を使用できます。
 
-{short-project-name}は、単一のPSP設定と同じ目標を達成するために、別々のポリシー設定を持っています。各{short-project-name}ポリシー定義は、PSPの仕様内の異なる設定セクションとして機能します。PSP設定フィールドのそれぞれの{short-project-name}ポリシーへのマッピングは、以下の<<_mapping_kubewarden_policies_to_psp_fields,マッピングテーブル>>にあります。
+{admc-short-name}は、単一のPSP設定と同じ目標を達成するために、別々のポリシー設定を持っています。各{admc-short-name}ポリシー定義は、PSPの仕様内の異なる設定セクションとして機能します。PSP設定フィールドのそれぞれの{admc-short-name}ポリシーへのマッピングは、以下の<<_mapping_kubewarden_policies_to_psp_fields,マッピングテーブル>>にあります。
 
-{short-project-name}を使用することで、オペレーターはクラスター内のポリシー設定を細かく制御できます。
+{admc-short-name}を使用することで、オペレーターはクラスター内のポリシー設定を細かく制御できます。
 
-{short-project-name}インスタンスを使用すると、`PodSecurityPolicy`オブジェクトを置き換えるポリシーをデプロイできます。この例では、これらのルールを考慮します：
+{admc-short-name}インスタンスを使用すると、`PodSecurityPolicy`オブジェクトを置き換えるポリシーをデプロイできます。この例では、これらのルールを考慮します：
 
 * 特権昇格を無効にするPSP
 * 特権コンテナ
@@ -62,10 +62,10 @@ spec:
 
 ======
 
-== {short-project-name}PSPの置換
+== {admc-short-name}PSPの置換
 
-同じ目標を達成するために{short-project-name}ポリシーを作成します。
-各ルールを別々の{short-project-name}ポリシーで強制します。
+同じ目標を達成するために{admc-short-name}ポリシーを作成します。
+各ルールを別々の{admc-short-name}ポリシーで強制します。
 したがって、この例では、次の各項目の強制のために別々のポリシーが必要です：
 
 * 特権昇格
@@ -465,12 +465,12 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 ======
 
-== {short-project-name}ポリシーをPSPフィールドにマッピングします。
+== {admc-short-name}ポリシーをPSPフィールドにマッピングします。
 
-この表は、PSP設定フィールドを対応する{short-project-name}ポリシーにマッピングします。
+この表は、PSP設定フィールドを対応する{admc-short-name}ポリシーにマッピングします。
 
 |===
-| PSPフィールド | {short-project-name}に相当するポリシー
+| PSPフィールド | {admc-short-name}に相当するポリシー
 
 | https://kubernetes.io/docs/concepts/security/pod-security-policy/#privileged[privileged]
 | https://github.com/kubewarden/pod-privileged-policy[pod-privileged-policy]
@@ -547,18 +547,18 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 == PSP移行スクリプト
 
-{short-project-name}チームはPSP移行のためのスクリプトを開発しました。それはhttps://github.com/appvia/psp-migration[AppVia]からの移行ツールを使用します。AppViaツールはPSP YAML構成を読み取ります。次に、対応するポリシーを生成します。これは{short-project-name}および他のポリシーエンジンのために行います。
+{admc-short-name}チームはPSP移行のためのスクリプトを開発しました。それはhttps://github.com/appvia/psp-migration[AppVia]からの移行ツールを使用します。AppViaツールはPSP YAML構成を読み取ります。次に、対応するポリシーを生成します。これは{admc-short-name}および他のポリシーエンジンのために行います。
 
 [CAUTION]
 ====
 
 AppVia移行ツールはKubewardenのメンテナによる制御外です。
-これは、古い{short-project-name}ポリシーが生成される可能性があることを意味します。注意して使用してください。AppViaのためのプルリクエストが必要で、作業が進行中です。
+これは、古い{admc-short-name}ポリシーが生成される可能性があることを意味します。注意して使用してください。AppViaのためのプルリクエストが必要で、作業が進行中です。
 必要な場合は、詳細についてお問い合わせください。
 ====
 
 
-スクリプトは{short-project-name}のhttps://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]リポジトリで入手可能です。使用するため、作業ディレクトリにAppVia移行ツールをダウンロードします。それは`kubectl`のデフォルトコンテキストで定義されたPSPを処理します。次に、標準出力にKuberwardenのポリシー定義を出力します。ユーザーは内容をファイルにリダイレクトするか、直接`kubectl`にリダイレクトできます。
+スクリプトは{admc-short-name}のhttps://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils]リポジトリで入手可能です。使用するため、作業ディレクトリにAppVia移行ツールをダウンロードします。それは`kubectl`のデフォルトコンテキストで定義されたPSPを処理します。次に、標準出力にKuberwardenのポリシー定義を出力します。ユーザーは内容をファイルにリダイレクトするか、直接`kubectl`にリダイレクトできます。
 
 [NOTE]
 ====
@@ -636,7 +636,7 @@ spec:
 
 ======
 
-{short-project-name} ポリシーは、以下のコマンドを使用してクラスターに直接適用できます：
+{admc-short-name} ポリシーは、以下のコマンドを使用してクラスターに直接適用できます：
 
 [subs="+attributes",shell]
 ----

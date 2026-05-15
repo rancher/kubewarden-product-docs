@@ -4,7 +4,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Investigative security researchers work with the {project-name}'s team to identify vulnerabilities using responsible disclosure protocols.
+:description: Investigative security researchers work with the {admc-name}'s team to identify vulnerabilities using responsible disclosure protocols.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["security", "disclosure"]
 :doc-type: ["explanation"]
@@ -13,19 +13,19 @@ include::partial$variables.adoc[]
 :sidebar_position: 80
 :current-version: {page-origin-branch}
 
-The {project-name} team appreciates investigative work on security vulnerabilities
-carried out by well-intentioned, ethical security researchers. {short-project-name}
+The {admc-name} team appreciates investigative work on security vulnerabilities
+carried out by well-intentioned, ethical security researchers. {admc-short-name}
 follows the practice of [responsible
 disclosure](https://en.wikipedia.org/wiki/Responsible_disclosure) to best
-protect {short-project-name}'s user base from the impact of security issues. On
-{short-project-name}'s side, this means:
+protect {admc-short-name}'s user base from the impact of security issues. On
+{admc-short-name}'s side, this means:
 
-* {short-project-name} responds to security incidents on priority.
-* {short-project-name} releases fixes for issues as soon as is practical, prioritizing by risk.
-* {short-project-name} always transparently lets the community know about any incident that
+* {admc-short-name} responds to security incidents on priority.
+* {admc-short-name} releases fixes for issues as soon as is practical, prioritizing by risk.
+* {admc-short-name} always transparently lets the community know about any incident that
   affects them.
 
-If you have found a security vulnerability in {short-project-name}, the easiest way to
+If you have found a security vulnerability in {admc-short-name}, the easiest way to
 report a vulnerability is through the
 https://github.com/kubewarden/community/security/advisories[Security tab on
 GitHub]. This mechanism allows maintainers to communicate privately with you,
@@ -44,7 +44,7 @@ On receipt the security team:
 
 * Reviews the report, verifies the vulnerability and responds with confirmation
   and/or further information requests.
-* After addressing the reported security bug, {short-project-name} notifies the
+* After addressing the reported security bug, {admc-short-name} notifies the
   Researcher, who is then welcome to optionally disclose publicly.
 
 Please, refer to the https://github.com/kubewarden/community[community

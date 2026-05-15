@@ -3,20 +3,20 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Apprenez à tester les auteurs de stratégies avec kwctl, en utilisant soit bats soit des tests standards, spécifiquement pour les stratégies {project-name} en Wasm.
+:description: Apprenez à tester les auteurs de stratégies avec kwctl, en utilisant soit bats soit des tests standards, spécifiquement pour les stratégies {admc-name} en Wasm.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "test de stratégie", "auteur de stratégie", "rust", "go", "assemblyscript", "environnement de développement"]
 :current-version: {page-origin-branch}
 
-Les stratégies {project-name} sont des programmes réguliers compilés en WebAssembly (Wasm).
+Les stratégies {admc-name} sont des programmes réguliers compilés en WebAssembly (Wasm).
 Comme pour tout type de programme, une bonne couverture de tests est importante.
 
 Les auteurs de stratégies peuvent utiliser leurs environnements de développement préférés.
 Vous pouvez utiliser des outils familiers et des frameworks de test pour vérifier le développement.
 
-Ces stratégies {short-project-name} sont des exemples écrits en xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] et xref:tutorials/writing-policies/go/01-intro-go.adoc[Go] :
+Ces stratégies {admc-short-name} sont des exemples écrits en xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] et xref:tutorials/writing-policies/go/01-intro-go.adoc[Go] :
 
 * https://github.com/kubewarden/psp-apparmor[psp-apparmor]
 * https://github.com/kubewarden/ingress-policy[ingress-policy]
@@ -31,12 +31,12 @@ Vous pouvez également écrire des tests qui s'exécutent contre le binaire Wasm
 Pour ce faire sans avoir à déployer un cluster Kubernetes, vous pouvez utiliser ces outils :
 
 * https://github.com/bats-core/bats-core[bats] : est utilisé pour écrire des tests et automatiser leur exécution.
-* https://github.com/kubewarden/kwctl[`kwctl`] : l'outil CLI par défaut de {short-project-name} qui vous aide avec les opérations liées aux stratégies ; tirer, inspecter, annoter, pousser et exécuter.
+* https://github.com/kubewarden/kwctl[`kwctl`] : l'outil CLI par défaut de {admc-short-name} qui vous aide avec les opérations liées aux stratégies ; tirer, inspecter, annoter, pousser et exécuter.
 
 Pour utiliser `kwctl run`, vous avez besoin des éléments suivants :
 
 . La référence du fichier binaire Wasm de la stratégie à exécuter.
-La stratégie {short-project-name} peut être chargée depuis :
+La stratégie {admc-short-name} peut être chargée depuis :
  ** le système de fichiers local (`file://`)
  ** un serveur HTTP(s) (`https://`
  ** un registre OCI (`registry://`).

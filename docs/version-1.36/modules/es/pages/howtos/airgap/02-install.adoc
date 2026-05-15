@@ -4,15 +4,15 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura un registro privado con imágenes y políticas de {project-name} para instalar {project-name} en un entorno aislado.
+:description: Configura un registro privado con imágenes y políticas de {admc-name} para instalar {admc-name} en un entorno aislado.
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
 :doc-topic: [“manual-del-operador”, “entorno aislado”, “instalación”]
 :doc-type: [“howto”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “instalación en entorno aislado”]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “instalación en entorno aislado”]
 :current-version: {page-origin-branch}
 
-Para una instalación en entorno aislado de {project-name}, necesitas un registro privado de Open Container Initiative (OCI) accesible por tu clúster de Kubernetes.
-Las políticas de {short-project-name} son módulos de WebAssembly, por lo tanto, puedes almacenarlas en un registro compatible con OCI como artefactos OCI. Necesitas añadir las imágenes y políticas de {short-project-name} a este registro OCI. Puedes consultar una lista de artefactos de {short-project-name} en la página de xref:/reference/artifacts.adoc[Referencia de artefactos]. Las siguientes secciones describen el proceso.
+Para una instalación en entorno aislado de {admc-name}, necesitas un registro privado de Open Container Initiative (OCI) accesible por tu clúster de Kubernetes.
+Las políticas de {admc-short-name} son módulos de WebAssembly, por lo tanto, puedes almacenarlas en un registro compatible con OCI como artefactos OCI. Necesitas añadir las imágenes y políticas de {admc-short-name} a este registro OCI. Puedes consultar una lista de artefactos de {admc-short-name} en la página de xref:/reference/artifacts.adoc[Referencia de artefactos]. Las siguientes secciones describen el proceso.
 
 [NOTE]
 ====
@@ -63,7 +63,7 @@ cat */imagelist.txt > kubewarden-images.txt
 ----
 
 . Descarga `kubewarden-save-images.sh` y `kubewarden-load-images.sh` del https://github.com/kubewarden/utils[repositorio de utilidades].
-. Guarda {short-project-name}las imágenes de contenedor en un archivo `.tar.gz`:
+. Guarda {admc-short-name}las imágenes de contenedor en un archivo `.tar.gz`:
 +
 [,shell]
 ----
@@ -83,7 +83,7 @@ Docker comienza a descargar las imágenes utilizadas para una instalación en un
 cat */policylist.txt > policies.txt
 ----
 +
-Un archivo con una lista de directivas predeterminadas está en la {short-project-name} defaults https://github.com/kubewarden/helm-charts/releases/[página de lanzamiento].
+Un archivo con una lista de directivas predeterminadas está en la {admc-short-name} defaults https://github.com/kubewarden/helm-charts/releases/[página de lanzamiento].
 
 . Descarga `kubewarden-save-policies.sh` y `kubewarden-load-policies.sh` del https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller` repositorio].
 
@@ -118,7 +118,7 @@ Mueve estos archivos al entorno aislado:
 * `kubewarden-load-policies.sh` y
 * `policies.txt`
 
-. Carga {short-project-name}las imágenes en el registro privado. Necesitas autenticar el cliente de Docker contra el registro local.
+. Carga {admc-short-name}las imágenes en el registro privado. Necesitas autenticar el cliente de Docker contra el registro local.
 +
 [,shell]
 ----
@@ -128,7 +128,7 @@ Mueve estos archivos al entorno aislado:
    --registry <REGISTRY.YOURDOMAIN.COM:PORT>
 ----
 
-. Carga {short-project-name}las directivas en el registro privado. Debes autenticar `kwctl` el registro local (`kwctl` utiliza el mismo mecanismo para autenticar como `docker`, un archivo `~/.docker/config.json`)
+. Carga {admc-short-name}las directivas en el registro privado. Debes autenticar `kwctl` el registro local (`kwctl` utiliza el mismo mecanismo para autenticar como `docker`, un archivo `~/.docker/config.json`)
 +
 [,shell]
 ----
@@ -153,11 +153,11 @@ Consulta xref:howtos/custom-certificate-authorities.adoc[la sección sobre autor
 ====
 
 
-== Instalar {short-project-name}
+== Instalar {admc-short-name}
 
-Ahora que tu registro privado tiene todo lo necesario, puedes instalar {short-project-name}. La única diferencia con una instalación estándar de {short-project-name} es que necesitas cambiar el registro en las imágenes de contenedor y directivas para que sea el registro privado.
+Ahora que tu registro privado tiene todo lo necesario, puedes instalar {admc-short-name}. La única diferencia con una instalación estándar de {admc-short-name} es que necesitas cambiar el registro en las imágenes de contenedor y directivas para que sea el registro privado.
 
-Instala el {short-project-name}stack:
+Instala el {admc-short-name}stack:
 
 [,shell]
 ----
@@ -223,7 +223,7 @@ Si la `recommendedPolicies.defaultPoliciesRegistry`configuración no está estab
 
 Finalmente, necesitas configurar el Servidor de Directivas para obtener directivas de tu registro privado. Consulta la xref:howtos/policy-servers/02-private-registry.adoc[sección usando registro privado] de la documentación.
 
-Ahora puedes crear {short-project-name}directivas en tu clúster. Las directivas deben estar disponibles en tu registro privado.
+Ahora puedes crear {admc-short-name}directivas en tu clúster. Las directivas deben estar disponibles en tu registro privado.
 
 [,console]
 ----

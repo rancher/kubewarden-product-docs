@@ -5,18 +5,18 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: K3sで相互トランスポート層セキュリティ（mTLS）を有効にする
 :description: SUSE KubernetesディストリビューションのK3sを使用して、Webhookを保護するために相互トランスポート層セキュリティ（mTLS）プロトコルを実装します。
-:keywords: ["{project-name}", kubewarden, kubernetes, security]
+:keywords: ["{admc-name}", kubewarden, kubernetes, security]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: HOWTO(操作方法)
 :doc-topic: operator-manual, security
 
-このガイドでは、https://k3s.io/[K3s]をKubernetesディストリビューションとして使用する際に、{project-name}スタックWebhookのために相互トランスポート層セキュリティ（mTLS）を有効にする方法を示します。
+このガイドでは、https://k3s.io/[K3s]をKubernetesディストリビューションとして使用する際に、{admc-name}スタックWebhookのために相互トランスポート層セキュリティ（mTLS）を有効にする方法を示します。
 
 Webhookを強化する方法についての詳細は、xref:/reference/security-hardening/webhooks-hardening.adoc[リファレンスページ]を参照してください。
 
 == 前提条件
 
-K3sをインストールする前に、証明書機関（CA）とクライアント証明書を作成する必要があります。これは、{short-project-name} WebhookとKubernetes APIサーバー間の通信を保護するために使用します。
+K3sをインストールする前に、証明書機関（CA）とクライアント証明書を作成する必要があります。これは、{admc-short-name} WebhookとKubernetes APIサーバー間の通信を保護するために使用します。
 
 最初のステップとして、`/etc/rancher/k3s/admission/certs`ディレクトリを作成します：
 
@@ -140,11 +140,11 @@ curl -sfL https://get.k3s.io | sh -
 
 インストールが完了するまで待ちます。
 
-== {short-project-name}スタックをインストールします。
+== {admc-short-name}スタックをインストールします。
 
 === 前提条件
 
-Kubernetesクライアント証明書を発行したルートCAの証明書は、{short-project-name}スタックで利用可能である必要があります。
+Kubernetesクライアント証明書を発行したルートCAの証明書は、{admc-short-name}スタックで利用可能である必要があります。
 
 ルートCAはKubernetesノードの`/etc/rancher/k3s/admission/certs/rootCA.crt`にあります。`ConfigMap`名前空間の`kubewarden`にその内容を格納する必要があります。`client-ca.crt`という名前のキーに`rootCA.crt`ファイルの内容を格納します。
 
@@ -165,9 +165,9 @@ kubectl create configmap -n kubewarden api-server-mtls \
 
 生成された`ConfigMap`の名前は`api-server-mtls`です。
 
-=== {short-project-name}スタックをインストールします。
+=== {admc-short-name}スタックをインストールします。
 
-xref:/quick-start.adoc[クイックスタートガイド]に記載されているように{short-project-name}スタックをインストールします。すべての手順に従ってください。ただし、`kubewarden-controller` Helmチャートをインストールする際には、以下の値を有効にすることを確認してください：
+xref:/quick-start.adoc[クイックスタートガイド]に記載されているように{admc-short-name}スタックをインストールします。すべての手順に従ってください。ただし、`kubewarden-controller` Helmチャートをインストールする際には、以下の値を有効にすることを確認してください：
 
 * `mTLS.enable`: `true`である必要があります。
 * `mTLS.configMapName`: 以前に作成した`ConfigMap`の名前である必要があります。
@@ -181,4 +181,4 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
     --set mTLS.configMapName=api-server-mtls
 ----
 
-このコマンドが完了すると、mTLSによって{short-project-name}スタックおよびそのWebhookのインストールが保護されます。
+このコマンドが完了すると、mTLSによって{admc-short-name}スタックおよびそのWebhookのインストールが保護されます。

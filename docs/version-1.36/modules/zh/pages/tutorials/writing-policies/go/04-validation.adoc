@@ -34,9 +34,9 @@ include::partial$variables.adoc[]
 使用 Kubernetes 对象的策略大约为 1.5&nbsp;MB，而使用 `gjson` 的策略大约为 300&nbsp;KB。
 
 除了大小，使用 Kubernetes 对象的策略在第一次执行时需要更多时间。
-后续调用很快，因为 {project-name} 使用了 Wasmtime 的缓存功能。
+后续调用很快，因为 {admc-name} 使用了 Wasmtime 的缓存功能。
 第一次执行可能需要大约 20 秒 `kwctl`，而后续执行需要 1 到 2 秒。
-因此，{short-project-name} 策略服务器的启动时间较慢，但随后策略评估时间通常不受使用 Kubernetes 对象的影响。
+因此，{admc-short-name} 策略服务器的启动时间较慢，但随后策略评估时间通常不受使用 Kubernetes 对象的影响。
 ====
 
 
@@ -319,7 +319,7 @@ struct {
 
 . 通过使用 `testCase` 提供的数据创建一个 `BasicSettings` 对象。
 . 创建一个 `Pod` 对象，并将 `testCase` 中定义的标签分配给它。
-. 创建一个 `payload` 对象。使用 {short-project-name} SDK 的辅助函数：`kubewarden_testing.BuildValidationRequest` 来完成此操作。
+. 创建一个 `payload` 对象。使用 {admc-short-name} SDK 的辅助函数：`kubewarden_testing.BuildValidationRequest` 来完成此操作。
 此函数以请求相关的对象、`Pod` 和描述设置的对象（`BasicSettings` 实例）作为输入。
 . 最后，代码调用您的 `validate` 函数并对结果进行检查。
 
@@ -394,7 +394,7 @@ validate_test.go:126: Unexpected acceptance with pod labels: map[owner:team-kube
 
 策略中的 `logger` 语句会产生此输出。
 这仅在代码在 WebAssembly 上下文之外运行时发生。
-当策略在 {short-project-name} 中评估时，这不会发生，在该上下文中，`logger` 语句会发出 OpenTelemetry 事件。
+当策略在 {admc-short-name} 中评估时，这不会发生，在该上下文中，`logger` 语句会发出 OpenTelemetry 事件。
 ====
 
 

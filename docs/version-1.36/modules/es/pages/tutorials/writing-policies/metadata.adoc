@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes policy development", "policy metadata"]
 :current-version: {page-origin-branch}
 
-El archivo de metadatos {project-name}, `metadata.yaml`, es un archivo de configuración que contiene información y configuraciones importantes relacionadas con las directivas utilizadas dentro de {short-project-name}.
+El archivo de metadatos {admc-name}, `metadata.yaml`, es un archivo de configuración que contiene información y configuraciones importantes relacionadas con las directivas utilizadas dentro de {admc-short-name}.
 Esta documentación es una visión general del propósito y uso del archivo de metadatos.
 
 El archivo de directiva `metadata.yaml` tiene valores predeterminados para la directiva, así como metadatos como el autor y la descripción, establecidos por el autor de la directiva.

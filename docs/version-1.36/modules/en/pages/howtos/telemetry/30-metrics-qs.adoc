@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure metrics reporting on the Policy Server using Prometheus and {project-name} enabled through Helm charts for data collection.
+:description: Configure metrics reporting on the Policy Server using Prometheus and {admc-name} enabled through Helm charts for data collection.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]
@@ -96,9 +96,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== Install {short-project-name}
+== Install {admc-short-name}
 
-You can now install {short-project-name}, in the recommended way with Helm
+You can now install {admc-short-name}, in the recommended way with Helm
 charts.
 
 [NOTE]
@@ -110,7 +110,7 @@ installed it in a previous section of this documentation.
 ====
 
 
-First, you should add the Helm repository that contains {short-project-name}:
+First, you should add the Helm repository that contains {admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -118,7 +118,7 @@ helm repo add kubewarden https://charts.kubewarden.io
 ----
 
 Then you install the Custom Resource Definitions (CRDs) defined by
-{short-project-name}:
+{admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -127,11 +127,11 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Now you can deploy the rest of the {short-project-name} stack. The official
+Now you can deploy the rest of the {admc-short-name} stack. The official
 Helm chart creates a PolicyServer named `default`.
 
 You should configure the Helm chart so that you have metrics enabled
-in {short-project-name}. The `kubewarden-values.yaml` file should have the following contents:
+in {admc-short-name}. The `kubewarden-values.yaml` file should have the following contents:
 
 [subs="+attributes",yaml]
 ----
@@ -200,11 +200,11 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 You can now login with the default username `admin` and password
 `prom-operator`.
 
-=== Using the {short-project-name} Grafana dashboard
+=== Using the {admc-short-name} Grafana dashboard
 
-{short-project-name} has a Grafana dashboard with basic metrics giving an
-overview about how {short-project-name} behaves in the cluster. This dashboard
-is available in the GitHub releases of the {short-project-name} policy-server
+{admc-short-name} has a Grafana dashboard with basic metrics giving an
+overview about how {admc-short-name} behaves in the cluster. This dashboard
+is available in the GitHub releases of the {admc-short-name} policy-server
 repository as a
 https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSON
 file] or at the https://grafana.com/grafana/dashboards/15314[Grafana website].
@@ -237,7 +237,7 @@ Another option is import it directly from the grafana.com website. For this:
   finish the import process.
 
 The Grafana dashboard has panes showing the state of all policies managed by
-{short-project-name}. It also has policy-specific panels.
+{admc-short-name}. It also has policy-specific panels.
 
 You can obtain detailed metrics for a specific policy by changing the value of
 the `policy_name` variable to match the required policy's name.

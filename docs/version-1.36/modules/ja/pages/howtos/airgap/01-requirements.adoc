@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 
-= {project-name}をエアギャップ(された)環境にインストールするための要件
+= {admc-name}をエアギャップ(された)環境にインストールするための要件
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: エアギャップ(された)環境における{project-name}のインストール要件について学びます。サポートされているプライベートレジストリや互換性の詳細が含まれています。
+:description: エアギャップ(された)環境における{admc-name}のインストール要件について学びます。サポートされているプライベートレジストリや互換性の詳細が含まれています。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "エアギャップ", "requirements"]
 :doc-type: ["howto"]

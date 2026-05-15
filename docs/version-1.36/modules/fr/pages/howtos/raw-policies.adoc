@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurez des stratégies brutes en tant que moteur d'évaluation de stratégies générique en utilisant {project-name}.
+:description: Configurez des stratégies brutes en tant que moteur d'évaluation de stratégies générique en utilisant {admc-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "stratégies brutes"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "support", "stratégies brutes"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "support", "stratégies brutes"]
 :sidebar_label: Stratégies brutes
 :sidebar_position: 60
 :current-version: {page-origin-branch}
 
-À partir de `v1.9.0`, {project-name} prend en charge la possibilité d'écrire et d'exécuter des stratégies en dehors d'un cluster Kubernetes, en tant que moteur d'évaluation de stratégies générique.
-Le serveur de stratégies expose le point de terminaison `/validate_raw` qui peut être utilisé pour valider des documents JSON arbitraires contre une stratégie {short-project-name}.
+À partir de `v1.9.0`, {admc-name} prend en charge la possibilité d'écrire et d'exécuter des stratégies en dehors d'un cluster Kubernetes, en tant que moteur d'évaluation de stratégies générique.
+Le serveur de stratégies expose le point de terminaison `/validate_raw` qui peut être utilisé pour valider des documents JSON arbitraires contre une stratégie {admc-short-name}.
 
 Pour ce guide, nous utiliserons les stratégies brutes suivantes :
 
@@ -87,9 +87,9 @@ NOTE: le drapeau `--ignore-kubernetes-connection-failure=true` est requis pour d
 Cependant, il est possible de démarrer le serveur de stratégies avec/dans Kubernetes et d'utiliser le point de terminaison de validation brute.
 Les stratégies brutes peuvent accéder aux xref:../explanations/context-aware-policies.adoc[capabilities] sensibles au contexte comme les stratégies standard.
 
-== Exécution d'un serveur de stratégies à l'intérieur de Kubernetes sans le contrôleur {short-project-name}
+== Exécution d'un serveur de stratégies à l'intérieur de Kubernetes sans le contrôleur {admc-short-name}
 
-Il n'est pas possible d'utiliser une instance de serveur de stratégies gérée par le contrôleur {short-project-name} pour héberger des stratégies brutes.
+Il n'est pas possible d'utiliser une instance de serveur de stratégies gérée par le contrôleur {admc-short-name} pour héberger des stratégies brutes.
 Le contrôleur ne permettra pas à l'utilisateur de modifier le ConfigMap du serveur de stratégies pour ajouter une stratégie brute, car il essaiera de le réconcilier en annulant les modifications.
 À cause de cela, un serveur de stratégies dédié doit être démarré.
 
@@ -295,7 +295,7 @@ La requête sera modifiée et la réponse contiendra un JSONPatch :
 
 == Rédaction de stratégies brutes
 
-De la même manière que les stratégies qui valident les ressources Kubernetes, les stratégies brutes sont écrites en WebAssembly en utilisant les SDK {short-project-name}.
+De la même manière que les stratégies qui valident les ressources Kubernetes, les stratégies brutes sont écrites en WebAssembly en utilisant les SDK {admc-short-name}.
 Si vous êtes intéressé par l'écriture de stratégies brutes, veuillez vous référer à la documentation spécifique à la langue pour plus d'informations :
 
 * xref:../tutorials/writing-policies/go/10-raw-policies.adoc[Ok]

@@ -8,16 +8,16 @@ include::partial$variables.adoc[]
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
 :doc-topic: [“explicaciones”, “escáner-de-auditoría”, “informes-de-directivas”]
 :doc-type: [“explicación”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “escáner de auditoría”, "informes-de-directivas"]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “escáner de auditoría”, "informes-de-directivas"]
 :sidebar_label: InformesDeDirectiva
 :current-version: {page-origin-branch}
 
-Al utilizar el Escáner de Auditoría {project-name}, almacenas los resultados de los escaneos de directivas utilizando los Recursos Personalizados https://openreports.io/[OpenReports].
+Al utilizar el Escáner de Auditoría {admc-name}, almacenas los resultados de los escaneos de directivas utilizando los Recursos Personalizados https://openreports.io/[OpenReports].
 
 [CAUTION]
 ====
 
-Con {project-name} 1.33, la función del Escáner de Auditoría guarda los informes en los CRDs de OpenReports de [openreports.io](https://openreports.io) por defecto.
+Con {admc-name} 1.33, la función del Escáner de Auditoría guarda los informes en los CRDs de OpenReports de [openreports.io](https://openreports.io) por defecto.
 
 Los CRDs de link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] del grupo de trabajo de Directivas de K8s no están instalados por defecto, están marcados como obsoletos y se eliminarán en una futura versión.
 
@@ -197,7 +197,7 @@ La interfaz de usuario del Policy Reporter proporciona un panel que muestra toda
 
 image::policy-reporter_dashboard.png[Ejemplo de panel del Policy Reporter]
 
-{short-project-name} incluye la interfaz de usuario del Policy Reporter con un filtro preconfigurado que solo muestra {short-project-name} directivas, junto con información ampliada:
+{admc-short-name} incluye la interfaz de usuario del Policy Reporter con un filtro preconfigurado que solo muestra {admc-short-name} directivas, junto con información ampliada:
 
 image::policy-reporter_policyreports.png[Ejemplo de PolicyReports del Policy Reporter]
 

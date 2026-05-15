@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl CLI
-:description: 探索 \`kwctl` 命令行工具以管理 {project-name} 策略并执行加载策略等任务。
+:description: 探索 \`kwctl` 命令行工具以管理 {admc-name} 策略并执行加载策略等任务。
 :keywords: cli，参考，kwctl
 :doc-persona: kubewarden-operator
 :doc-type: 参考手册
@@ -44,28 +44,28 @@ include::partial$variables.adoc[]
 [[kwctl]]
 === `kwctl`
 
-管理 {project-name} 策略的工具
+管理 {admc-name} 策略的工具
 
 *用法：* `kwctl [OPTIONS] <COMMAND>`
 
 ==== 子命令
 
-* `annotate` — 向 WebAssembly 模块添加 {short-project-name} 元数据
-* `bench` — 对 {short-project-name} 策略进行基准测试
+* `annotate` — 向 WebAssembly 模块添加 {admc-short-name} 元数据
+* `bench` — 对 {admc-short-name} 策略进行基准测试
 * `completions` — 生成 shell 补全
 * `digest` — 从策略的 OCI 清单中获取摘要
 * `docs` — 为 kwctl 命令生成 markdown 文档
 * `info` — 显示系统信息
-* `inspect` — 检查 {short-project-name} 策略
+* `inspect` — 检查 {admc-short-name} 策略
 * `load` — 从 tar.gz 文件加载策略
 * `policies` — 列出所有已下载的策略
-* `pull` — 从给定的 URI 拉取 {short-project-name} 策略
-* `push` — 将 {short-project-name} 策略推送到 OCI 注册表
-* `rm` — 从存储中移除 {short-project-name} 策略
-* `run` — 从给定的 URI 运行 {short-project-name} 策略
+* `pull` — 从给定的 URI 拉取 {admc-short-name} 策略
+* `push` — 将 {admc-short-name} 策略推送到 OCI 注册表
+* `rm` — 从存储中移除 {admc-short-name} 策略
+* `run` — 从给定的 URI 运行 {admc-short-name} 策略
 * `save` — 将策略保存到 tar.gz 文件
 * `scaffold` — 为 Kubernetes 资源或配置文件生成骨架
-* `verify` — 使用 Sigstore 验证来自给定 URI 的 {short-project-name} 策略
+* `verify` — 使用 Sigstore 验证来自给定 URI 的 {admc-short-name} 策略
 
 ==== 选项
 
@@ -75,7 +75,7 @@ include::partial$variables.adoc[]
 [[kwctl-annotate]]
 === `kwctl annotate`
 
-向 WebAssembly 模块添加 {short-project-name} 元数据
+向 WebAssembly 模块添加 {admc-short-name} 元数据
 
 *用法：* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
 
@@ -92,21 +92,21 @@ include::partial$variables.adoc[]
 [[kwctl-bench]]
 === `kwctl bench`
 
-对 {short-project-name} 策略进行基准测试。
+对 {admc-short-name} 策略进行基准测试。
 
 可以通过以下方式指定策略： +
 - URI：例如，`registry://ghcr.io/kubewarden/policies/psp-policy:latest` 或 `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
 - SHA 前缀：例如，`c3b80a10f9c3`（要求策略已被拉取） +
 - 本地 WASM 文件：例如，`file://home/tux/new-policy/psp-policy.wasm` +
-- 本地 YAML 文件：例如，`file://home/tux/cluster-admission-policy.yaml`（包含 {short-project-name} 自定义资源的声明，如 `ClusterAdmissionPolicy`、`AdmissionPolicy` 等）
+- 本地 YAML 文件：例如，`file://home/tux/cluster-admission-policy.yaml`（包含 {admc-short-name} 自定义资源的声明，如 `ClusterAdmissionPolicy`、`AdmissionPolicy` 等）
 
 默认行为:
 如果省略模式，则假定为 `file://`，根目录为当前目录。
 
-关于 {short-project-name} 自定义资源的说明： +
+关于 {admc-short-name} 自定义资源的说明： +
 - 标志 `--request-path`、`--settings-path` 和 `--settings-json` 被忽略；设置从自定义资源定义中读取。 +
 - `--execution-mode` 标志适用于 YAML 文件中的所有策略。 +
-- `--raw` 标志不能使用，因为 {short-project-name} 的自定义资源不支持 `raw` 策略。
+- `--raw` 标志不能使用，因为 {admc-short-name} 的自定义资源不支持 `raw` 策略。
 
 仅评估自定义资源定义（CRD）的以下属性： +
 - 策略模块 +
@@ -121,7 +121,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 
 ==== 参数
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — 策略 URI、SHA 前缀或包含 {short-project-name} 策略资源的 YAML 文件。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录。
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — 策略 URI、SHA 前缀或包含 {admc-short-name} 策略资源的 YAML 文件。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录。
 
 ==== 选项
 
@@ -201,7 +201,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-inspect]]
 === `kwctl inspect`
 
-检查 {short-project-name} 策略
+检查 {admc-short-name} 策略
 
 *用法：* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
 
@@ -238,7 +238,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-pull]]
 === `kwctl pull`
 
-从给定 URI 拉取 {short-project-name} 策略
+从给定 URI 拉取 {admc-short-name} 策略
 
 *用法：* `kwctl pull [OPTIONS] <uri>`
 
@@ -253,7 +253,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 * `--docker-config-json-path <DOCKER_CONFIG>` — 包含 Docker 'config.json' 文件的目录的路径。可用于指示注册表身份验证详细信息。
 * `--github-owner <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 拥有者。
 * `--github-repo <VALUE>` — 在 CD 管道中生成的证书中预期的 GitHub 仓库。
-* `-o`, `--output-path <PATH>` — 输出文件。如果未提供，将下载到 {short-project-name} 存储
+* `-o`, `--output-path <PATH>` — 输出文件。如果未提供，将下载到 {admc-short-name} 存储
 * `--sigstore-trust-config <PATH>` — 符合Sigstore protobuf规范中ClientTrustConfig消息的JSON格式文件。此文件配置整个Sigstore实例状态，包括用于访问CA和工件透明服务的URI以及加密信任根本身。
 * `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
 * `-a`, `--verification-annotation <KEY=VALUE>` — 以key=value格式的注释。可以重复多次。
@@ -263,7 +263,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-push]]
 === `kwctl push`
 
-将{short-project-name}策略推送到OCI注册表
+将{admc-short-name}策略推送到OCI注册表
 
 *用法:* `kwctl push [OPTIONS] <policy> <uri>`
 
@@ -288,7 +288,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-rm]]
 === `kwctl rm`
 
-从商店中去除{short-project-name}策略
+从商店中去除{admc-short-name}策略
 
 *用法:* `kwctl rm <uri_or_sha_prefix>`
 
@@ -299,21 +299,21 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-run]]
 === `kwctl run`
 
-在本地运行一个或多个{short-project-name}策略。
+在本地运行一个或多个{admc-short-name}策略。
 
 可以通过以下方式指定策略： +
 - URI：例如，`registry://ghcr.io/kubewarden/policies/psp-policy:latest` 或 `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
 - SHA 前缀：例如，`c3b80a10f9c3`（要求策略已被拉取） +
 - 本地 WASM 文件：例如，`file://home/tux/new-policy/psp-policy.wasm` +
-- 本地 YAML 文件：例如，`file://home/tux/cluster-admission-policy.yaml`（包含 {short-project-name} 自定义资源的声明，如 `ClusterAdmissionPolicy`、`AdmissionPolicy` 等）
+- 本地 YAML 文件：例如，`file://home/tux/cluster-admission-policy.yaml`（包含 {admc-short-name} 自定义资源的声明，如 `ClusterAdmissionPolicy`、`AdmissionPolicy` 等）
 
 默认行为:
 如果省略模式，则假定为 `file://`，根目录为当前目录。
 
-关于 {short-project-name} 自定义资源的说明： +
+关于 {admc-short-name} 自定义资源的说明： +
 - 标志 `--request-path`、`--settings-path` 和 `--settings-json` 被忽略；设置从自定义资源定义中读取。 +
 - `--execution-mode` 标志适用于 YAML 文件中的所有策略。 +
-- `--raw` 标志不能使用，因为 {short-project-name} 的自定义资源不支持 `raw` 策略。
+- `--raw` 标志不能使用，因为 {admc-short-name} 的自定义资源不支持 `raw` 策略。
 
 仅评估自定义资源定义（CRD）的以下属性： +
 - 策略模块 +
@@ -328,7 +328,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 
 ==== 参数
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — 策略 URI、SHA 前缀或包含 {short-project-name} 策略资源的 YAML 文件。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — 策略 URI、SHA 前缀或包含 {admc-short-name} 策略资源的 YAML 文件。支持的方案：registry://、https://, file://。如果省略模式，则假定为 file://，根目录为当前目录.
 
 ==== 选项
 
@@ -381,7 +381,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 * `admission-request` — 生成准入请求对象
 * `artifacthub` — 从 metadata.yml 文件输出 artifacthub-pkg.yml 文件
 * `manifest` — 输出Kubernetes资源清单
-* `vap` — 将 Kubernetes `ValidatingAdmissionPolicy` 转换为 {short-project-name} `ClusterAdmissionPolicy`
+* `vap` — 将 Kubernetes `ValidatingAdmissionPolicy` 转换为 {admc-short-name} `ClusterAdmissionPolicy`
 * `verification-config` — 输出默认的 Sigstore 验证配置文件
 
 [[kwctl-scaffold-admission-request]]
@@ -395,7 +395,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 
 * `--object <PATH>` — 包含被接纳的新对象的文件
 * `--old-object <PATH>` — 包含现有对象的文件
-* `-o`, `--operation <TYPE>` — {short-project-name} 自定义资源类型 +
+* `-o`, `--operation <TYPE>` — {admc-short-name} 自定义资源类型 +
   可能的值：`CREATE`
 
 [[kwctl-scaffold-artifacthub]]
@@ -438,7 +438,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 * `--sigstore-trust-config <PATH>` — 符合Sigstore protobuf规范中ClientTrustConfig消息的JSON格式文件。此文件配置整个Sigstore实例状态，包括用于访问CA和工件透明服务的URI以及加密信任根本身。
 * `--sources-path <PATH>` — 包含源信息的YAML文件（https，不安全的注册表主机，自定义CA...）。
 * `--title <VALUE>` — 策略标题
-* `-t`, `--type <VALUE>` — {short-project-name} 自定义资源类型 +
+* `-t`, `--type <VALUE>` — {admc-short-name} 自定义资源类型 +
   可能的值：`ClusterAdmissionPolicy`、`AdmissionPolicy`
 * `-a`, `--verification-annotation <KEY=VALUE>` — 以key=value格式的注释。可以重复多次。
 * `--verification-config-path <PATH>` — 包含验证配置信息的 YAML 文件（签名、公钥...）。
@@ -447,7 +447,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-scaffold-vap]]
 === `kwctl scaffold vap`
 
-将 Kubernetes `ValidatingAdmissionPolicy` 转换为 {short-project-name} `ClusterAdmissionPolicy`
+将 Kubernetes `ValidatingAdmissionPolicy` 转换为 {admc-short-name} `ClusterAdmissionPolicy`
 
 *用法:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
 
@@ -468,7 +468,7 @@ YAML 文件可以包含多个自定义资源声明。在这种情况下，`kwctl
 [[kwctl-verify]]
 === `kwctl verify`
 
-使用 Sigstore 从给定的 URI 验证 {short-project-name} 策略。
+使用 Sigstore 从给定的 URI 验证 {admc-short-name} 策略。
 
 *用法:* `kwctl verify [OPTIONS] <uri>`
 

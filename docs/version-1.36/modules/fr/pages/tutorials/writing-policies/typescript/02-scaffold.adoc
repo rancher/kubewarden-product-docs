@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Créez une nouvelle stratégie de validation pour rejeter les noms d'hôtes invalides dans les objets Pod par la configuration des paramètres de stratégie, testée avec les outils fournis.
-:keywords: {project-name}, kubewarden, kubernetes, rédaction de stratégies en TypeScript, nouvelle stratégie de validation
+:keywords: {admc-name}, kubewarden, kubernetes, rédaction de stratégies en TypeScript, nouvelle stratégie de validation
 :doc-type: didacticiel
-:doc-topic: {project-name}, kubewarden, rédaction de stratégies, typescript, création d'une nouvelle stratégie de validation
+:doc-topic: {admc-name}, kubewarden, rédaction de stratégies, typescript, création d'une nouvelle stratégie de validation
 :doc-persona: développeur-de-stratégie-kubewarden
 :current-version: {page-origin-branch}
 

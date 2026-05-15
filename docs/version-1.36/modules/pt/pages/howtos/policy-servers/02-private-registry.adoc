@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "private-registry"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "policyservers", "private registries"]
 :current-version: {page-origin-branch}
 
 É possível configurar os PolicyServers para usar credenciais de registros OCI privados. Isso permite que esses PolicyServers baixem políticas de registros públicos e privados.

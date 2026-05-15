@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "context-aware-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "kontextabhängige Richtlinie", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "clusteradministrator"]
+:keywords: ["{admc-name}", "kubewarden", "kontextabhängige Richtlinie", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "clusteradministrator"]
 :sidebar_label: Kontextabhängige Richtlinien
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -16,7 +16,7 @@ Entwickler können Richtlinien erstellen, die zur Laufzeit Informationen aus ein
 
 [NOTE]
 ====
-Kontextabhängige Richtlinien sind nur in {project-name} Versionen ≥ v1.6.0 verfügbar.
+Kontextabhängige Richtlinien sind nur in {admc-name} Versionen ≥ v1.6.0 verfügbar.
 ====
 
 Die Kontrolle darüber, auf welche Ressourcen eine Richtlinie im Cluster zugreifen kann, erfolgt über das https://kubernetes.io/docs/concepts/security/service-accounts/[Service-Konto] des Richtliniendienstes. Ein Clusteradministrator kontrolliert, auf was eine Richtlinie über Kubernetes RBAC-Regeln zugreifen kann. Kontextabhängige Richtlinien haben nur *Lesezugriff* auf die angeforderten Ressourcen.
@@ -28,7 +28,7 @@ Wenn ein unprivilegierter Benutzer eine kontextabhängige Richtlinie als `Admiss
 - Blockiert alle Versuche, auf Kubernetes-Ressourcen zuzugreifen.
 - Meldet sie an den Clusteradministrator.
 
-Standardmäßig blockiert {short-project-name} alle Clusterressourcen. Ein {project-name} Administrator definiert, auf welche Kubernetes-Ressourcen jede kontextabhängige Richtlinie zugreifen kann. Dafür wird `contextAwareResources` verwendet.
+Standardmäßig blockiert {admc-short-name} alle Clusterressourcen. Ein {admc-name} Administrator definiert, auf welche Kubernetes-Ressourcen jede kontextabhängige Richtlinie zugreifen kann. Dafür wird `contextAwareResources` verwendet.
 
 Das folgende Beispiel stellt eine Richtlinie bereit, die den Zugriff auf die `Deployment` und `Pod` Ressourcen erfordert:
 
@@ -60,12 +60,12 @@ spec:
 
 Sobald die Richtlinie bereitgestellt ist, kann sie die Daten der `deployment` und `pod` Ressourcen lesen.
 
-Richtlinienautoren stellen Listen von Kubernetes-Ressourcen für ihre kontextabhängige Richtlinie bereit. Richtlinienautoren tun dies, indem sie die Richtlinie annotieren. {project-name} Administratoren sehen die Metadaten der Richtlinie mit dem `kwctl inspect` Befehl ein. Sie können eine Liste der Ressourcen abrufen, auf die die Richtlinie zugreifen muss. Ein Administrator verwendet diese Liste, um die `ClusterAdmissionPolicy` Definition auszufüllen.
+Richtlinienautoren stellen Listen von Kubernetes-Ressourcen für ihre kontextabhängige Richtlinie bereit. Richtlinienautoren tun dies, indem sie die Richtlinie annotieren. {admc-name} Administratoren sehen die Metadaten der Richtlinie mit dem `kwctl inspect` Befehl ein. Sie können eine Liste der Ressourcen abrufen, auf die die Richtlinie zugreifen muss. Ein Administrator verwendet diese Liste, um die `ClusterAdmissionPolicy` Definition auszufüllen.
 
 [WARNING]
 ====
 
-Um Missbrauch des Systems zu verhindern, müssen {project-name} Administratoren die Ressourcen überprüfen, auf die die Richtlinie zugreift.
+Um Missbrauch des Systems zu verhindern, müssen {admc-name} Administratoren die Ressourcen überprüfen, auf die die Richtlinie zugreift.
 
 Zum Beispiel hätte eine Richtlinie, die Ingress-Objekte bewertet, gute Gründe, die `Ingress` Ressourcen zu lesen, die im Cluster definiert sind. Die gleiche Richtlinie kann nicht rechtfertigen, Zugriff auf `Secret` Ressourcen zu haben.
 

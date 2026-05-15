@@ -23,14 +23,14 @@ Gatekeeper est un projet visant Kubernetes avec des fonctionnalités prêtes à 
 
 == Compatibilité avec les politiques existantes
 
-Toutes les politiques existantes de Gatekeeper devraient être compatibles avec {short-project-name} comme expliqué dans ce chapitre.
+Toutes les politiques existantes de Gatekeeper devraient être compatibles avec {admc-short-name} comme expliqué dans ce chapitre.
 
 [IMPORTANT]
 ====
-Si vous constatez que cela n'est pas vrai pour vos politiques Gatekeeper, signalez-le, et nous travaillerons pour garantir que votre politique Gatekeeper fonctionne avec {short-project-name}.
+Si vous constatez que cela n'est pas vrai pour vos politiques Gatekeeper, signalez-le, et nous travaillerons pour garantir que votre politique Gatekeeper fonctionne avec {admc-short-name}.
 ====
 
 
 Les politiques doivent être compilées avec la CLI `opa` pour cibler `wasm`.
 
-Pour l'exécution des politiques, vous pouvez en savoir plus sur le xref:tutorials/writing-policies/rego/02-builtin-support.adoc[support intégré] de l'Open Policy Agent dans {short-project-name}.
+Pour l'exécution des politiques, vous pouvez en savoir plus sur le xref:tutorials/writing-policies/rego/02-builtin-support.adoc[support intégré] de l'Open Policy Agent dans {admc-short-name}.

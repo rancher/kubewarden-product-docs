@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erforschen Sie Cluster-Metriken und -Muster mit den von {project-name} bereitgestellten Plattformmetriken, um Entscheidungsprozesse zu informieren.
+:description: Erforschen Sie Cluster-Metriken und -Muster mit den von {admc-name} bereitgestellten Plattformmetriken, um Entscheidungsprozesse zu informieren.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name} stellt relevante Plattformmetriken bereit, die es Clusteradministratoren und Richtlinienentwicklern ermöglichen, Muster und potenzielle Probleme zu identifizieren.
+{admc-short-name} stellt relevante Plattformmetriken bereit, die es Clusteradministratoren und Richtlinienentwicklern ermöglichen, Muster und potenzielle Probleme zu identifizieren.
 
 == Policy-Server
 

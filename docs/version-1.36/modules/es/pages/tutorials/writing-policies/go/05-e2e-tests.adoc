@@ -24,7 +24,7 @@ Utilizarás el compilador incluido en la imagen oficial del contenedor de TinyGo
 * https://github.com/bats-core/bats-core[bats]:
 Utilizado para escribir las pruebas y automatizar su ejecución.
 * https://github.com/kubewarden/kwctl/releases[`kwctl`]:
-Herramienta CLI proporcionada por {project-name} para ejecutar sus directivas fuera de Kubernetes, entre otras acciones.
+Herramienta CLI proporcionada por {admc-name} para ejecutar sus directivas fuera de Kubernetes, entre otras acciones.
 Está cubierto en xref:tutorials/testing-policies/index.adoc[esta sección] de la documentación.
 
 == Escribiendo pruebas

@@ -3,27 +3,27 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Résoudre les problèmes de rotation des certificats du serveur de stratégie dans {project-name}, en commençant par la version 1.16.
+:description: Résoudre les problèmes de rotation des certificats du serveur de stratégie dans {admc-name}, en commençant par la version 1.16.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "solutions de contournement", "certificats du serveur de stratégie"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "certificats du serveur de stratégie"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "certificats du serveur de stratégie"]
 :sidebar_label: Rotation des certificats
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
 [IMPORTANT]
-.Solution de contournement pour {project-name} v1.16.0 et antérieures
+.Solution de contournement pour {admc-name} v1.16.0 et antérieures
 ====
 
-Cette solution de contournement n'est nécessaire que pour {short-project-name} v1.16.0 et antérieures.
+Cette solution de contournement n'est nécessaire que pour {admc-short-name} v1.16.0 et antérieures.
 À partir de v1.17.0, le contrôleur renouvelle automatiquement les certificats du serveur de stratégie.
 
 ====
 
-Lors du processus de publication pour v1.14, le {short-project-name} a découvert un bogue lié à la rotation des certificats du serveur de stratégie. La configuration de la CA racine est pour une expiration de 10 ans, mais chaque secret de certificat de serveur de stratégie a une expiration d'un an. Cependant, le contrôleur est actuellement incapable de les renouveler automatiquement.
+Lors du processus de publication pour v1.14, le {admc-short-name} a découvert un bogue lié à la rotation des certificats du serveur de stratégie. La configuration de la CA racine est pour une expiration de 10 ans, mais chaque secret de certificat de serveur de stratégie a une expiration d'un an. Cependant, le contrôleur est actuellement incapable de les renouveler automatiquement.
 
-Dans la version v1.14, le {short-project-name} a veillé à ce que les secrets du serveur de stratégie soient créés avec une expiration de 10 ans.
+Dans la version v1.14, le {admc-short-name} a veillé à ce que les secrets du serveur de stratégie soient créés avec une expiration de 10 ans.
 
 Un processus de renouvellement automatisé est en place pour les versions ≥ v1.16.0.
 

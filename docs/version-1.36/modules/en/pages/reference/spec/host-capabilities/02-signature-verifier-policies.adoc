@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Signature verifier policies
 :current-version: {page-origin-branch}
 
-{project-name} implements support for the
+{admc-name} implements support for the
 https://www.sigstore.dev/[Sigstore]
 project.
 This allows implementing a "Secure Supply Chain" for your cluster.
@@ -24,7 +24,7 @@ xref:/howtos/security-hardening/secure-supply-chain.adoc[how we implement a Secu
 Sigstore signatures are stored inside of container registries,
 next to the OCI object being signed.
 They can be a container image or a more generic OCI artifact,
-like a {short-project-name} policy.
+like a {admc-short-name} policy.
 When an object is signed,
 its signatures are stored as layers of an OCI object created by Sigstore.
 Policies needing to check signatures of containers need to check those layers,
@@ -32,11 +32,11 @@ and need to pull the signature layers to check the signatures themselves.
 
 Obtaining and operating with those OCI layers needs to happen outside the WebAssembly guest (the policy).
 Hence, this is done by the WebAssembly runtime,
-{short-project-name}'s `policy-server` or `kwctl`.
+{admc-short-name}'s `policy-server` or `kwctl`.
 
-The different language SDKs for {short-project-name} policies take care of this.
+The different language SDKs for {admc-short-name} policies take care of this.
 They provide functions for verification of container image,
-{short-project-name} policies, Helm charts and other kinds of OCI artifact.
+{admc-short-name} policies, Helm charts and other kinds of OCI artifact.
 This ensures a safe and tested code path for verification.
 
 Pulling data from a registry and cryptographically verifying signatures can be time and computationally expensive,
@@ -86,7 +86,7 @@ and not from a tag that may not match that checksum digest (and therefore be com
 
 == An example
 
-The {short-project-name} team
+The {admc-short-name} team
 https://github.com/kubewarden/verify-image-signatures[provides a verifier policy]
 that enforces Sigstore signatures for all containers.
 It's built using Rust and with the Rust SDK.

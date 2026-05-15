@@ -19,11 +19,11 @@ Ao construir uma política Rego em um módulo WebAssembly, certas dessas funçõ
 São os incorporados marcados com uma marca verde na página de incorporados vinculada.
 O runtime do WebAssembly que avalia o módulo fornece os outros.
 
-Os incorporados marcados como `SDK-dependent` são aqueles que o host deve implementar, neste caso, {project-name}.
+Os incorporados marcados como `SDK-dependent` são aqueles que o host deve implementar, neste caso, {admc-name}.
 OPA e Gatekeeper podem usá-los dependendo das necessidades da política.
 Em qualquer caso, esses incorporados são expostos à política e qualquer nova ou existente pode depender deles.
 
-Ainda existem certos incorporados que ainda não são fornecidos por {short-project-name}, no entanto, com base nas políticas vistas em aberto, os já suportados devem ser suficientes para a maioria dos usuários do Kubernetes.
+Ainda existem certos incorporados que ainda não são fornecidos por {admc-short-name}, no entanto, com base nas políticas vistas em aberto, os já suportados devem ser suficientes para a maioria dos usuários do Kubernetes.
 
 https://github.com/kubewarden/policy-evaluator/issues/56[Esta questão do GitHub] acompanha os incorporados Rego que ainda precisamos implementar.
 Sinta-se à vontade para comentar lá para ajudar a priorizar nosso trabalho.

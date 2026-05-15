@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "context-aware-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "コンテキスト認識ポリシー", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "クラスター管理者"]
+:keywords: ["{admc-name}", "kubewarden", "コンテキスト認識ポリシー", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "クラスター管理者"]
 :sidebar_label: コンテキスト認識ポリシー
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -16,7 +16,7 @@ include::partial$variables.adoc[]
 
 [NOTE]
 ====
-コンテキスト認識ポリシーは、{project-name}のバージョンがv1.6.0以上でのみ利用可能です。
+コンテキスト認識ポリシーは、{admc-name}のバージョンがv1.6.0以上でのみ利用可能です。
 ====
 
 ポリシーがクラスター内のどのリソースにアクセスできるかは、ポリシーサーバーのhttps://kubernetes.io/docs/concepts/security/service-accounts/[サービスアカウント]によって制御されます。クラスター管理者は、KubernetesのRBACルールを介してポリシーがアクセスできる内容を制御します。コンテキスト認識ポリシーは、要求されたリソースに対して*read*アクセスのみを持っています。
@@ -28,7 +28,7 @@ include::partial$variables.adoc[]
 - Kubernetesリソースへのすべてのアクセス試行をブロックします。
 - それらをクラスター管理者に報告します。
 
-デフォルトでは、{short-project-name}はすべてのクラスターリソースをブロックします。{project-name}管理者は、各コンテキスト認識ポリシーが読み取ることができるKubernetesリソースを定義します。これを行うために`contextAwareResources`を使用します。
+デフォルトでは、{admc-short-name}はすべてのクラスターリソースをブロックします。{admc-name}管理者は、各コンテキスト認識ポリシーが読み取ることができるKubernetesリソースを定義します。これを行うために`contextAwareResources`を使用します。
 
 以下の例は、`Deployment`および`Pod`リソースへのアクセスを必要とするポリシーをデプロイします：
 
@@ -60,12 +60,12 @@ spec:
 
 デプロイされると、このポリシーは`deployment`および`pod`リソースのデータを読み取ることができます。
 
-ポリシーの著者は、コンテキスト認識ポリシーのためのKubernetesリソースのリストを提供します。ポリシーの著者は、ポリシーに注釈を付けることでこれを行います。{project-name}管理者は、`kwctl inspect`コマンドを使用してポリシーのメタデータを表示します。彼らは、ポリシーがアクセスする必要のあるリソースのリストを取得できます。管理者は、このリストを使用して`ClusterAdmissionPolicy`定義を埋めます。
+ポリシーの著者は、コンテキスト認識ポリシーのためのKubernetesリソースのリストを提供します。ポリシーの著者は、ポリシーに注釈を付けることでこれを行います。{admc-name}管理者は、`kwctl inspect`コマンドを使用してポリシーのメタデータを表示します。彼らは、ポリシーがアクセスする必要のあるリソースのリストを取得できます。管理者は、このリストを使用して`ClusterAdmissionPolicy`定義を埋めます。
 
 [WARNING]
 ====
 
-システムの悪用を防ぐために、{project-name}管理者はポリシーがアクセスするリソースを確認する必要があります。
+システムの悪用を防ぐために、{admc-name}管理者はポリシーがアクセスするリソースを確認する必要があります。
 
 例えば、イングレスオブジェクトを評価するポリシーは、クラスター内で定義された`Ingress`リソースを読む必要があります。同じポリシーは、`Secret`リソースへのアクセスを正当化できません。
 

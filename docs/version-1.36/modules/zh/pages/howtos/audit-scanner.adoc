@@ -4,16 +4,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用 {project-name} 中的审计扫描器功能验证您的集群的合规状态，以确保其正确配置。
+:description: 使用 {admc-name} 中的审计扫描器功能验证您的集群的合规状态，以确保其正确配置。
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "audit scanner"]
 :sidebar_label: 审计扫描器
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-从版本 `v1.7.0` 开始，{project-name} 具有一个名为 "审计扫描器" 的新功能。一个名为 "审计扫描器" 的新组件不断检查集群中声明的资源，标记不符合已部署的 {project-name} 策略的资源，并将这些结果保存到特定的报告自定义资源中。
+从版本 `v1.7.0` 开始，{admc-name} 具有一个名为 "审计扫描器" 的新功能。一个名为 "审计扫描器" 的新组件不断检查集群中声明的资源，标记不符合已部署的 {admc-name} 策略的资源，并将这些结果保存到特定的报告自定义资源中。
 
 政策会随着时间而演变：您会部署新政策并更新现有政策。版本和配置设置也会发生变化。这可能导致集群中已经存在的资源不再合规。
 
@@ -23,7 +23,7 @@ include::partial$variables.adoc[]
 
 == 安装
 
-审计扫描器组件自 {short-project-name} `v1.7.0` 起可用。
+审计扫描器组件自 {admc-short-name} `v1.7.0` 起可用。
 因此，请确保您安装的 Helm 图表的 APP 版本为 `v1.7.0` 或更高。
 
 . 安装 `kubewarden-crds` Helm 图表。该图表默认安装所需的 `PolicyReport` CRDs。
@@ -71,7 +71,7 @@ helm install kubewarden-controller kubewarden/kubewarden-controller
 如果您希望审计扫描器将其报告保存在 PolicyReports CRDs（标记为已弃用）中，而不是默认的 OpenReports CRDs，请设置 `auditScanner.reportCRDsKind="policyreport"`。
 ====
 
-有关 {short-project-name} 安装的更多信息，请参见 xref:quick-start.adoc[快速入门指南]。
+有关 {admc-short-name} 安装的更多信息，请参见 xref:quick-start.adoc[快速入门指南]。
 
 默认情况下，审计扫描器的实现为每 60 分钟触发一次的 https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob]。您可以通过更改 kubewarden-controller 图表 https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml] 来调整此和其他审计扫描器设置。
 

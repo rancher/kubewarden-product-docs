@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie kontextabhängige Richtlinien, um eindeutige Ingress-Regeln über Hosts hinweg sicherzustellen und Konflikte mit den CEL-Erweiterungsbibliotheken von {project-name} zu vermeiden.
+:description: Konfigurieren Sie kontextabhängige Richtlinien, um eindeutige Ingress-Regeln über Hosts hinweg sicherzustellen und Konflikte mit den CEL-Erweiterungsbibliotheken von {admc-name} zu vermeiden.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
 :doc-type: ["tutorial"]
@@ -11,9 +11,9 @@ include::partial$variables.adoc[]
 :sidebar_label: Kontextabhängige Richtlinien
 :current-version: {page-origin-branch}
 
-Die {project-name} von `cel-policy` unterstützt die Funktion xref:reference/spec/05-context-aware-policies.adoc[Kontextbewusstsein]. Die Richtlinie hat die Fähigkeit, Clusterinformationen zu lesen und Entscheidungen basierend auf anderen vorhandenen Ressourcen zu treffen, zusätzlich zu der Ressource, die die Bewertung der Richtlinie über die Zulassungsanfrage ausgelöst hat.
+Die {admc-name} von `cel-policy` unterstützt die Funktion xref:reference/spec/05-context-aware-policies.adoc[Kontextbewusstsein]. Die Richtlinie hat die Fähigkeit, Clusterinformationen zu lesen und Entscheidungen basierend auf anderen vorhandenen Ressourcen zu treffen, zusätzlich zu der Ressource, die die Bewertung der Richtlinie über die Zulassungsanfrage ausgelöst hat.
 
-Um dies zu erreichen, können wir die https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{short-project-name}'s CEL-Erweiterungsbibliotheken für Hostfähigkeiten] verwenden, die in der Richtlinie enthalten sind.
+Um dies zu erreichen, können wir die https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{admc-short-name}'s CEL-Erweiterungsbibliotheken für Hostfähigkeiten] verwenden, die in der Richtlinie enthalten sind.
 
 == Beispiel: Eindeutiger Ingress
 
@@ -53,7 +53,7 @@ spec:
 
 ----
 
-Jetzt müssen wir den CEL-Code schreiben, der die vorhandenen Ingresses im Cluster abruft. Dafür verwenden wir die [{short-project-name} CEL-Erweiterungsbibliothek](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
+Jetzt müssen wir den CEL-Code schreiben, der die vorhandenen Ingresses im Cluster abruft. Dafür verwenden wir die [{admc-short-name} CEL-Erweiterungsbibliothek](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
 Insbesondere die `kw.k8s` Hostfähigkeiten, die es uns ermöglichen, das Cluster nach GroupVersionKinds abzufragen. Sie können die verfügbaren Dokumente für die CEL-Funktionen [hier](https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library) einsehen.
 
 Die Bibliothek verwendet ein Builder-Schema, genau wie die Upstream-Kubernetes-CEL-Erweiterungen; das Aufrufen einer CEL-Funktionsmethode gibt ein CEL-Objekt zurück, das seinerseits spezifische Funktionsmethoden hat. Dies vereinfacht die Gewissheit über den Umfang und die Rückgaben unseres CEL-Codes.

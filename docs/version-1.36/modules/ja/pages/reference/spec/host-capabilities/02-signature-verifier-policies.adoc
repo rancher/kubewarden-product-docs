@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: 署名検証ポリシー
 :current-version: {page-origin-branch}
 
-{project-name}はhttps://www.sigstore.dev/[Sigstore]プロジェクトのサポートを実装します。
+{admc-name}はhttps://www.sigstore.dev/[Sigstore]プロジェクトのサポートを実装します。
 これにより、クラスターのための「安全なサプライチェーン」を実装できます。
 
 安全なサプライチェーンの機能の一部は、クラスター内で実行されるすべてのコンテナイメージが署名され、検証されていることを保証することです。
@@ -19,15 +19,15 @@ include::partial$variables.adoc[]
 詳細については、xref:/howtos/security-hardening/secure-supply-chain.adoc[ポリシー自体の安全なサプライチェーンの実装方法]に関するドキュメントをご確認ください。
 
 Sigstoreの署名は、署名されるOCIオブジェクトの隣にあるコンテナレジストリ内に保存されます。
-それらはコンテナイメージまたはより一般的なOCIアーティファクト、例えば{short-project-name}ポリシーのようなものです。
+それらはコンテナイメージまたはより一般的なOCIアーティファクト、例えば{admc-short-name}ポリシーのようなものです。
 オブジェクトが署名されると、その署名はSigstoreによって作成されたOCIオブジェクトのレイヤーとして保存されます。
 コンテナの署名を確認する必要があるポリシーは、これらのレイヤーを確認し、署名自体を確認するために署名レイヤーをプルする必要があります。
 
 これらのOCIレイヤーを取得し、操作することは、WebAssemblyゲスト（ポリシー）の外で行う必要があります。
-したがって、これはWebAssemblyランタイム、すなわち{short-project-name}の`policy-server`または`kwctl`によって行われます。
+したがって、これはWebAssemblyランタイム、すなわち{admc-short-name}の`policy-server`または`kwctl`によって行われます。
 
-{short-project-name}ポリシー向けの各種言語SDKがこれを処理します。
-それらは、コンテナイメージ、{short-project-name}ポリシー、Helmチャート、その他の種類のOCIアーティファクトの検証のための関数を提供します。
+{admc-short-name}ポリシー向けの各種言語SDKがこれを処理します。
+それらは、コンテナイメージ、{admc-short-name}ポリシー、Helmチャート、その他の種類のOCIアーティファクトの検証のための関数を提供します。
 これにより、検証のための安全でテストされたコードパスが確保されます。
 
 レジストリからのデータ取得および署名の暗号検証は時間と計算リソースを要するため、WebAssemblyランタイム（PolicyServer、`kwctl`）は、署名の取得と検証計算の両方をキャッシュすることを保証します。
@@ -74,7 +74,7 @@ verify_keyless_exact_match(
 
 == 例
 
-{short-project-name}チームは、https://github.com/kubewarden/verify-image-signatures[検証ポリシー]を提供し、すべてのコンテナに対してSigstore署名を強制します。
+{admc-short-name}チームは、https://github.com/kubewarden/verify-image-signatures[検証ポリシー]を提供し、すべてのコンテナに対してSigstore署名を強制します。
 RustおよびRust SDKを使用して構築されています。
 ポリシーは、コンテナが署名されていることを保証し、オプションでリクエストを変更します。変更は、検証されたチェックサムをイメージのタグに追加します。
 詳細については、ドキュメントを確認してください。

@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Apprenez à écrire et à exécuter des tests de bout en bout complets pour le comportement des stratégies en utilisant BATS et kwctl.
-:keywords: "{project-name}", kubewarden, kubernetes, tests de stratégies, typescript, tests e2e
+:keywords: "{admc-name}", kubewarden, kubernetes, tests de stratégies, typescript, tests e2e
 :doc-type: didacticiel
-:doc-topic: {project-name}, kubewarden, écriture-des-stratégies, typescript, tests-de-bout-en-bout
+:doc-topic: {admc-name}, kubewarden, écriture-des-stratégies, typescript, tests-de-bout-en-bout
 :doc-persona: développeur-de-stratégie-kubewarden
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ Cette section montre comment vous pouvez écrire des tests de bout en bout s'ex�
 Rappelez-vous, vous avez besoin de ces outils sur votre machine de développement :
 
 * `bats` : Utilisé pour écrire les tests et automatiser leur exécution.
-* `kwctl` >= v1.30 : Outil CLI fourni par {project-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions. C'est couvert dans xref:/tutorials/testing-policies/index.adoc[la section des tests de stratégies] de la documentation.
+* `kwctl` >= v1.30 : Outil CLI fourni par {admc-name} pour exécuter ses stratégies en dehors de Kubernetes, entre autres actions. C'est couvert dans xref:/tutorials/testing-policies/index.adoc[la section des tests de stratégies] de la documentation.
 
 == Écriture de tests
 
@@ -252,9 +252,9 @@ Les déclarations `echo "output = $\{output}"` dans chaque test aident au débog
 
 == Conclusion
 
-Les tests de bout en bout offrent une couverture complète du comportement de la stratégie en testant contre le binaire WebAssembly réel. Cela garantit que la stratégie fonctionne correctement lorsqu'elle est déployée dans {short-project-name}, et pas seulement dans l'environnement de développement TypeScript.
+Les tests de bout en bout offrent une couverture complète du comportement de la stratégie en testant contre le binaire WebAssembly réel. Cela garantit que la stratégie fonctionne correctement lorsqu'elle est déployée dans {admc-short-name}, et pas seulement dans l'environnement de développement TypeScript.
 
 [TIP]
 ====
-Pour des exemples plus complets de tests de bout en bout, vous pouvez explorer le code source https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js source code], qui comprend des tests e2e étendus démontrant chacune des capacités d'hôte de {short-project-name}. Ces tests peuvent servir d'inspiration pour tester des fonctionnalités de stratégie plus avancées telles que le réseau, les opérations cryptographiques et les interactions avec le registre OCI.
+Pour des exemples plus complets de tests de bout en bout, vous pouvez explorer le code source https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js source code], qui comprend des tests e2e étendus démontrant chacune des capacités d'hôte de {admc-short-name}. Ces tests peuvent servir d'inspiration pour tester des fonctionnalités de stratégie plus avancées telles que le réseau, les opérations cryptographiques et les interactions avec le registre OCI.
 ====

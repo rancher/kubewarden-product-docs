@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
-:title: {project-name} artefacts
-:description: Vérifiez {project-name} artefacts et accédez aux binaires associés, aux graphiques Helm, pour une gestion efficace de la sécurité.
+:title: {admc-name} artefacts
+:description: Vérifiez {admc-name} artefacts et accédez aux binaires associés, aux graphiques Helm, pour une gestion efficace de la sécurité.
 :keywords: [artefacts, support, airgap, images]
 :doc-persona: [kubewarden-operator]
 :doc-type: [référence]
@@ -11,10 +11,10 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 
-== Vérification de {project-name}
+== Vérification de {admc-name}
 
 Il existe un tutoriel sur xref:/tutorials/verifying-kubewarden.adoc[vérification
-{short-project-name}] démontrant comment vérifier les artefacts {short-project-name}.
+{admc-short-name}] démontrant comment vérifier les artefacts {admc-short-name}.
 
 == Fichiers binaires
 
@@ -31,4 +31,4 @@ Pour les artefacts de l'Open Container Initiative (OCI), le projet publie tout d
 
 == Charts Helm via HTTPS
 
-{short-project-name} publie des charts Helm dans le dépôt HTTPS des charts Helm à https://charts.kubewarden.io.. Ils sont sans SLSA, ni signatures, mais ce type de dépôt Helm permet la recherche.
+{admc-short-name} publie des charts Helm dans le dépôt HTTPS des charts Helm à https://charts.kubewarden.io.. Ils sont sans SLSA, ni signatures, mais ce type de dépôt Helm permet la recherche.

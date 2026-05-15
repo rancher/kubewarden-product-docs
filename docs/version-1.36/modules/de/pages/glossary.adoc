@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erforschen Sie wichtige Ressourcen und Konfigurationen im Zusammenhang mit {project-name} Richtlinien in Kubernetes-Umgebungen für weitere Informationen.
+:description: Erforschen Sie wichtige Ressourcen und Konfigurationen im Zusammenhang mit {admc-name} Richtlinien in Kubernetes-Umgebungen für weitere Informationen.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["glossary"]
 :doc-type: ["explanation"]
@@ -38,8 +38,8 @@ Ein CLI-Tool zur Erstellung und Prüfung von Kubernetes YAML-Dateien für die Be
 
 === MutatingWebhookConfiguration
 
-Eine https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes-Ressource], die vom {short-project-name} Controller erstellt wurde, um Kubernetes mitzuteilen, wo eine `AdmissionReview` gesendet werden soll.
-Mit anderen Worten, so informiert ein {short-project-name} Controller Kubernetes, wo eine Richtlinie zur Veränderung von Ressourcen zu finden ist.
+Eine https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes-Ressource], die vom {admc-short-name} Controller erstellt wurde, um Kubernetes mitzuteilen, wo eine `AdmissionReview` gesendet werden soll.
+Mit anderen Worten, so informiert ein {admc-short-name} Controller Kubernetes, wo eine Richtlinie zur Veränderung von Ressourcen zu finden ist.
 
 == P
 
@@ -50,14 +50,14 @@ Ein Bericht und ein <<_clusterreport,Clusterbericht>> speichern die Ergebnisse v
 [#_policy_server]
 === PolicyServer
 
-Ein Richtlinienserver validiert eingehende Anfragen, indem er {short-project-name} Richtlinien gegen die Anfragen ausführt.
+Ein Richtlinienserver validiert eingehende Anfragen, indem er {admc-short-name} Richtlinien gegen die Anfragen ausführt.
 
 == V
 
 === ValidatingWebhookConfiguration
 
-Eine https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes-Ressource], die vom {short-project-name} Controller erstellt wurde, um Kubernetes mitzuteilen, wo eine `AdmissionReview` gesendet werden soll.
-Mit anderen Worten, so informiert {short-project-name} Kubernetes, wo eine Richtlinie zur Validierung von Ressourcen zu finden ist.
+Eine https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[Kubernetes-Ressource], die vom {admc-short-name} Controller erstellt wurde, um Kubernetes mitzuteilen, wo eine `AdmissionReview` gesendet werden soll.
+Mit anderen Worten, so informiert {admc-short-name} Kubernetes, wo eine Richtlinie zur Validierung von Ressourcen zu finden ist.
 
 == W
 

@@ -7,11 +7,11 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher", "installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "rancher", "アプリケーションコレクション", "appco", "署名", "確認", "確認する"]
+:keywords: ["{admc-name}", "rancher", "アプリケーションコレクション", "appco", "署名", "確認", "確認する"]
 :sidebar_label: イメージを確認する
 :current-version: {page-origin-branch}
 
-このセクションでは、https://apps.rancher.io/[Rancherアプリケーションコレクション]からのアプリケーションとイメージを{project-name}で確認する方法について説明します。
+このセクションでは、https://apps.rancher.io/[Rancherアプリケーションコレクション]からのアプリケーションとイメージを{admc-name}で確認する方法について説明します。
 
 イメージの確認は、https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[イメージ署名の確認]ポリシーをデプロイし、PolicyServersを構成してアプリケーションコレクションからイメージの署名レイヤーを取得することによって行います。
 

@@ -3,22 +3,22 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: ValidatingAdmissionPolicyを{project-name}に移行するために、kwctlコマンドのマイグレーション手順を使用して、スムーズなポリシー移行を行います。
+:description: ValidatingAdmissionPolicyを{admc-name}に移行するために、kwctlコマンドのマイグレーション手順を使用して、スムーズなポリシー移行を行います。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 Kubernetes v1.26以降、https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy]は、KubernetesでカスタムAdmissionポリシーを記述する方法を提供します。ポリシーは、https://cel.dev/[Common Expression Language (CEL)]を使用して記述され、いくつかのhttps://kubernetes.io/docs/reference/using-api/cel/[Kubernetes特有の拡張]が追加されています。
 ValidatingAdmissionPolicyはKubernetes v1.30で安定版となりました。
 
-{project-name}は、変更なしでKubernetes VAPポリシーを実行できるCELポリシーを提供します。
-CELポリシーに関する詳細は、{short-project-name}のドキュメント内のxref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[このセクション]でご覧いただけます。
-xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[この段落]は、{short-project-name}を使用してVAPポリシーを実行する利点を説明します。
+{admc-name}は、変更なしでKubernetes VAPポリシーを実行できるCELポリシーを提供します。
+CELポリシーに関する詳細は、{admc-short-name}のドキュメント内のxref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[このセクション]でご覧いただけます。
+xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[この段落]は、{admc-short-name}を使用してVAPポリシーを実行する利点を説明します。
 
-このガイドでは、`kwctl`ツールを使用してVAPポリシーを{short-project-name}に移行する方法を説明します。
+このガイドでは、`kwctl`ツールを使用してVAPポリシーを{admc-short-name}に移行する方法を説明します。
 
 == 移行手順
 
@@ -82,7 +82,7 @@ spec:
 
 ======
 
-次の手順に従って、ポリシーを{short-project-name}に移行できます：
+次の手順に従って、ポリシーを{admc-short-name}に移行できます：
 
 .ポリシー移行のための`kwctl`コマンド
 [%collapsible]

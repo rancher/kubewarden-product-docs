@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: 网络能力
 :current-version: {page-origin-branch}
 
-{project-name} 策略无法在WebAssembly执行上下文中发起网络请求。
+{admc-name} 策略无法在WebAssembly执行上下文中发起网络请求。
 
 网络操作可以通过利用主机暴露的一系列能力来完成。
 

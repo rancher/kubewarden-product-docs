@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl CLI
-:description: Erforschen Sie das \`kwctl` Kommandozeilenwerkzeug zur Verwaltung von {project-name} Richtlinien und zur Durchführung von Aufgaben wie das Laden von Richtlinien.
+:description: Erforschen Sie das \`kwctl` Kommandozeilenwerkzeug zur Verwaltung von {admc-name} Richtlinien und zur Durchführung von Aufgaben wie das Laden von Richtlinien.
 :keywords: CLI, Referenz, kwctl
 :doc-persona: kubewarden-operator
 :doc-type: Referenz
@@ -44,28 +44,28 @@ Dieses Dokument enthält den Hilfetext für das `kwctl` Kommandozeilenwerkzeug.
 [[kwctl]]
 === `kwctl`
 
-Werkzeug zur Verwaltung von {project-name} Richtlinien
+Werkzeug zur Verwaltung von {admc-name} Richtlinien
 
 *Verwendung:* `kwctl [OPTIONS] <COMMAND>`
 
 ==== Unterbefehle
 
-* `annotate` — Fügt {short-project-name} Metadaten zu einem WebAssembly-Modul hinzu
-* `bench` — Führt Benchmarktests an einer {short-project-name} Richtlinie durch
+* `annotate` — Fügt {admc-short-name} Metadaten zu einem WebAssembly-Modul hinzu
+* `bench` — Führt Benchmarktests an einer {admc-short-name} Richtlinie durch
 * `completions` — Generiert Shell-Vervollständigungen
 * `digest` — Ruft den Digest aus dem OCI-Manifest einer Richtlinie ab
 * `docs` — Generiert die Markdown-Dokumentation für kwctl-Befehle
 * `info` — Zeigt Systeminformationen an
-* `inspect` — Untersucht die {short-project-name} Richtlinie
+* `inspect` — Untersucht die {admc-short-name} Richtlinie
 * `load` — Lädt Richtlinien aus einer tar.gz-Datei
 * `policies` — Listet alle heruntergeladenen Richtlinien auf
-* `pull` — Holt eine {short-project-name} Richtlinie von einer angegebenen URI
-* `push` — Schiebt eine {short-project-name} Richtlinie in ein OCI-Registry
-* `rm` — Entfernt eine {short-project-name} Richtlinie aus dem Speicher
-* `run` — Führt eine {short-project-name} Richtlinie von einer gegebenen URI aus
+* `pull` — Holt eine {admc-short-name} Richtlinie von einer angegebenen URI
+* `push` — Schiebt eine {admc-short-name} Richtlinie in ein OCI-Registry
+* `rm` — Entfernt eine {admc-short-name} Richtlinie aus dem Speicher
+* `run` — Führt eine {admc-short-name} Richtlinie von einer gegebenen URI aus
 * `save` — Speichert Richtlinien in einer tar.gz-Datei
 * `scaffold` — Erstellt eine Kubernetes-Ressource oder Konfigurationsdatei
-* `verify` — Überprüft eine {short-project-name} Richtlinie von einer gegebenen URI mit Sigstore
+* `verify` — Überprüft eine {admc-short-name} Richtlinie von einer gegebenen URI mit Sigstore
 
 ==== Optionen
 
@@ -75,7 +75,7 @@ Werkzeug zur Verwaltung von {project-name} Richtlinien
 [[kwctl-annotate]]
 === `kwctl annotate`
 
-Fügen Sie {short-project-name} Metadaten zu einem WebAssembly-Modul hinzu
+Fügen Sie {admc-short-name} Metadaten zu einem WebAssembly-Modul hinzu
 
 *Verwendung:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
 
@@ -92,21 +92,21 @@ Fügen Sie {short-project-name} Metadaten zu einem WebAssembly-Modul hinzu
 [[kwctl-bench]]
 === `kwctl bench`
 
-Führt Benchmarktests an einer {short-project-name} Richtlinie durch.
+Führt Benchmarktests an einer {admc-short-name} Richtlinie durch.
 
 Die Richtlinie kann auf folgende Weise angegeben werden:
 - URI: z.B. `registry://ghcr.io/kubewarden/policies/psp-policy:latest` oder `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - SHA-Präfix: z.B. `c3b80a10f9c3` (erfordert, dass die Richtlinie bereits abgerufen wurde)
 - Lokale WASM-Datei: z.B. `file://home/tux/new-policy/psp-policy.wasm`
-- Lokale YAML-Datei: z.B. `file://home/tux/cluster-admission-policy.yaml` (enthält Deklarationen von {short-project-name} benutzerdefinierten Ressourcen wie `ClusterAdmissionPolicy`, `AdmissionPolicy` usw.)
+- Lokale YAML-Datei: z.B. `file://home/tux/cluster-admission-policy.yaml` (enthält Deklarationen von {admc-short-name} benutzerdefinierten Ressourcen wie `ClusterAdmissionPolicy`, `AdmissionPolicy` usw.)
 
 Standardverhalten:
 Wenn das Schema weggelassen wird, wird `file://` angenommen, das im aktuellen Verzeichnis verwurzelt ist.
 
-Hinweise zu {short-project-name} benutzerdefinierten Ressourcen:
+Hinweise zu {admc-short-name} benutzerdefinierten Ressourcen:
 - Flags `--request-path`, `--settings-path` und `--settings-json` werden ignoriert; Einstellungen werden aus der Definition der benutzerdefinierten Ressource gelesen.
 - Das `--execution-mode` Flag gilt für alle Richtlinien in der YAML-Datei.
-- Das `--raw` Flag kann nicht verwendet werden, da die benutzerdefinierten Ressourcen von {short-project-name} `raw` Richtlinien nicht unterstützen.
+- Das `--raw` Flag kann nicht verwendet werden, da die benutzerdefinierten Ressourcen von {admc-short-name} `raw` Richtlinien nicht unterstützen.
 
 Nur die folgenden Attribute der Definition der benutzerdefinierten Ressource (CRD) werden bewertet: +
 - Richtlinienmodul +
@@ -121,7 +121,7 @@ Eine YAML-Datei kann mehrere Deklarationen von benutzerdefinierten Ressourcen en
 
 ==== Argumente
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Richtlinien-URI, SHA-Präfix oder YAML-Datei, die {short-project-name} Richtlinienressourcen enthält. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Richtlinien-URI, SHA-Präfix oder YAML-Datei, die {admc-short-name} Richtlinienressourcen enthält. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
 
 ==== Optionen
 
@@ -201,7 +201,7 @@ Zeige Systeminformationen an
 [[kwctl-inspect]]
 === `kwctl inspect`
 
-Untersuche die {short-project-name} Richtlinie
+Untersuche die {admc-short-name} Richtlinie
 
 *Verwendung:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
 
@@ -238,7 +238,7 @@ Listet alle heruntergeladenen Richtlinien auf
 [[kwctl-pull]]
 === `kwctl pull`
 
-Holt eine {short-project-name} Richtlinie von einer gegebenen URI
+Holt eine {admc-short-name} Richtlinie von einer gegebenen URI
 
 *Verwendung:* `kwctl pull [OPTIONS] <uri>`
 
@@ -253,7 +253,7 @@ Holt eine {short-project-name} Richtlinie von einer gegebenen URI
 * `--docker-config-json-path <DOCKER_CONFIG>` — Pfad zu einem Verzeichnis, das die Docker 'config.json'-Datei enthält. Kann verwendet werden, um Authentifizierungsdetails für das Registry anzugeben.
 * `--github-owner <VALUE>` — Erwarteter GitHub-Besitzer in den in CD-Pipelines generierten Zertifikaten
 * `--github-repo <VALUE>` — Erwartetes GitHub-Repository in den in CD-Pipelines generierten Zertifikaten
-* `-o`, `--output-path <PATH>` — Ausgabedatei. Wenn nicht angegeben, wird sie im {short-project-name} Store heruntergeladen
+* `-o`, `--output-path <PATH>` — Ausgabedatei. Wenn nicht angegeben, wird sie im {admc-short-name} Store heruntergeladen
 * `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst.
 * `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
 * `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
@@ -263,7 +263,7 @@ Holt eine {short-project-name} Richtlinie von einer gegebenen URI
 [[kwctl-push]]
 === `kwctl push`
 
-Überträgt eine {short-project-name} Richtlinie an das OCI-Registry
+Überträgt eine {admc-short-name} Richtlinie an das OCI-Registry
 
 *Verwendung:* `kwctl push [OPTIONS] <policy> <uri>`
 
@@ -288,7 +288,7 @@ Die Annotation 'io.kubewarden.policy.source' wird als 'org.opencontainers.image.
 [[kwctl-rm]]
 === `kwctl rm`
 
-Entfernt eine {short-project-name} Richtlinie aus dem Store
+Entfernt eine {admc-short-name} Richtlinie aus dem Store
 
 *Verwendung:* `kwctl rm <uri_or_sha_prefix>`
 
@@ -299,21 +299,21 @@ Entfernt eine {short-project-name} Richtlinie aus dem Store
 [[kwctl-run]]
 === `kwctl run`
 
-Führen Sie eine oder mehrere {short-project-name} Richtlinien lokal aus.
+Führen Sie eine oder mehrere {admc-short-name} Richtlinien lokal aus.
 
 Die Richtlinie kann auf folgende Weise angegeben werden:
 - URI: z.B. `registry://ghcr.io/kubewarden/policies/psp-policy:latest` oder `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm`
 - SHA-Präfix: z.B. `c3b80a10f9c3` (erfordert, dass die Richtlinie bereits abgerufen wurde)
 - Lokale WASM-Datei: z.B. `file://home/tux/new-policy/psp-policy.wasm`
-- Lokale YAML-Datei: z.B. `file://home/tux/cluster-admission-policy.yaml` (enthält Deklarationen von {short-project-name} benutzerdefinierten Ressourcen wie `ClusterAdmissionPolicy`, `AdmissionPolicy` usw.)
+- Lokale YAML-Datei: z.B. `file://home/tux/cluster-admission-policy.yaml` (enthält Deklarationen von {admc-short-name} benutzerdefinierten Ressourcen wie `ClusterAdmissionPolicy`, `AdmissionPolicy` usw.)
 
 Standardverhalten:
 Wenn das Schema weggelassen wird, wird `file://` angenommen, das im aktuellen Verzeichnis verwurzelt ist.
 
-Hinweise zu {short-project-name} benutzerdefinierten Ressourcen:
+Hinweise zu {admc-short-name} benutzerdefinierten Ressourcen:
 - Flags `--request-path`, `--settings-path` und `--settings-json` werden ignoriert; Einstellungen werden aus der Definition der benutzerdefinierten Ressource gelesen.
 - Das `--execution-mode` Flag gilt für alle Richtlinien in der YAML-Datei.
-- Das `--raw` Flag kann nicht verwendet werden, da die benutzerdefinierten Ressourcen von {short-project-name} `raw` Richtlinien nicht unterstützen.
+- Das `--raw` Flag kann nicht verwendet werden, da die benutzerdefinierten Ressourcen von {admc-short-name} `raw` Richtlinien nicht unterstützen.
 
 Nur die folgenden Attribute der Definition der benutzerdefinierten Ressource (CRD) werden bewertet:
 - Richtlinienmodul
@@ -328,7 +328,7 @@ Eine YAML-Datei kann mehrere Deklarationen von benutzerdefinierten Ressourcen en
 
 ==== Argumente
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy-URI, SHA-Präfix oder YAML-Datei, die {short-project-name} Richtlinienressourcen enthält. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — Policy-URI, SHA-Präfix oder YAML-Datei, die {admc-short-name} Richtlinienressourcen enthält. Unterstützte Schemas: registry://, https://, file://. Wenn das Schema weggelassen wird, wird file:// angenommen, basierend auf dem aktuellen Verzeichnis.
 
 ==== Optionen
 
@@ -381,7 +381,7 @@ Erstellen Sie eine Kubernetes-Ressource oder eine Konfigurationsdatei
 * `admission-request` — Erstellen Sie ein AdmissionRequest-Objekt
 * `artifacthub` — Erstellen Sie eine artifacthub-pkg.yml-Datei aus einer metadata.yml-Datei
 * `manifest` — Geben Sie ein Kubernetes-Ressourcenmanifest aus
-* `vap` — Konvertieren Sie ein Kubernetes `ValidatingAdmissionPolicy` in ein {short-project-name} `ClusterAdmissionPolicy`
+* `vap` — Konvertieren Sie ein Kubernetes `ValidatingAdmissionPolicy` in ein {admc-short-name} `ClusterAdmissionPolicy`
 * `verification-config` — Geben Sie eine Standard-Sigstore-Verifizierungskonfigurationsdatei aus
 
 [[kwctl-scaffold-admission-request]]
@@ -395,7 +395,7 @@ Erstellen Sie ein AdmissionRequest-Objekt
 
 * `--object <PATH>` — Die Datei, die das neue Objekt enthält, das zugelassen wird
 * `--old-object <PATH>` — Die Datei, die das vorhandene Objekt enthält
-* `-o`, `--operation <TYPE>` — {short-project-name} benutzerdefinierter Ressourcentyp +
+* `-o`, `--operation <TYPE>` — {admc-short-name} benutzerdefinierter Ressourcentyp +
   Mögliche Werte: `CREATE`
 
 [[kwctl-scaffold-artifacthub]]
@@ -438,7 +438,7 @@ Geben Sie ein Kubernetes-Ressourcenmanifest aus
 * `--sigstore-trust-config <PATH>` — JSON-formatierte Datei, die der ClientTrustConfig-Nachricht in den Sigstore-Protobuf-Spezifikationen entspricht. Diese Datei konfiguriert den gesamten Zustand der Sigstore-Instanz, einschließlich der URIs, die zum Zugriff auf die CA und die Dienste für die Transparenz von Artefakten verwendet werden, sowie des kryptografischen Vertrauensankers selbst
 * `--sources-path <PATH>` — YAML-Datei, die Quellinformationen enthält (https, unsichere Registrierungs-Hosts, benutzerdefinierte CAs...)
 * `--title <VALUE>` — Titel der Richtlinie
-* `-t`, `--type <VALUE>` — {short-project-name} benutzerdefinierter Ressourcentyp +
+* `-t`, `--type <VALUE>` — {admc-short-name} benutzerdefinierter Ressourcentyp +
   Mögliche Werte: `ClusterAdmissionPolicy`, `AdmissionPolicy`
 * `-a`, `--verification-annotation <KEY=VALUE>` — Annotation im key=value-Format. Kann mehrfach wiederholt werden
 * `--verification-config-path <PATH>` — YAML-Datei, die Informationen zur Verifizierungskonfiguration enthält (Signaturen, öffentliche Schlüssel...)
@@ -447,7 +447,7 @@ Geben Sie ein Kubernetes-Ressourcenmanifest aus
 [[kwctl-scaffold-vap]]
 === `kwctl scaffold vap`
 
-Konvertieren Sie ein Kubernetes `ValidatingAdmissionPolicy` in ein {short-project-name} `ClusterAdmissionPolicy`
+Konvertieren Sie ein Kubernetes `ValidatingAdmissionPolicy` in ein {admc-short-name} `ClusterAdmissionPolicy`
 
 *Verwendung:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
 
@@ -468,7 +468,7 @@ Geben Sie eine Standardkonfigurationsdatei zur Überprüfung von Sigstore aus
 [[kwctl-verify]]
 === `kwctl verify`
 
-Überprüfen Sie eine {short-project-name} Richtlinie von einer gegebenen URI unter Verwendung von Sigstore
+Überprüfen Sie eine {admc-short-name} Richtlinie von einer gegebenen URI unter Verwendung von Sigstore
 
 *Verwendung:* `kwctl verify [OPTIONS] <uri>`
 

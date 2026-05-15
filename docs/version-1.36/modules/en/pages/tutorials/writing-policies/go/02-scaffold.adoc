@@ -95,7 +95,7 @@ A real policy would use a repository path, like `github.com/kubewarden/go-policy
 Provided the necessary tools are in place a `make test` command uses Docker to pull a TinyGo compiler image using it to build and test the policy template.
 
 The default `make` command builds the `policy.wasm` target. Then `make test` runs the defined Go tests.
-The command `make e2e-tests` runs tests using https://github.com/bats-core/bats-core[bats] within a {short-project-name} cluster.
+The command `make e2e-tests` runs tests using https://github.com/bats-core/bats-core[bats] within a {admc-short-name} cluster.
 After cloning the `go-policy-template`, running these commands checks you have the tools in place for the tutorial.
 
 .Output from the `make` commands

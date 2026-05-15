@@ -40,9 +40,9 @@ mientras que una que utiliza `gjson` es de alrededor de 300&nbsp;KB.
 
 Aparte del tamaño,
 la directiva que utiliza objetos de Kubernetes tarda mucho más tiempo durante la primera ejecución.
-Las invocaciones siguientes son rápidas porque {project-name} utiliza la función de caché de Wasmtime.
+Las invocaciones siguientes son rápidas porque {admc-name} utiliza la función de caché de Wasmtime.
 La primera ejecución puede tardar unos 20 segundos con `kwctl`, las ejecuciones posteriores, de 1 a 2 segundos.
-Así que, {short-project-name} Policy Server tiene un tiempo de inicio más lento, pero luego los tiempos de evaluación de directivas no suelen verse afectados por el uso de objetos de Kubernetes.
+Así que, {admc-short-name} Policy Server tiene un tiempo de inicio más lento, pero luego los tiempos de evaluación de directivas no suelen verse afectados por el uso de objetos de Kubernetes.
 ====
 
 
@@ -325,7 +325,7 @@ Aquí es donde iteras sobre los diferentes casos de prueba utilizando el siguien
 
 . Crea un objeto `BasicSettings` utilizando los datos proporcionados por el `testCase`.
 . Crea un objeto `Pod`, asígnale las etiquetas definidas en `testCase`.
-. Crea un objeto `payload`. Haz esto utilizando una función auxiliar del SDK de {short-project-name}: `kubewarden_testing.BuildValidationRequest`.
+. Crea un objeto `payload`. Haz esto utilizando una función auxiliar del SDK de {admc-short-name}: `kubewarden_testing.BuildValidationRequest`.
 Esta función toma como entrada el objeto sobre el que trata la solicitud, el `Pod`, y el objeto que describe la configuración, la instancia de `BasicSettings`.
 . Finalmente, el código invoca tu función `validate` y realiza una comprobación sobre el resultado.
 
@@ -400,7 +400,7 @@ Puede que te estés preguntando por qué la salida de las pruebas unitarias pres
 
 Las declaraciones de `logger` en la directiva producen esta salida.
 Esto ocurre solo cuando el código se ejecuta fuera del contexto de WebAssembly.
-Esto no sucede cuando la directiva se evalúa en {short-project-name}, en ese contexto las declaraciones de `logger` emiten eventos de OpenTelemetry en su lugar.
+Esto no sucede cuando la directiva se evalúa en {admc-short-name}, en ese contexto las declaraciones de `logger` emiten eventos de OpenTelemetry en su lugar.
 ====
 
 

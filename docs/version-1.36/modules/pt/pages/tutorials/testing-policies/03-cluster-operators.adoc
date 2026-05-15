@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "kubernetes", "operadores de cluster", "testando"]
 :current-version: {page-origin-branch}
 
-Como operador de cluster Kubernetes, você vai querer realizar testes para as políticas {project-name} que deseja usar.
+Como operador de cluster Kubernetes, você vai querer realizar testes para as políticas {admc-name} que deseja usar.
 
 Você terá perguntas como:
 
@@ -21,12 +21,12 @@ Você terá perguntas como:
  ** mudar os parâmetros de configuração da política?
  ** e assim por diante?
 
-{short-project-name} possui uma utilidade, https://github.com/kubewarden/kwctl[`kwctl`], que permite testar as políticas fora do Kubernetes.
+{admc-short-name} possui uma utilidade, https://github.com/kubewarden/kwctl[`kwctl`], que permite testar as políticas fora do Kubernetes.
 
 Para usar `kwctl`, você a invoca com as seguintes entradas:
 
 . Um URI de arquivo binário WebAssembly da política a ser executada.
-A política {short-project-name} pode carregar do:
+A política {admc-short-name} pode carregar do:
  ** sistema de arquivos local `file://`
  ** um servidor HTTP(s) `https://`
  ** um registro OCI `registry://`.

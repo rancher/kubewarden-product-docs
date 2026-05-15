@@ -36,4 +36,4 @@ Elles doivent retourner un objet `AdmissionReview` valide en tant que résultats
 
 Toutes les stratégies peuvent être compilées pour la cible `wasm` (WebAssembly) avec l'outil CLI officiel `opa`.
 
-En termes d'exécution de stratégies, vous pouvez en savoir plus sur le xref:tutorials/writing-policies/rego/02-builtin-support.adoc[support intégré OPA] mis en œuvre dans {short-project-name}.
+En termes d'exécution de stratégies, vous pouvez en savoir plus sur le xref:tutorials/writing-policies/rego/02-builtin-support.adoc[support intégré OPA] mis en œuvre dans {admc-short-name}.

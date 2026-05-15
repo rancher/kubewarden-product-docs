@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-= Protección de los {short-project-name} webhooks
+= Protección de los {admc-short-name} webhooks
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
@@ -10,8 +10,8 @@ include::partial$variables.adoc[]
 :doc-type: referencia
 :doc-topic: referencia, seguridad
 
-El stack de {project-name} utiliza webhooks para hacer cumplir directivas en un clúster de Kubernetes.
-Cada instancia de `PolicyServer` expone un webhook que el servidor API de Kubernetes llama para validar y mutar recursos. Además, el `kubewarden-controller` expone webhooks para validar y mutar los recursos personalizados proporcionados por el proyecto {short-project-name}.
+El stack de {admc-name} utiliza webhooks para hacer cumplir directivas en un clúster de Kubernetes.
+Cada instancia de `PolicyServer` expone un webhook que el servidor API de Kubernetes llama para validar y mutar recursos. Además, el `kubewarden-controller` expone webhooks para validar y mutar los recursos personalizados proporcionados por el proyecto {admc-short-name}.
 
 Para disminuir su superficie de ataque, debes limitar el acceso a estos webhooks a los únicos llamadores válidos que tienen:
 
@@ -61,7 +61,7 @@ spec:
 [NOTE]
 ====
 
-Esta directiva de red utiliza selectores de etiquetas introducidos en {short-project-name} 1.23.0. Si estás utilizando una versión anterior, actualiza las etiquetas en la directiva para que coincidan con tu ampliación.
+Esta directiva de red utiliza selectores de etiquetas introducidos en {admc-short-name} 1.23.0. Si estás utilizando una versión anterior, actualiza las etiquetas en la directiva para que coincidan con tu ampliación.
 
 Más específicamente, escribe los
 
@@ -109,7 +109,7 @@ spec:
 [NOTE]
 ====
 
-Esta directiva de red utiliza selectores de etiquetas introducidos en {short-project-name} 1.23.0. Si estás utilizando una versión anterior, actualiza las etiquetas en la directiva para que coincidan con tu ampliación.
+Esta directiva de red utiliza selectores de etiquetas introducidos en {admc-short-name} 1.23.0. Si estás utilizando una versión anterior, actualiza las etiquetas en la directiva para que coincidan con tu ampliación.
 
 Más específicamente, escribe el
 
@@ -147,7 +147,7 @@ Consulta xref:/howtos/security-hardening/webhook-mtls.adoc[cómo configurar mTLS
 
 ====
 
-Los webhooks expuestos por el stack {short-project-name} solo deberían aceptar solicitudes del servidor API de Kubernetes o del componente escáner de auditoría. Por defecto, estos webhooks no requieren que los clientes se autentiquen en ellos. Aceptan cualquier solicitud.
+Los webhooks expuestos por el stack {admc-short-name} solo deberían aceptar solicitudes del servidor API de Kubernetes o del componente escáner de auditoría. Por defecto, estos webhooks no requieren que los clientes se autentiquen en ellos. Aceptan cualquier solicitud.
 
 Puedes configurar los webhooks para requerir credenciales de modo que solo el servidor API y los procesos del escáner de auditoría puedan acceder a ellos. Consulta la
 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers[documentación de Kubernetes] para más información.
@@ -177,7 +177,7 @@ plugins:
 Este es el mismo archivo de configuración utilizado para configurar otros complementos, como
 `PodSecurity`. Si tu distribución o configuración utiliza plug-ins de admisión adicionales, también deberías configurarlos.
 
-. Crea el archivo `kubeconfig` al que se refieren los plug-ins de admisión. {short-project-name} solo admite autenticación con certificado de cliente, así que genera un par de claves TLS y configura el kubeconfig para usar ya sea client-certificate y client-key o client-certificate-data y client-key-data.
+. Crea el archivo `kubeconfig` al que se refieren los plug-ins de admisión. {admc-short-name} solo admite autenticación con certificado de cliente, así que genera un par de claves TLS y configura el kubeconfig para usar ya sea client-certificate y client-key o client-certificate-data y client-key-data.
 +
 Por ejemplo:
 +
@@ -194,7 +194,7 @@ users:
 
 . Inicia el binario `kube-apiserver` con la bandera `--admission-control-config-file` apuntando a tu archivo `AdmissionConfiguration`. La forma de hacer esto varía según la distribución, y no se admite de manera universal, como en los proveedores de Kubernetes alojados. Consulta la documentación de tu distribución de Kubernetes.
 
-. Haz que el certificado de la CA raíz que emitió el certificado del cliente del servidor API esté disponible para el stack {short-project-name}.
+. Haz que el certificado de la CA raíz que emitió el certificado del cliente del servidor API esté disponible para el stack {admc-short-name}.
 +
 Pon su contenido en un `ConfigMap` bajo el espacio de nombres `kubewarden` utilizando una clave llamada `client-ca.crt`.
 +
@@ -220,4 +220,4 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
    --set mTLS.configMapName=api-server-mtls
 ----
 +
-El controlador {short-project-name} crea un certificado de cliente para ser utilizado por el componente del escáner de auditoría. El certificado es rotado automáticamente por el controlador cuando es necesario.
+El controlador {admc-short-name} crea un certificado de cliente para ser utilizado por el componente del escáner de auditoría. El certificado es rotado automáticamente por el controlador cuando es necesario.

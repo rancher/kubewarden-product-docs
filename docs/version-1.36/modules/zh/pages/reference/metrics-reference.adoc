@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 使用{project-name}暴露的平台指标探索集群指标和模式，以支持决策过程。
+:description: 使用{admc-name}暴露的平台指标探索集群指标和模式，以支持决策过程。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name}暴露相关的平台指标，使集群管理员和策略开发者能够识别模式和潜在问题。
+{admc-short-name}暴露相关的平台指标，使集群管理员和策略开发者能够识别模式和潜在问题。
 
 == 策略服务器
 

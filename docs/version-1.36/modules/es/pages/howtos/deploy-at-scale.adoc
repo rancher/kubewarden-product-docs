@@ -1,21 +1,21 @@
 include::partial$variables.adoc[]
-= {project-name} en un entorno a gran escala
+= {admc-name} en un entorno a gran escala
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura {project-name}s con {project-name} para garantizar alta disponibilidad y rendimiento en entornos a gran escala exigentes.
-:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, producción]
+:description: Configura {admc-name}s con {admc-name} para garantizar alta disponibilidad y rendimiento en entornos a gran escala exigentes.
+:keywords: [kubewarden, "{admc-name}", kubernetes, policyservers, producción]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: manual del operador, servidores de directivas, producción
 :sidebar_label: Despliegue a gran escala
 :sidebar_position: 21
 
-Esta sección detalla un despliegue del mundo real de {project-name} en un entorno a gran escala exigente. Ilustra cómo configurar {short-project-name} para alta disponibilidad y rendimiento y qué esperar bajo una carga pesada.
+Esta sección detalla un despliegue del mundo real de {admc-name} en un entorno a gran escala exigente. Ilustra cómo configurar {admc-short-name} para alta disponibilidad y rendimiento y qué esperar bajo una carga pesada.
 
 [IMPORTANT]
 ====
-Si quieres ver más consejos sobre cómo ejecutar {short-project-name} en producción, consulta la documentación de xref:/howtos/production-deployments.adoc[Despliegues en producción].
+Si quieres ver más consejos sobre cómo ejecutar {admc-short-name} en producción, consulta la documentación de xref:/howtos/production-deployments.adoc[Despliegues en producción].
 ====
 
 == Descripción general del entorno
@@ -31,9 +31,9 @@ La infraestructura consiste en aproximadamente 20 clústeres de Kubernetes. Los 
 ** Despliegues: 8,000
 ** Servicios: 13,000
 
-== {short-project-name} Configuración
+== {admc-short-name} Configuración
 
-Para satisfacer las demandas de este entorno, {short-project-name} está configurado con un enfoque en el aislamiento de cargas de trabajo y alta disponibilidad.
+Para satisfacer las demandas de este entorno, {admc-short-name} está configurado con un enfoque en el aislamiento de cargas de trabajo y alta disponibilidad.
 
 * Aplicación de directivas: 22 `ClusterAdmissionPolicies` se aplican en los clústeres, sin `AdmissionPolicies` específicos de espacio de nombres.
 * Arquitectura del servidor de directivas: Se utilizan dos despliegues separados de `PolicyServer` para aislar cargas de trabajo:

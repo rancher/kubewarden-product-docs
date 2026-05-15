@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configurez le reporting des métriques sur le serveur de stratégie en utilisant Prometheus et {project-name} activé via des charts Helm pour la collecte de données.
+:description: Configurez le reporting des métriques sur le serveur de stratégie en utilisant Prometheus et {admc-name} activé via des charts Helm pour la collecte de données.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["manuel-opérateur", "télémétrie", "métriques", "démarrage-rapide"]
 :doc-type: ["howto"]
@@ -89,9 +89,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== Installez {short-project-name}
+== Installez {admc-short-name}
 
-Vous pouvez maintenant installer {short-project-name}, de la manière recommandée avec des charts Helm.
+Vous pouvez maintenant installer {admc-short-name}, de la manière recommandée avec des charts Helm.
 
 [NOTE]
 ====
@@ -101,14 +101,14 @@ Le `cert-manager` est une exigence d'OpenTelemetry, mais vous l'avez déjà inst
 ====
 
 
-Tout d'abord, vous devez ajouter le dépôt Helm qui contient {short-project-name} :
+Tout d'abord, vous devez ajouter le dépôt Helm qui contient {admc-short-name} :
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Ensuite, vous installez les définitions de ressources personnalisées (CRDs) définies par {short-project-name} :
+Ensuite, vous installez les définitions de ressources personnalisées (CRDs) définies par {admc-short-name} :
 
 [subs="+attributes",console]
 ----
@@ -117,9 +117,9 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Vous pouvez maintenant déployer le reste de la pile {short-project-name}. Le chart Helm officiel crée un serveur de stratégie nommé `default`.
+Vous pouvez maintenant déployer le reste de la pile {admc-short-name}. Le chart Helm officiel crée un serveur de stratégie nommé `default`.
 
-Vous devez configurer le chart Helm afin d'avoir les métriques activées dans {short-project-name}. Le fichier `kubewarden-values.yaml` doit avoir le contenu suivant :
+Vous devez configurer le chart Helm afin d'avoir les métriques activées dans {admc-short-name}. Le fichier `kubewarden-values.yaml` doit avoir le contenu suivant :
 
 [subs="+attributes",yaml]
 ----
@@ -184,9 +184,9 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 
 Vous pouvez maintenant vous connecter avec le nom d'utilisateur par défaut `admin` et le mot de passe `prom-operator`.
 
-=== Utiliser le tableau de bord Grafana {short-project-name}
+=== Utiliser le tableau de bord Grafana {admc-short-name}
 
-{short-project-name} dispose d'un tableau de bord Grafana avec des métriques de base donnant un aperçu de la façon dont {short-project-name} se comporte dans le cluster. Ce tableau de bord est disponible dans les versions GitHub du dépôt du serveur de stratégie {short-project-name} sous la forme d'un https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[fichier JSON] ou sur le https://grafana.com/grafana/dashboards/15314[site Web de Grafana].
+{admc-short-name} dispose d'un tableau de bord Grafana avec des métriques de base donnant un aperçu de la façon dont {admc-short-name} se comporte dans le cluster. Ce tableau de bord est disponible dans les versions GitHub du dépôt du serveur de stratégie {admc-short-name} sous la forme d'un https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[fichier JSON] ou sur le https://grafana.com/grafana/dashboards/15314[site Web de Grafana].
 
 Pour importer le tableau de bord dans votre environnement, vous pouvez télécharger le fichier JSON depuis le site Web de Grafana ou le dépôt :
 
@@ -209,7 +209,7 @@ Une autre option est de l'importer directement depuis le site grafana.com. Pour 
 . Cliquez sur le bouton `load`.
 . Après avoir importé le tableau de bord, définissez la source de données Prometheus à utiliser et terminez le processus d'importation.
 
-Le tableau de bord Grafana a des panneaux montrant l'état de toutes les stratégies gérées par {short-project-name}. Il a également des panneaux spécifiques aux stratégies.
+Le tableau de bord Grafana a des panneaux montrant l'état de toutes les stratégies gérées par {admc-short-name}. Il a également des panneaux spécifiques aux stratégies.
 
 Vous pouvez obtenir des métriques détaillées pour une stratégie spécifique en changeant la valeur de la variable `policy_name` pour correspondre au nom de la stratégie requise.
 

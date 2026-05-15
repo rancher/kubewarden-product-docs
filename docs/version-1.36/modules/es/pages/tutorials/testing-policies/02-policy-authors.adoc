@@ -3,20 +3,20 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprende a probar autores de directivas con kwctl, ya sea utilizando bats o pruebas estándar, específicamente para directivas de {project-name} en Wasm.
+:description: Aprende a probar autores de directivas con kwctl, ya sea utilizando bats o pruebas estándar, específicamente para directivas de {admc-name} en Wasm.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "pruebas de directivas", "autor de directivas", "rust", "go", "assemblyscript", "entorno de desarrollo"]
 :current-version: {page-origin-branch}
 
-Las directivas de {project-name} son programas regulares compilados como WebAssembly (Wasm).
+Las directivas de {admc-name} son programas regulares compilados como WebAssembly (Wasm).
 Al igual que con cualquier tipo de programa, una buena cobertura de pruebas es importante.
 
 Los autores de directivas pueden utilizar sus entornos de desarrollo favoritos.
 Puedes utilizar herramientas familiares y marcos de pruebas para verificar el desarrollo.
 
-Estas directivas de {short-project-name} son ejemplos escritos en xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] y xref:tutorials/writing-policies/go/01-intro-go.adoc[Go]:
+Estas directivas de {admc-short-name} son ejemplos escritos en xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] y xref:tutorials/writing-policies/go/01-intro-go.adoc[Go]:
 
 * https://github.com/kubewarden/psp-apparmor[psp-apparmor]
 * https://github.com/kubewarden/ingress-policy[ingress-policy]
@@ -31,12 +31,12 @@ También puedes escribir pruebas que se ejecuten contra el binario de Wasm que c
 Para hacer esto sin tener que desplegar un clúster de Kubernetes, puedes utilizar estas herramientas:
 
 * https://github.com/bats-core/bats-core[bats]: es para escribir pruebas y automatizar su ejecución.
-* https://github.com/kubewarden/kwctl[`kwctl`]: La herramienta CLI predeterminada de {short-project-name} que te ayuda con operaciones relacionadas con directivas; extraer, inspeccionar, anotar, enviar y ejecutar.
+* https://github.com/kubewarden/kwctl[`kwctl`]: La herramienta CLI predeterminada de {admc-short-name} que te ayuda con operaciones relacionadas con directivas; extraer, inspeccionar, anotar, enviar y ejecutar.
 
 Para usar `kwctl run` necesitas lo siguiente:
 
 . La referencia del archivo binario Wasm de la directiva a ejecutar.
-La directiva {short-project-name} se puede cargar desde:
+La directiva {admc-short-name} se puede cargar desde:
  ** el sistema de archivos local (`file://`)
  ** un servidor HTTP(s) (`https://`)
  ** un registro OCI (`registry://`).

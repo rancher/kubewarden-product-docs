@@ -7,11 +7,11 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher", "installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "rancher", "应用程序集合", "appco", "签名", "验证", "verify"]
+:keywords: ["{admc-name}", "rancher", "应用程序集合", "appco", "签名", "验证", "verify"]
 :sidebar_label: 验证镜像
 :current-version: {page-origin-branch}
 
-本节介绍如何利用 {project-name} 验证来自 https://apps.rancher.io/[Rancher 应用程序集合] 的应用程序和镜像。
+本节介绍如何利用 {admc-name} 验证来自 https://apps.rancher.io/[Rancher 应用程序集合] 的应用程序和镜像。
 
 您通过部署 https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[验证镜像签名] 策略并配置 PolicyServers 从应用程序集合中拉取镜像的签名层来执行镜像验证。
 

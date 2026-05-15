@@ -18,14 +18,14 @@ A https://wasi.dev/[Interface de Sistema WebAssembly (WASI)] é um padrão WebAs
 
 Autores que escrevem políticas regulares nunca devem usar interfaces de sistema WASI simples para escrever políticas.
 
-Esta página é para {project-name} mantenedores ou autores de políticas de baixo nível que desejam experimentar plataformas WASM de ponta.
+Esta página é para {admc-name} mantenedores ou autores de políticas de baixo nível que desejam experimentar plataformas WASM de ponta.
 ====
 
 
 Usando WASI, você pode ter um módulo WebAssembly que interage com primitivos do sistema como STDOUT, STDERR, STDIN, variáveis de ambiente e mais.
 
-Muitos dos compiladores usados para compilar políticas do {short-project-name} produzem módulos WebAssembly que visam interfaces WASI.
-No entanto, {short-project-name} políticas usam o projeto https://github.com/wapc[waPC] para implementar comunicação bidirecional entre a política e o tempo de execução da política (`kwctl` ou `policy-server`). {short-project-name} O uso do protocolo de comunicação é descrito xref:reference/spec/01-intro-spec.adoc[aqui].
+Muitos dos compiladores usados para compilar políticas do {admc-short-name} produzem módulos WebAssembly que visam interfaces WASI.
+No entanto, {admc-short-name} políticas usam o projeto https://github.com/wapc[waPC] para implementar comunicação bidirecional entre a política e o tempo de execução da política (`kwctl` ou `policy-server`). {admc-short-name} O uso do protocolo de comunicação é descrito xref:reference/spec/01-intro-spec.adoc[aqui].
 
 Existem casos especiais quando o projeto waPC não pode ser usado ainda.
 Nessas circunstâncias, você pode escrever uma política usando as interfaces fornecidas pelo WASI.
@@ -33,7 +33,7 @@ Nessas circunstâncias, você pode escrever uma política usando as interfaces f
 [IMPORTANT]
 ====
 
-{short-project-name} suporta políticas WASI a partir do lançamento {short-project-name} 1.7.0 em diante.
+{admc-short-name} suporta políticas WASI a partir do lançamento {admc-short-name} 1.7.0 em diante.
 ====
 
 
@@ -46,7 +46,7 @@ Você não deve usar políticas WASI em circunstâncias regulares porque elas t�
 
 A comunicação bidirecional entre a política e o host pode ser alcançada, mas requer mudanças a serem feitas dentro do SDK da linguagem. Isso é necessário para usar xref:/reference/spec/host-capabilities/01-intro-host-capabilities.adoc[capacidades do host] e para escrever políticas xref:/explanations/context-aware-policies.adoc[conscientes do contexto].
 
-Atualmente, apenas os SDKs {short-project-name} Go e JavaScript/TypeScript os expõem para políticas WASI.
+Atualmente, apenas os SDKs {admc-short-name} Go e JavaScript/TypeScript os expõem para políticas WASI.
 
 Se isso for do seu interesse, entre em contato. Podemos então priorizar o esforço.
 
@@ -63,7 +63,7 @@ A partir da versão 1.21, o compilador oficial Go é capaz de produzir módulos 
 No entanto, esses módulos ainda não podem exportar funções para o tempo de execução WebAssembly.
 Essa limitação, rastreada por https://github.com/golang/go/issues/42372[este problema dedicado], impede a adoção do protocolo waPC.
 
-A equipe do projeto {short-project-name} recomenda que você escreva {short-project-name} políticas Go usando o compilador TinyGo, conforme descrito xref:tutorials/writing-policies/go/01-intro-go.adoc[aqui].
+A equipe do projeto {admc-short-name} recomenda que você escreva {admc-short-name} políticas Go usando o compilador TinyGo, conforme descrito xref:tutorials/writing-policies/go/01-intro-go.adoc[aqui].
 
 No entanto, determinadas bases de código Go complexas não podem ser compiladas usando o compilador TinyGo.
 Isso inclui, por exemplo, bases de código como https://github.com/google/cel-go[CEL-go] ou https://github.com/kyverno/kyverno/[Kyverno].
@@ -123,7 +123,7 @@ O formato do `SettingsValidationResponse` e o processo de validação de configu
 
 == Metadados da política
 
-Cada política {short-project-name} deve ser anotada via o comando `kwctl annotate`.
+Cada política {admc-short-name} deve ser anotada via o comando `kwctl annotate`.
 Os metadados da política de uma política WASI simples devem ter este valor:
 
 [subs="+attributes",yaml]

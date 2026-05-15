@@ -1,16 +1,16 @@
 include::partial$variables.adoc[]
-= Instalando kwctl ({project-name} CLI)
+= Instalando kwctl ({admc-name} CLI)
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: Instalando kwctl
-:description: Instala kwctl (el {project-name} CLI) siguiendo sus instrucciones de instalación para varios sistemas operativos, luego habilita la finalización de shell.
-:keywords: ["{project-name}", kubewarden, kubernetes, instalar kwctl, instalar, kwctl]
+:description: Instala kwctl (el {admc-name} CLI) siguiendo sus instrucciones de instalación para varios sistemas operativos, luego habilita la finalización de shell.
+:keywords: ["{admc-name}", kubewarden, kubernetes, instalar kwctl, instalar, kwctl]
 :doc-persona: kubewarden-all
 :doc-type: howto
 :doc-topic: install-kwctl
 
-`kwctl` es la herramienta de interfaz de línea de comandos (CLI) para {project-name}. A continuación se presentan las instrucciones de instalación para algunos sistemas operativos.
+`kwctl` es la herramienta de interfaz de línea de comandos (CLI) para {admc-name}. A continuación se presentan las instrucciones de instalación para algunos sistemas operativos.
 
 [tabs]
 ====
@@ -178,7 +178,7 @@ Windows::
 Instala para Windows
 
 . Descarga `kwctl`:
-    .. Abre tu navegador y ve a la página de lanzamientos de https://github.com/kubewarden/kwctl/releases/latest[{short-project-name}].
+    .. Abre tu navegador y ve a la página de lanzamientos de https://github.com/kubewarden/kwctl/releases/latest[{admc-short-name}].
     .. Descarga el archivo `kwctl-windows-x86_64.zip`.
 
 . Extrae los archivos del archivo zip descargado. Contendrá:

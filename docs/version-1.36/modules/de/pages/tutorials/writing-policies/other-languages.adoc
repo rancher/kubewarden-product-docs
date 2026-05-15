@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Erfahren Sie, wie Sie {project-name} Richtlinien mit verschiedenen Programmiersprachen schreiben, die auf WebAssembly-Module und die WASI-Schnittstelle abzielen.
+:description: Erfahren Sie, wie Sie {admc-name} Richtlinien mit verschiedenen Programmiersprachen schreiben, die auf WebAssembly-Module und die WASI-Schnittstelle abzielen.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "richtlinien schreiben", "andere sprachen"]
 :doc-type: ["tutorial"]
@@ -12,6 +12,6 @@ include::partial$variables.adoc[]
 :sidebar_position: 70 US-Dollar
 :current-version: {page-origin-branch}
 
-{project-name} Richtlinien können mit jeder Programmiersprache geschrieben werden, die WebAssembly-Module erzeugen kann, die auf die WASI-Schnittstelle abzielen.
+{admc-name} Richtlinien können mit jeder Programmiersprache geschrieben werden, die WebAssembly-Module erzeugen kann, die auf die WASI-Schnittstelle abzielen.
 
-Bitte öffnen Sie einen Pull Request oder ein GitHub-Issue https://github.com/kubewarden/docs[hier], wenn Sie von einer Programmiersprache wissen, die verwendet werden kann, um {short-project-name} Richtlinien zu schreiben.
+Bitte öffnen Sie einen Pull Request oder ein GitHub-Issue https://github.com/kubewarden/docs[hier], wenn Sie von einer Programmiersprache wissen, die verwendet werden kann, um {admc-short-name} Richtlinien zu schreiben.

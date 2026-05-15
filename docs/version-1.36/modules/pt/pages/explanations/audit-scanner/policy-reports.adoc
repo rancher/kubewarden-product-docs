@@ -8,16 +8,16 @@ include::partial$variables.adoc[]
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
 :doc-topic: [“explicações”, “scanner-de-auditoria”, “relatórios-de-política”]
 :doc-type: [“explicação”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “Audit Scanner”, "relatórios de políticas"]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “Audit Scanner”, "relatórios de políticas"]
 :sidebar_label: Relatórios de políticas
 :current-version: {page-origin-branch}
 
-Ao usar o {project-name} Audit Scanner, você armazena os resultados das varreduras de políticas usando os recursos customizados https://openreports.io/[OpenReports].
+Ao usar o {admc-name} Audit Scanner, você armazena os resultados das varreduras de políticas usando os recursos customizados https://openreports.io/[OpenReports].
 
 [CAUTION]
 ====
 
-Com {project-name} 1.33, o recurso Audit Scanner salva os relatórios em OpenReports CRDs de [openreports.io](https://openreports.io) por padrão.
+Com {admc-name} 1.33, o recurso Audit Scanner salva os relatórios em OpenReports CRDs de [openreports.io](https://openreports.io) por padrão.
 
 Os CRDs link:https://htmlpreview.github.io/?https://github.com/kubernetes-sigs/wg-policy-prototypes/blob/045372e558b896695b2daae92e8c7a04d4d40282/policy-report/docs/index.html[PolicyReport] do grupo de trabalho de políticas do K8s não são instalados por padrão, estão marcados como descontinuados e serão removidos em uma versão futura.
 
@@ -199,7 +199,7 @@ A interface do usuário do Policy Reporter fornece um painel mostrando todas as 
 
 image::policy-reporter_dashboard.png[Painel de exemplo do Policy Reporter]
 
-{short-project-name} envia a interface do usuário do Policy Reporter com um filtro pré-configurado que mostra apenas as políticas {short-project-name}, juntamente com informações expandidas:
+{admc-short-name} envia a interface do usuário do Policy Reporter com um filtro pré-configurado que mostra apenas as políticas {admc-short-name}, juntamente com informações expandidas:
 
 image::policy-reporter_policyreports.png[Exemplo de PolicyReports do Policy Reporter]
 

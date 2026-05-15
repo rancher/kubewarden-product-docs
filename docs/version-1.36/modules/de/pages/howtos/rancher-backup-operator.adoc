@@ -5,7 +5,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Konfigurieren und Verwalten von Sicherungen und Wiederherstellungen mit dem Rancher Backup Operator auf jedem Kubernetes-Cluster.
-:keywords: "{project-name}", Kubernetes, Kubewarden, Rancher Backup Operator, Sicherung, Wiederherstellung
+:keywords: "{admc-name}", Kubernetes, Kubewarden, Rancher Backup Operator, Sicherung, Wiederherstellung
 :doc-persona: Kubewarden-operator, Kubewarden-integrator
 :doc-type: howto
 :doc-topic: Operator-Handbuch, Rancher Backup Operator
@@ -13,11 +13,11 @@ include::partial$variables.adoc[]
 
 Der `rancher-backup` Operator kann verwendet werden, um Rancher auf jedem Kubernetes-Cluster zu sichern und wiederherzustellen.
 
-Seit Version `v9.0.0` unterstützt `rancher-backup` {project-name}. Dies beinhaltet:
+Seit Version `v9.0.0` unterstützt `rancher-backup` {admc-name}. Dies beinhaltet:
 
-- Der Standard-Rancher-Namespace `cattle-kubewarden-system` (oder `cattle-kubewarden-*`) sowie der Standard-{short-project-name}-Namespace `kubewarden`.
-- Die benötigten Ressourcen von {short-project-name} werden über die Helm-Charts installiert.
-- Die {short-project-name} CRDs, die nach der Wiederherstellung vom {short-project-name} Controller abgeglichen werden.
+- Der Standard-Rancher-Namespace `cattle-kubewarden-system` (oder `cattle-kubewarden-*`) sowie der Standard-{admc-short-name}-Namespace `kubewarden`.
+- Die benötigten Ressourcen von {admc-short-name} werden über die Helm-Charts installiert.
+- Die {admc-short-name} CRDs, die nach der Wiederherstellung vom {admc-short-name} Controller abgeglichen werden.
 - Das `policy-reporter` Subchart des `kubewarden-controller` Charts, für deren Standardwerte. Dies umfasst nicht die Grafana-Integration oder andere Plugins.
 
 == Benutzergeheimnisse
@@ -40,7 +40,7 @@ kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
 
 Folgen Sie dem Link: \https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html[Rancher Manager] Dokumentation. Für eine Minikube-Installation, bei der PersistentVolumes vom Typ `hostPath` verwendet werden, die Minikube standardmäßig unterstützt, und die den Namen `standard` trägt.
 
-Man muss den Backup Operator anweisen, auch {short-project-name} benutzerdefinierte CRs zu sichern, indem der Wert `optionalResources.kubewarden.enabled` auf `true` gesetzt wird.
+Man muss den Backup Operator anweisen, auch {admc-short-name} benutzerdefinierte CRs zu sichern, indem der Wert `optionalResources.kubewarden.enabled` auf `true` gesetzt wird.
 
 Die Installation erfolgt wie folgt:
 
@@ -58,7 +58,7 @@ helm install --wait -n cattle-resources-system \
 
 == Sicherung
 
-Verwenden Sie die `rancher-resource-set-full`, um die {short-project-name} Geheimnisse zu sichern.
+Verwenden Sie die `rancher-resource-set-full`, um die {admc-short-name} Geheimnisse zu sichern.
 Dazu gehören die TLS-Geheimnisse, die bei der Helm-Installation erstellt werden.
 
 Wenn Sie `rancher-resource-basic` bevorzugen, denken Sie bitte daran, die benötigten TLS-Geheimnisse zu sichern oder manuell zu erstellen.

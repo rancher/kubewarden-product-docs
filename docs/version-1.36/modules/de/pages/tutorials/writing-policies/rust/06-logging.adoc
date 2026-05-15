@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie die Protokollierungsfunktionen für Ihre Richtlinie, indem Sie die Integration von {project-name} mit der SLOG-Bibliothek verwenden und initialisieren.
+:description: Konfigurieren Sie die Protokollierungsfunktionen für Ihre Richtlinie, indem Sie die Integration von {admc-name} mit der SLOG-Bibliothek verwenden und initialisieren.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "logging"]
 :doc-type: ["tutorial"]
-:keywords: ["{project-name}", kubewarden, "kubernetes", "logging"]
+:keywords: ["{admc-name}", kubewarden, "kubernetes", "logging"]
 :sidebar_label: Protokollierung
 :current-version: {page-origin-branch}
 
@@ -15,7 +15,7 @@ Sie können Ihre Richtlinie so konfigurieren, dass sie Protokolle schreibt.
 Die `policy-server` oder `kwctl` leitet diese Protokolleinträge mit den entsprechenden Informationen weiter.
 
 Die für das Rust SDK gewählte Protokollierungsbibliothek ist https://github.com/slog-rs/slog[`slog`].
-Es ist ein beliebtes, bekanntes Crate und integriert sich sauber mit {project-name}.
+Es ist ein beliebtes, bekanntes Crate und integriert sich sauber mit {admc-name}.
 
 == Logger initialisieren
 

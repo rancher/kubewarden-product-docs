@@ -93,7 +93,7 @@ module <path to your repository>
 只要必要的工具到位，`make test` 命令使用 Docker 拉取 TinyGo 编译器镜像，并使用它来构建和测试策略模板。
 
 默认的 `make` 命令构建 `policy.wasm` 目标。然后 `make test` 运行定义的 Go 测试。
-命令 `make e2e-tests` 在 {short-project-name} 集群中使用 https://github.com/bats-core/bats-core[bats] 运行测试。
+命令 `make e2e-tests` 在 {admc-short-name} 集群中使用 https://github.com/bats-core/bats-core[bats] 运行测试。
 克隆完 `go-policy-template` 后，运行这些命令可以检查您是否具备进行教程所需的工具。
 
 .来自 `make` 命令的输出

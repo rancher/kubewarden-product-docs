@@ -3,12 +3,12 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Migrate a ValidatingAdmissionPolicy to {project-name} via the kwctl command's migration steps for a smooth policy transition.
+:description: Migrate a ValidatingAdmissionPolicy to {admc-name} via the kwctl command's migration steps for a smooth policy transition.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 Starting from Kubernetes v1.26, the https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy]
@@ -17,12 +17,12 @@ written with the https://cel.dev/[Common Expression Language (CEL)], extended wi
 some https://kubernetes.io/docs/reference/using-api/cel/[Kubernetes-specific extensions].
 ValidatingAdmissionPolicy reached stability in Kubernetes v1.30.
 
-{project-name} provides a CEL policy that is capable of running Kubernetes VAP policies without any modifications.
-You can read more about the CEL policy in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[this section] of {short-project-name}'s documentation.
+{admc-name} provides a CEL policy that is capable of running Kubernetes VAP policies without any modifications.
+You can read more about the CEL policy in xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[this section] of {admc-short-name}'s documentation.
 xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[This paragraph]
-explains the benefits of running VAP policies using {short-project-name}.
+explains the benefits of running VAP policies using {admc-short-name}.
 
-This guide explains how to use the `kwctl` tool to migrate a VAP policy to {short-project-name}.
+This guide explains how to use the `kwctl` tool to migrate a VAP policy to {admc-short-name}.
 
 == Migration steps
 
@@ -86,7 +86,7 @@ spec:
 
 ======
 
-You can migrate the policy to {short-project-name} by following these steps:
+You can migrate the policy to {admc-short-name} by following these steps:
 
 .`kwctl` command for policy migration
 [%collapsible]

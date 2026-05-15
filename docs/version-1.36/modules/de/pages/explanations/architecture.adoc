@@ -1,20 +1,20 @@
 include::partial$variables.adoc[]
-= {project-name}-Architektur
+= {admc-name}-Architektur
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Entdecken Sie, wie {project-name} Kernel-Funktionen von Kubernetes nutzt, um nahtlos in Ihren Cluster integriert zu werden.
+:description: Entdecken Sie, wie {admc-name} Kernel-Funktionen von Kubernetes nutzt, um nahtlos in Ihren Cluster integriert zu werden.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["architecture"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "architecture"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "architecture"]
 :sidebar_label: Architektur
 :sidebar_position: 61
 :current-version: {page-origin-branch}
 
-{project-name} ist eine Kubernetes-Richtlinien-Engine.
+{admc-name} ist eine Kubernetes-Richtlinien-Engine.
 Es verwendet Richtlinien, die in einer Programmiersprache Ihrer Wahl geschrieben sind.
-Diese Sprache muss ein WebAssembly-Binärformat erzeugen, das {project-name} verwenden kann.
+Diese Sprache muss ein WebAssembly-Binärformat erzeugen, das {admc-name} verwenden kann.
 
 == Was _ist_ eine Richtlinie?
 
@@ -23,7 +23,7 @@ Eine Richtlinie ist ein https://opencontainers.org/[Open Container Initiative] (
 [NOTE]
 ====
 
-Wie https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes] verwendet {project-name} die Begriffe 'PolicyServer', wenn über den {project-name} Richtlinienserver und `policy-server` gesprochen wird, wenn über Pod oder Implementierung eines {project-name} PolicyServers gesprochen wird.
+Wie https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes] verwendet {admc-name} die Begriffe 'PolicyServer', wenn über den {admc-name} Richtlinienserver und `policy-server` gesprochen wird, wenn über Pod oder Implementierung eines {admc-name} PolicyServers gesprochen wird.
 
 ====
 
@@ -32,7 +32,7 @@ Wie https://kubernetes.io/docs/contribute/style/style-guide/[Kubernetes] verwend
 
 === Nutzung von Kernel-Funktionen von Kubernetes
 
-Das Team hat {project-name} so entworfen, dass es Kernel-Funktionen von Kubernetes nutzt, ohne das Rad neu zu erfinden.
+Das Team hat {admc-name} so entworfen, dass es Kernel-Funktionen von Kubernetes nutzt, ohne das Rad neu zu erfinden.
 Das Projekt nutzt eine Kombination aus:
 
 * Kubernetes-Controller
@@ -42,56 +42,56 @@ Das Projekt nutzt eine Kombination aus:
 
 === Die Kubernetes-Architektur wird effektiv genutzt.
 
-{project-name} funktioniert nahtlos innerhalb des Kubernetes-Ökosystems. Im Kernel ist der {project-name} Controller ein Kubernetes-Controller, der {project-name} benutzerdefinierte Ressourcenbeschreibungen (CRDs) überwacht und Kubernetes-Ressourcen konfiguriert, um sie auszuführen. Diese Integration stellt sicher, dass {project-name} die integrierten Kubernetes-Mechanismen wie Controller und CRDs nutzt, um Sicherheitsrichtlinien effizient zu überwachen, zu verwalten und anzuwenden.
+{admc-name} funktioniert nahtlos innerhalb des Kubernetes-Ökosystems. Im Kernel ist der {admc-name} Controller ein Kubernetes-Controller, der {admc-name} benutzerdefinierte Ressourcenbeschreibungen (CRDs) überwacht und Kubernetes-Ressourcen konfiguriert, um sie auszuführen. Diese Integration stellt sicher, dass {admc-name} die integrierten Kubernetes-Mechanismen wie Controller und CRDs nutzt, um Sicherheitsrichtlinien effizient zu überwachen, zu verwalten und anzuwenden.
 
 === Erweiterbare Richtliniendefinition
 
-{project-name} verwendet benutzerdefinierte Ressourcenbeschreibungen (CRDs), um {project-name} Ressourcen zu definieren und zu verwalten, die die Regeln für die Validierung von Zulassungsanfragen festlegen. Dieses Design ermöglicht es Benutzern, die Fähigkeiten von Kubernetes mit benutzerdefinierten Zulassungssteuerungen zu erweitern und sicherzustellen, dass die Durchsetzung von Sicherheits- und Compliance-Richtlinien im gesamten Cluster konsistent ist.
+{admc-name} verwendet benutzerdefinierte Ressourcenbeschreibungen (CRDs), um {admc-name} Ressourcen zu definieren und zu verwalten, die die Regeln für die Validierung von Zulassungsanfragen festlegen. Dieses Design ermöglicht es Benutzern, die Fähigkeiten von Kubernetes mit benutzerdefinierten Zulassungssteuerungen zu erweitern und sicherzustellen, dass die Durchsetzung von Sicherheits- und Compliance-Richtlinien im gesamten Cluster konsistent ist.
 
 === Direkte Zulassungssteuerung
 
-Wenn der {project-name} Controller eingerichtet wird, erhält der Policy-Server-Dienst Zulassungsanfragen direkt vom Kubernetes-Control-Plane unter Verwendung von `ValidationWebhooks` und `MutatingWebhooks`. Diese direkte Interaktion optimiert den Zulassungssteuerungsprozess, reduziert die Latenz und erhöht die Effizienz bei der Durchsetzung von Richtlinien.
+Wenn der {admc-name} Controller eingerichtet wird, erhält der Policy-Server-Dienst Zulassungsanfragen direkt vom Kubernetes-Control-Plane unter Verwendung von `ValidationWebhooks` und `MutatingWebhooks`. Diese direkte Interaktion optimiert den Zulassungssteuerungsprozess, reduziert die Latenz und erhöht die Effizienz bei der Durchsetzung von Richtlinien.
 
 WebAssembly bietet eine sandboxed Ausführungsumgebung, die sicherstellt, dass Richtlinien isoliert ausgeführt werden, wodurch die Sicherheit und Stabilität des Mechanismus zur Durchsetzung von Richtlinien verbessert wird. Diese Isolation verhindert, dass Richtlinien sich gegenseitig oder mit dem Host-System interferieren, wodurch das Risiko der Ausführung von bösartigem Code gemindert wird.
-WebAssembly ist portabel und effizient, sodass Richtlinien in verschiedenen Umgebungen ohne Modifikation ausgeführt werden können. Diese plattformübergreifende Kompatibilität stellt sicher, dass {project-name} Richtlinien vielseitig sind, sodass Sie sie auf verschiedenen Kubernetes-Clustern verteilen und ausführen können.
+WebAssembly ist portabel und effizient, sodass Richtlinien in verschiedenen Umgebungen ohne Modifikation ausgeführt werden können. Diese plattformübergreifende Kompatibilität stellt sicher, dass {admc-name} Richtlinien vielseitig sind, sodass Sie sie auf verschiedenen Kubernetes-Clustern verteilen und ausführen können.
 
 === OCI-basierte Richtlinienartefakte
 
-Richtlinien in {project-name} sind OCI (Open Container Initiative) Artefakte. Diese Standardisierung erleichtert die Verteilung und Versionierung von Richtlinien. Richtlinien enthalten sowohl die WebAssembly-Module für die Durchsetzungslogik als auch die für den Betrieb des PolicyServers erforderlichen Metadaten. Die Verwendung von OCI-Artefakten fördert die Interoperabilität und die einfache Verwaltung innerhalb von Cloud-Ökosystemen.
+Richtlinien in {admc-name} sind OCI (Open Container Initiative) Artefakte. Diese Standardisierung erleichtert die Verteilung und Versionierung von Richtlinien. Richtlinien enthalten sowohl die WebAssembly-Module für die Durchsetzungslogik als auch die für den Betrieb des PolicyServers erforderlichen Metadaten. Die Verwendung von OCI-Artefakten fördert die Interoperabilität und die einfache Verwaltung innerhalb von Cloud-Ökosystemen.
 
 === Fein abgestufte Richtlinienanwendung
 
-{project-name} verknüpft Richtlinien mit ihrem eigenen 'Validierungs-' oder 'Mutations-'Webhook, was eine fein abgestufte Anwendung von Zulassungssteuerungen ermöglicht. Diese Flexibilität ermöglicht es Administratoren, die Durchsetzung von Richtlinien an spezifische Bedürfnisse anzupassen und die Sicherheits- und Compliance-Position des Kubernetes-Clusters zu verbessern.
+{admc-name} verknüpft Richtlinien mit ihrem eigenen 'Validierungs-' oder 'Mutations-'Webhook, was eine fein abgestufte Anwendung von Zulassungssteuerungen ermöglicht. Diese Flexibilität ermöglicht es Administratoren, die Durchsetzung von Richtlinien an spezifische Bedürfnisse anzupassen und die Sicherheits- und Compliance-Position des Kubernetes-Clusters zu verbessern.
 
-== Der {project-name} Stack
+== Der {admc-name} Stack
 
-{project-name} besteht aus diesen Komponenten:
+{admc-name} besteht aus diesen Komponenten:
 
-* {project-name} Benutzerdefinierte Ressourcen sind https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes Benutzerdefinierte Ressourcen], die den Prozess der Verwaltung von Richtlinien vereinfachen.
+* {admc-name} Benutzerdefinierte Ressourcen sind https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/[Kubernetes Benutzerdefinierte Ressourcen], die den Prozess der Verwaltung von Richtlinien vereinfachen.
 +
-{project-name} integriert sich mit Kubernetes unter Verwendung von https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamische Zulassungssteuerung]. Insbesondere fungiert {project-name} als ein Kubernetes Zulassungs-Webhook. Der `policy-server` ist der Webhook-Endpunkt, der vom Kubernetes API-Server aufgerufen wird, um Anfragen zu validieren.
+{admc-name} integriert sich mit Kubernetes unter Verwendung von https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamische Zulassungssteuerung]. Insbesondere fungiert {admc-name} als ein Kubernetes Zulassungs-Webhook. Der `policy-server` ist der Webhook-Endpunkt, der vom Kubernetes API-Server aufgerufen wird, um Anfragen zu validieren.
 
-* Der https://github.com/kubewarden/kubewarden-controller[{project-name} Controller] ist ein Kubernetes-Controller, der die {project-name} Benutzerdefinierten Ressourcen abgleicht. Dieser Controller erstellt Teile des {project-name} Stacks.
-Er übersetzt auch die {project-name} Konfiguration in Kubernetes-Direktiven.
+* Der https://github.com/kubewarden/kubewarden-controller[{admc-name} Controller] ist ein Kubernetes-Controller, der die {admc-name} Benutzerdefinierten Ressourcen abgleicht. Dieser Controller erstellt Teile des {admc-name} Stacks.
+Er übersetzt auch die {admc-name} Konfiguration in Kubernetes-Direktiven.
 +
 Der `kubewarden-controller` registriert die benötigten `MutatingWebhookConfiguration` oder `ValidatingWebhookConfiguration` Objekte beim Kubernetes API-Server.
 
-* xref:../tutorials/writing-policies/index.adoc[{project-name} Richtlinien] sind WebAssembly-Module, die die Validierungs- oder Mutationslogik enthalten. WebAssembly-Module haben detaillierte Dokumentation in den xref:../tutorials/writing-policies/index.adoc[Richtlinien schreiben] Abschnitten.
+* xref:../tutorials/writing-policies/index.adoc[{admc-name} Richtlinien] sind WebAssembly-Module, die die Validierungs- oder Mutationslogik enthalten. WebAssembly-Module haben detaillierte Dokumentation in den xref:../tutorials/writing-policies/index.adoc[Richtlinien schreiben] Abschnitten.
 
-* Der https://github.com/kubewarden/policy-server[PolicyServer] erhält Anfragen zur Validierung. Er validiert die Anfragen, indem er {project-name} Richtlinien ausführt.
+* Der https://github.com/kubewarden/policy-server[PolicyServer] erhält Anfragen zur Validierung. Er validiert die Anfragen, indem er {admc-name} Richtlinien ausführt.
 
-* Der https://github.com/kubewarden/audit-scanner[Audit-Scanner] inspiziert die bereits im Cluster vorhandenen Ressourcen. Er identifiziert diejenigen, die gegen {project-name} Richtlinien verstoßen.
+* Der https://github.com/kubewarden/audit-scanner[Audit-Scanner] inspiziert die bereits im Cluster vorhandenen Ressourcen. Er identifiziert diejenigen, die gegen {admc-name} Richtlinien verstoßen.
 +
-xref:/explanations/audit-scanner/audit-scanner.adoc[Audit-Scanner] überprüft ständig die im Cluster deklarierten Ressourcen und kennzeichnet die, die nicht mehr den bereitgestellten {project-name} Richtlinien entsprechen.
+xref:/explanations/audit-scanner/audit-scanner.adoc[Audit-Scanner] überprüft ständig die im Cluster deklarierten Ressourcen und kennzeichnet die, die nicht mehr den bereitgestellten {admc-name} Richtlinien entsprechen.
 +
 .Architektur
 include::latest@shared:en:partial$architecture.adoc[]
 
-== Die Reise einer {project-name} Richtlinie
+== Die Reise einer {admc-name} Richtlinie
 
 === Standard PolicyServer
 
-In einem neuen Cluster sind die definierten {project-name} Komponenten:
+In einem neuen Cluster sind die definierten {admc-name} Komponenten:
 
 * Benutzerdefinierte Ressourcenbeschreibungen (CRD)
 * Die `kubewarden-controller` Implementierung
@@ -99,7 +99,7 @@ In einem neuen Cluster sind die definierten {project-name} Komponenten:
 
 Wenn der `kubewarden-controller` die Standard-PolicyServer-Ressource bemerkt, erstellt er eine `policy-server` Implementierung der PolicyServer-Komponente.
 
-{project-name} fungiert als Kubernetes Admission Webhook. Kubernetes gibt an, dass https://en.wikipedia.org/wiki/Transport_Layer_Security[Transport Layer Security] (TLS) verwendet werden soll, um alle Webhook-Endpunkte zu sichern. Das `kubewarden-controller` richtet diese sichere Kommunikation ein durch:
+{admc-name} fungiert als Kubernetes Admission Webhook. Kubernetes gibt an, dass https://en.wikipedia.org/wiki/Transport_Layer_Security[Transport Layer Security] (TLS) verwendet werden soll, um alle Webhook-Endpunkte zu sichern. Das `kubewarden-controller` richtet diese sichere Kommunikation ein durch:
 
 . Erzeugen einer selbstsignierten Zertifizierungsstelle
 . Verwenden Sie diese CA, um einen TLS-Zertifikatsschlüssel für den `policy-server` Dienst zu generieren.
@@ -123,7 +123,7 @@ Der `kubewarden-controller` bemerkt die neue `ClusterAdmissionPolicy` Ressource 
 
 Beim Erstellen, Ändern oder Löschen eines `ClusterAdmissionPolicy` oder `AdmissionPolicy` wird eine Abgleichschleife in `kubewarden-controller` aktiviert, für den `policy-server`, der die Richtlinie besitzt. Diese Abgleichsschleife erstellt ein `ConfigMap` mit allen an die `policy-server` gebundenen Richtlinien. Dann beginnt die Implementierungs-Rollout des `policy-server`. Dies führt dazu, dass die neue `policy-server`-Instanz mit der aktualisierten Konfiguration gestartet wird.
 
-Zum Startzeitpunkt liest der `policy-server` seine Konfiguration aus der ConfigMap und lädt alle angegebenen {project-name} Richtlinien herunter. Sie können {project-name} Richtlinien von entfernten HTTP-Servern und Container-Registries herunterladen.
+Zum Startzeitpunkt liest der `policy-server` seine Konfiguration aus der ConfigMap und lädt alle angegebenen {admc-name} Richtlinien herunter. Sie können {admc-name} Richtlinien von entfernten HTTP-Servern und Container-Registries herunterladen.
 
 Sie verwenden die Parameter der Richtlinieneinstellungen, um das Verhalten einer Richtlinie anzupassen. Nach dem Start und dem Herunterladen der Richtlinien überprüft der `policy-server`, ob die vom Benutzer bereitgestellten Richtlinieneinstellungen gültig sind.
 
@@ -131,9 +131,9 @@ Der `policy-server` validiert die Richtlinieneinstellungen, indem er die `valida
 
 Wenn irgendwelche Richtlinien falsche Konfigurationsparameter aus der Richtlinienspezifikation des Benutzers erhalten haben, geben alle Zulassungsanfragen, die von dieser Richtlinie bewertet werden, einen Fehler zurück.
 
-Wenn {project-name} alle Richtlinien konfiguriert hat, erzeugt der `policy-server` einen Pool von Worker-Threads, um eingehende Anfragen mit den vom Benutzer angegebenen {project-name} Richtlinien zu bewerten.
+Wenn {admc-name} alle Richtlinien konfiguriert hat, erzeugt der `policy-server` einen Pool von Worker-Threads, um eingehende Anfragen mit den vom Benutzer angegebenen {admc-name} Richtlinien zu bewerten.
 
-Schließlich startet der `policy-server` einen HTTPS-Server, der auf eingehende Validierungsanfragen überwacht. Der {project-name} verwendet den TLS-Schlüssel und das Zertifikat, die vom {project-name} Controller erstellt wurden, um den Webserver abzusichern.
+Schließlich startet der `policy-server` einen HTTPS-Server, der auf eingehende Validierungsanfragen überwacht. Der {admc-name} verwendet den TLS-Schlüssel und das Zertifikat, die vom {admc-name} Controller erstellt wurden, um den Webserver abzusichern.
 
 Der Webserver macht jede Richtlinie über einen dedizierten Pfad, gemäß der Namenskonvention `/validate/<policy ID>`, zugänglich.
 
@@ -141,7 +141,7 @@ Der Webserver macht jede Richtlinie über einen dedizierten Pfad, gemäß der Na
 
 Alle `policy-server` Instanzen haben ein https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/[`Readiness Probe`], das `kubewarden-controller` verwendet, um zu überprüfen, wann die `policy-server` Implementierung bereit ist, eine https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#webhook-request-and-response[`AdmissionReview`] zu bewerten.
 
-Sobald {project-name} die `policy-server` Implementierung als 'einzigartig erreichbar' oder `Ready` markiert, macht der `kubewarden-controller` den Kubernetes API-Server auf die neue Richtlinie aufmerksam. Dies geschieht durch die Erstellung entweder eines `MutatingWebhookConfiguration` oder eines `ValidatingWebhookConfiguration` Objekts. In diesem Kontext bedeutet 'einzigartig erreichbar', dass alle PolicyServer-Instanzen im Cluster die neueste Richtlinienkonfiguration installiert haben. Die Unterscheidung ist ein feiner Punkt, aber notwendig aufgrund der Funktionsweise des Rollouts von PolicyServern.
+Sobald {admc-name} die `policy-server` Implementierung als 'einzigartig erreichbar' oder `Ready` markiert, macht der `kubewarden-controller` den Kubernetes API-Server auf die neue Richtlinie aufmerksam. Dies geschieht durch die Erstellung entweder eines `MutatingWebhookConfiguration` oder eines `ValidatingWebhookConfiguration` Objekts. In diesem Kontext bedeutet 'einzigartig erreichbar', dass alle PolicyServer-Instanzen im Cluster die neueste Richtlinienkonfiguration installiert haben. Die Unterscheidung ist ein feiner Punkt, aber notwendig aufgrund der Funktionsweise des Rollouts von PolicyServern.
 Es ist möglich, die gleiche Richtlinie auf verschiedenen PolicyServern mit unterschiedlichen Konfigurationen zu haben.
 
 Jede Richtlinie hat einen dedizierten `MutatingWebhookConfiguration` oder `ValidatingWebhookConfiguration`, der auf den von `policy-server` bereitgestellten Webhook-Endpunkt verweist. Der Endpunkt ist unter der `/validate/<policy ID>` URL erreichbar.
@@ -152,12 +152,12 @@ Jetzt, da alle notwendigen Vorbereitungen abgeschlossen sind, beginnt Kubernetes
 
 Ein `policy-server` empfängt das Admission Request-Objekt und verwendet, basierend auf dem Endpunkt, der die Anfrage erhalten hat, die richtige Richtlinie zur Bewertung.
 
-{project-name} bewertet jede Richtlinie in seiner eigenen dedizierten WebAssembly-Sandbox. Die Kommunikation zwischen einer `policy-server` Instanz (dem "Host") und der WebAssembly-Richtlinie (dem "Gast") verwendet das waPC-Kommunikationsprotokoll. Die Beschreibung des Protokolls ist Teil der xref:../tutorials/writing-policies/index.adoc[Richtlinien schreiben] Dokumentation.
+{admc-name} bewertet jede Richtlinie in seiner eigenen dedizierten WebAssembly-Sandbox. Die Kommunikation zwischen einer `policy-server` Instanz (dem "Host") und der WebAssembly-Richtlinie (dem "Gast") verwendet das waPC-Kommunikationsprotokoll. Die Beschreibung des Protokolls ist Teil der xref:../tutorials/writing-policies/index.adoc[Richtlinien schreiben] Dokumentation.
 Richtlinien können auch die von der xref:../tutorials/writing-policies/wasi/01-intro-wasi.adoc[Web Assembly System Interface] (WASI) bereitgestellten Schnittstellen nutzen.
 
-== Wie {project-name} viele PolicyServer und Richtlinien verwaltet.
+== Wie {admc-name} viele PolicyServer und Richtlinien verwaltet.
 
-Ein Cluster kann viele PolicyServer und {project-name} Richtlinien definiert haben.
+Ein Cluster kann viele PolicyServer und {admc-name} Richtlinien definiert haben.
 Es gibt Vorteile, viele PolicyServer zu haben:
 
 * Sie können störende Namespaces oder Mandanten – beziehungsweise solche, die viele Richtlinienbewertungen erzeugen – vom Rest des Clusters isolieren, um andere Clusteroperationen nicht negativ zu beeinflussen.

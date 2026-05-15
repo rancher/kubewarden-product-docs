@@ -93,7 +93,7 @@ Eine echte Richtlinie würde einen Repository-Pfad verwenden, wie `github.com/ku
 Vorausgesetzt, die erforderlichen Werkzeuge sind vorhanden, verwendet ein `make test`-Befehl Docker, um ein TinyGo-Compiler-Image herunterzuladen, um die Richtlinienvorlage zu erstellen und zu testen.
 
 Der Standard-`make`-Befehl erstellt das `policy.wasm`-Ziel. Dann führt `make test` die definierten Go-Tests aus.
-Der Befehl `make e2e-tests` führt Tests mit https://github.com/bats-core/bats-core[bats] innerhalb eines {short-project-name}-Clusters aus.
+Der Befehl `make e2e-tests` führt Tests mit https://github.com/bats-core/bats-core[bats] innerhalb eines {admc-short-name}-Clusters aus.
 Nach dem Klonen der `go-policy-template` überprüfen diese Befehle, ob Sie über die erforderlichen Werkzeuge für das Tutorial verfügen.
 
 .Ausgabe der `make`-Befehle

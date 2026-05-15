@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Configurando PolicyServers para utilizar una instancia privada de Sigstore
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:description: Configurando PolicyServers para utilizar una instancia privada o autohospedada de Sigstore para la verificación de firmas de políticas en {project-name}.
+:description: Configurando PolicyServers para utilizar una instancia privada o autohospedada de Sigstore para la verificación de firmas de políticas en {admc-name}.
 :keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-type: ["howto"]
@@ -52,7 +52,7 @@ kubectl get secret -o json -n tuf-system ctlog-public-key \
 .Consideración de seguridad
 ====
 
-Asegúrate de descargar de forma segura los certificados y claves de tu instancia de Sigstore. De lo contrario, podrías acabar configurando {project-name} con datos comprometidos.
+Asegúrate de descargar de forma segura los certificados y claves de tu instancia de Sigstore. De lo contrario, podrías acabar configurando {admc-name} con datos comprometidos.
 
 Los comandos anteriores son ejemplos de cómo hacerlo en un entorno de pruebas.
 Consulta con el equipo adecuado en tu organización para aprender cómo obtener esta información correctamente.
@@ -156,7 +156,7 @@ kubectl --namespace kubewarden create configmap my-verification-config \
 
 [NOTE]
 ====
-La clave del ConfigMap **debe** ser `verification-config` (no el nombre del archivo). {short-project-name} busca esta clave exacta.
+La clave del ConfigMap **debe** ser `verification-config` (no el nombre del archivo). {admc-short-name} busca esta clave exacta.
 ====
 
 == Paso 4 - Configura el PolicyServer

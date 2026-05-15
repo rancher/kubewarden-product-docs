@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Publicar {project-name} directivas en Artifact Hub creando un diseño de repositorio Git bien formateado y configurando GitHub Actions para empaquetado automatizado, facilitando la integración continua.
+:description: Publicar {admc-name} directivas en Artifact Hub creando un diseño de repositorio Git bien formateado y configurando GitHub Actions para empaquetado automatizado, facilitando la integración continua.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 
 https://artifacthub.io/[Artifact Hub] es un sitio web donde los usuarios pueden encontrar, instalar y publicar paquetes y configuraciones para proyectos de https://cncf.io[CNCF].
 
-Las {project-name} directivas pueden publicarse en Artifact Hub y hacerse descubribles para la amplia audiencia de usuarios de CNCF.
+Las {admc-name} directivas pueden publicarse en Artifact Hub y hacerse descubribles para la amplia audiencia de usuarios de CNCF.
 
 [NOTE]
 ====
@@ -25,7 +25,7 @@ Consulta la sección xref:explanations/distributing-policies.adoc[distribución 
 ====
 
 
-Este documento se centra en los pasos necesarios para hacer que una directiva {short-project-name} sea descubrible en Artifact Hub.
+Este documento se centra en los pasos necesarios para hacer que una directiva {admc-short-name} sea descubrible en Artifact Hub.
 
 == Prepara tu repositorio Git
 
@@ -67,7 +67,7 @@ Decide si quieres publicar la directiva como usuario o bajo una organización de
 
 Luego, presiona el botón _"Añadir"_ y completa el formulario:
 
-* Elige _"{short-project-name} directivas"_ como tipo.
+* Elige _"{admc-short-name} directivas"_ como tipo.
 * Introduce un _"Nombre"_ y _"Nombre para mostrar"_ de tu elección.
 * Introduce la URL de tu repositorio Git.
 * Introduce `artifacthub` como la rama a rastrear.

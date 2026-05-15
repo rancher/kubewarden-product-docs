@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "policy-servers", "custom-certificate-authorities"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "custom certificate authorities"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "custom certificate authorities"]
 :sidebar_label: Uso de CAs personalizadas
 :current-version: {page-origin-branch}
 

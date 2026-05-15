@@ -37,7 +37,7 @@ accepted keys based on different use cases is below:
 * `pubKey`: For signatures performed with traditional public/private key
   cryptography.
 * `githubAction`: For signatures performed with Sigstore's keyless workflow
-  inside GitHub Actions. {short-project-name} checks this information against the x509
+  inside GitHub Actions. {admc-short-name} checks this information against the x509
   certificate extension `workflow_repository` created by the OpenID Connect of
   GitHub, and not only the `issuer` and `subject`. You should use this `kind`
   if dealing with GitHub Actions.
@@ -261,7 +261,7 @@ For example, the last snippet, using `genericIssuer`, could be rewritten as:
 All signature types can have other optional validation fields, `annotations`.
 These fields are key/value data added during the signing process.
 
-With {short-project-name}, you can verify policy signature are from trusted users *and*
+With {admc-short-name}, you can verify policy signature are from trusted users *and*
 have specific annotations.
 
 The next validation checks two conditions for the policy:
@@ -303,7 +303,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-This last example tests if a given policy came from the {short-project-name}
+This last example tests if a given policy came from the {admc-short-name}
 organization:
 
 [subs="+attributes",console]

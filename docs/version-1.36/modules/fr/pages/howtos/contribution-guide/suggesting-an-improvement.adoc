@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 8
 :current-version: {page-origin-branch}
 
-Si vous remarquez un problème avec {short-project-name} documentation ou souhaitez suggérer un nouveau contenu, ouvrez un problème. Vous avez seulement besoin d'accéder à un https://github.com/join[compte GitHub] et à un navigateur.
+Si vous remarquez un problème avec {admc-short-name} documentation ou souhaitez suggérer un nouveau contenu, ouvrez un problème. Vous avez seulement besoin d'accéder à un https://github.com/join[compte GitHub] et à un navigateur.
 
-En général, tout nouveau travail de documentation pour {short-project-name} commence par un problème sur GitHub.
+En général, tout nouveau travail de documentation pour {admc-short-name} commence par un problème sur GitHub.
 ifeval::["{build-type}" == "community"]
-L'équipe de documentation https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name}] examine, catégorise et étiquette les problèmes.
+L'équipe de documentation https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{admc-short-name}] examine, catégorise et étiquette les problèmes.
 endif::[]
 ifeval::["{build-type}" == "product"]
-L'équipe de documentation https://github.com/orgs/rancher/teams/docs[{short-project-name}] examine, catégorise et étiquette les problèmes.
+L'équipe de documentation https://github.com/orgs/rancher/teams/docs[{admc-short-name}] examine, catégorise et étiquette les problèmes.
 endif::[]
 Tout le monde est le bienvenu pour travailler sur n'importe quel problème, y compris le rapporteur, mais vous devez vous l'assigner avant de commencer tout travail pour éviter les efforts en double.
 
@@ -29,10 +29,10 @@ Pour suggérer des améliorations au contenu de documentation existant ou signal
 
 * Cliquez sur l'icône Octocat de GitHub en haut. Cela vous redirige vers le
 ifeval::["{build-type}" == "community"]
-  https://github.com/kubewarden/docs[dépôt de documentation pour {short-project-name}].
+  https://github.com/kubewarden/docs[dépôt de documentation pour {admc-short-name}].
 endif::[]
 ifeval::["{build-type}" == "product"]
-  https://github.com/rancher/kubewarden-product-docs[dépôt de documentation pour {short-project-name}].
+  https://github.com/rancher/kubewarden-product-docs[dépôt de documentation pour {admc-short-name}].
 endif::[]
 * Naviguez vers l'onglet Problèmes et cliquez sur *Nouveau problème*.
 * Décrivez le problème ou la suggestion d'amélioration. Plus il y a de détails, mieux c'est.

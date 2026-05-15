@@ -31,7 +31,7 @@ include::partial$variables.adoc[]
 これらの2つのルートキーは、`kind`型のキーの配列を受け入れます。異なるユースケースに基づく受け入れられたキーの完全なリストは以下の通りです：
 
 * `pubKey`:従来の公開鍵/秘密鍵暗号化で行われた署名のため。
-* `githubAction`:GitHub Actions内でSigstoreのキーレスワークフローで行われた署名のため。{short-project-name}は、GitHubのOpenID Connectによって作成されたx509証明書拡張`workflow_repository`に対してこの情報を確認し、`issuer`と`subject`だけでなく、他の情報も確認します。GitHub Actionsを扱う場合は、この`kind`を使用するべきです。
+* `githubAction`:GitHub Actions内でSigstoreのキーレスワークフローで行われた署名のため。{admc-short-name}は、GitHubのOpenID Connectによって作成されたx509証明書拡張`workflow_repository`に対してこの情報を確認し、`issuer`と`subject`だけでなく、他の情報も確認します。GitHub Actionsを扱う場合は、この`kind`を使用するべきです。
 * `genericIssuer`:ユーザーが自分で証明書`issuer`と`subject`を検証する必要があるSigstoreのキーレスワークフローで行われた署名のため。これは`subject`を受け入れ、次のようになります：
 
 ** `equal`:ここに渡される値は、署名証明書の`subject`と正確に一致する必要があります。
@@ -225,7 +225,7 @@ anyOf: # at least `+anyOf.minimumMatches+` are required to match
 すべての署名タイプには、他のオプションの検証フィールド`annotations`が含まれる可能性があります。
 これらのフィールドは、署名プロセス中に追加されるキー/値データです。
 
-{short-project-name}を使用すると、ポリシー署名が信頼できるユーザーによるものであり、さらに特定の注釈が付与されていることを確認できます。
+{admc-short-name}を使用すると、ポリシー署名が信頼できるユーザーによるものであり、さらに特定の注釈が付与されていることを確認できます。
 
 次の検証では、ポリシーに対して2つの条件をチェックします：
 
@@ -265,7 +265,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-この最後の例では、特定のポリシーが{short-project-name}組織から来たかどうかをテストします。
+この最後の例では、特定のポリシーが{admc-short-name}組織から来たかどうかをテストします。
 
 [subs="+attributes",console]
 ----

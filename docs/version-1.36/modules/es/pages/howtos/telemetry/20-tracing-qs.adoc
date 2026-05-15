@@ -24,7 +24,7 @@ correctamente.
 ====
 
 
-El trazado te permite recopilar detalles precisos sobre las evaluaciones de políticas. Puede ser una herramienta útil para depurar problemas en tu ampliación de {project-name}
+El trazado te permite recopilar detalles precisos sobre las evaluaciones de políticas. Puede ser una herramienta útil para depurar problemas en tu ampliación de {admc-name}
 y políticas.
 
 Utilizas https://www.jaegertracing.io/[Jaeger] -- que se utiliza para recibir, almacenar y
@@ -86,9 +86,9 @@ Después de la creación de recursos del Operador de Jaeger, tienes un Servicio 
 `my-open-telemetry-collector.jaeger.svc.cluster.local`. La interfaz de usuario de consulta de Jaeger está
 expuesta por el Servicio `my-open-telemetry-query` en el espacio de nombres `jaeger`.
 
-== Instalar {short-project-name}
+== Instalar {admc-short-name}
 
-Ahora puedes proceder a la ampliación de {short-project-name} de la manera habitual.
+Ahora puedes proceder a la ampliación de {admc-short-name} de la manera habitual.
 
 [NOTE]
 ====
@@ -97,14 +97,14 @@ El `cert-manager` es un requisito de OpenTelemetry, pero ya lo has instalado en 
 
 ====
 
-Como primer paso, añades el repositorio de Helm que contiene {short-project-name}:
+Como primer paso, añades el repositorio de Helm que contiene {admc-short-name}:
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Luego instalas las definiciones de recursos personalizadas (CRDs) definidas por {short-project-name}:
+Luego instalas las definiciones de recursos personalizadas (CRDs) definidas por {admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -114,7 +114,7 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Ahora puedes desplegar el resto de la pila de {short-project-name}. El chart de Helm oficial de `kubewarden-defaults` crea un PolicyServer llamado `default`. Quieres que esta instancia de PolicyServer tenga el trazado habilitado.
+Ahora puedes desplegar el resto de la pila de {admc-short-name}. El chart de Helm oficial de `kubewarden-defaults` crea un PolicyServer llamado `default`. Quieres que esta instancia de PolicyServer tenga el trazado habilitado.
 
 Para ello, necesitas especificar algunos valores adicionales para el chart de `kubewarden-controller`. Deberías crear un archivo `values.yaml` con el siguiente contenido:
 

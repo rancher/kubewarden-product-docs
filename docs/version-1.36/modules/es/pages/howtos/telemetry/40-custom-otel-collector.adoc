@@ -4,13 +4,13 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura el {project-name} para enviar datos de telemetría de forma segura a un recolector de OpenTelemetry personalizado desplegado dentro del clúster.
+:description: Configura el {admc-name} para enviar datos de telemetría de forma segura a un recolector de OpenTelemetry personalizado desplegado dentro del clúster.
 :keywords: kubewarden, kubernetes, métricas, trazado, opentelemetry
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: manual del operador, telemetría, métricas, inicio rápido
 
-Esta guía explica cómo configurar {short-project-name} para enviar datos de telemetría a un recolector de OpenTelemetry ya desplegado en el clúster.
+Esta guía explica cómo configurar {admc-short-name} para enviar datos de telemetría a un recolector de OpenTelemetry ya desplegado en el clúster.
 
 Solo debes desplegar una instancia del https://opentelemetry.io/docs/collector/[Recolector de OpenTelemetry] en el clúster.
 
@@ -18,11 +18,11 @@ Solo debes desplegar una instancia del https://opentelemetry.io/docs/collector/[
 
 Primero, comienza instalando las dependencias del Recolector de OpenTelemetry.
 
-Necesitas comunicación encriptada entre los componentes del {project-name} y el Recolector de OpenTelemetry. Puedes usar https://cert-manager.io/[cert-manager] para gestionar todos los certificados requeridos para una comunicación segura.
+Necesitas comunicación encriptada entre los componentes del {admc-name} y el Recolector de OpenTelemetry. Puedes usar https://cert-manager.io/[cert-manager] para gestionar todos los certificados requeridos para una comunicación segura.
 
 Las trazas del Recolector de OpenTelemetry se envían a una instancia de https://www.jaegertracing.io/[Jaeger].
 
-La pila del {short-project-name} envía métricas al Recolector de OpenTelemetry.
+La pila del {admc-short-name} envía métricas al Recolector de OpenTelemetry.
 Este expone las métricas como un endpoint de Prometheus. Las métricas son luego recogidas por una instancia de Prometheus y almacenadas en su base de datos. La misma instancia de Prometheus también expone una interfaz de usuario para ver y utilizar las métricas.
 
 Los recursos que creas se definen en el espacio de nombres `kubewarden`, o se espera su existencia. Debido a eso, debes comenzar creando el espacio de nombres:
@@ -55,7 +55,7 @@ helm install --wait \
   my-opentelemetry-operator open-telemetry/opentelemetry-operator
 ----
 
-Configuras la comunicación entre los componentes del {short-project-name} y el Recolector de OpenTelemetry usando mTLS.
+Configuras la comunicación entre los componentes del {admc-short-name} y el Recolector de OpenTelemetry usando mTLS.
 
 Para hacer eso, necesitas crear toda la infraestructura de clave pública (PKI):
 
@@ -183,7 +183,7 @@ helm install --wait --create-namespace \
 [NOTE]
 ====
 
-El monitor de servicio de Prometheus obtiene las métricas {short-project-name} al raspar el recolector de OpenTelemetry que se ejecuta en el espacio de nombres `kubewarden`.
+El monitor de servicio de Prometheus obtiene las métricas {admc-short-name} al raspar el recolector de OpenTelemetry que se ejecuta en el espacio de nombres `kubewarden`.
 
 ====
 
@@ -253,13 +253,13 @@ kubectl apply -f otel-collector.yaml
 
 Esa configuración utiliza un pipeline de procesamiento trivial para recibir eventos de trazado y reenviarlos a Jaeger. También recibe métricas y las expone para la recolección mediante Prometheus.
 
-Aseguras la comunicación entre la pila {short-project-name} y el Recolector de OpenTelemetry utilizando mTLS. Sin embargo, la comunicación entre el Recolector de OpenTelemetry y Jaeger no está asegurada, para reducir la complejidad del ejemplo.
+Aseguras la comunicación entre la pila {admc-short-name} y el Recolector de OpenTelemetry utilizando mTLS. Sin embargo, la comunicación entre el Recolector de OpenTelemetry y Jaeger no está asegurada, para reducir la complejidad del ejemplo.
 
-== Instala la pila {short-project-name}
+== Instala la pila {admc-short-name}
 
-Cuando el Recolector de OpenTelemetry está en funcionamiento, puedes desplegar {short-project-name} de la manera habitual.
+Cuando el Recolector de OpenTelemetry está en funcionamiento, puedes desplegar {admc-short-name} de la manera habitual.
 
-Necesitas configurar los componentes {short-project-name} para que envíen eventos y métricas al Recolector de OpenTelemetry.
+Necesitas configurar los componentes {admc-short-name} para que envíen eventos y métricas al Recolector de OpenTelemetry.
 
 [source,yaml]
 ----
@@ -277,11 +277,11 @@ telemetry:
 
 El Secreto referenciado por la clave `otelCollectorCertificateSecret` debe tener una entrada llamada `ca.crt`. Eso contiene el certificado de la CA que emitió el certificado utilizado por el Recolector de OpenTelemetry.
 
-El Secreto referenciado por la clave `otelCollectorClientCertificateSecret` debe tener las siguientes entradas: las claves `tls.crt` y `tls.key`. Estos son el certificado del cliente y su clave utilizados por la pila {short-project-name} para autenticarse ante el Recolector de OpenTelemetry.
+El Secreto referenciado por la clave `otelCollectorClientCertificateSecret` debe tener las siguientes entradas: las claves `tls.crt` y `tls.key`. Estos son el certificado del cliente y su clave utilizados por la pila {admc-short-name} para autenticarse ante el Recolector de OpenTelemetry.
 
 Deja estos valores vacíos si no utilizas cifrado o mTLS.
 
-Instala el {short-project-name}stack:
+Instala el {admc-short-name}stack:
 
 [source,console]
 ----
@@ -305,7 +305,7 @@ Ahora todo está en su lugar.
 
 == Explorando la interfaz de usuario de Jaeger
 
-Puedes ver los eventos de trazado generados por {short-project-name} utilizando la interfaz web de Jaeger. Están agrupados bajo el servicio `kubewarden-policy-server`:
+Puedes ver los eventos de trazado generados por {admc-short-name} utilizando la interfaz web de Jaeger. Están agrupados bajo el servicio `kubewarden-policy-server`:
 
 image::jaeger-custom-otel-collector.png[El panel de control de Jaeger]
 

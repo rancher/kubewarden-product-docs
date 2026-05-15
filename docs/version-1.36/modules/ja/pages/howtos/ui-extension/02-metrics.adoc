@@ -3,14 +3,14 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}とPrometheusを統合して、Rancher環境の監視を設定します。
+:description: {admc-name}とPrometheusを統合して、Rancher環境の監視を設定します。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "metrics-and-monitoring"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "ユーザーインターフェース拡張", "メトリクス", "監視"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "ユーザーインターフェース拡張", "メトリクス", "監視"]
 :current-version: {page-origin-branch}
 
-Rancherには、GrafanaとPrometheusを使用した監視用のクラスターツールがあります。このツールを使用して、{project-name}と統合し、ポリシーサーバーの全体的なメトリクスや特定のポリシーのメトリクスを表示できます。
+Rancherには、GrafanaとPrometheusを使用した監視用のクラスターツールがあります。このツールを使用して、{admc-name}と統合し、ポリシーサーバーの全体的なメトリクスや特定のポリシーのメトリクスを表示できます。
 
 [CAUTION]
 ====
@@ -29,7 +29,7 @@ Prometheusオペレーターが必要です。xref:howtos/telemetry/30-metrics-q
 === ServiceMonitorsを作成します。
 
 * ServiceMonitorsを作成するためにマニフェストをインポートします。
-* {short-project-name}のインストールネームスペースを指定する必要があります。
+* {admc-short-name}のインストールネームスペースを指定する必要があります。
 
 これらの手順は、xref:howtos/telemetry/30-metrics-qs.adoc[テレメトリ・メトリクスの指示]からの適応です。
 
@@ -108,4 +108,4 @@ telemetry:
 * プロンプトに従ってConfigMapを作成してください。
 * ページを再読み込みしてGrafanaビューを更新します（Grafanaは新しいダッシュボードを承認するのに時間がかかる場合があります）。
 
-ポリシーサーバーまたは各リソースの詳細ページにおいて、任意のポリシーのメトリクスを表示できるはずです。Grafana UI内で{short-project-name}ダッシュボードや、Prometheus UIからのイベントも表示できます。
+ポリシーサーバーまたは各リソースの詳細ページにおいて、任意のポリシーのメトリクスを表示できるはずです。Grafana UI内で{admc-short-name}ダッシュボードや、Prometheus UIからのイベントも表示できます。

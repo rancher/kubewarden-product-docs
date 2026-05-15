@@ -1,6 +1,6 @@
 site:
   title: SUSE Security Admission Controller
-  start_page: 1.36@admission-controller:en:introduction.adoc
+  start_page: 1.35@admission-controller:en:introduction.adoc
 
 content:
   sources:
@@ -26,7 +26,7 @@ antora:
   extensions:
     # - require: "@antora/pdf-extension"
     - require: "@antora/lunr-extension"
-      index_latest_only: false
+      index_latest_only: true
       index_by_heading: true
       languages: [en, de, es, fr, pt, ja, zh]
     - require: "@sntke/antora-mermaid-extension"

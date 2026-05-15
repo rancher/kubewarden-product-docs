@@ -5,26 +5,26 @@ include::partial$variables.adoc[]
 :page-revdate: {revdate}
 :sidebar_label: Organización
 :sidebar_position: 75
-:description: Accede a documentación completa organizada en tutoriales, explicaciones, instrucciones y materiales de referencia para el {project-name}.
-:keywords: ["gestor de políticas de admisión", "{project-name}", documentación, organización]
+:description: Accede a documentación completa organizada en tutoriales, explicaciones, instrucciones y materiales de referencia para el {admc-name}.
+:keywords: ["gestor de políticas de admisión", "{admc-name}", documentación, organización]
 :doc-persona: [kubewarden-all]
 :doc-type: [explicación]
 :doc-topic: [explicación]
 
-{project-name} organiza la documentación del proyecto de la siguiente manera:
+{admc-name} organiza la documentación del proyecto de la siguiente manera:
 
 * xref:/introduction.adoc[Introducción]
 * xref:/quick-start.adoc[Inicio rápido]
 * _Tutoriales_—aprendiendo a través de ejemplos.
 * _Explicaciones_—conceptos subyacentes.
-* _Instrucciones_—para realizar las tareas {short-project-name}.
+* _Instrucciones_—para realizar las tareas {admc-short-name}.
 * _Referencia_
 * Organización—esta página
-* xref:/personas.adoc[Personas]—¿para quién es {short-project-name}?
+* xref:/personas.adoc[Personas]—¿para quién es {admc-short-name}?
 * xref:/disclosure.adoc[Seguridad]
 * xref:/glossary.adoc[Glosario]
 
-La mayor parte del material se encuentra en las cuatro secciones, _Tutoriales_, _Explicaciones_, _Instrucciones_ y _Referencia_. Puede haber superposición ya que las secciones no son mutuamente excluyentes. El proyecto {short-project-name} intenta seguir el marco de documentación link:https://diataxis.fr/[Diátaxis].
+La mayor parte del material se encuentra en las cuatro secciones, _Tutoriales_, _Explicaciones_, _Instrucciones_ y _Referencia_. Puede haber superposición ya que las secciones no son mutuamente excluyentes. El proyecto {admc-short-name} intenta seguir el marco de documentación link:https://diataxis.fr/[Diátaxis].
 
 == Navegación
 

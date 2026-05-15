@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Schreiben Sie die Validierungslogik für Kubernetes-Ressourcen in die Datei src/index.ts, indem Sie auf die eingehenden Anforderungsdaten zugreifen, um eine Antwort zurückzugeben.
-:keywords: "{project-name}", Kubewarden, kubernetes, Richtlinien schreiben, typescript
+:keywords: "{admc-name}", Kubewarden, kubernetes, Richtlinien schreiben, typescript
 :doc-type: Anleitung
-:doc-topic: {project-name}, Kubewarden, Richtlinien schreiben, typescript, Validierungslogik
+:doc-topic: {admc-name}, Kubewarden, Richtlinien schreiben, typescript, Validierungslogik
 :doc-persona: Kubewarden-Richtlinienentwickler
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Kritisch: Schreiben Sie keine Protokollierungsinformationen in STDOUT.
 
-Das Schreiben in STDOUT bricht die Richtlinien. Verwenden Sie stattdessen STDERR für die Protokollierung oder die Protokollierungsfunktionalität, die vom {project-name} SDK bereitgestellt wird. Die Ausgabe der Richtlinie an STDOUT darf nur die Validierungsantwort enthalten.
+Das Schreiben in STDOUT bricht die Richtlinien. Verwenden Sie stattdessen STDERR für die Protokollierung oder die Protokollierungsfunktionalität, die vom {admc-name} SDK bereitgestellt wird. Die Ausgabe der Richtlinie an STDOUT darf nur die Validierungsantwort enthalten.
 ====
 
 Die Validierungslogik gehört in die `src/index.ts` Datei.
@@ -25,7 +25,7 @@ Ihre Validierungslogik muss:
 * Eine Antwort basierend auf den Eingaben und den Richtlinieneinstellungen zurückgeben.
 
 Die eingehende Anfrage enthält ein JSON-Objekt mit der zu validierenden Kubernetes-Ressource.
-Sie können auf die Daten dieses JSON-Objekts über die Hilfsfunktionen des {short-project-name} SDK zugreifen.
+Sie können auf die Daten dieses JSON-Objekts über die Hilfsfunktionen des {admc-short-name} SDK zugreifen.
 
 == Die `validate` Funktion
 
@@ -174,4 +174,4 @@ switch (action) {
 }
 ----
 
-Das {short-project-name} Javy-Plugin bietet die `policyAction()` Funktion, die angibt, ob die Richtlinie eine Ressource validieren oder deren Einstellungen validieren soll.
+Das {admc-short-name} Javy-Plugin bietet die `policyAction()` Funktion, die angibt, ob die Richtlinie eine Ressource validieren oder deren Einstellungen validieren soll.

@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 :title: PodSecurityPolicy-Migration
-:description: Konfigurieren Sie {project-name} Richtlinien in Ihren Kubernetes-Clustern, um eine granulare Kontrolle über die Richtlinienkonfiguration zu erreichen und die PodSecurityPolicy (PSP) zu ersetzen.
+:description: Konfigurieren Sie {admc-name} Richtlinien in Ihren Kubernetes-Clustern, um eine granulare Kontrolle über die Richtlinienkonfiguration zu erreichen und die PodSecurityPolicy (PSP) zu ersetzen.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["pod-security-policy-migration"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "appvia", "psp", "pod security policy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "appvia", "psp", "pod security policy"]
 :sidebar_label: PSP-Migration
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -16,13 +16,13 @@ include::partial$variables.adoc[]
 
 Für Kubernetes ≥ v1.25.
 https://kubernetes.io/docs/concepts/security/pod-security-policy/[PodSecurityPolicy]
-(PSP) wurde entfernt. Jetzt können Sie {project-name} für die Zulassungskontrolle in Ihren Kubernetes-Clustern verwenden.
+(PSP) wurde entfernt. Jetzt können Sie {admc-name} für die Zulassungskontrolle in Ihren Kubernetes-Clustern verwenden.
 
-{short-project-name} hat separate Richtlinien, um dasselbe Ziel wie eine monolithische PSP-Konfiguration zu erreichen. Jede {short-project-name} Richtliniendefinition fungiert als ein anderer Konfigurationsabschnitt in der Spezifikation einer PSP. Die Zuordnung der PSP-Konfigurationsfelder zu ihren jeweiligen {short-project-name} Richtlinien befindet sich in der <<_mapping_kubewarden_policies_to_psp_fields,Mapping-Tabelle>> unten.
+{admc-short-name} hat separate Richtlinien, um dasselbe Ziel wie eine monolithische PSP-Konfiguration zu erreichen. Jede {admc-short-name} Richtliniendefinition fungiert als ein anderer Konfigurationsabschnitt in der Spezifikation einer PSP. Die Zuordnung der PSP-Konfigurationsfelder zu ihren jeweiligen {admc-short-name} Richtlinien befindet sich in der <<_mapping_kubewarden_policies_to_psp_fields,Mapping-Tabelle>> unten.
 
-Mit {short-project-name} haben Betreiber eine granulare Kontrolle über die Richtlinienkonfiguration in ihren Clustern.
+Mit {admc-short-name} haben Betreiber eine granulare Kontrolle über die Richtlinienkonfiguration in ihren Clustern.
 
-Mit einer {short-project-name} Instanz können Sie Richtlinien bereitstellen, um das `PodSecurityPolicy` Objekt zu ersetzen. Wir betrachten diese Regeln in diesem Beispiel:
+Mit einer {admc-short-name} Instanz können Sie Richtlinien bereitstellen, um das `PodSecurityPolicy` Objekt zu ersetzen. Wir betrachten diese Regeln in diesem Beispiel:
 
 * eine PSP, die die privilegierte Eskalation deaktiviert
 * privilegierte Container
@@ -63,10 +63,10 @@ spec:
 
 ======
 
-== {short-project-name} Ersetzungen für PSP
+== {admc-short-name} Ersetzungen für PSP
 
-Jetzt werden wir {short-project-name} Richtlinien erstellen, um dasselbe Ziel zu erreichen.
-Sie setzen jede Regel mit einer separaten {short-project-name} Richtlinie durch.
+Jetzt werden wir {admc-short-name} Richtlinien erstellen, um dasselbe Ziel zu erreichen.
+Sie setzen jede Regel mit einer separaten {admc-short-name} Richtlinie durch.
 In diesem Beispiel benötigen Sie eine separate Richtlinie für die Durchsetzung von jedem der folgenden Punkte:
 
 * privilegierte Eskalation
@@ -466,12 +466,12 @@ Error from server: error when creating "STDIN": admission webhook "clusterwide-p
 
 ======
 
-== Zuordnung von {short-project-name} Richtlinien zu PSP-Feldern
+== Zuordnung von {admc-short-name} Richtlinien zu PSP-Feldern
 
-Diese Tabelle ordnet die PSP-Konfigurationsfelder den entsprechenden {short-project-name} Richtlinien zu.
+Diese Tabelle ordnet die PSP-Konfigurationsfelder den entsprechenden {admc-short-name} Richtlinien zu.
 
 |===
-| PSP-Feld | {short-project-name} äquivalente Richtlinie
+| PSP-Feld | {admc-short-name} äquivalente Richtlinie
 
 | https://kubernetes.io/docs/concepts/security/pod-security-policy/#privileged[privilegiert]
 | https://github.com/kubewarden/pod-privileged-policy[pod-privilegierte-Richtlinie]
@@ -548,18 +548,18 @@ Diese Tabelle ordnet die PSP-Konfigurationsfelder den entsprechenden {short-proj
 
 == PSP-Migrationsskript
 
-Das {short-project-name} Team hat ein Skript für die PSP-Migration entwickelt. Es verwendet das Migrationswerkzeug von https://github.com/appvia/psp-migration[AppVia]. Das AppVia-Werkzeug liest eine PSP-YAML-Konfiguration. Anschließend generiert es die entsprechenden Richtlinien. Dies geschieht für {short-project-name} und andere Richtlinien-Engines.
+Das {admc-short-name} Team hat ein Skript für die PSP-Migration entwickelt. Es verwendet das Migrationswerkzeug von https://github.com/appvia/psp-migration[AppVia]. Das AppVia-Werkzeug liest eine PSP-YAML-Konfiguration. Anschließend generiert es die entsprechenden Richtlinien. Dies geschieht für {admc-short-name} und andere Richtlinien-Engines.
 
 [CAUTION]
 ====
 
 Das AppVia-Migrationswerkzeug liegt außerhalb der Kontrolle der Kuberwarden-Maintainer.
-Das bedeutet, dass es möglich ist, dass es veraltete {short-project-name} Richtlinien generiert. Mit Vorsicht verwenden. Wir benötigen einen Pull-Request für AppVia, an dem derzeit gearbeitet wird.
+Das bedeutet, dass es möglich ist, dass es veraltete {admc-short-name} Richtlinien generiert. Mit Vorsicht verwenden. Wir benötigen einen Pull-Request für AppVia, an dem derzeit gearbeitet wird.
 Kontaktieren Sie uns für weitere Informationen, falls Sie dies benötigen.
 ====
 
 
-Das Skript ist im {short-project-name} https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils] Repository verfügbar. Es lädt das AppVia-Migrationswerkzeug in das Arbeitsverzeichnis herunter, um es zu verwenden. Es verarbeitet die in dem `kubectl` Standardkontext definierten PSPs. Dann gibt es die Kuberwarden-Richtliniendefinitionen auf der Standardausgabe aus. Benutzer können den Inhalt entweder in eine Datei oder direkt nach `kubectl` umleiten.
+Das Skript ist im {admc-short-name} https://github.com/kubewarden/utils/blob/main/scripts/psp-to-kubewarden[utils] Repository verfügbar. Es lädt das AppVia-Migrationswerkzeug in das Arbeitsverzeichnis herunter, um es zu verwenden. Es verarbeitet die in dem `kubectl` Standardkontext definierten PSPs. Dann gibt es die Kuberwarden-Richtliniendefinitionen auf der Standardausgabe aus. Benutzer können den Inhalt entweder in eine Datei oder direkt nach `kubectl` umleiten.
 
 [NOTE]
 ====
@@ -637,7 +637,7 @@ spec:
 
 ======
 
-{short-project-name} Richtlinien können direkt auf einen Cluster mit dem folgenden Befehl angewendet werden:
+{admc-short-name} Richtlinien können direkt auf einen Cluster mit dem folgenden Befehl angewendet werden:
 
 [subs="+attributes",shell]
 ----

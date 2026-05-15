@@ -27,12 +27,12 @@ As regras de validação do Kubernetes CEL têm acesso a várias bibliotecas de 
 * https://pkg.go.dev/github.com/google/cel-go/ext#Strings[Biblioteca de funções de string estendida do CEL]
 * https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-cel-libraries[Bibliotecas de extensão do Kubernetes CEL], com funções suplementares para listas, regex, URLs, autorizadores, quantidades, tipos opcionais, comparações numéricas, etc.
 
-== CEL em {project-name}: `cel-policy`
+== CEL em {admc-name}: `cel-policy`
 
-{short-project-name} fornece https://github.com/kubewarden/cel-policy[cel-policy].
+{admc-short-name} fornece https://github.com/kubewarden/cel-policy[cel-policy].
 Esta é uma política que constrói e empacota o interpretador upstream https://pkg.go.dev/github.com/google/cel-go[cel-go], e também as diferentes bibliotecas listadas acima e disponíveis para CEL no Kubernetes a partir de `apiextensions-apiserver`.
 
-Além disso, `cel-policy` empacota uma *{short-project-name}biblioteca de extensão do CEL* que expõe as {short-project-name} capacidades do host como recursos nativos do CEL https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native CEL]:
+Além disso, `cel-policy` empacota uma *{admc-short-name}biblioteca de extensão do CEL* que expõe as {admc-short-name} capacidades do host como recursos nativos do CEL https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native CEL]:
 
 * Verificação do Sigstore
 * Interação OCI
@@ -40,19 +40,19 @@ Além disso, `cel-policy` empacota uma *{short-project-name}biblioteca de extens
 * Operações de rede
 * Acesso aos recursos do Kubernetes
 
-Isso significa que `cel-policy` é um superconjunto do Kubernetes CEL, e compatível com versões anteriores. É possível reutilizar CEL escrito para Kubernetes vanilla, e/ou fazer uso dos recursos adicionados por {short-project-name}.
+Isso significa que `cel-policy` é um superconjunto do Kubernetes CEL, e compatível com versões anteriores. É possível reutilizar CEL escrito para Kubernetes vanilla, e/ou fazer uso dos recursos adicionados por {admc-short-name}.
 
 O `cel-policy` é enviado compilado e se comporta como um interpretador CEL. Os usuários da política passam as expressões CEL desejadas no `spec.settings` da (Cluster)AdmissionPolicy, e graças aos recursos do CEL, a expressão é compilada e verificada quanto à correção ao criar ou atualizar a (Cluster)AdmissionPolicy. Isso significa que não há necessidade de compilações personalizadas do `cel-policy`.
 
-=== Benefícios do {short-project-name} do `cel-policy` em comparação com ValidatingAdmissionPolicies
+=== Benefícios do {admc-short-name} do `cel-policy` em comparação com ValidatingAdmissionPolicies
 
-O {short-project-name} do `cel-policy`:
+O {admc-short-name} do `cel-policy`:
 
 * Seu código CEL é compatível com versões anteriores das ValidatingAdmissionPolicies.
-* Ao contrário das ValidatingAdmissionPolicies, não precisa de um vínculo como ValidatingAdmissionPolicyBinding, pois isso está incluído nas definições de (Cluster)Admissionpolicies do {short-project-name}.
+* Ao contrário das ValidatingAdmissionPolicies, não precisa de um vínculo como ValidatingAdmissionPolicyBinding, pois isso está incluído nas definições de (Cluster)Admissionpolicies do {admc-short-name}.
 * Pode ser implantado em clusters que não têm suporte a ValidatingAdmissionPolicies.
-* É consciente do contexto e faz uso das permissões granulares de {short-project-name} para xref:../../../reference/spec/05-context-aware-policies.adoc[consciência de contexto].
+* É consciente do contexto e faz uso das permissões granulares de {admc-short-name} para xref:../../../reference/spec/05-context-aware-policies.adoc[consciência de contexto].
 * É implantado como (Cluster)AdmissionPolicy.
-* Se beneficia do rastreamento e telemetria de {short-project-name} sobre políticas.
+* Se beneficia do rastreamento e telemetria de {admc-short-name} sobre políticas.
 * Será levado em consideração pelo Scanner de Auditoria.
 * Pode ser desenvolvido e testado fora do cluster graças ao kwctl.

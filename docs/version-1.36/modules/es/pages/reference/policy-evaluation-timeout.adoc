@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 [IMPORTANT]
 ====
 
-Esta función está disponible a partir de {project-name} v1.5.0 para el tiempo de espera por Servidor de Directivas y desde v1.29.0 para el tiempo de espera por directiva.
+Esta función está disponible a partir de {admc-name} v1.5.0 para el tiempo de espera por Servidor de Directivas y desde v1.29.0 para el tiempo de espera por directiva.
 
 ====
 
@@ -21,7 +21,7 @@ La protección contra el tiempo de espera de evaluación de directivas es una ca
 
 == Finalidad
 
-Puedes escribir directivas {short-project-name} utilizando tanto lenguajes de programación tradicionales (como xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] y xref:../tutorials/writing-policies/index.adoc[otros]) o utilizando el lenguaje de consulta especial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Ambos enfoques tienen méritos, por lo que un objetivo de {short-project-name} es permitir que los autores de directivas elijan la mejor herramienta para sus necesidades.
+Puedes escribir directivas {admc-short-name} utilizando tanto lenguajes de programación tradicionales (como xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go], xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] y xref:../tutorials/writing-policies/index.adoc[otros]) o utilizando el lenguaje de consulta especial xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]. Ambos enfoques tienen méritos, por lo que un objetivo de {admc-short-name} es permitir que los autores de directivas elijan la mejor herramienta para sus necesidades.
 
 Al utilizar un lenguaje tradicional https://en.wikipedia.org/wiki/Turing_completeness[Turing-completo], es posible tener problemas como:
 
@@ -47,7 +47,7 @@ Todos los valores de los tiempos de espera de evaluación por directiva, el tiem
 
 ### Por Directiva
 
-A partir de {short-project-name} v1.29.0, cada Directiva {short-project-name} puede establecer su propio valor de tiempo de espera a través de su atributo `spec.timeoutEvalSeconds`. Esto no debe confundirse con `spec.timeoutSeconds`, utilizado para el tiempo de espera del Webhook (ver sección [abajo](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
+A partir de {admc-short-name} v1.29.0, cada Directiva {admc-short-name} puede establecer su propio valor de tiempo de espera a través de su atributo `spec.timeoutEvalSeconds`. Esto no debe confundirse con `spec.timeoutSeconds`, utilizado para el tiempo de espera del Webhook (ver sección [abajo](#comparison-with-kubernetes-dynamic-admission-controller-timeout)).
 
 El `spec.timeoutEvalSeconds` es granular, permitiendo el ajuste del tiempo de espera de evaluación por directiva.
 
@@ -90,7 +90,7 @@ spec:
 
 === Por Servidor de Directivas
 
-A partir de {short-project-name} v1.5.0, los Servidores de Directivas vienen con un tiempo de espera de evaluación configurable, habilitado por defecto. La interrupción de la evaluación de una solicitud se produce después de 2 segundos. Esta configuración afecta a todas las directivas programadas en ese Servidor de Directivas. El tiempo de espera configurable `spec.timeoutEvalSeconds` por Directiva tiene prioridad sobre esta configuración por Servidor de Directivas.
+A partir de {admc-short-name} v1.5.0, los Servidores de Directivas vienen con un tiempo de espera de evaluación configurable, habilitado por defecto. La interrupción de la evaluación de una solicitud se produce después de 2 segundos. Esta configuración afecta a todas las directivas programadas en ese Servidor de Directivas. El tiempo de espera configurable `spec.timeoutEvalSeconds` por Directiva tiene prioridad sobre esta configuración por Servidor de Directivas.
 
 Puedes ajustar este comportamiento utilizando estas variables de entorno:
 
@@ -126,9 +126,9 @@ spec:
 
 == Comparación con el tiempo de espera del Controlador de Admisión Dinámico de Kubernetes
 
-{short-project-name} es una implementación de https://en.wikipedia.org/wiki/Webhook[webhook] del https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Controlador de Admisión Dinámico de Kubernetes].
+{admc-short-name} es una implementación de https://en.wikipedia.org/wiki/Webhook[webhook] del https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Controlador de Admisión Dinámico de Kubernetes].
 
-Internamente, el servidor API de Kubernetes realiza una solicitud HTTP al Servidor de Políticas de {short-project-name} describiendo un evento que está a punto de suceder. Después de la solicitud HTTP, el Servidor API de Kubernetes espera una respuesta. Sin embargo, el servidor API de Kubernetes no espera para siempre. Después de un cierto período de tiempo, considera que la solicitud ha superado el tiempo de espera.
+Internamente, el servidor API de Kubernetes realiza una solicitud HTTP al Servidor de Políticas de {admc-short-name} describiendo un evento que está a punto de suceder. Después de la solicitud HTTP, el Servidor API de Kubernetes espera una respuesta. Sin embargo, el servidor API de Kubernetes no espera para siempre. Después de un cierto período de tiempo, considera que la solicitud ha superado el tiempo de espera.
 
 Citando la https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[documentación oficial de Kubernetes]:
 
@@ -144,7 +144,7 @@ ____
 
 Eso significa que, independientemente de la función de tiempo de espera de evaluación de directivas, cada solicitud de admisión de Kubernetes está sujeta a un tiempo de espera.
 
-Cada Directiva {short-project-name} puede establecer su propio valor de tiempo de espera a través del atributo `timeoutSeconds` de los recursos personalizados `ClusterAdmissionPolicy` y `AdmissionPolicy`.
+Cada Directiva {admc-short-name} puede establecer su propio valor de tiempo de espera a través del atributo `timeoutSeconds` de los recursos personalizados `ClusterAdmissionPolicy` y `AdmissionPolicy`.
 Por defecto, el valor de tiempo de espera es de 10 segundos.
 
 [IMPORTANT]
@@ -157,10 +157,10 @@ Todas las solicitudes de admisión de Kubernetes realizadas a un Servidor de Dir
 
 ====
 
-Ahora puedes examinar los siguientes escenarios para entender mejor las diferencias entre el tiempo de espera del Webhook de Kubernetes y el tiempo de espera de evaluación de la directiva de {short-project-name}.
+Ahora puedes examinar los siguientes escenarios para entender mejor las diferencias entre el tiempo de espera del Webhook de Kubernetes y el tiempo de espera de evaluación de la directiva de {admc-short-name}.
 
 
-=== El tiempo de espera de evaluación de la directiva de {short-project-name} está deshabilitado.
+=== El tiempo de espera de evaluación de la directiva de {admc-short-name} está deshabilitado.
 
 Supón que tienes un Servidor de Directivas que tiene la función de tiempo de espera de evaluación de la directiva desactivada, y ninguna directiva programada en él ha establecido su campo `spec.timeoutEvalSeconds`. Este Servidor de Directivas está alojando una directiva afectada por un error que provoca que entre en un bucle infinito durante la evaluación.
 
@@ -172,19 +172,19 @@ Después de 10 segundos, se produce el tiempo de espera del webhook de Kubernete
 Ahora el Servidor de Directivas tiene recursos computacionales atrapados en este bucle infinito.
 Con el tiempo, con más solicitudes de admisión que activan la directiva con errores, el Servidor de Directivas se queda sin recursos computacionales. No puede responder al servidor API de Kubernetes. Esto es equivalente a un ataque de Denegación de Servicio (DOS) al Servidor de Directivas.
 
-=== El tiempo de espera de evaluación de la directiva de {short-project-name} está habilitado.
+=== El tiempo de espera de evaluación de la directiva de {admc-short-name} está habilitado.
 
 Supongamos un escenario en el que el mismo Servidor de Directivas ahora tiene habilitada la función de tiempo de espera de evaluación de la directiva, ya sea globalmente en el Servidor de Directivas, o en la Directiva a través de la directiva `spec.timeoutEvalSeconds`, y el tiempo de espera de evaluación de la directiva es de 2 segundos.
 
 El servidor API de Kubernetes envía una solicitud de admisión para evaluación por esta directiva con errores. Como resultado, la evaluación de la directiva entra en un bucle infinito.
 Mientras tanto, el servidor API de Kubernetes está esperando una respuesta.
 
-Después de dos segundos, la función de tiempo de espera de evaluación de la directiva de {short-project-name} interrumpe la evaluación de la directiva y produce una respuesta de rechazo. La respuesta contiene un mensaje explicando que el rechazo ocurrió porque la evaluación de la directiva no se completó a tiempo.
+Después de dos segundos, la función de tiempo de espera de evaluación de la directiva de {admc-short-name} interrumpe la evaluación de la directiva y produce una respuesta de rechazo. La respuesta contiene un mensaje explicando que el rechazo ocurrió porque la evaluación de la directiva no se completó a tiempo.
 
 [NOTE]
 ====
 
-Establecer el tiempo de espera de evaluación de la directiva de {short-project-name} a un valor tan alto como el tiempo de espera del webhook de Kubernetes no es una buena elección.
+Establecer el tiempo de espera de evaluación de la directiva de {admc-short-name} a un valor tan alto como el tiempo de espera del webhook de Kubernetes no es una buena elección.
 
 Aunque la evaluación de la directiva sigue interrumpida, reduciendo las posibilidades de un ataque DOS, la respuesta final de rechazo no es producida por el Servidor de Directivas. El rechazo proviene del servidor API de Kubernetes con el tiempo de espera del webhook.
 

@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-= 安全强化 {short-project-name} webhooks
+= 安全强化 {admc-short-name} webhooks
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
@@ -10,8 +10,8 @@ include::partial$variables.adoc[]
 :doc-type: 参考手册
 :doc-topic: 参考，安全
 
-{project-name} 堆栈使用 webhook 在 Kubernetes 集群中强制执行策略。
-每个 `PolicyServer` 实例都暴露一个 webhook，Kubernetes API 服务器调用它来验证和修改资源。此外，`kubewarden-controller` 还暴露 webhook 来验证和修改 {short-project-name} 项目提供的自定义资源。
+{admc-name} 堆栈使用 webhook 在 Kubernetes 集群中强制执行策略。
+每个 `PolicyServer` 实例都暴露一个 webhook，Kubernetes API 服务器调用它来验证和修改资源。此外，`kubewarden-controller` 还暴露 webhook 来验证和修改 {admc-short-name} 项目提供的自定义资源。
 
 为了减少攻击面，您应该限制对这些 webhook 的访问，仅限于有效调用者：
 
@@ -60,7 +60,7 @@ spec:
 [NOTE]
 ====
 
-此网络策略使用在 {short-project-name} 1.23.0 中引入的标签选择器。如果您使用的是旧版本，请更新策略中的标签以匹配您的部署。
+此网络策略使用在 {admc-short-name} 1.23.0 中引入的标签选择器。如果您使用的是旧版本，请更新策略中的标签以匹配您的部署。
 
 更具体地说，写下
 
@@ -108,7 +108,7 @@ spec:
 [NOTE]
 ====
 
-此网络策略使用在 {short-project-name} 1.23.0 中引入的标签选择器。如果您使用的是旧版本，请更新策略中的标签以匹配您的部署。
+此网络策略使用在 {admc-short-name} 1.23.0 中引入的标签选择器。如果您使用的是旧版本，请更新策略中的标签以匹配您的部署。
 
 更具体地说，写下
 
@@ -146,7 +146,7 @@ matchExpressions:
 
 ====
 
-{short-project-name} 堆栈暴露的 webhook 应仅接受来自 Kubernetes API 服务器或审计扫描器组件的请求。默认情况下，这些 webhook 不要求客户端进行身份验证。它们接受任何请求。
+{admc-short-name} 堆栈暴露的 webhook 应仅接受来自 Kubernetes API 服务器或审计扫描器组件的请求。默认情况下，这些 webhook 不要求客户端进行身份验证。它们接受任何请求。
 
 您可以配置 webhook 以要求凭据，以便只有 API 服务器和审计扫描器进程可以访问它们。有关更多信息，请参阅 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#authenticate-apiservers[Kubernetes 文档]。
 
@@ -173,7 +173,7 @@ plugins:
 +
 这是用于配置其他插件（如 `PodSecurity`）的相同配置文件。如果您的发行版或设置使用其他准入插件，您还应配置这些插件。
 
-. 创建准入插件所引用的 `kubeconfig` 文件。{short-project-name} 仅支持客户端证书认证，因此生成一个 TLS 密钥对，并将 kubeconfig 设置为使用客户端证书和客户端密钥或客户端证书数据和客户端密钥数据。
+. 创建准入插件所引用的 `kubeconfig` 文件。{admc-short-name} 仅支持客户端证书认证，因此生成一个 TLS 密钥对，并将 kubeconfig 设置为使用客户端证书和客户端密钥或客户端证书数据和客户端密钥数据。
 +
 例如：
 +
@@ -190,7 +190,7 @@ users:
 
 . 使用标志 `--admission-control-config-file` 启动 `kube-apiserver` 二进制文件，指向您的 `AdmissionConfiguration` 文件。执行此操作的方法因发行版而异，并且并非所有发行版都支持，例如在托管的 Kubernetes 提供商中。请查阅您的 Kubernetes 发行版的文档。
 
-. 将颁发 API 服务器客户端证书的根 CA 的证书提供给 {short-project-name} 堆栈。
+. 将颁发 API 服务器客户端证书的根 CA 的证书提供给 {admc-short-name} 堆栈。
 +
 将其内容放入 `kubewarden` 命名空间下的一个 `ConfigMap` 中，使用名为 `client-ca.crt` 的密钥。
 +
@@ -216,4 +216,4 @@ helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-co
    --set mTLS.configMapName=api-server-mtls
 ----
 +
-{short-project-name} 控制器为审计扫描器组件创建一个客户端证书。当需要时，控制器会自动轮换证书。
+{admc-short-name} 控制器为审计扫描器组件创建一个客户端证书。当需要时，控制器会自动轮换证书。

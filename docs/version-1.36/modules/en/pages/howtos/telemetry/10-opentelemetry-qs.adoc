@@ -15,7 +15,7 @@ https://opentelemetry.io/[OpenTelemetry] is a Cloud Native Computing Foundation
 (CNCF) framework for observability. It enables your microservices to provide
 metrics, logs and traces.
 
-{project-name}'s components, using the OpenTelemetry SDK, report data to
+{admc-name}'s components, using the OpenTelemetry SDK, report data to
 an OpenTelemetry collector — called the agent.
 
 This guide explains how to deploy the OpenTelemetry collector in `sidecar` mode
@@ -24,17 +24,17 @@ by using the official Kubernetes Helm chart.
 This is a simple deployment pattern using OpenTelemetry. It's final setup looks
 like this:
 
-* Each Pod of the {short-project-name} stack (Policy Server, Controller) has an
+* Each Pod of the {admc-short-name} stack (Policy Server, Controller) has an
   OpenTelemetry sidecar.
 * The sidecar receives tracing and monitoring information from the
-  {short-project-name} component via the OpenTelemetry Protocol (OTLP)
+  {admc-short-name} component via the OpenTelemetry Protocol (OTLP)
 * The OpenTelemetry collector:
  ** Sends the trace events to a central Jaeger instance
  ** Exposes Prometheus metrics on a specific port
 
-The {short-project-name} Helm chart doesn't cover all the possible deployment
+The {admc-short-name} Helm chart doesn't cover all the possible deployment
 scenarios of the OpenTelemetry collector. It's also possible to configure
-{short-project-name} to send data to an OpenTelemetry collector. Documentation
+{admc-short-name} to send data to an OpenTelemetry collector. Documentation
 for that scenario is in the xref:./40-custom-otel-collector.adoc[custom
 OpenTelemetry guide].
 

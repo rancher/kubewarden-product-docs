@@ -3,20 +3,20 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprenda como testar autores de políticas com o kwctl, usando bats ou testes padrão, especificamente para as políticas {project-name} em Wasm.
+:description: Aprenda como testar autores de políticas com o kwctl, usando bats ou testes padrão, especificamente para as políticas {admc-name} em Wasm.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["testing-policies", "policy-authors"]
 :doc-type: ["tutorial"]
 :keywords: ["kubewarden", "teste de políticas", "autor de políticas", "rust", "go", "assemblyscript", "ambiente de desenvolvimento"]
 :current-version: {page-origin-branch}
 
-{project-name} Políticas são programas regulares compilados como WebAssembly (Wasm).
+{admc-name} Políticas são programas regulares compilados como WebAssembly (Wasm).
 Assim como qualquer tipo de programa, uma boa cobertura de testes é importante.
 
 Os autores de políticas podem usar seus ambientes de desenvolvimento favoritos.
 Você pode usar ferramentas familiares e frameworks de teste para verificar o desenvolvimento.
 
-Essas {short-project-name} políticas são exemplos escritos em xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] e xref:tutorials/writing-policies/go/01-intro-go.adoc[Go]:
+Essas {admc-short-name} políticas são exemplos escritos em xref:tutorials/writing-policies/rust/01-intro-rust.adoc[Rust] e xref:tutorials/writing-policies/go/01-intro-go.adoc[Go]:
 
 * https://github.com/kubewarden/psp-apparmor[psp-apparmor]
 * https://github.com/kubewarden/ingress-policy[ingress-policy]
@@ -31,12 +31,12 @@ Você também pode escrever testes que executam contra o binário Wasm contendo 
 Para fazer isso sem precisar implantar um cluster Kubernetes, você pode usar estas ferramentas:
 
 * https://github.com/bats-core/bats-core[bats]: é para escrever testes e automatizar sua execução.
-* https://github.com/kubewarden/kwctl[`kwctl`]: a ferramenta CLI padrão do {short-project-name} que ajuda você com operações relacionadas a políticas; baixar, inspecionar, anotar, enviar e executar.
+* https://github.com/kubewarden/kwctl[`kwctl`]: a ferramenta CLI padrão do {admc-short-name} que ajuda você com operações relacionadas a políticas; baixar, inspecionar, anotar, enviar e executar.
 
 Para usar `kwctl run` você precisa do seguinte:
 
 . O arquivo binário Wasm da política a ser executada.
-A {short-project-name} política pode ser carregada de:
+A {admc-short-name} política pode ser carregada de:
  ** o sistema de arquivos local (`file://`)
  ** um servidor HTTP(s) (`https://`)
  ** um registro OCI (`registry://`).

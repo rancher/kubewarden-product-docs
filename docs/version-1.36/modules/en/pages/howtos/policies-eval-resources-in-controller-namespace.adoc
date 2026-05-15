@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 
 By default, the Admission Controller does not allow policies to
 evaluate resources in its own namespace. This prevents misconfigurations that
-could break the {short-project-name} installation.
+could break the {admc-short-name} installation.
 
 This safety measure is implemented in two layers. The first layer is controlled
 by the `--always-accept-admission-reviews-on-deployments-namespace` CLI flag.
@@ -32,7 +32,7 @@ The first step is to configure the controller to not set the
 `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` environment variable
 in the PolicyServer deployments.
 
-To do this, upgrade your {short-project-name} installation and set the
+To do this, upgrade your {admc-short-name} installation and set the
 `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` value of the
 `kubewarden-controller` Helm chart to `false`:
 
@@ -45,7 +45,7 @@ helm upgrade -n kubewarden
 
 This change allows policy servers to evaluate resources from any namespace.
 Once this is done, policies can be configured to evaluate admission reviews
-from the {short-project-name} namespace.
+from the {admc-short-name} namespace.
 
 == Configure policies to evaluate resources in the Admission Controller namespace
 
@@ -98,6 +98,6 @@ including that namespace.
 ====
 Policies CRDs also allow users to define their own namespace selectors. These
 selectors are not changed. This means that if a user defines a selector that
-skips the {short-project-name} namespace, the policy will still ignore that namespace as
+skips the {admc-short-name} namespace, the policy will still ignore that namespace as
 expected.
 ====

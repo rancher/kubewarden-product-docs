@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: ポリシーの配布方法や、{project-name}に関する設定の詳細を含む関連情報へのアクセス方法を学びます。
+:description: ポリシーの配布方法や、{admc-name}に関する設定の詳細を含む関連情報へのアクセス方法を学びます。
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "go", "distributing-policies"]
 :doc-type: ["tutorial"]
@@ -19,4 +19,4 @@ Goチュートリアルを通じて、長く、そしてきっと楽しい旅路
 ポリシーを配布する際に特別なことはありません。
 このガイドに従った場合、最後の章で定義されたGitHub `release.yml` Actionを使用して、すでにポリシーを公開しています。
 
-ポリシーの配布に関するトピックは、{project-name}のドキュメントのxref:/explanations/distributing-policies.adoc["ポリシーの配布"]セクションでより詳しく説明されています。
+ポリシーの配布に関するトピックは、{admc-name}のドキュメントのxref:/explanations/distributing-policies.adoc["ポリシーの配布"]セクションでより詳しく説明されています。

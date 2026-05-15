@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Comprendre la pile {project-name} en apprenant à déployer et à gérer ses principaux composants, y compris les serveurs de stratégie et les ressources ClusterAdmissionPolicy.
+:description: Comprendre la pile {admc-name} en apprenant à déployer et à gérer ses principaux composants, y compris les serveurs de stratégie et les ressources ClusterAdmissionPolicy.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["quick-start"]
 :doc-type: ["tutorial"]
-:keywords: ["{project-name}", "installation", "démarrage rapide", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "installation", "démarrage rapide", "policyserver", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: Actions de
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -18,19 +18,19 @@ include::partial$variables.adoc[]
 </head>
 ++++
 
-La pile {project-name} se compose de :
+La pile {admc-name} se compose de :
 
 * Une ou plusieurs ressources {cluster-admission-policy} : cela définit des stratégies pour les clusters Kubernetes.
-* Une ou plusieurs ressources {policy-server} : représentant un déploiement d'un {short-project-name} `PolicyServer`. Le {short-project-name} `PolicyServer` charge et évalue les stratégies de votre administrateur.
+* Une ou plusieurs ressources {policy-server} : représentant un déploiement d'un {admc-short-name} `PolicyServer`. Le {admc-short-name} `PolicyServer` charge et évalue les stratégies de votre administrateur.
 * Une ou plusieurs ressources {admission-policy} : politiques pour un espace de noms défini.
-* Un déploiement d'un `kubewarden-controller` : ce contrôleur surveille les ressources {cluster-admission-policy} et interagit avec les composants {short-project-name} {policy-server}.
+* Un déploiement d'un `kubewarden-controller` : ce contrôleur surveille les ressources {cluster-admission-policy} et interagit avec les composants {admc-short-name} {policy-server}.
 
 [TIP]
 ====
 
-{short-project-name} décrit ses définitions de ressources personnalisées Kubernetes (CRDs) xref:reference/CRDs.adoc[ici].
+{admc-short-name} décrit ses définitions de ressources personnalisées Kubernetes (CRDs) xref:reference/CRDs.adoc[ici].
 
-Les CRDs {short-project-name} mentionnées dans ce tutoriel et dans le reste de la documentation ont des noms courts, qui sont plus faciles à utiliser. Voici les noms courts pour les CRDs :
+Les CRDs {admc-short-name} mentionnées dans ce tutoriel et dans le reste de la documentation ont des noms courts, qui sont plus faciles à utiliser. Voici les noms courts pour les CRDs :
 
 [cols="1,1"]
 |===
@@ -64,7 +64,7 @@ Les CRDs {short-project-name} mentionnées dans ce tutoriel et dans le reste de 
 
 :gh-pat-url: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens
 
-Vous pouvez récupérer les stratégies {short-project-name} depuis le registre de conteneurs GitHub à https://ghcr.io.. Vous avez besoin d'une authentification pour utiliser le dépôt avec la CLI {short-project-name}, un {gh-pat-url}[token d'accès personnel GitHub] (PAT). Leur documentation vous guide pour en créer un si vous ne l'avez pas déjà fait.
+Vous pouvez récupérer les stratégies {admc-short-name} depuis le registre de conteneurs GitHub à https://ghcr.io.. Vous avez besoin d'une authentification pour utiliser le dépôt avec la CLI {admc-short-name}, un {gh-pat-url}[token d'accès personnel GitHub] (PAT). Leur documentation vous guide pour en créer un si vous ne l'avez pas déjà fait.
 Ensuite, vous vous authentifiez avec une commande comme :
 
 [subs="+attributes",console]
@@ -75,7 +75,7 @@ echo $PAT | docker login ghcr.io --username <my-gh-username> --password-stdin
 ====
 
 
-Déployez la pile {short-project-name} en utilisant les charts `helm` comme suit :
+Déployez la pile {admc-short-name} en utilisant les charts `helm` comme suit :
 
 [subs="+attributes",console]
 ----
@@ -90,7 +90,7 @@ helm repo update kubewarden
 Installez les charts Helm suivants dans l'espace de noms `kubewarden` de votre cluster Kubernetes :
 
 * `kubewarden-crds`, qui enregistre les définitions de ressources personnalisées {cluster-admission-policy}, {admission-policy} et {policy-server}. De plus, les définitions de ressources personnalisées {report} utilisées par le scanner d'audit.
-* `kubewarden-controller`, qui installe le contrôleur {short-project-name} et le scanner d'audit.
+* `kubewarden-controller`, qui installe le contrôleur {admc-short-name} et le scanner d'audit.
 +
 [NOTE]
 ====
@@ -130,7 +130,7 @@ Les valeurs de configuration par défaut sont suffisantes pour la plupart des d�
 
 == Composants principaux
 
-{short-project-name} a trois composants principaux avec lesquels vous interagissez :
+{admc-short-name} a trois composants principaux avec lesquels vous interagissez :
 
 * Le {policy-server}
 * Le {cluster-admission-policy}
@@ -138,9 +138,9 @@ Les valeurs de configuration par défaut sont suffisantes pour la plupart des d�
 
 === `PolicyServer`
 
-Le `kubewarden-controller` gère un {short-project-name} `PolicyServer`. Vous pouvez déployer plusieurs {policy-server} dans le même cluster Kubernetes.
+Le `kubewarden-controller` gère un {admc-short-name} `PolicyServer`. Vous pouvez déployer plusieurs {policy-server} dans le même cluster Kubernetes.
 
-Un `PolicyServer` valide les requêtes entrantes en exécutant des stratégies {short-project-name} contre elles.
+Un `PolicyServer` valide les requêtes entrantes en exécutant des stratégies {admc-short-name} contre elles.
 
 Il s'agit de la configuration `PolicyServer` par défaut :
 
@@ -198,7 +198,7 @@ Modifier l'un de ces attributs entraîne un déploiement `PolicyServer` avec la 
 
 === ClusterAdmissionPolicy
 
-La ressource {cluster-admission-policy} est le cœur de la pile {short-project-name}. Elle définit comment les stratégies évaluent les requêtes.
+La ressource {cluster-admission-policy} est le cœur de la pile {admc-short-name}. Elle définit comment les stratégies évaluent les requêtes.
 
 L'application des stratégies est l'opération la plus courante qu'un administrateur Kubernetes effectue. Vous pouvez déclarer autant de stratégies que vous le souhaitez, chacune ciblant une ou plusieurs ressources Kubernetes (c'est-à-dire, `pods`, `Custom Resource` et d'autres). Vous spécifiez également le type d'opérations appliquées aux ressources ciblées. Les opérations disponibles sont `CREATE`, `UPDATE`, `DELETE` et `CONNECT`.
 
@@ -240,7 +240,7 @@ Aperçu des attributs de la ressource {cluster-admission-policy} :
 
 | Y
 | `module`
-| L'emplacement de la stratégie {short-project-name}. Les schémas suivants sont autorisés :
+| L'emplacement de la stratégie {admc-short-name}. Les schémas suivants sont autorisés :
 
 | N
 |
@@ -302,7 +302,7 @@ Le contrôleur enregistre le webhook des ressources {cluster-admission-policy} `
 [IMPORTANT]
 ====
 
-{admission-policy} nécessite Kubernetes 1.21.0 ou une version ultérieure. C'est parce que {short-project-name} utilise l'étiquette `kubernetes.io/metadata.name`, introduite dans Kubernetes 1.21.0.
+{admission-policy} nécessite Kubernetes 1.21.0 ou une version ultérieure. C'est parce que {admc-short-name} utilise l'étiquette `kubernetes.io/metadata.name`, introduite dans Kubernetes 1.21.0.
 
 ====
 
@@ -453,7 +453,7 @@ helm uninstall --namespace kubewarden kubewarden-controller
 helm uninstall --namespace kubewarden kubewarden-crds
 ----
 
-Après la suppression des charts `helm`, supprimez l'espace de noms Kubernetes utilisé pour déployer la pile {short-project-name} :
+Après la suppression des charts `helm`, supprimez l'espace de noms Kubernetes utilisé pour déployer la pile {admc-short-name} :
 
 [subs="+attributes",console]
 ----
@@ -463,12 +463,12 @@ kubectl delete namespace kubewarden
 [CAUTION]
 ====
 
-{short-project-name} contient un hook de pré-suppression helm qui supprime tous les `PolicyServer` et `kubewarden-controller`. Ensuite, le `kubewarden-controller` supprime toutes les ressources, il est donc important que `kubewarden-controller` soit en cours d'exécution lorsque la désinstallation helm s'exécute.
+{admc-short-name} contient un hook de pré-suppression helm qui supprime tous les `PolicyServer` et `kubewarden-controller`. Ensuite, le `kubewarden-controller` supprime toutes les ressources, il est donc important que `kubewarden-controller` soit en cours d'exécution lorsque la désinstallation helm s'exécute.
 
 ====
 
 
-{short-project-name} supprime les {validating-webhook-configuration} et {mutating-webhook-configuration}. Vérifiez cela avec :
+{admc-short-name} supprime les {validating-webhook-configuration} et {mutating-webhook-configuration}. Vérifiez cela avec :
 
 [subs="+attributes",console]
 ----
@@ -498,7 +498,7 @@ kubectl delete -l "kubewarden" mutatingwebhookconfigurations.admissionregistrati
 
 == Opérations suivantes
 
-Vous êtes maintenant prêt à déployer {short-project-name} ! Jetez un œil aux stratégies sur https://artifacthub.io/packages/search?kind=13[artifacthub.io], sur https://github.com/topics/kubewarden-policy[GitHub], ou réutilisez les stratégies Rego existantes comme indiqué dans les xref:tutorials/writing-policies/rego/01-intro-rego.adoc[chapitres suivants].
+Vous êtes maintenant prêt à déployer {admc-short-name} ! Jetez un œil aux stratégies sur https://artifacthub.io/packages/search?kind=13[artifacthub.io], sur https://github.com/topics/kubewarden-policy[GitHub], ou réutilisez les stratégies Rego existantes comme indiqué dans les xref:tutorials/writing-policies/rego/01-intro-rego.adoc[chapitres suivants].
 
 .Liste complète des stratégies disponibles sur ArtifactHub
 [%collapsible,subs="+macros"]

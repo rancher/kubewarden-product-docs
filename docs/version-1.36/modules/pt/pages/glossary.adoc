@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explore recursos e configurações principais relacionados a {project-name} políticas em ambientes Kubernetes para mais informações.
+:description: Explore recursos e configurações principais relacionados a {admc-name} políticas em ambientes Kubernetes para mais informações.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["glossary"]
 :doc-type: ["explanation"]
@@ -38,8 +38,8 @@ Uma ferramenta CLI para gerar e testar arquivos YAML do Kubernetes para implanta
 
 === MutatingWebhookConfiguration
 
-Um https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[recurso do Kubernetes] criado pelo controlador {short-project-name} para informar ao Kubernetes onde enviar um `AdmissionReview`.
-Em outras palavras, é assim que um controlador {short-project-name} informa ao Kubernetes onde encontrar uma política de mutação de recurso.
+Um https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[recurso do Kubernetes] criado pelo controlador {admc-short-name} para informar ao Kubernetes onde enviar um `AdmissionReview`.
+Em outras palavras, é assim que um controlador {admc-short-name} informa ao Kubernetes onde encontrar uma política de mutação de recurso.
 
 == P
 
@@ -50,14 +50,14 @@ Um Relatório e um <<_clusterreport,Relatório de Cluster>> armazenam os resulta
 [#_policy_server]
 === PolicyServer
 
-Um Servidor de Políticas valida as solicitações recebidas executando {short-project-name} políticas sobre elas.
+Um Servidor de Políticas valida as solicitações recebidas executando {admc-short-name} políticas sobre elas.
 
 == V
 
 === ValidatingWebhookConfiguration
 
-Um https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[recurso do Kubernetes] criado pelo controlador {short-project-name} para informar ao Kubernetes onde enviar um `AdmissionReview`.
-Em outras palavras, é assim que {short-project-name} informa ao Kubernetes onde encontrar uma política de validação de recurso.
+Um https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[recurso do Kubernetes] criado pelo controlador {admc-short-name} para informar ao Kubernetes onde enviar um `AdmissionReview`.
+Em outras palavras, é assim que {admc-short-name} informa ao Kubernetes onde encontrar uma política de validação de recurso.
 
 == Q
 

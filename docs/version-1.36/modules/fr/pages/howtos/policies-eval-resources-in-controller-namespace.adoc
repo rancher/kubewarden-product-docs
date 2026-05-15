@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-type: ["howto"]
 :doc-topic: ["manuel de l'opérateur", "politiques"]
 
-Par défaut, le contrôleur d'admission ne permet pas aux stratégies d'évaluer les ressources dans son propre espace de noms. Cela empêche les erreurs de configuration susceptibles de compromettre {short-project-name}l'installation.
+Par défaut, le contrôleur d'admission ne permet pas aux stratégies d'évaluer les ressources dans son propre espace de noms. Cela empêche les erreurs de configuration susceptibles de compromettre {admc-short-name}l'installation.
 
 Cette mesure de sécurité est mise en œuvre en deux couches. La première couche est contrôlée par le `--always-accept-admission-reviews-on-deployments-namespace` drapeau CLI.
 Ce drapeau, qui est activé par défaut dans les charts Helm, permet au contrôleur de configurer `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE`la variable d'environnement dans les déploiements de PolicyServer. Cette variable indique au serveur de stratégies d'accepter toujours les examens d'admission de l'espace de noms défini dans la variable. La deuxième couche est le contrôleur d'admission lui-même, qui par défaut ajoute un sélecteur d'espace de noms aux stratégies à l'échelle du cluster pour ignorer l'espace de noms où le contrôleur s'exécute.
@@ -19,7 +19,7 @@ Cependant, dans certains scénarios, les administrateurs de cluster peuvent voul
 
 La première étape consiste à configurer le contrôleur pour ne pas définir `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE`la variable d'environnement dans les déploiements de PolicyServer.
 
-Pour ce faire, mettez à niveau votre installation de {short-project-name} et définissez la valeur `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` du chart Helm `kubewarden-controller` sur `false` :
+Pour ce faire, mettez à niveau votre installation de {admc-short-name} et définissez la valeur `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` du chart Helm `kubewarden-controller` sur `false` :
 
 [source,console]
 ----
@@ -29,7 +29,7 @@ helm upgrade -n kubewarden
 ----
 
 Ce changement permet aux serveurs de stratégies d'évaluer les ressources de n'importe quel espace de noms.
-Une fois cela fait, les stratégies peuvent être configurées pour évaluer les examens d'admission de {short-project-name}l'espace de noms.
+Une fois cela fait, les stratégies peuvent être configurées pour évaluer les examens d'admission de {admc-short-name}l'espace de noms.
 
 == Configurer des stratégies pour évaluer les ressources dans l'espace de noms du contrôleur d'admission
 
@@ -73,5 +73,5 @@ Cette option de configuration, qui est `false` par défaut, fait en sorte que le
 [NOTE]
 .Qu'en est-il de mes sélecteurs d'espace de noms personnalisés ?
 ====
-Les CRD de stratégies permettent également aux utilisateurs de définir leurs propres sélecteurs d'espace de noms. Ces sélecteurs ne sont pas modifiés. Cela signifie que si un utilisateur définit un sélecteur qui omet {short-project-name}l'espace de noms, la stratégie ignorera toujours cet espace de noms comme prévu.
+Les CRD de stratégies permettent également aux utilisateurs de définir leurs propres sélecteurs d'espace de noms. Ces sélecteurs ne sont pas modifiés. Cela signifie que si un utilisateur définit un sélecteur qui omet {admc-short-name}l'espace de noms, la stratégie ignorera toujours cet espace de noms comme prévu.
 ====

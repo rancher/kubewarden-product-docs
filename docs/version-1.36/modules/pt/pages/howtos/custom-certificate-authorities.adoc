@@ -3,11 +3,11 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure autoridades de certificação personalizadas para uso em instalações {project-name}, garantindo comunicação e autenticação seguras.
+:description: Configure autoridades de certificação personalizadas para uso em instalações {admc-name}, garantindo comunicação e autenticação seguras.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "custom-certificate-authorities"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "autoridades de certificação personalizadas"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "autoridades de certificação personalizadas"]
 :sidebar_label: Autoridades de Certificação Personalizadas
 :sidebar_position: 50
 :current-version: {page-origin-branch}
@@ -17,7 +17,7 @@ Você só pode enviar políticas para registros OCI.
 Por padrão, HTTPS é usado com verificação TLS do host para isso.
 
 O repositório de autoridades de certificação (CA) do sistema é usado para validar a cadeia de certificados confiáveis do registro OCI.
-Em uma instalação padrão de {project-name}, o `policy-server` usa o repositório de CA fornecido com seu Linux Container.
+Em uma instalação padrão de {admc-name}, o `policy-server` usa o repositório de CA fornecido com seu Linux Container.
 Do lado do cliente, `kwctl` usa o repositório CA do seu sistema operacional.
 
 Se você estiver usando o https://github.com/kubewarden/kubewarden-controller[Controlador], você pode configurar o PolicyServer por meio de seus campos xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`].

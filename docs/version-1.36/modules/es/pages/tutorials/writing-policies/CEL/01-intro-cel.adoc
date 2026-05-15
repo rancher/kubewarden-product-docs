@@ -27,12 +27,12 @@ Las reglas de validación de Kubernetes CEL tienen acceso a varias bibliotecas d
 * https://pkg.go.dev/github.com/google/cel-go/ext#Strings[Biblioteca de funciones de cadena extendida de CEL]
 * https://kubernetes.io/docs/reference/using-api/cel/#kubernetes-cel-libraries[Bibliotecas de extensión de Kubernetes CEL], con funciones suplementarias para listas, regex, URLs, autorizadores, cantidades, tipos opcionales, comparaciones numéricas, etc.
 
-== CEL en {project-name}: `cel-policy`
+== CEL en {admc-name}: `cel-policy`
 
-{short-project-name} proporciona https://github.com/kubewarden/cel-policy[cel-policy].
+{admc-short-name} proporciona https://github.com/kubewarden/cel-policy[cel-policy].
 Esta es una política que construye y empaqueta el intérprete https://pkg.go.dev/github.com/google/cel-go[cel-go] de sentido ascendente, y también las diferentes bibliotecas listadas arriba y disponibles para CEL en Kubernetes desde `apiextensions-apiserver`.
 
-Además, `cel-policy` incluye una biblioteca de extensión de CEL *{short-project-name} que expone las capacidades del host de {short-project-name} como CEL nativas*:
+Además, `cel-policy` incluye una biblioteca de extensión de CEL *{admc-short-name} que expone las capacidades del host de {admc-short-name} como CEL nativas*:
 
 * Verificación de Sigstore
 * Interacción OCI
@@ -40,19 +40,19 @@ Además, `cel-policy` incluye una biblioteca de extensión de CEL *{short-projec
 * Operaciones de red
 * Acceso a recursos de Kubernetes
 
-Esto significa que `cel-policy` es un superconjunto de Kubernetes CEL, y es compatible hacia atrás. Se puede reutilizar CEL escrito para Kubernetes estándar, y/o hacer uso de las características añadidas por {short-project-name}.
+Esto significa que `cel-policy` es un superconjunto de Kubernetes CEL, y es compatible hacia atrás. Se puede reutilizar CEL escrito para Kubernetes estándar, y/o hacer uso de las características añadidas por {admc-short-name}.
 
 El `cel-policy` se envía compilado y se comporta como un intérprete de CEL. Los usuarios de la política pasan las expresiones CEL deseadas en el `spec.settings` de la (Cluster)AdmissionPolicy, y gracias a las características de CEL, la expresión se compila y se verifica su tipo para corrección al crear o actualizar la (Cluster)AdmissionPolicy. Esto significa que no hay necesidad de compilaciones personalizadas del `cel-policy`.
 
-=== Beneficios del `cel-policy` de {short-project-name} en comparación con ValidatingAdmissionPolicies
+=== Beneficios del `cel-policy` de {admc-short-name} en comparación con ValidatingAdmissionPolicies
 
-El {short-project-name} `cel-policy`:
+El {admc-short-name} `cel-policy`:
 
 * Su código CEL es compatible hacia atrás con ValidatingAdmissionPolicies.
-* A diferencia de ValidatingAdmissionPolicies, no necesita un enlace como ValidatingAdmissionPolicyBinding, ya que esto está incluido en las definiciones de (Cluster)Admissionpolicies de {short-project-name}.
+* A diferencia de ValidatingAdmissionPolicies, no necesita un enlace como ValidatingAdmissionPolicyBinding, ya que esto está incluido en las definiciones de (Cluster)Admissionpolicies de {admc-short-name}.
 * Se puede desplegar en clústeres que carecen de soporte para ValidatingAdmissionPolicies.
-* Es consciente del contexto y hace uso de los permisos granulares de {short-project-name} para xref:../../../reference/spec/05-context-aware-policies.adoc[conciencia del contexto].
+* Es consciente del contexto y hace uso de los permisos granulares de {admc-short-name} para xref:../../../reference/spec/05-context-aware-policies.adoc[conciencia del contexto].
 * Se despliega como (Cluster)AdmissionPolicy.
-* Se beneficia del rastreo y la telemetría de {short-project-name} sobre políticas.
+* Se beneficia del rastreo y la telemetría de {admc-short-name} sobre políticas.
 * Se tendrá en cuenta por el Escáner de Auditoría.
 * Se puede desarrollar y probar fuera del clúster gracias a kwctl.

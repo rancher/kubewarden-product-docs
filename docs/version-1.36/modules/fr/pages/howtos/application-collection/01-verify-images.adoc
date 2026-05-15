@@ -7,11 +7,11 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["manuel-opérateur", "rancher", "installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "rancher", "Collection d'Applications", "appco", "signature", "vérification", "vérifier"]
+:keywords: ["{admc-name}", "rancher", "Collection d'Applications", "appco", "signature", "vérification", "vérifier"]
 :sidebar_label: Vérifiez les images
 :current-version: {page-origin-branch}
 
-Cette section décrit comment vérifier les applications et les images de la https://apps.rancher.io/[Collection d'Applications Rancher] avec {project-name}.
+Cette section décrit comment vérifier les applications et les images de la https://apps.rancher.io/[Collection d'Applications Rancher] avec {admc-name}.
 
 Vous effectuez la vérification des images en déployant la stratégie https://artifacthub.io/packages/kubewarden/verify-image-signatures/verify-image-signatures[Vérifier les signatures d'images] et en configurant les PolicyServers pour tirer les couches de signature des images de la Collection d'Applications.
 

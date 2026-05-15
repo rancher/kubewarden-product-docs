@@ -3,27 +3,27 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Resolver problemas de rotación de certificados del servidor de directivas en {project-name}, comenzando con la versión 1.16.
+:description: Resolver problemas de rotación de certificados del servidor de directivas en {admc-name}, comenzando con la versión 1.16.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["cómo hacer", "soluciones alternativas", "certificados del servidor de directivas"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "certificados del servidor de directivas"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "certificados del servidor de directivas"]
 :sidebar_label: Rotación de certificados
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
 [IMPORTANT]
-.Solución alternativa para {project-name} v1.16.0 y anteriores
+.Solución alternativa para {admc-name} v1.16.0 y anteriores
 ====
 
-Esta solución alternativa solo es necesaria para {short-project-name} v1.16.0 y anteriores.
+Esta solución alternativa solo es necesaria para {admc-short-name} v1.16.0 y anteriores.
 A partir de v1.17.0, el controlador renueva automáticamente los certificados del servidor de directivas.
 
 ====
 
-Durante el proceso de lanzamiento de v1.14, el {short-project-name} descubrió un error relacionado con la rotación de certificados del servidor de directivas. La configuración de la CA raíz es para una caducidad de 10 años, pero cada secreto de certificado del servidor de directivas tiene una caducidad de un año. Sin embargo, el controlador actualmente no puede renovarlos automáticamente.
+Durante el proceso de lanzamiento de v1.14, el {admc-short-name} descubrió un error relacionado con la rotación de certificados del servidor de directivas. La configuración de la CA raíz es para una caducidad de 10 años, pero cada secreto de certificado del servidor de directivas tiene una caducidad de un año. Sin embargo, el controlador actualmente no puede renovarlos automáticamente.
 
-En el lanzamiento de v1.14, el {short-project-name} se aseguró de que los secretos del servidor de directivas se crearan con una caducidad de 10 años.
+En el lanzamiento de v1.14, el {admc-short-name} se aseguró de que los secretos del servidor de directivas se crearan con una caducidad de 10 años.
 
 Un proceso de renovación automatizado está en marcha para la versión ≥ v1.16.0.
 

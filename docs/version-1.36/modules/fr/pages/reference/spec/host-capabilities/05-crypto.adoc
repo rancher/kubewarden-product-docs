@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Capacités cryptographiques
 :current-version: {page-origin-branch}
 
-En raison des contraintes de Wasm au moment de la rédaction, certaines bibliothèques cryptographiques ne peuvent pas être compilées en Wasm. En attendant, les politiques {project-name} nécessitant ces bibliothèques peuvent effectuer des appels de retour pour évaluer les fonctions cryptographiques du côté de l'hôte. Elles reçoivent le résultat et poursuivent leurs tâches.
+En raison des contraintes de Wasm au moment de la rédaction, certaines bibliothèques cryptographiques ne peuvent pas être compilées en Wasm. En attendant, les politiques {admc-name} nécessitant ces bibliothèques peuvent effectuer des appels de retour pour évaluer les fonctions cryptographiques du côté de l'hôte. Elles reçoivent le résultat et poursuivent leurs tâches.
 
 == Comportement
 

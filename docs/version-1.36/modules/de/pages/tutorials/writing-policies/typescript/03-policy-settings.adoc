@@ -3,10 +3,10 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Definieren und Implementieren effektiver Strukturen für Richtlinieneinstellungen durch {project-name} Richtlinien in den Dateien src/types.ts und src/index.ts.
-:keywords: "{project-name}", kubewarden, kubernetes, Festlegung von Richtlinieneinstellungen, TypeScript
+:description: Definieren und Implementieren effektiver Strukturen für Richtlinieneinstellungen durch {admc-name} Richtlinien in den Dateien src/types.ts und src/index.ts.
+:keywords: "{admc-name}", kubewarden, kubernetes, Festlegung von Richtlinieneinstellungen, TypeScript
 :doc-type: Anleitung
-:doc-topic: {project-name}, kubewarden, Richtlinien schreiben, typescript, Festlegung von Richtlinieneinstellungen
+:doc-topic: {admc-name}, kubewarden, Richtlinien schreiben, typescript, Festlegung von Richtlinieneinstellungen
 :doc-persona: kubewarden-Richtlinienentwickler
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Kritisch: Schreiben Sie keine Protokollinformationen in STDOUT.
 
-Das Schreiben in STDOUT bricht die Richtlinien. Verwenden Sie stattdessen STDERR für das Protokollieren oder die Protokollierungsfunktionalität, die vom {project-name} SDK bereitgestellt wird. Die Ausgabe der Richtlinie an STDOUT darf nur die Validierungsantwort enthalten.
+Das Schreiben in STDOUT bricht die Richtlinien. Verwenden Sie stattdessen STDERR für das Protokollieren oder die Protokollierungsfunktionalität, die vom {admc-name} SDK bereitgestellt wird. Die Ausgabe der Richtlinie an STDOUT darf nur die Validierungsantwort enthalten.
 ====
 
 Zuerst definieren Sie die Struktur, die die Richtlinieneinstellungen in `src/types.ts` enthält:
@@ -45,7 +45,7 @@ export interface KubernetesResource {
 
 == Erstellen von Richtlinieneinstellungen-Instanzen
 
-{short-project-name} Richtlinien verwenden zwei Funktionen, die Einstellungen verwalten:
+{admc-short-name} Richtlinien verwenden zwei Funktionen, die Einstellungen verwalten:
 
 * `validate`: Wird während der Objektvalidierung aufgerufen.
 * `validateSettings`: Wird zur Ladezeit der Richtlinie aufgerufen.

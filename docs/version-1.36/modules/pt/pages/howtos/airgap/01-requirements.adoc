@@ -1,10 +1,10 @@
 include::partial$variables.adoc[]
 
-= Requisitos para instalar {project-name} em uma instalação air-gapped
+= Requisitos para instalar {admc-name} em uma instalação air-gapped
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Saiba mais sobre os requisitos de instalação para {project-name} em ambientes air-gapped, incluindo registros privados suportados e detalhes de compatibilidade.
+:description: Saiba mais sobre os requisitos de instalação para {admc-name} em ambientes air-gapped, incluindo registros privados suportados e detalhes de compatibilidade.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["manual-do-operador", "air gap", "requisitos"]
 :doc-type: ["howto"]

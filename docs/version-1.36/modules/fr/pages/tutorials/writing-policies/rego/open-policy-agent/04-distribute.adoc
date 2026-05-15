@@ -1,5 +1,5 @@
 include::partial$variables.adoc[]
-= Distribuer une stratégie OPA avec {project-name}
+= Distribuer une stratégie OPA avec {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
@@ -38,7 +38,7 @@ annotations:
   io.kubewarden.policy.title: no-default-namespace
   io.kubewarden.policy.version: 0.1.0 # should match the OCI tag
   io.kubewarden.policy.description: This policy will reject any resource created inside the default namespace
-  io.kubewarden.policy.author: The {project-name} Authors
+  io.kubewarden.policy.author: The {admc-name} Authors
   io.kubewarden.policy.url: https://github.com/kubewarden/some-policy
   io.kubewarden.policy.source: https://github.com/kubewarden/some-policy
   io.kubewarden.policy.license: Apache-2.0

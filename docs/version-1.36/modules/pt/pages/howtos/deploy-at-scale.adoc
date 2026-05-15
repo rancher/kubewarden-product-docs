@@ -1,21 +1,21 @@
 include::partial$variables.adoc[]
-= {project-name} em um Ambiente de Grande Escala
+= {admc-name} em um Ambiente de Grande Escala
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure {project-name}s com {project-name} para garantir alta disponibilidade e desempenho em ambientes de grande escala exigentes.
-:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, produção]
+:description: Configure {admc-name}s com {admc-name} para garantir alta disponibilidade e desempenho em ambientes de grande escala exigentes.
+:keywords: [kubewarden, "{admc-name}", kubernetes, policyservers, produção]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, policyservers, produção
 :sidebar_label: Implantação em escala
 :sidebar_position: 21
 
-Esta seção detalha uma implantação do mundo real de {project-name} em um ambiente de grande escala exigente. Ela ilustra como configurar {short-project-name} para alta disponibilidade e desempenho e o que esperar sob carga pesada.
+Esta seção detalha uma implantação do mundo real de {admc-name} em um ambiente de grande escala exigente. Ela ilustra como configurar {admc-short-name} para alta disponibilidade e desempenho e o que esperar sob carga pesada.
 
 [IMPORTANT]
 ====
-Se você quiser ver mais dicas sobre como executar {short-project-name} em produção, confira a documentação de xref:/howtos/production-deployments.adoc[Implantações em produção].
+Se você quiser ver mais dicas sobre como executar {admc-short-name} em produção, confira a documentação de xref:/howtos/production-deployments.adoc[Implantações em produção].
 ====
 
 == Visão Geral do Ambiente
@@ -31,9 +31,9 @@ A infraestrutura consiste em aproximadamente 20 clusters Kubernetes. Os maiores 
 ** Implantações: 8.000
 ** Serviços: 13.000
 
-== {short-project-name} Configuração
+== {admc-short-name} Configuração
 
-Para atender às demandas deste ambiente, {short-project-name} é configurado com foco no isolamento de carga de trabalho e alta disponibilidade.
+Para atender às demandas deste ambiente, {admc-short-name} é configurado com foco no isolamento de carga de trabalho e alta disponibilidade.
 
 * Aplicação da Política: 22 `ClusterAdmissionPolicies` são aplicadas em todos os clusters, sem `AdmissionPolicies` específico de namespace.
 * Arquitetura do PolicyServer: Duas implantações `PolicyServer` separadas são usadas para isolar cargas de trabalho:

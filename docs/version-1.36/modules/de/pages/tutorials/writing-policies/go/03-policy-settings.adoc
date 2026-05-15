@@ -102,11 +102,11 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == Erstellen von `Settings`-Instanzen
 
-Eine {short-project-name}-Richtlinie bietet zwei verschiedene Funktionen, die die Richtlinieneinstellungen als Eingabe erhalten:
+Eine {admc-short-name}-Richtlinie bietet zwei verschiedene Funktionen, die die Richtlinieneinstellungen als Eingabe erhalten:
 
 * `validate`: Verwenden Sie diese Funktion, wenn das Kubernetes-Objekt eine Validierung durch die Richtlinie erfordert.
 Die Einstellungen sind Teil eines https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`]-Objekts.
-* `validate_settings`: Rufen Sie diese Funktion auf, wenn die Richtlinie erstmals von {short-project-name} geladen wird.
+* `validate_settings`: Rufen Sie diese Funktion auf, wenn die Richtlinie erstmals von {admc-short-name} geladen wird.
 Die Funktion erhält die Richtlinieneinstellungen als Eingabe und überprüft die Gültigkeit.
 
 Sie müssen eine Hilfsfunktion erstellen, die ein `Settings`-Objekt aus dem JSON-Payload erstellt:
@@ -136,7 +136,7 @@ Siehe https://github.com/WebAssembly/threads[den offiziellen Vorschlag] für wei
 
 == Implementierung der `Settings`-Validierung
 
-Alle {short-project-name}-Richtlinien müssen die Einstellungsvalidierung implementieren.
+Alle {admc-short-name}-Richtlinien müssen die Einstellungsvalidierung implementieren.
 
 Sie tun dies, indem Sie eine `Valid`-Methode zu den `Settings`-Instanzen hinzufügen:
 
@@ -191,7 +191,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 }
 ----
 
-Sie können sehen, dass die Funktion die Hilfsfunktionen nutzt, die von https://github.com/kubewarden/policy-sdk-go[{short-project-name}'s SDK] bereitgestellt werden.
+Sie können sehen, dass die Funktion die Hilfsfunktionen nutzt, die von https://github.com/kubewarden/policy-sdk-go[{admc-short-name}'s SDK] bereitgestellt werden.
 
 == Testen des Einstellungs-Codes
 

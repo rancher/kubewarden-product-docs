@@ -1,16 +1,16 @@
 include::partial$variables.adoc[]
-= kwctl ({project-name} CLI) installieren
+= kwctl ({admc-name} CLI) installieren
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl installieren
-:description: Installieren Sie kwctl (das {project-name} CLI), indem Sie die Installationsanweisungen für verschiedene Betriebssysteme befolgen, und aktivieren Sie dann die Shell-Vervollständigung.
-:keywords: ["{project-name}", kubewarden, kubernetes, kwctl installieren, installieren, kwctl]
+:description: Installieren Sie kwctl (das {admc-name} CLI), indem Sie die Installationsanweisungen für verschiedene Betriebssysteme befolgen, und aktivieren Sie dann die Shell-Vervollständigung.
+:keywords: ["{admc-name}", kubewarden, kubernetes, kwctl installieren, installieren, kwctl]
 :doc-persona: kubewarden-all
 :doc-type: howto
 :doc-topic: kwctl-installieren
 
-`kwctl` ist das Befehlszeilenschnittstellen-Tool (CLI) für {project-name}. Im Folgenden finden Sie Installationsanweisungen für einige Betriebssysteme.
+`kwctl` ist das Befehlszeilenschnittstellen-Tool (CLI) für {admc-name}. Im Folgenden finden Sie Installationsanweisungen für einige Betriebssysteme.
 
 [tabs]
 ====
@@ -178,7 +178,7 @@ Windows::
 Für Windows installieren
 
 . Laden Sie `kwctl` herunter:
-    .. Öffnen Sie Ihren Browser und gehen Sie zur https://github.com/kubewarden/kwctl/releases/latest[{short-project-name} Veröffentlichungsseite].
+    .. Öffnen Sie Ihren Browser und gehen Sie zur https://github.com/kubewarden/kwctl/releases/latest[{admc-short-name} Veröffentlichungsseite].
     .. Laden Sie die `kwctl-windows-x86_64.zip` Datei herunter.
 
 . Entpacken Sie die Dateien aus der heruntergeladenen Zip-Datei. Es wird enthalten:

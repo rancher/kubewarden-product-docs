@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: ホスト間で一意のIngressルールを確保し、{project-name}のCEL拡張機能ライブラリとの競合を防ぐために、コンテキスト認識ポリシーを構成します。
+:description: ホスト間で一意のIngressルールを確保し、{admc-name}のCEL拡張機能ライブラリとの競合を防ぐために、コンテキスト認識ポリシーを構成します。
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
 :doc-type: ["tutorial"]
@@ -11,9 +11,9 @@ include::partial$variables.adoc[]
 :sidebar_label: コンテキスト認識ポリシー
 :current-version: {page-origin-branch}
 
-{project-name}の`cel-policy`は、xref:reference/spec/05-context-aware-policies.adoc[コンテキスト認識]機能をサポートしています。ポリシーは、クラスター情報を読み取り、ポリシー評価をトリガーしたリソース以外の既存リソースに基づいて意思決定を行う能力を持っています。
+{admc-name}の`cel-policy`は、xref:reference/spec/05-context-aware-policies.adoc[コンテキスト認識]機能をサポートしています。ポリシーは、クラスター情報を読み取り、ポリシー評価をトリガーしたリソース以外の既存リソースに基づいて意思決定を行う能力を持っています。
 
-これを実現するために、ポリシーに含まれているhttps://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{short-project-name}のホスト機能のためのCEL拡張機能ライブラリ]を使用できます。
+これを実現するために、ポリシーに含まれているhttps://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{admc-short-name}のホスト機能のためのCEL拡張機能ライブラリ]を使用できます。
 
 == 例:一意のIngress
 
@@ -53,7 +53,7 @@ spec:
 
 ----
 
-今、クラスター内の既存のIngressを取得するCELコードを書く必要があります。そのために、[{short-project-name} CEL拡張機能ライブラリ](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities)を使用します。
+今、クラスター内の既存のIngressを取得するCELコードを書く必要があります。そのために、[{admc-short-name} CEL拡張機能ライブラリ](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities)を使用します。
 特に、グループバージョンKindをクエリすることを可能にする`kw.k8s`ホスト機能です。CEL関数の利用可能なドキュメントは[こちら](https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library)で確認できます。
 
 ライブラリは、アップストリームのKubernetes CEL拡張と同様にビルダーパターンを使用しており、CEL関数メソッドを呼び出すと、特定の関数メソッドを持つCELオブジェクトが返されます。これにより、私たちのCELコードの範囲と戻り値を確実にすることが簡素化されます。

@@ -19,7 +19,7 @@ Diese Richtlinie wird alle Containerbilder im Pod Sigstore überprüfen und sich
 
 In diesem Fall werden wir nach einer Sigstore-schlüssellosen Signatur suchen, die in GitHub Actions durchgeführt wurde. Diese Art von Sigstore-schlüssellosen Signaturen ist an den OIDC-Issuer von GitHub gebunden, wenn die kryptografischen Zertifikate erstellt werden, sodass wir nur die GitHub-Organisation kennen müssen, unter der das Containerbild veröffentlicht wird. Sie können mehr über die Hostfähigkeiten für Sigstore xref:reference/spec/host-capabilities/02-signature-verifier-policies.adoc[hier] lesen.
 
-Um dies in CEL zu erreichen, verwenden wir die https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{project-name} CEL-Erweiterungsbibliotheken für Hostfähigkeiten] in der Richtlinie, insbesondere die https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[`githubAction` Funktion].
+Um dies in CEL zu erreichen, verwenden wir die https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{admc-name} CEL-Erweiterungsbibliotheken für Hostfähigkeiten] in der Richtlinie, insbesondere die https://pkg.go.dev/github.com/kubewarden/cel-policy/internal/cel/library#Sigstore[`githubAction` Funktion].
 
 Wie immer können wir mit `kwctl` beginnen:
 

@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["mutating-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "ミューテーションポリシー", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "ミューテーションポリシー", "kubernetes", "clusteradmissionpolicy", "admissionpolicy"]
 :sidebar_label: ミューテーションポリシー
 :sidebar_position: 10
 :current-version: {page-origin-branch}
@@ -25,7 +25,7 @@ include::partial$variables.adoc[]
 [WARNING]
 ====
 
-システムの悪用を防ぐために、{project-name}管理者はミューテーションポリシーをレビューするべきです。ミューテーションポリシーは、例えば、ワークロードを変更し、特権コンテナの作成を許可することがあります。
+システムの悪用を防ぐために、{admc-name}管理者はミューテーションポリシーをレビューするべきです。ミューテーションポリシーは、例えば、ワークロードを変更し、特権コンテナの作成を許可することがあります。
 
 ====
 
@@ -182,4 +182,4 @@ EOF
 Error from server: error when creating ".\\pause-user-group.yaml": admission webhook "psp-user-group.kubewarden.admission" denied the request: Request rejected by policy psp-user-group. The policy attempted to mutate the request, but it is currently configured to not allow mutations.
 ----
 
-結論として、{short-project-name}は廃止されたKubernetesポッドセキュリティポリシー（PSP）と同じ動作を再現することがわかります。
+結論として、{admc-short-name}は廃止されたKubernetesポッドセキュリティポリシー（PSP）と同じ動作を再現することがわかります。

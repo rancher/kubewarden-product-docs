@@ -4,27 +4,27 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verwalten Sie Richtlinien in Ihrem Kubernetes-Cluster mit {project-name} mit dem kwctl CLI-Tool.
+:description: Verwalten Sie Richtlinien in Ihrem Kubernetes-Cluster mit {admc-name} mit dem kwctl CLI-Tool.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["gemeinsame-aufgaben"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "Richtlinie", "Richtlinienspeicher", "Clusterzulassungsrichtlinie", "Zulassungsrichtlinie"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "kwctl", "Richtlinie", "Richtlinienspeicher", "Clusterzulassungsrichtlinie", "Zulassungsrichtlinie"]
 :current-version: {page-origin-branch}
 
-Dies beschreibt allgemeine Aufgaben, nachdem Sie xref:quick-start.adoc#installation[installieren {project-name}] in Ihrem Kubernetes-Cluster.
+Dies beschreibt allgemeine Aufgaben, nachdem Sie xref:quick-start.adoc#installation[installieren {admc-name}] in Ihrem Kubernetes-Cluster.
 
 Die einzelnen Aufgaben sind in einer logischen Reihenfolge angeordnet.
 
 == Richtlinien testen
 
-{short-project-name} verwendet zwei Werkzeuge, um Ihnen zu helfen, Richtlinien zu finden und sie lokal zu testen:
+{admc-short-name} verwendet zwei Werkzeuge, um Ihnen zu helfen, Richtlinien zu finden und sie lokal zu testen:
 
-* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub], mit ihrem Paketfilter für {short-project-name} Richtlinien
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub], mit ihrem Paketfilter für {admc-short-name} Richtlinien
 * https://github.com/kubewarden/kwctl[`kwctl`], ein CLI-Tool
 
 === Artifact Hub
 
-Artifact Hub stellt von der Community bereitgestellte Richtlinien bereit. Zum Beispiel können Sie Ersatz für die https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[ausgelaufenen Kubernetes Pod-Sicherheitsrichtlinien] finden, die von den {short-project-name} Entwicklern erstellt wurden.
+Artifact Hub stellt von der Community bereitgestellte Richtlinien bereit. Zum Beispiel können Sie Ersatz für die https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[ausgelaufenen Kubernetes Pod-Sicherheitsrichtlinien] finden, die von den {admc-short-name} Entwicklern erstellt wurden.
 
 Wie im Screenshot unten gezeigt, wählen Sie, sobald Sie eine interessante Richtlinie gefunden haben, die `Install` Schaltfläche und verwenden Sie `kwctl`, um die Richtlinie für Ihr Cluster abzurufen.
 
@@ -33,7 +33,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 [NOTE]
 ====
 
-Früher konnten {short-project-name} Richtlinien im https://hub.kubewarden.io[{short-project-name} Policy Hub] gefunden werden. Dies wurde https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[eingestellt].
+Früher konnten {admc-short-name} Richtlinien im https://hub.kubewarden.io[{admc-short-name} Policy Hub] gefunden werden. Dies wurde https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[eingestellt].
 Richtlinien sind jetzt verfügbar von https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
 
 ====
@@ -41,7 +41,7 @@ Richtlinien sind jetzt verfügbar von https://artifacthub.io/packages/search?kin
 
 === `kwctl` CLI-Tool
 
-`kwctl` ist das CLI-Tool von {short-project-name} für Richtlinienautoren und Cluster-Administratoren, um Richtlinien vor der Anwendung in einem Kubernetes-Cluster zu testen.
+`kwctl` ist das CLI-Tool von {admc-short-name} für Richtlinienautoren und Cluster-Administratoren, um Richtlinien vor der Anwendung in einem Kubernetes-Cluster zu testen.
 
 Dieses Tool hat eine ähnliche Benutzeroberfläche wie das `docker` CLI-Tool.
 
@@ -74,8 +74,8 @@ Sie können alle `kwctl` Optionen und Unterbefehle auflisten, indem Sie den folg
 ----
 $ kwctl --help
 kwctl 0.2.5
-{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage {short-project-name} policies
+{admc-short-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {admc-short-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -86,18 +86,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add {short-project-name} metadata to a WebAssembly module
+    annotate       Add {admc-short-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect {short-project-name} policy
+    inspect        Inspect {admc-short-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a {short-project-name} policy from a given URI
-    push           Pushes a {short-project-name} policy to an OCI registry
-    rm             Removes a {short-project-name} policy from the store
-    run            Runs a {short-project-name} policy from a given URI
+    pull           Pulls a {admc-short-name} policy from a given URI
+    push           Pushes a {admc-short-name} policy to an OCI registry
+    rm             Removes a {admc-short-name} policy from the store
+    run            Runs a {admc-short-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+    verify         Verify a {admc-short-name} policy from a given URI using Sigstore
 ----
 
 Hier sind einige Beispiele für die Verwendung von Befehlen:
@@ -261,5 +261,5 @@ Nach der Bereitstellung der `ClusterAdmissionPolicy` werden alle an Ihren Cluste
 
 == Nächste Schritte
 
-* xref:tutorials/writing-policies/index.adoc[Richtlinien schreiben] erklärt, wie man Richtlinien in verschiedenen Sprachen schreibt und WebAssembly-Binärdateien generiert, damit sie von {short-project-name} verwendet werden können.
+* xref:tutorials/writing-policies/index.adoc[Richtlinien schreiben] erklärt, wie man Richtlinien in verschiedenen Sprachen schreibt und WebAssembly-Binärdateien generiert, damit sie von {admc-short-name} verwendet werden können.
 * xref:../explanations/distributing-policies.adoc[Richtlinien verteilen] erklärt, wie man Richtlinien an https://github.com/opencontainers/distribution-spec/blob/main/spec.md[OCI-Registries] veröffentlicht.

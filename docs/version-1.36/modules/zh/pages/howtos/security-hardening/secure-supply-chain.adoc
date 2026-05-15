@@ -3,12 +3,12 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 配置 {project-name} 以验证工件签名和接纳政策的完整性。
+:description: 配置 {admc-name} 以验证工件签名和接纳政策的完整性。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "secure-supply-chain"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "安全供应链", "基础设施"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "安全供应链", "基础设施"]
 :sidebar_label: 安全供应链
 :sidebar_position: 40
 :current-version: {page-origin-branch}
@@ -17,9 +17,9 @@ include::partial$variables.adoc[]
 
 https://sigstore.dev/[Sigstore] 项目提供了用于此的工具和基础设施。它用于验证工件供应链的完整性。
 
-{short-project-name} 使用 https://github.com/sigstore/cosign[`cosign`] 以及 https://github.com/SigStore/fulcio[fulcio] 和 https://github.com/sigstore/rekor[rekor] 基础设施，这些都是由 Sigstore 项目提供的。
+{admc-short-name} 使用 https://github.com/sigstore/cosign[`cosign`] 以及 https://github.com/SigStore/fulcio[fulcio] 和 https://github.com/sigstore/rekor[rekor] 基础设施，这些都是由 Sigstore 项目提供的。
 
-集群操作员可以配置 {project-name} 仅运行由受信任实体签署的策略。策略开发者可以签署他们的策略并将其发布在注册表中。
+集群操作员可以配置 {admc-name} 仅运行由受信任实体签署的策略。策略开发者可以签署他们的策略并将其发布在注册表中。
 
 == 先决条件
 
@@ -31,7 +31,7 @@ https://sigstore.dev/[Sigstore] 项目提供了用于此的工具和基础设施
 
 == 签署策略
 
-{short-project-name} 建议使用 Sigstore 的 https://github.com/sigstore/cosign[cosign] 工具来签署策略。本节展示了一种基于密钥的签署策略的方法。您需要为此生成一对私钥和公钥。生成的密钥有助于验证签署的工件是否来自预期的用户。要生成此密钥对，请使用此 `cosign generate-key-pair` 命令：
+{admc-short-name} 建议使用 Sigstore 的 https://github.com/sigstore/cosign[cosign] 工具来签署策略。本节展示了一种基于密钥的签署策略的方法。您需要为此生成一对私钥和公钥。生成的密钥有助于验证签署的工件是否来自预期的用户。要生成此密钥对，请使用此 `cosign generate-key-pair` 命令：
 
 [subs="+attributes",bash]
 ----
@@ -68,7 +68,7 @@ Enter password for private key: ●●●●●●●●
 Pushing signature to: ghcr.io/kubewarden/policies/user-group-psp
 ----
 
-此命令通过创建一个新的签名对象来签署策略。签名对象随后与策略一起上传到注册表。现在该策略已准备好在使用签名验证的 {short-project-name} 安装中使用。
+此命令通过创建一个新的签名对象来签署策略。签名对象随后与策略一起上传到注册表。现在该策略已准备好在使用签名验证的 {admc-short-name} 安装中使用。
 
 同一策略可以由同一用户或不同用户多次签署。这些签名与原始签名一起添加到签名对象中。
 
@@ -109,9 +109,9 @@ Pushing signature to: ghcr.io/kubewarden/policies/user-group-psp
 
 === 如何在 GitHub 工作流程中签署工件
 
-在使用无密钥签名时，在 GitHub 操作中，`cosign` 不需要用户登录到 OIDC 提供者。在执行 GitHub 工作流程期间，可以使用 GitHub 令牌。它用于验证用户并生成临时密钥。签名过程与无密钥模式下使用的相同。这是 {short-project-name} 项目如何签名其策略的示例：
+在使用无密钥签名时，在 GitHub 操作中，`cosign` 不需要用户登录到 OIDC 提供者。在执行 GitHub 工作流程期间，可以使用 GitHub 令牌。它用于验证用户并生成临时密钥。签名过程与无密钥模式下使用的相同。这是 {admc-short-name} 项目如何签名其策略的示例：
 
-.描述 {short-project-name} 策略签名的 YAML
+.描述 {admc-short-name} 策略签名的 YAML
 [%collapsible]
 ======
 
@@ -153,7 +153,7 @@ jobs:
 [NOTE]
 ====
 
-策略开发人员可以使用 {short-project-name} 策略模板。他们有 GitHub 操作来构建、测试、签名和发布策略。
+策略开发人员可以使用 {admc-short-name} 策略模板。他们有 GitHub 操作来构建、测试、签名和发布策略。
 
 ====
 
@@ -273,9 +273,9 @@ The following checks were performed on each of these signatures:
 
 == 配置策略服务器以检查策略签名
 
-您可以使用 {short-project-name} 和 `ConfigMap` 配置仅运行受信任的策略。`ConfigMap` 结构在 xref:reference/verification-config.adoc#_signature_configuration_reference[签名配置参考] 中描述。它用于使用 `kwctl` 验证策略。`ConfigMap` 应该在 `verification-config` 字段下定义允许的配置。
+您可以使用 {admc-short-name} 和 `ConfigMap` 配置仅运行受信任的策略。`ConfigMap` 结构在 xref:reference/verification-config.adoc#_signature_configuration_reference[签名配置参考] 中描述。它用于使用 `kwctl` 验证策略。`ConfigMap` 应该在 `verification-config` 字段下定义允许的配置。
 
-例如，您想运行由 {short-project-name} GitHub 组织签名的策略。那么这个场景的示例 `ConfigMap` 将是：
+例如，您想运行由 {admc-short-name} GitHub 组织签名的策略。那么这个场景的示例 `ConfigMap` 将是：
 
 .$ cat kubewarden_signatures.yaml
 [%collapsible]
@@ -326,9 +326,9 @@ $ kwctl scaffold verification-config > verification_config.yaml
 ----
 $ kwctl scaffold verification-config > verification_config.yaml
 $ cat verification_config.yaml
-# Default {short-project-name} verification config
+# Default {admc-short-name} verification config
 #
-# With this config, the only valid policies are those signed by {short-project-name}
+# With this config, the only valid policies are those signed by {admc-short-name}
 # infrastructure.
 #
 # This config can be saved to its default location (for this OS) with:
@@ -368,9 +368,9 @@ $ kubectl get configmap -o yaml my-signatures-configuration
 apiVersion: v1
 data:
   verification-config: |+
-    # Default {short-project-name} verification config
+    # Default {admc-short-name} verification config
     #
-    # With this config, the only valid policies are those signed by {short-project-name}
+    # With this config, the only valid policies are those signed by {admc-short-name}
     # infrastructure.
     #
     # This config can be saved to its default location (for this OS) with:
@@ -571,7 +571,7 @@ anyOf: # at least `+anyOf.minimumMatches+` are required to match <2>
 所有签名类型都可以有其他可选的验证字段，`annotations`。
 这些字段是在签署过程中添加的键/值数据。
 
-使用 {short-project-name}，您可以验证策略签名是否由受信任的用户签署，以及是否包含特定的注释。
+使用 {admc-short-name}，您可以验证策略签名是否由受信任的用户签署，以及是否包含特定的注释。
 
 下一个验证检查策略的两个条件：
 
@@ -611,7 +611,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-最后一个示例测试给定策略是否来自 {short-project-name} 组织：
+最后一个示例测试给定策略是否来自 {admc-short-name} 组织：
 
 [subs="+attributes",console]
 ----

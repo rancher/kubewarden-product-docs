@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure as configurações de política usando {project-name} para validação e serialização dos dados da política.
+:description: Configure as configurações de política usando {admc-name} para validação e serialização dos dados da política.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "settings"]
 :doc-type: ["reference"]
@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 
 O comportamento da política não é rígido, você pode configurá-lo fornecendo detalhes de configuração à política em runtime. O autor da política tem a liberdade de definir a estrutura das configurações da política.
 
-{project-name} cuida de serializar as configurações da política em JSON e as fornece à política sempre que é invocada.
+{admc-name} cuida de serializar as configurações da política em JSON e as fornece à política sempre que é invocada.
 
 == Validação de configurações
 
@@ -41,7 +41,7 @@ Se as configurações fornecidas pelo usuário forem `valid`, `validate_settings
 [NOTE]
 ====
 
-O https://github.com/chimera-kube/policy-server[policy-server] de {short-project-name} valida todas as configurações de política fornecidas pelos usuários no momento da inicialização. O servidor de política fecha imediatamente com um erro se pelo menos uma de suas políticas recebeu parâmetros de configuração incorretos.
+O https://github.com/chimera-kube/policy-server[policy-server] de {admc-short-name} valida todas as configurações de política fornecidas pelos usuários no momento da inicialização. O servidor de política fecha imediatamente com um erro se pelo menos uma de suas políticas recebeu parâmetros de configuração incorretos.
 
 ====
 

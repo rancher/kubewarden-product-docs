@@ -31,7 +31,7 @@ La configuration a 2 clés racines :
 Ces deux clés racines acceptent un tableau de clés de type `kind`. Une liste complète des clés acceptées en fonction de différents cas d'utilisation est ci-dessous :
 
 * `pubKey` : Pour les signatures effectuées avec la cryptographie traditionnelle à clé publique/privée.
-* `githubAction` : Pour les signatures effectuées avec le flux de travail sans clé de Sigstore à l'intérieur de GitHub Actions. {short-project-name} vérifie ces informations par rapport à l'extension de certificat x509 `workflow_repository` créée par l'OpenID Connect de GitHub, et pas seulement les `issuer` et `subject`. Vous devriez utiliser ce `kind` si vous travaillez avec GitHub Actions.
+* `githubAction` : Pour les signatures effectuées avec le flux de travail sans clé de Sigstore à l'intérieur de GitHub Actions. {admc-short-name} vérifie ces informations par rapport à l'extension de certificat x509 `workflow_repository` créée par l'OpenID Connect de GitHub, et pas seulement les `issuer` et `subject`. Vous devriez utiliser ce `kind` si vous travaillez avec GitHub Actions.
 * `genericIssuer` : Pour les signatures effectuées avec le flux de travail sans clé de Sigstore, où l'utilisateur doit valider le certificat `issuer` et `subject` par lui-même. Il accepte un `subject`, qui peut être :
 
 ** `equal` : La valeur passée ici doit correspondre exactement au `subject` dans le certificat de signature.
@@ -225,7 +225,7 @@ Par exemple, le dernier extrait, utilisant `genericIssuer`, pourrait être réé
 Tous les types de signature peuvent avoir d'autres champs de validation optionnels, `annotations`.
 Ces champs sont des données clé/valeur ajoutées lors du processus de signature.
 
-Avec {short-project-name}, vous pouvez vérifier que les signatures de stratégie proviennent d'utilisateurs de confiance *et* ont des annotations spécifiques.
+Avec {admc-short-name}, vous pouvez vérifier que les signatures de stratégie proviennent d'utilisateurs de confiance *et* ont des annotations spécifiques.
 
 La prochaine validation vérifie deux conditions pour la stratégie :
 
@@ -265,7 +265,7 @@ $ kwctl verify --verification-config-path signatures_requirements.yaml ghcr.io/k
 2022-03-29T17:34:37.847169Z  INFO kwctl::verify: Policy successfully verified
 ----
 
-Ce dernier exemple teste si une stratégie donnée provient de l'organisation {short-project-name} :
+Ce dernier exemple teste si une stratégie donnée provient de l'organisation {admc-short-name} :
 
 [subs="+attributes",console]
 ----

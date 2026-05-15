@@ -116,7 +116,7 @@ fn validate(payload: &[u8]) -> CallResult {
 
 Schließlich können Sie Unit-Tests erstellen, um zu überprüfen, ob der Validierungscode wie erwartet funktioniert.
 
-Die `lib.rs` Datei hat bereits Tests am Ende der Datei definiert, und wie Sie sehen können, bietet das Rust SDK von {short-project-name} auch Testhilfen an.
+Die `lib.rs` Datei hat bereits Tests am Ende der Datei definiert, und wie Sie sehen können, bietet das Rust SDK von {admc-short-name} auch Testhilfen an.
 
 Darüber hinaus wird das Scaffold-Projekt bereits mit standardmäßigen https://en.wikipedia.org/wiki/Test_fixture#Software[Testfixtures] im `test_data` Verzeichnis ausgeliefert. Sie werden diese aufgezeichneten Zulassungsanfragen verwenden, um Ihre Unit-Tests zu schreiben.
 

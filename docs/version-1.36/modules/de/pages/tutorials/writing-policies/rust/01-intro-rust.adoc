@@ -14,11 +14,11 @@ include::partial$variables.adoc[]
 https://www.rust-lang.org/[Rust] ist die ausgereifteste Programmiersprache, die WebAssembly-Module generieren kann.
 WebAssembly ist in der Rust-Welt ein erstklassiger Bürger, weshalb viele Werkzeuge und Crates aus dem Rust-Ökosystem sofort einsatzbereit sind.
 
-{project-name} bietet ein https://crates.io/crates/kubewarden-policy-sdk[Rust SDK], das den Prozess des Richtlinien-Schreibens vereinfacht.
+{admc-name} bietet ein https://crates.io/crates/kubewarden-policy-sdk[Rust SDK], das den Prozess des Richtlinien-Schreibens vereinfacht.
 Es gibt auch ein https://github.com/kubewarden/rust-policy-template[Vorlagenprojekt], das eine Struktur für ein Richtlinienprojekt unter Verwendung des https://github.com/cargo-generate/cargo-generate[`cargo-generate`] Dienstprogramms bereitstellt.
 
-Diese Dokumentation zeigt, wie Sie diese Projekte verwenden, um {short-project-name} Richtlinien mit Rust zu schreiben.
-Es behandelt nicht die Einzelheiten des {short-project-name}Rust SDK von.
+Diese Dokumentation zeigt, wie Sie diese Projekte verwenden, um {admc-short-name} Richtlinien mit Rust zu schreiben.
+Es behandelt nicht die Einzelheiten des {admc-short-name}Rust SDK von.
 Die Einzelheiten finden Sie in der https://docs.rs/kubewarden-policy-sdk/0.1.0[Crate-Dokumentation].
 
 == Die Rust-Abhängigkeiten beschaffen

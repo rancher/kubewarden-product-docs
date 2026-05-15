@@ -102,11 +102,11 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == `Settings`インスタンスの構築
 
-{short-project-name}ポリシーは、ポリシー設定を入力として受け取る2つの異なる関数を公開します：
+{admc-short-name}ポリシーは、ポリシー設定を入力として受け取る2つの異なる関数を公開します：
 
 * `validate`:Kubernetesオブジェクトがポリシーによる検証を必要とする場合は、この関数を使用してください。
 設定は、https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`]オブジェクトの一部です。
-* `validate_settings`:ポリシーが最初に{short-project-name}によって読み込まれたときにこの関数を呼び出します。
+* `validate_settings`:ポリシーが最初に{admc-short-name}によって読み込まれたときにこの関数を呼び出します。
 この関数は、ポリシー設定を入力として受け取り、有効性をチェックします。
 
 JSONペイロードから`Settings`オブジェクトを作成するヘルパー関数を作成する必要があります：
@@ -136,7 +136,7 @@ WebAssembly標準はまだスレッドをカバーしていません。
 
 == `Settings`の検証を実装する
 
-すべての{short-project-name}ポリシーは、設定の検証を実装する必要があります。
+すべての{admc-short-name}ポリシーは、設定の検証を実装する必要があります。
 
 これは、`Settings`インスタンスに`Valid`メソッドを追加することで行います：
 
@@ -191,7 +191,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 }
 ----
 
-この関数は、https://github.com/kubewarden/policy-sdk-go[{short-project-name}のSDK]によって提供されるヘルパー関数を活用していることがわかります。
+この関数は、https://github.com/kubewarden/policy-sdk-go[{admc-short-name}のSDK]によって提供されるヘルパー関数を活用していることがわかります。
 
 == 設定コードのテスト
 

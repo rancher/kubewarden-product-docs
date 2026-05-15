@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Signaturprüfungsrichtlinien
 :current-version: {page-origin-branch}
 
-{project-name} implementiert die Unterstützung für das
+{admc-name} implementiert die Unterstützung für das
 https://www.sigstore.dev/[Sigstore]
 Projekt.
 Dies ermöglicht die Implementierung einer "sicheren Lieferkette" für Ihren Cluster.
@@ -24,18 +24,18 @@ xref:/howtos/security-hardening/secure-supply-chain.adoc[wie wir eine sichere Li
 Sigstore-Signaturen werden in Container-Registrierungen gespeichert,
 neben dem OCI-Objekt, das signiert wird.
 Sie können ein Containerbild oder ein allgemeineres OCI-Artefakt sein,
-wie eine {short-project-name} Richtlinie.
+wie eine {admc-short-name} Richtlinie.
 Wenn ein Objekt signiert wird,
 werden seine Signaturen als Schichten eines von Sigstore erstellten OCI-Objekts gespeichert.
 Richtlinien, die die Signaturen von Containern überprüfen müssen, müssen diese Schichten überprüfen,
 und müssen die Signaturschichten abrufen, um die Signaturen selbst zu überprüfen.
 
 Das Abrufen und Arbeiten mit diesen OCI-Schichten muss außerhalb des WebAssembly-Gasts (der Richtlinie) erfolgen.
-Daher geschieht dies durch die WebAssembly-Laufzeit – entweder durch {short-project-name} `policy-server` oder durch `kwctl`.
+Daher geschieht dies durch die WebAssembly-Laufzeit – entweder durch {admc-short-name} `policy-server` oder durch `kwctl`.
 
-Die verschiedenen Sprach-SDKs für {short-project-name} Richtlinien kümmern sich darum.
+Die verschiedenen Sprach-SDKs für {admc-short-name} Richtlinien kümmern sich darum.
 Sie bieten Funktionen zur Überprüfung von Containerbildern,
-{short-project-name} Richtlinien, Helm-Charts und anderen Arten von OCI-Artefakten.
+{admc-short-name} Richtlinien, Helm-Charts und anderen Arten von OCI-Artefakten.
 Dies gewährleistet einen sicheren und getesteten Codepfad für die Überprüfung.
 
 Das Abrufen von Daten aus einer Registry und das kryptografische Überprüfen von Signaturen kann zeit- und rechenintensiv sein, deshalb stellt die WebAssembly-Laufzeit (PolicyServer, `kwctl`) sicher, dass sowohl das Abrufen von Signaturen als auch die Überprüfungsberechnungen zwischengespeichert werden.
@@ -82,7 +82,7 @@ Es liegt nun in der Verantwortung der Richtlinie, sicherzustellen, dass Containe
 
 == Ein Beispiel
 
-Das {short-project-name} Team
+Das {admc-short-name} Team
 https://github.com/kubewarden/verify-image-signatures[stellt eine Signaturprüfungsrichtlinie]
 bereit, die Sigstore-Signaturen für alle Container durchsetzt.
 Es wurde mit Rust und dem Rust SDK erstellt.

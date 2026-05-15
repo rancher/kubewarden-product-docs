@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
-:title: {project-name} 工件
-:description: 验证 {project-name} 工件并访问相关的二进制文件、Helm 图表，以实现高效的安全管理。
+:title: {admc-name} 工件
+:description: 验证 {admc-name} 工件并访问相关的二进制文件、Helm 图表，以实现高效的安全管理。
 :keywords: [工件，支持，隔离，镜像]
 :doc-persona: [kubewarden-operator]
 :doc-type: [参考]
@@ -11,10 +11,10 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 
-== 正在验证 {project-name}
+== 正在验证 {admc-name}
 
 在 xref:/tutorials/verifying-kubewarden.adoc[验证
-{short-project-name}] 上有一个教程，演示如何验证 {short-project-name} 工件。
+{admc-short-name}] 上有一个教程，演示如何验证 {admc-short-name} 工件。
 
 == 二进制文件
 
@@ -31,4 +31,4 @@ include::partial$variables.adoc[]
 
 == 通过 HTTPS 的 Helm 图表
 
-{short-project-name} 将 Helm 图表发布到位于 https://charts.kubewarden.io. 的 Helm 图表 HTTPS 储存库中。它们没有 SLSA 或签名，但这种类型的 Helm 储存库提供搜索功能。
+{admc-short-name} 将 Helm 图表发布到位于 https://charts.kubewarden.io. 的 Helm 图表 HTTPS 储存库中。它们没有 SLSA 或签名，但这种类型的 Helm 储存库提供搜索功能。

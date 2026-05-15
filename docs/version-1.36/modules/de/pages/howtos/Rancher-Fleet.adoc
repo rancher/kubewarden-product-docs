@@ -1,24 +1,24 @@
 include::partial$variables.adoc[]
-= Verwalten von {project-name} mit Rancher Fleet
+= Verwalten von {admc-name} mit Rancher Fleet
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Verwalten von {project-name} Helm-Charts mit Rancher Fleet und Kubernetes benutzerdefinierte Ressourcenbeschreibungen (CRDs), um einen GitOps-Ansatz umzusetzen.
+:description: Verwalten von {admc-name} Helm-Charts mit Rancher Fleet und Kubernetes benutzerdefinierte Ressourcenbeschreibungen (CRDs), um einen GitOps-Ansatz umzusetzen.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "rancher-fleet"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}","kubernetes", "kubewarden", "rancher fleet"]
+:keywords: ["{admc-name}","kubernetes", "kubewarden", "rancher fleet"]
 :sidebar_label: Rancher Fleet
 :sidebar_position: 130
 :current-version: {page-origin-branch}
 
-Sie können {project-name} Helm-Charts, wie andere Helm-Charts, mit https://fleet.rancher.io/[Rancher Fleet] verwalten.
+Sie können {admc-name} Helm-Charts, wie andere Helm-Charts, mit https://fleet.rancher.io/[Rancher Fleet] verwalten.
 Rancher Fleet verwendet Kubernetes CRDs, um einen GitOps-Ansatz zur Verwaltung von Kubernetes-Clustern zu definieren.
 Dies geschieht durch die Definition von https://fleet.rancher.io/concepts[Fleet Bundles].
 
 == Installieren
 
-Die {short-project-name} Charts sind Standard-Charts, sie hängen transitiv voneinander ab:
+Die {admc-short-name} Charts sind Standard-Charts, sie hängen transitiv voneinander ab:
 
 `kubewarden-crds` ← `kubewarden-controller` ← `kubewarden-defaults`
 
@@ -41,10 +41,10 @@ Diese Fehler bedeuten kein Problem, und sobald die Charts bereitgestellt sind, e
 [CAUTION]
 ====
 
-Beim Entfernen des GitRepo werden alle 3 {short-project-name} Charts auf einmal entfernt.
+Beim Entfernen des GitRepo werden alle 3 {admc-short-name} Charts auf einmal entfernt.
 Das bedeutet, dass das `kubewarden-crds` Chart entfernt wird.
 
-{short-project-name} verwendet einen Pre-Delete Helm Hook Job im `kubewarden-controller` Chart, der den Standard-Policy-Server löscht.
+{admc-short-name} verwendet einen Pre-Delete Helm Hook Job im `kubewarden-controller` Chart, der den Standard-Policy-Server löscht.
 Dieser Pre-Delete Hook ist notwendig, um die Webhooks der Richtlinien vor dem Löschen des PolicyServers freizugeben.
 Das gilt für jede Policy Engine.
 Andernfalls könnte der Cluster Webhooks für Richtlinien haben, die nicht mehr existieren, sodass alles abgelehnt wird und sich in einem fehlerhaften Zustand befindet.
@@ -60,8 +60,8 @@ Um eine korrekte Entfernung durchzuführen, stellen Sie sicher, dass Sie zuerst 
 Tun Sie dies, indem Sie diese Änderungen in das Repository, das die Fleet-Konfiguration enthält, einpflegen und dann warten, bis es angewendet wird.
 Entfernen Sie dann `kubewarden-controller` auf die gleiche Weise und zuletzt `kubewarden-crds`.
 
-Eine weitere Möglichkeit besteht darin, 2 GitRepos hinzuzufügen, eines nur für die CRDs und ein weiteres für den Rest der {short-project-name} Charts.
-Dies ermöglicht es Ihnen, die {short-project-name} Charts zuerst und die {short-project-name} CRDs zuletzt zu entfernen.
+Eine weitere Möglichkeit besteht darin, 2 GitRepos hinzuzufügen, eines nur für die CRDs und ein weiteres für den Rest der {admc-short-name} Charts.
+Dies ermöglicht es Ihnen, die {admc-short-name} Charts zuerst und die {admc-short-name} CRDs zuletzt zu entfernen.
 
 == Beispiel
 

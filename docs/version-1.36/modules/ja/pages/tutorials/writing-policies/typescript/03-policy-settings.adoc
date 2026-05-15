@@ -3,10 +3,10 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: src/types.tsおよびsrc/index.tsファイル内の{project-name}ポリシーを通じて、効果的なポリシー設定構造を定義し、実装します。
-:keywords: "{project-name}", kubewarden, kubernetes, ポリシー設定の定義, TypeScript
+:description: src/types.tsおよびsrc/index.tsファイル内の{admc-name}ポリシーを通じて、効果的なポリシー設定構造を定義し、実装します。
+:keywords: "{admc-name}", kubewarden, kubernetes, ポリシー設定の定義, TypeScript
 :doc-type: チュートリアル
-:doc-topic: {project-name}, kubewarden, ポリシーの作成, typescript, ポリシー設定の定義
+:doc-topic: {admc-name}, kubewarden, ポリシーの作成, typescript, ポリシー設定の定義
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 重大:STDOUTにログ情報を書き込まないでください。
 
-STDOUTへの書き込みはポリシーが正しく動作しなくなります。代わりに、ログ記録にはSTDERRを使用するか、{project-name} SDKが提供するログ記録機能を使用してください。ポリシーのSTDOUTへの出力は、検証応答のみを含む必要があります。
+STDOUTへの書き込みはポリシーが正しく動作しなくなります。代わりに、ログ記録にはSTDERRを使用するか、{admc-name} SDKが提供するログ記録機能を使用してください。ポリシーのSTDOUTへの出力は、検証応答のみを含む必要があります。
 ====
 
 まず、`src/types.ts`にポリシー設定を保持する構造を定義します：
@@ -45,7 +45,7 @@ export interface KubernetesResource {
 
 == 設定インスタンスの構築
 
-{short-project-name}ポリシーは、設定を処理する2つの関数を使用します：
+{admc-short-name}ポリシーは、設定を処理する2つの関数を使用します：
 
 * `validate`:オブジェクトの検証中に呼び出されます。
 * `validateSettings`:ポリシーの読み込み時に呼び出されます。

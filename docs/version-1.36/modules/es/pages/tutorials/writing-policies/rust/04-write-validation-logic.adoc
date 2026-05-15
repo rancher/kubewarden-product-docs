@@ -116,7 +116,7 @@ fn validate(payload: &[u8]) -> CallResult {
 
 Finalmente, puedes crear pruebas unitarias para comprobar que el código de validación funciona como se espera.
 
-El archivo `lib.rs` ya tiene pruebas definidas al final del archivo, y como puedes ver, el SDK de Rust de {short-project-name} también proporciona ayudantes para pruebas.
+El archivo `lib.rs` ya tiene pruebas definidas al final del archivo, y como puedes ver, el SDK de Rust de {admc-short-name} también proporciona ayudantes para pruebas.
 
 Además, el proyecto de andamiaje ya incluye https://en.wikipedia.org/wiki/Test_fixture#Software[fixtures de prueba] por defecto en el directorio `test_data`. Vas a utilizar estas solicitudes de admisión grabadas para escribir tus pruebas unitarias.
 

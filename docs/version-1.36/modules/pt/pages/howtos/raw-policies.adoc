@@ -3,17 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure políticas brutas como um mecanismo genérico de avaliação de políticas usando {project-name}.
+:description: Configure políticas brutas como um mecanismo genérico de avaliação de políticas usando {admc-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "kubernetes", "raw-policies"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "suporte", "políticas brutas"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "suporte", "políticas brutas"]
 :sidebar_label: Políticas brutas
 :sidebar_position: 60
 :current-version: {page-origin-branch}
 
-A partir de `v1.9.0`, {project-name} suporta a capacidade de escrever e executar políticas fora de um cluster Kubernetes, como um mecanismo genérico de avaliação de políticas.
-O Policy Server expõe o endpoint `/validate_raw` que pode ser usado para validar documentos JSON arbitrários contra uma política {short-project-name}.
+A partir de `v1.9.0`, {admc-name} suporta a capacidade de escrever e executar políticas fora de um cluster Kubernetes, como um mecanismo genérico de avaliação de políticas.
+O Policy Server expõe o endpoint `/validate_raw` que pode ser usado para validar documentos JSON arbitrários contra uma política {admc-short-name}.
 
 Para este guia, usaremos as seguintes políticas brutas:
 
@@ -87,9 +87,9 @@ NOTE: a flag `--ignore-kubernetes-connection-failure=true` é necessária para i
 No entanto, é possível iniciar o Policy Server com/dentro do Kubernetes e usar o endpoint de validação bruta.
 Políticas brutas podem acessar xref:../explanations/context-aware-policies.adoc[capacidades] sensíveis ao contexto, como políticas padrão.
 
-== Executando um Policy Server dentro do Kubernetes sem o controlador {short-project-name}
+== Executando um Policy Server dentro do Kubernetes sem o controlador {admc-short-name}
 
-Não é possível usar uma instância do Policy Server gerenciada pelo controlador {short-project-name} para hospedar políticas brutas.
+Não é possível usar uma instância do Policy Server gerenciada pelo controlador {admc-short-name} para hospedar políticas brutas.
 O controlador não permitirá que o usuário altere o ConfigMap do Policy Server para adicionar uma política bruta, pois tentará reconciliá-la revertendo as alterações.
 Por causa disso, um servidor de políticas dedicado deve ser iniciado.
 
@@ -295,7 +295,7 @@ A requisição será mutada e a resposta conterá um JSONPatch:
 
 == Escrevendo políticas brutas
 
-De forma semelhante às políticas que validam recursos do Kubernetes, políticas brutas são escritas em WebAssembly usando {short-project-name} SDKs.
+De forma semelhante às políticas que validam recursos do Kubernetes, políticas brutas são escritas em WebAssembly usando {admc-short-name} SDKs.
 Se você estiver interessado em escrever políticas brutas, consulte a documentação específica da linguagem para mais informações:
 
 * xref:../tutorials/writing-policies/go/10-raw-policies.adoc[Ir]

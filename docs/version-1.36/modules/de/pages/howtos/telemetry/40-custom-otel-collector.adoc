@@ -4,13 +4,13 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie den {project-name}, um Telemetriedaten sicher an einen benutzerdefinierten OpenTelemetry Collector zu senden, der innerhalb des Clusters bereitgestellt wird.
+:description: Konfigurieren Sie den {admc-name}, um Telemetriedaten sicher an einen benutzerdefinierten OpenTelemetry Collector zu senden, der innerhalb des Clusters bereitgestellt wird.
 :keywords: kubewarden, kubernetes, Metriken, Tracing, opentelemetry
 :doc-persona: Kubewarden-operator, Kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-handbuch, Telemetrie, Metriken, Kurzanleitung
 
-Dieser Leitfaden erklärt, wie Sie {short-project-name} konfigurieren, um Telemetriedaten an einen bereits im Cluster bereitgestellten OpenTelemetry Collector zu senden.
+Dieser Leitfaden erklärt, wie Sie {admc-short-name} konfigurieren, um Telemetriedaten an einen bereits im Cluster bereitgestellten OpenTelemetry Collector zu senden.
 
 Sie sollten nur eine Instanz des https://opentelemetry.io/docs/collector/[OpenTelemetry Collector] im Cluster bereitstellen.
 
@@ -18,11 +18,11 @@ Sie sollten nur eine Instanz des https://opentelemetry.io/docs/collector/[OpenTe
 
 Zuerst beginnen Sie mit der Installation der Abhängigkeiten des OpenTelemetry Collectors.
 
-Sie benötigen eine verschlüsselte Kommunikation zwischen den {project-name}-Komponenten und dem Collector. Sie können https://cert-manager.io/[cert-manager] verwenden, um alle für die sichere Kommunikation erforderlichen Zertifikate zu verwalten.
+Sie benötigen eine verschlüsselte Kommunikation zwischen den {admc-name}-Komponenten und dem Collector. Sie können https://cert-manager.io/[cert-manager] verwenden, um alle für die sichere Kommunikation erforderlichen Zertifikate zu verwalten.
 
 OpenTelemetry Collector-Traces werden an eine https://www.jaegertracing.io/[Jaeger]-Instanz gesendet.
 
-Der {short-project-name}-Stack sendet Metriken an den OpenTelemetry Collector.
+Der {admc-short-name}-Stack sendet Metriken an den OpenTelemetry Collector.
 Dieser exponiert die Metriken als einen Prometheus-Endpunkt. Die Metriken werden dann von einer Prometheus-Instanz gesammelt und in ihrer Datenbank gespeichert. Die gleiche Prometheus-Instanz bietet auch eine Benutzeroberfläche, um die Metriken anzuzeigen und zu verwenden.
 
 Die von Ihnen erstellten Ressourcen werden im `kubewarden` Namespace definiert oder setzen dessen Vorhandensein voraus. Daher sollten Sie mit der Erstellung des Namespace beginnen:
@@ -55,7 +55,7 @@ helm install --wait \
   my-opentelemetry-operator open-telemetry/opentelemetry-operator
 ----
 
-Sie richten die Kommunikation zwischen den {short-project-name}-Komponenten und dem OpenTelemetry Collector mit mTLS ein.
+Sie richten die Kommunikation zwischen den {admc-short-name}-Komponenten und dem OpenTelemetry Collector mit mTLS ein.
 
 Um dies zu tun, müssen Sie die gesamte Infrastruktur für öffentliche Schlüssel (PKI) erstellen:
 
@@ -183,7 +183,7 @@ helm install --wait --create-namespace \
 [NOTE]
 ====
 
-Der Prometheus-Dienstmonitor erhält die {short-project-name} Metriken, indem er den OpenTelemetry-Collector im `kubewarden` Namespace abruft.
+Der Prometheus-Dienstmonitor erhält die {admc-short-name} Metriken, indem er den OpenTelemetry-Collector im `kubewarden` Namespace abruft.
 
 ====
 
@@ -253,13 +253,13 @@ kubectl apply -f otel-collector.yaml
 
 Diese Konfiguration verwendet eine triviale Verarbeitungspipeline, um Trace-Ereignisse zu empfangen und an Jaeger weiterzuleiten. Er empfängt auch Metriken und stellt sie zur Sammlung durch Prometheus bereit.
 
-Sie sichern die Kommunikation zwischen dem {short-project-name} Stack und dem OpenTelemetry Collector mit mTLS. Die Kommunikation zwischen dem OpenTelemetry Collector und Jaeger ist jedoch nicht gesichert, um die Komplexität des Beispiels zu reduzieren.
+Sie sichern die Kommunikation zwischen dem {admc-short-name} Stack und dem OpenTelemetry Collector mit mTLS. Die Kommunikation zwischen dem OpenTelemetry Collector und Jaeger ist jedoch nicht gesichert, um die Komplexität des Beispiels zu reduzieren.
 
-== Installieren Sie den {short-project-name} Stack
+== Installieren Sie den {admc-short-name} Stack
 
-Wenn der OpenTelemetry Collector läuft, können Sie {short-project-name} auf die übliche Weise bereitstellen.
+Wenn der OpenTelemetry Collector läuft, können Sie {admc-short-name} auf die übliche Weise bereitstellen.
 
-Sie müssen die {short-project-name} Komponenten konfigurieren, damit sie Ereignisse und Metriken an den OpenTelemetry Collector senden.
+Sie müssen die {admc-short-name} Komponenten konfigurieren, damit sie Ereignisse und Metriken an den OpenTelemetry Collector senden.
 
 [source,yaml]
 ----
@@ -277,11 +277,11 @@ telemetry:
 
 Das durch den `otelCollectorCertificateSecret` Schlüssel referenzierte Geheimnis muss einen Eintrag mit dem Namen `ca.crt` haben. Das hält das Zertifikat der CA, die das Zertifikat ausgestellt hat, das vom OpenTelemetry Collector verwendet wird.
 
-Das durch den `otelCollectorClientCertificateSecret` Schlüssel referenzierte Geheimnis muss die folgenden Einträge haben: `tls.crt` und `tls.key` Schlüssel. Dies sind das Client-Zertifikat und der Schlüssel, die vom {short-project-name} Stack verwendet werden, um sich beim OpenTelemetry Collector zu authentifizieren.
+Das durch den `otelCollectorClientCertificateSecret` Schlüssel referenzierte Geheimnis muss die folgenden Einträge haben: `tls.crt` und `tls.key` Schlüssel. Dies sind das Client-Zertifikat und der Schlüssel, die vom {admc-short-name} Stack verwendet werden, um sich beim OpenTelemetry Collector zu authentifizieren.
 
 Lassen Sie diese Werte leer, wenn Sie keine Verschlüsselung oder mTLS verwenden.
 
-Installieren Sie den {short-project-name} Stack:
+Installieren Sie den {admc-short-name} Stack:
 
 [source,console]
 ----
@@ -305,7 +305,7 @@ Jetzt ist alles bereit.
 
 == Erkunden der Jaeger UI
 
-Sie können die von {short-project-name} generierten Trace-Ereignisse über die Jaeger-Web-UI sehen. Sie sind unter dem `kubewarden-policy-server` Dienst gruppiert:
+Sie können die von {admc-short-name} generierten Trace-Ereignisse über die Jaeger-Web-UI sehen. Sie sind unter dem `kubewarden-policy-server` Dienst gruppiert:
 
 image::jaeger-custom-otel-collector.png[Das Jaeger-Dashboard]
 

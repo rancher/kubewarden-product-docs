@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Écrire la logique de validation pour les ressources Kubernetes dans le fichier src/index.ts, en accédant aux données de la requête entrante pour renvoyer une réponse.
-:keywords: "{project-name}", kubewarden, kubernetes, rédaction de stratégies, typescript
+:keywords: "{admc-name}", kubewarden, kubernetes, rédaction de stratégies, typescript
 :doc-type: didacticiel
-:doc-topic: {project-name}, kubewarden, rédaction-de-stratégies, typescript, logique-de-validation
+:doc-topic: {admc-name}, kubewarden, rédaction-de-stratégies, typescript, logique-de-validation
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Critique : Ne pas écrire d'informations de journalisation sur STDOUT.
 
-Écrire sur STDOUT enfreint les stratégies. Utilisez plutôt STDERR pour la journalisation ou le service de journalisation fourni par le {project-name} SDK. La sortie de la stratégie vers STDOUT ne doit contenir que la réponse de validation.
+Écrire sur STDOUT enfreint les stratégies. Utilisez plutôt STDERR pour la journalisation ou le service de journalisation fourni par le {admc-name} SDK. La sortie de la stratégie vers STDOUT ne doit contenir que la réponse de validation.
 ====
 
 La logique de validation va dans le fichier `src/index.ts`.
@@ -25,7 +25,7 @@ Votre logique de validation doit :
 * Renvoyer une réponse basée sur l'entrée et les paramètres de la stratégie.
 
 La requête entrante contient un objet JSON avec la ressource Kubernetes à valider.
-Vous pouvez accéder aux données de cet objet JSON via les fonctions auxiliaires du {short-project-name} SDK.
+Vous pouvez accéder aux données de cet objet JSON via les fonctions auxiliaires du {admc-short-name} SDK.
 
 == La fonction `validate`
 
@@ -174,4 +174,4 @@ switch (action) {
 }
 ----
 
-Le {short-project-name} plug-in Javy fournit la fonction `policyAction()` indiquant si la stratégie doit valider une ressource ou valider ses paramètres.
+Le {admc-short-name} plug-in Javy fournit la fonction `policyAction()` indiquant si la stratégie doit valider une ressource ou valider ses paramètres.

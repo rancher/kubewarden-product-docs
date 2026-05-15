@@ -7,16 +7,16 @@ include::partial$variables.adoc[]
 :sidebar_label: ArgoCD Installation
 :sidebar_position: 35
 :description: Configure your ArgoCD application to manage Kubernetes resources effectively by setting specific configuration options for certificate creation and renewal securely.
-:keywords: ["{project-name}", gitops, argocd]
+:keywords: ["{admc-name}", gitops, argocd]
 :doc-persona: [kubewarden-operator]
 :doc-type: [howto]
 :doc-topic: [argocd-installation]
 
 If you're using ArgoCD to manage your Kubernetes resources, you may want to
-install {project-name} using ArgoCD. This is possible, but there are certain
-considerations. Since {short-project-name} v1.17.0, the cert-manager dependency
+install {admc-name} using ArgoCD. This is possible, but there are certain
+considerations. Since {admc-short-name} v1.17.0, the cert-manager dependency
 is removed. There is a new certificate reconciler that automatically renews the
-certificates. This means that the {short-project-name} controller takes care of
+certificates. This means that the {admc-short-name} controller takes care of
 creating and renewing the certificates for you. This includes both the root CA
 and all webhook certificates.
 
@@ -137,7 +137,7 @@ spec:
 ====
 
 In the example, the key aspect is the `ignoreDifferences` configuration for the
-{short-project-name} controller application. The rest of the content provides
+{admc-short-name} controller application. The rest of the content provides
 context on how to configure the ArgoCD application and to provide a complete
 example.
 

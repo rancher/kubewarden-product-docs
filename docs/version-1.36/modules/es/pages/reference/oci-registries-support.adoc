@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= Soporte de registro OCI para {short-project-name}
+= Soporte de registro OCI para {admc-short-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Distribuye las directivas de {project-name} como artefactos OCI a través de registros regulares de la Iniciativa de Contenedores Abiertos (OCI).
+:description: Distribuye las directivas de {admc-name} como artefactos OCI a través de registros regulares de la Iniciativa de Contenedores Abiertos (OCI).
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,17 +12,17 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-Distribuyes tus directivas de {project-name} como
+Distribuyes tus directivas de {admc-name} como
 https://opencontainers.org[Artefactos OCI]
 usando registros regulares de la Iniciativa de Contenedores Abiertos (OCI).
 
-El almacenamiento de directivas de {short-project-name} está junto a las imágenes de contenedor.
+El almacenamiento de directivas de {admc-short-name} está junto a las imágenes de contenedor.
 No requieren configuración o mantenimiento adicional
 más allá de lo necesario para las imágenes de contenedor regulares.
 
 [NOTE]
 ====
-Puedes añadir un registro que funcione con {short-project-name} o
+Puedes añadir un registro que funcione con {admc-short-name} o
 corregir cualquier inexactitud del registro utilizando el
 botón "Editar esta página" en la parte inferior de la página
 ====
@@ -47,7 +47,7 @@ botón "Editar esta página" en la parte inferior de la página
 
 == Herramientas que funcionan con registros OCI
 
-El proyecto {short-project-name} recomienda:
+El proyecto {admc-short-name} recomienda:
 
 * https://github.com/kubewarden/kwctl[`kwctl`] (nuestra herramienta CLI).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
@@ -57,7 +57,7 @@ El proyecto {short-project-name} recomienda:
 
 === Docker Hub
 
-Actualmente, Docker Hub no soporta artefactos OCI, por lo que no se puede utilizar para almacenar directivas de {short-project-name}.
+Actualmente, Docker Hub no soporta artefactos OCI, por lo que no se puede utilizar para almacenar directivas de {admc-short-name}.
 Docker Inc. ha anunciado que Docker Hub soportará artefactos OCI en el https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[futuro].
 
 === JFrog

@@ -2,21 +2,21 @@ include::partial$variables.adoc[]
 
 = Air gap installation
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Configure a private registry with {project-name} images and policies to install {project-name} in an air-gapped environment.
+:description: Configure a private registry with {admc-name} images and policies to install {admc-name} in an air-gapped environment.
 :doc-persona: [“kubewarden-operator”, “kubewarden-integrator”]
 :doc-topic: [“operator-manual”, “air gap”, “installation”]
 :doc-type: [“howto”]
-:keywords: ["{project-name}", “kubewarden”, “kubernetes”, “air gap installation”]
+:keywords: ["{admc-name}", “kubewarden”, “kubernetes”, “air gap installation”]
 :current-version: {page-origin-branch}
 
-For an air-gapped installation of {project-name}, you need a private Open
+For an air-gapped installation of {admc-name}, you need a private Open
 Container Initiative (OCI) registry accessible by your Kubernetes cluster.
-{short-project-name} Policies are WebAssembly modules, therefore you can store
+{admc-short-name} Policies are WebAssembly modules, therefore you can store
 them in an OCI-compliant registry as OCI artifacts. You need to add
-{short-project-name}’s images and policies to this OCI registry. You can refer
-to a list of {short-project-name} artifacts in the
+{admc-short-name}’s images and policies to this OCI registry. You can refer
+to a list of {admc-short-name} artifacts in the
 xref:/reference/artifacts.adoc[Artifacts reference] page. The following
 sections describe the process.
 
@@ -74,7 +74,7 @@ cat */imagelist.txt > kubewarden-images.txt
 
 . Download `kubewarden-save-images.sh` and `kubewarden-load-images.sh` from the
   https://github.com/kubewarden/utils[utilities repository].
-. Save {short-project-name} container images into a `.tar.gz` file:
+. Save {admc-short-name} container images into a `.tar.gz` file:
 +
 [,shell]
 ----
@@ -96,11 +96,11 @@ ran the command, has a tarball, `kubewarden-images.tar.gz`.
 cat */policylist.txt > policies.txt
 ----
 +
-A file with a list of default policies is in the {short-project-name} defaults
+A file with a list of default policies is in the {admc-short-name} defaults
 https://github.com/kubewarden/helm-charts/releases/[release page].
 
 . Download `kubewarden-save-policies.sh` and `kubewarden-load-policies.sh` from
-  the https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller` repository].
+  the https://github.com/kubewarden/adm-controller/blob/main/scripts[`adm-controller` repository].
 
 . Save policies into a `.tar.gz` file:
 +
@@ -134,7 +134,7 @@ Move these files to the air gap environment:
 * `kubewarden-load-policies.sh` and
 * `policies.txt`
 
-. Load {short-project-name} images into the private registry. You need to authenticate
+. Load {admc-short-name} images into the private registry. You need to authenticate
   the Docker client against the local registry .
 +
 [,shell]
@@ -145,7 +145,7 @@ Move these files to the air gap environment:
    --registry <REGISTRY.YOURDOMAIN.COM:PORT>
 ----
 
-. Load {short-project-name} policies into the private registry. You should authenticate
+. Load {admc-short-name} policies into the private registry. You should authenticate
   `kwctl` the local registry (`kwctl` uses the same mechanism to authenticate
   as `docker`, a `~/.docker/config.json` file)
 +
@@ -175,14 +175,14 @@ the `sources.yaml` file
 ====
 
 
-== Install {short-project-name}
+== Install {admc-short-name}
 
 Now that your private registry has everything required you can install
-{short-project-name}. The only difference to a standard {short-project-name} installation is that
+{admc-short-name}. The only difference to a standard {admc-short-name} installation is that
 you need to change the registry in the container images and policies to be the
 private registry.
 
-Install the {short-project-name} stack:
+Install the {admc-short-name} stack:
 
 [,shell]
 ----
@@ -264,7 +264,7 @@ private registry. Refer to the
 xref:howtos/policy-servers/02-private-registry.adoc[using private registry]
 section of the documentation.
 
-Now you can create {short-project-name} policies in your cluster. Policies must be
+Now you can create {admc-short-name} policies in your cluster. Policies must be
 available in your private registry.
 
 [,console]
@@ -299,7 +299,7 @@ kind: PolicyServer
 metadata:
   name: reserved-instance-for-tenant-a
 spec:
-  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policy-server:v1.3.0
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/adm-controller/policy-server:v1.3.0
   replicas: 2
   serviceAccountName: sa
 ----

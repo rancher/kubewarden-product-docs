@@ -102,11 +102,11 @@ func (s *Settings) UnmarshalJSON(data []byte) error {
 
 == Construyendo instancias de `Settings`
 
-Una directiva de {short-project-name} expone dos funciones diferentes que reciben los ajustes de la directiva como entrada:
+Una directiva de {admc-short-name} expone dos funciones diferentes que reciben los ajustes de la directiva como entrada:
 
 * `validate`: Utiliza esta función cuando el objeto de Kubernetes requiera validación por parte de la directiva.
 Los ajustes son parte de un objeto https://pkg.go.dev/github.com/kubewarden/policy-sdk-go@v0.2.1/protocol#ValidationRequest[`ValidationRequest`].
-* `validate_settings`: Llama a esta función cuando la directiva se cargue por primera vez en {short-project-name}.
+* `validate_settings`: Llama a esta función cuando la directiva se cargue por primera vez en {admc-short-name}.
 La función recibe los ajustes de la directiva como entrada y verifica la validez.
 
 Necesitas crear una función auxiliar que cree un objeto `Settings` a partir de la carga útil JSON:
@@ -136,7 +136,7 @@ Consulta https://github.com/WebAssembly/threads[la propuesta oficial] para más 
 
 == Implementando la validación de `Settings`
 
-Todas las directivas de {short-project-name} deben implementar la validación de ajustes.
+Todas las directivas de {admc-short-name} deben implementar la validación de ajustes.
 
 Haces esto añadiendo un método de `Valid` a las instancias de `Settings`:
 
@@ -191,7 +191,7 @@ func validateSettings(payload []byte) ([]byte, error) {
 }
 ----
 
-Puedes ver que la función aprovecha las funciones auxiliares proporcionadas por https://github.com/kubewarden/policy-sdk-go[{short-project-name} del SDK].
+Puedes ver que la función aprovecha las funciones auxiliares proporcionadas por https://github.com/kubewarden/policy-sdk-go[{admc-short-name} del SDK].
 
 == Probando el código de ajustes
 

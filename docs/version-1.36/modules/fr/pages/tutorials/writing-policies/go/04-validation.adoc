@@ -40,9 +40,9 @@ tandis qu'une utilisant `gjson` fait environ 300&nbsp;Ko.
 
 En dehors de la taille,
 la stratégie utilisant des objets Kubernetes prend beaucoup plus de temps lors de la première exécution.
-Les invocations suivantes sont rapides car {project-name} utilise la fonctionnalité de cache de Wasmtime.
+Les invocations suivantes sont rapides car {admc-name} utilise la fonctionnalité de cache de Wasmtime.
 La première exécution peut prendre environ 20 secondes avec `kwctl`, les exécutions suivantes, 1 à 2 secondes.
-Ainsi, le serveur de stratégie {short-project-name} a un temps de démarrage plus lent mais ensuite les temps d'évaluation des stratégies ne sont généralement pas affectés par l'utilisation d'objets Kubernetes.
+Ainsi, le serveur de stratégie {admc-short-name} a un temps de démarrage plus lent mais ensuite les temps d'évaluation des stratégies ne sont généralement pas affectés par l'utilisation d'objets Kubernetes.
 ====
 
 
@@ -325,7 +325,7 @@ C'est ici que vous itérez sur les différents cas de test en utilisant le code 
 
 . Créez un objet `BasicSettings` en utilisant les données fournies par le `testCase`.
 . Créez un objet `Pod`, et assignez-lui les étiquettes définies dans `testCase`.
-. Créez un objet `payload`. Faites cela en utilisant une fonction d'assistance du SDK {short-project-name} : `kubewarden_testing.BuildValidationRequest`.
+. Créez un objet `payload`. Faites cela en utilisant une fonction d'assistance du SDK {admc-short-name} : `kubewarden_testing.BuildValidationRequest`.
 Cette fonction prend en entrée l'objet concerné par la demande, le `Pod`, et l'objet qui décrit les paramètres, l'instance `BasicSettings`.
 . Enfin, le code invoque votre fonction `validate` et effectue une vérification sur le résultat.
 
@@ -400,7 +400,7 @@ Vous vous demandez peut-être pourquoi la sortie des tests unitaires présente d
 
 Les déclarations `logger` dans la stratégie produisent cette sortie.
 Cela se produit uniquement lorsque le code s'exécute en dehors du contexte WebAssembly.
-Cela ne se produit pas lorsque la stratégie s'évalue dans {short-project-name}, dans ce contexte, les déclarations `logger` émettent des événements OpenTelemetry à la place.
+Cela ne se produit pas lorsque la stratégie s'évalue dans {admc-short-name}, dans ce contexte, les déclarations `logger` émettent des événements OpenTelemetry à la place.
 ====
 
 

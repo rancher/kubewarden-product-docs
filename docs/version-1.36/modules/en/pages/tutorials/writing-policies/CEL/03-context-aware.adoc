@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure context-aware policies to ensure unique Ingress rules across hosts, preventing conflicts with {project-name}'s CEL extension libraries.
+:description: Configure context-aware policies to ensure unique Ingress rules across hosts, preventing conflicts with {admc-name}'s CEL extension libraries.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "cel", "context-aware", "context", "awaree", "ingress"]
 :doc-type: ["tutorial"]
@@ -11,13 +11,13 @@ include::partial$variables.adoc[]
 :sidebar_label: Context-aware policies
 :current-version: {page-origin-branch}
 
-{project-name}'s `cel-policy` supports the xref:reference/spec/05-context-aware-policies.adoc[context
+{admc-name}'s `cel-policy` supports the xref:reference/spec/05-context-aware-policies.adoc[context
 awareness] feature. The
 policy has the capability to read cluster information and take decisions based
 on other existing resources besides the resource that triggered the policy
 evaluation via admission request.
 
-To achieve this, we can use the https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{short-project-name}'s CEL extension
+To achieve this, we can use the https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[{admc-short-name}'s CEL extension
 libraries for host capabilities]
 included in the policy.
 
@@ -63,7 +63,7 @@ spec:
 ----
 
 Now, we need to write the CEL code that will fetch the existing Ingresses in
-the cluster. For that, we use the [{short-project-name} CEL extension
+the cluster. For that, we use the [{admc-short-name} CEL extension
 library](https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities).
 Particularly, the `kw.k8s` host capabilities, which allows us to query the
 cluster for GroupVersionKinds. You can see the available docs for the CEL

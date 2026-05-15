@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Validando políticas
 :current-version: {page-origin-branch}
 
-O servidor de política {project-name} recebe:
+O servidor de política {admc-name} recebe:
 
 * Kubernetes
 https://godoc.org/k8s.io/api/admission/v1#AdmissionReview[`AdmissionReview`]

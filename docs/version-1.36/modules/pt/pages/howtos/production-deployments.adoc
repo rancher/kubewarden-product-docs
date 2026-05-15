@@ -1,36 +1,36 @@
 include::partial$variables.adoc[]
-= Configurando a pilha {project-name} para produção
+= Configurando a pilha {admc-name} para produção
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure tolerâncias e regras de afinidade para agendamento e confiabilidade ideais dentro da pilha {project-name} em um cluster Kubernetes.
-:keywords: ["{project-name}", kubewarden, kubernetes, policyservers, produção, poddisruptionbudget, afinidade, limites, tolerâncias, priorityclass]
+:description: Configure tolerâncias e regras de afinidade para agendamento e confiabilidade ideais dentro da pilha {admc-name} em um cluster Kubernetes.
+:keywords: ["{admc-name}", kubewarden, kubernetes, policyservers, produção, poddisruptionbudget, afinidade, limites, tolerâncias, priorityclass]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: manual-do-operador, servidores-de-política, produção, poddisruptionbudget, afinidade, limites, tolerâncias, priorityclass
 
-{project-name} oferece recursos para confiabilidade e agendamento correto de seus componentes em um cluster Kubernetes. Algumas das dicas nesta página vêm de membros da comunidade {short-project-name} usando {short-project-name} em grande escala.
+{admc-name} oferece recursos para confiabilidade e agendamento correto de seus componentes em um cluster Kubernetes. Algumas das dicas nesta página vêm de membros da comunidade {admc-short-name} usando {admc-short-name} em grande escala.
 
 [IMPORTANT]
 ====
-Se você quiser ver um exemplo real de execução de {short-project-name} em grande escala, confira a página de documentação xref:/howtos/deploy-at-scale.adoc[{short-project-name} em um Ambiente de Grande Escala].
+Se você quiser ver um exemplo real de execução de {admc-short-name} em grande escala, confira a página de documentação xref:/howtos/deploy-at-scale.adoc[{admc-short-name} em um Ambiente de Grande Escala].
 
 ====
 
 == Configurando Tolerâncias e Afinidade/Anti-Afinidade
 
-Ao usar os campos `tolerations` e `affinity`, os operadores podem ajustar o agendamento e a confiabilidade da pilha {short-project-name} para atender às suas necessidades e restrições específicas de implantação. Para mais detalhes sobre os campos exatos e suas configurações, consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/[documentação do Kubernetes sobre Taints e Tolerâncias] e https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[Afinidade e Anti-Afinidade].
+Ao usar os campos `tolerations` e `affinity`, os operadores podem ajustar o agendamento e a confiabilidade da pilha {admc-short-name} para atender às suas necessidades e restrições específicas de implantação. Para mais detalhes sobre os campos exatos e suas configurações, consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/[documentação do Kubernetes sobre Taints e Tolerâncias] e https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[Afinidade e Anti-Afinidade].
 
-A partir da versão 1.15 da pilha {short-project-name}, os gráficos Helm {short-project-name} vêm com dois novos valores:
+A partir da versão 1.15 da pilha {admc-short-name}, os gráficos Helm {admc-short-name} vêm com dois novos valores:
 
 * `.global.tolerations`
 * `.global.affinity`
 
-Esses valores do gráfico Helm permitem que os usuários definam tolerâncias do Kubernetes e configurações de afinidade/anti-afinidade para a pilha {short-project-name}, incluindo a implantação do controlador, o cronjob do scanner de auditoria e o recurso personalizado padrão `PolicyServer`.
+Esses valores do gráfico Helm permitem que os usuários definam tolerâncias do Kubernetes e configurações de afinidade/anti-afinidade para a pilha {admc-short-name}, incluindo a implantação do controlador, o cronjob do scanner de auditoria e o recurso personalizado padrão `PolicyServer`.
 
 === Tolerâncias
 
-O valor `tolerations` é um array onde os usuários podem especificar tolerâncias do Kubernetes para os componentes {short-project-name}. Tolerâncias permitem que pods sejam agendados em nós com taints correspondentes. Isso é útil para gerenciar onde os pods podem ser agendados, especialmente em cenários que envolvem manutenção de nós, cargas de trabalho dedicadas ou requisitos de hardware específicos:
+O valor `tolerations` é um array onde os usuários podem especificar tolerâncias do Kubernetes para os componentes {admc-short-name}. Tolerâncias permitem que pods sejam agendados em nós com taints correspondentes. Isso é útil para gerenciar onde os pods podem ser agendados, especialmente em cenários que envolvem manutenção de nós, cargas de trabalho dedicadas ou requisitos de hardware específicos:
 
 [source,yaml]
 ----
@@ -50,7 +50,7 @@ Neste exemplo, as tolerâncias definidas são aplicadas à implantação do cont
 
 === Afinidade/Anti-Afinidade
 
-O valor `affinity` permite que os usuários definam regras de afinidade e anti-afinidade do Kubernetes para os componentes {short-project-name}. Regras de afinidade restringem pods a nós específicos, enquanto regras de anti-afinidade impedem que pods sejam agendados em certos nós ou em estreita proximidade com outros pods. Essas configurações são úteis para garantir alta disponibilidade, tolerância a falhas e uso otimizado de recursos em um cluster.
+O valor `affinity` permite que os usuários definam regras de afinidade e anti-afinidade do Kubernetes para os componentes {admc-short-name}. Regras de afinidade restringem pods a nós específicos, enquanto regras de anti-afinidade impedem que pods sejam agendados em certos nós ou em estreita proximidade com outros pods. Essas configurações são úteis para garantir alta disponibilidade, tolerância a falhas e uso otimizado de recursos em um cluster.
 
 [source,yaml]
 ----
@@ -103,18 +103,18 @@ global:
 
 Neste exemplo, as regras de afinidade serão aplicadas à implantação do controlador, ao cronjob do scanner de auditoria e ao recurso personalizado padrão `PolicyServer`.
 
-A configuração de afinidade anterior disponível no Helm chart `kubewarden-default`, que era usada para definir a configuração de afinidade apenas para o `PolicyServer`, foi removida em favor do valor global `affinity`. Essa mudança simplifica o processo de configuração ao fornecer uma única abordagem para definir regras de afinidade e anti-afinidade para todos os componentes {short-project-name}.
+A configuração de afinidade anterior disponível no Helm chart `kubewarden-default`, que era usada para definir a configuração de afinidade apenas para o `PolicyServer`, foi removida em favor do valor global `affinity`. Essa mudança simplifica o processo de configuração ao fornecer uma única abordagem para definir regras de afinidade e anti-afinidade para todos os componentes {admc-short-name}.
 
 [WARNING]
 ====
-A antiga configuração `affinity` no Helm chart `kubewarden-default` foi removida. Os usuários agora devem usar o campo `.global.affinity` para configurar as definições de afinidade e anti-afinidade para toda a pilha {short-project-name}.
+A antiga configuração `affinity` no Helm chart `kubewarden-default` foi removida. Os usuários agora devem usar o campo `.global.affinity` para configurar as definições de afinidade e anti-afinidade para toda a pilha {admc-short-name}.
 ====
 
 == Configurando Classes de Prioridade
 
-Ao usar classes de prioridade, os operadores podem impor uma prioridade de agendamento para os pods de carga de trabalho da pilha {short-project-name}. Isso garante que a carga de trabalho {short-project-name} esteja disponível em relação a outras cargas de trabalho, prevenindo a evacuação e garantindo a confiabilidade do serviço. Para mais informações, consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[documentação do Kubernetes sobre Classes de Prioridade].
+Ao usar classes de prioridade, os operadores podem impor uma prioridade de agendamento para os pods de carga de trabalho da pilha {admc-short-name}. Isso garante que a carga de trabalho {admc-short-name} esteja disponível em relação a outras cargas de trabalho, prevenindo a evacuação e garantindo a confiabilidade do serviço. Para mais informações, consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[documentação do Kubernetes sobre Classes de Prioridade].
 
-A partir da versão 1.25 da pilha {short-project-name}, os Helm charts {short-project-name} vêm com um novo valor:
+A partir da versão 1.25 da pilha {admc-short-name}, os Helm charts {admc-short-name} vêm com um novo valor:
 
 * `.global.priorityClassName`
 
@@ -146,11 +146,11 @@ Se você excluir uma classe de prioridade, os Pods existentes que usam o nome da
 
 Assim como outros Controladores de Admissão Dinâmica, esse processo ocorre antes que as solicitações cheguem ao servidor de API do Kubernetes. A latência ou atrasos de serviço pelo Controlador de Admissão Dinâmica podem introduzir inconsistência no cluster, negação de serviço ou deadlock.
 
-{short-project-name} oferece várias maneiras de aumentar a confiabilidade de `PolicyServers`. As implantações em produção podem variar bastante, cabendo ao operador configurar a implantação de acordo com suas necessidades.
+{admc-short-name} oferece várias maneiras de aumentar a confiabilidade de `PolicyServers`. As implantações em produção podem variar bastante, cabendo ao operador configurar a implantação de acordo com suas necessidades.
 
 === Orçamentos de Interrupção de Pod
 
-O controlador {short-project-name} pode criar um https://kubernetes.io/docs/tasks/run-application/configure-pdb/[Orçamento de Interrupção de Pod] (PDB) para os Pods `PolicyServer`. Isso controla a faixa de réplicas de Pods `PolicyServer` associadas ao `PolicyServer`, garantindo alta disponibilidade e evacuação controlada em caso de manutenção de nó, operações de escalonamento ou atualizações de cluster.
+O controlador {admc-short-name} pode criar um https://kubernetes.io/docs/tasks/run-application/configure-pdb/[Orçamento de Interrupção de Pod] (PDB) para os Pods `PolicyServer`. Isso controla a faixa de réplicas de Pods `PolicyServer` associadas ao `PolicyServer`, garantindo alta disponibilidade e evacuação controlada em caso de manutenção de nó, operações de escalonamento ou atualizações de cluster.
 
 Isso é alcançado definindo `spec.minAvailable`, ou `spec.maxUnavailable` do recurso `PolicyServer`:
 
@@ -197,7 +197,7 @@ spec:
 
 === Afinidade / Anti-afinidade
 
-O controlador {short-project-name} pode definir a afinidade dos Pods `PolicyServer`. Isso permite restringir Pods a nós específicos, ou Pods em relação a outros Pods. Para mais informações sobre Afinidade, consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[documentação do Kubernetes].
+O controlador {admc-short-name} pode definir a afinidade dos Pods `PolicyServer`. Isso permite restringir Pods a nós específicos, ou Pods em relação a outros Pods. Para mais informações sobre Afinidade, consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity[documentação do Kubernetes].
 
 A configuração de afinidade do Kubernetes permite restringir Pods a nós (via `spec.affinity.nodeAffinity`) ou restringir Pods em relação a outros Pods (via `spec.affinity.podAffinity`). A afinidade pode ser configurada como uma restrição suave (com `preferredDuringSchedulingIgnoredDuringExecution`) ou uma restrição rígida (com `requiredDuringSchedulingIgnoredDuringExecution`).
 
@@ -263,7 +263,7 @@ spec:
 
 === Limites e Solicitações
 
-O controlador {short-project-name} pode definir os limites de recursos e solicitações dos Pods `PolicyServer`. Isso especifica quanto de cada recurso cada um dos contêineres associados aos Pods `PolicyServer` necessita. Para `PolicyServers`, apenas os recursos `cpu` e `memory` são relevantes. Consulte a https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes[documentação do Kubernetes] sobre unidades de recursos para mais informações.
+O controlador {admc-short-name} pode definir os limites de recursos e solicitações dos Pods `PolicyServer`. Isso especifica quanto de cada recurso cada um dos contêineres associados aos Pods `PolicyServer` necessita. Para `PolicyServers`, apenas os recursos `cpu` e `memory` são relevantes. Consulte a https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#resource-units-in-kubernetes[documentação do Kubernetes] sobre unidades de recursos para mais informações.
 
 Isso é alcançado definindo os seguintes campos de recursos `PolicyServer`:
 
@@ -297,7 +297,7 @@ spec:
 
 === Classes de Prioridade
 
-O controlador {short-project-name} pode definir a classe de prioridade usada para os pods de `PolicyServers`. Isso significa que as cargas de trabalho `PolicyServer` são agendadas com prioridade, prevenindo a evacuação e garantindo a confiabilidade do serviço. Consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[documentação do Kubernetes para mais informações].
+O controlador {admc-short-name} pode definir a classe de prioridade usada para os pods de `PolicyServers`. Isso significa que as cargas de trabalho `PolicyServer` são agendadas com prioridade, prevenindo a evacuação e garantindo a confiabilidade do serviço. Consulte a https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/[documentação do Kubernetes para mais informações].
 
 [WARNING]
 ====
@@ -331,7 +331,7 @@ Você também pode considerar dividir ainda mais a carga de trabalho. Por exempl
 
 Para lidar com alto tráfego e garantir disponibilidade, forneça recursos suficientes e escale suas réplicas.
 
-* *Aloque Recursos Suficientes:* Em ambientes de alto tráfego, aloque recursos generosos para cada réplica. Não deixe o `PolicyServers` sem recursos, pois CPU ou memória insuficientes são uma das principais causas de timeouts de requisição. Lembre-se de que o `PolicyServers` receberá requisições do plano de controle e do {short-project-name} scanner de auditoria.
+* *Aloque Recursos Suficientes:* Em ambientes de alto tráfego, aloque recursos generosos para cada réplica. Não deixe o `PolicyServers` sem recursos, pois CPU ou memória insuficientes são uma das principais causas de timeouts de requisição. Lembre-se de que o `PolicyServers` receberá requisições do plano de controle e do {admc-short-name} scanner de auditoria.
 * *Escale para Alta Disponibilidade:* Para implantações que lidam com centenas de requisições por segundo, execute um número elevado de réplicas. Isso distribui a carga de forma eficaz e garante que a falha de alguns pods não impacte a operação do cluster.
 
 Comece com uma base de 3-5 réplicas e monitore o uso de CPU e memória. Escalone a contagem de réplicas conforme necessário.

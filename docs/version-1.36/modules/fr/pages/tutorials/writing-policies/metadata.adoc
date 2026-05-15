@@ -10,7 +10,7 @@ include::partial$variables.adoc[]
 :keywords: ["kubewarden", "développement de stratégies Kubernetes", "métadonnées de la stratégie"]
 :current-version: {page-origin-branch}
 
-Le fichier de métadonnées {project-name}, `metadata.yaml`, est un fichier de configuration contenant des informations et des paramètres importants liés aux stratégies utilisées dans {short-project-name}.
+Le fichier de métadonnées {admc-name}, `metadata.yaml`, est un fichier de configuration contenant des informations et des paramètres importants liés aux stratégies utilisées dans {admc-short-name}.
 Cette documentation est un aperçu de l'objectif et de l'utilisation du fichier de métadonnées.
 
 Le fichier de stratégie `metadata.yaml` a des valeurs par défaut pour la stratégie, ainsi que des métadonnées telles que l'auteur et la description, définies par l'auteur de la stratégie.

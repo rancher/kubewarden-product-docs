@@ -24,7 +24,7 @@ include::partial$variables.adoc[]
 * https://github.com/bats-core/bats-core[bats]：
 用于编写测试并自动化其执行。
 * https://github.com/kubewarden/kwctl/releases[`kwctl`]：
-由 {project-name} 提供的 CLI 工具，用于在 Kubernetes 之外运行其策略，以及其他操作。
+由 {admc-name} 提供的 CLI 工具，用于在 Kubernetes 之外运行其策略，以及其他操作。
 在文档的 xref:tutorials/testing-policies/index.adoc[本节] 中有介绍。
 
 == 编写测试

@@ -1,37 +1,37 @@
 include::partial$variables.adoc[]
-= Migration von Gatekeeper-Richtlinien zu {project-name}
+= Migration von Gatekeeper-Richtlinien zu {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Konfigurieren Sie eine {project-name}-Richtlinie, indem Sie eine vorhandene Gatekeeper-Richtlinie in zwei Hauptschritten migrieren: Kompilierung von Rego-Code in WebAssembly.
-:keywords: ["{project-name}", kubewarden, gatekeeper]
+:description: Konfigurieren Sie eine {admc-name}-Richtlinie, indem Sie eine vorhandene Gatekeeper-Richtlinie in zwei Hauptschritten migrieren: Kompilierung von Rego-Code in WebAssembly.
+:keywords: ["{admc-name}", kubewarden, gatekeeper]
 :doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 :doc-type: [howto]
 :doc-topic: [operator-manual]
 
-Dieser Leitfaden zeigt Ihnen, wie Sie eine vorhandene Gatekeeper-Richtlinie in eine {project-name}-Richtlinie umwandeln. Dieser Prozess umfasst zwei Hauptschritte:
+Dieser Leitfaden zeigt Ihnen, wie Sie eine vorhandene Gatekeeper-Richtlinie in eine {admc-name}-Richtlinie umwandeln. Dieser Prozess umfasst zwei Hauptschritte:
 . Kompilieren Sie das Rego-Programm in ein WebAssembly (Wasm)-Modul.
-. Verteilen Sie das WebAssembly-Modul als {short-project-name}-Richtlinie.
+. Verteilen Sie das WebAssembly-Modul als {admc-short-name}-Richtlinie.
 
-Das xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego-Richtlinien-Tutorial] behandelt den Großteil des Build-Prozesses zur Kompilierung von Rego-Code in ein WebAssembly-Modul. Dieser Leitfaden konzentriert sich auf den schrittweisen Prozess der Extraktion von Gatekeeper Custom Resource Definitions (CRDs) und deren Migration in eine funktionale {short-project-name}-Richtlinie. Es verwendet eine grundlegende Gatekeeper-Demo-Richtlinie.
+Das xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego-Richtlinien-Tutorial] behandelt den Großteil des Build-Prozesses zur Kompilierung von Rego-Code in ein WebAssembly-Modul. Dieser Leitfaden konzentriert sich auf den schrittweisen Prozess der Extraktion von Gatekeeper Custom Resource Definitions (CRDs) und deren Migration in eine funktionale {admc-short-name}-Richtlinie. Es verwendet eine grundlegende Gatekeeper-Demo-Richtlinie.
 
 == Voraussetzungen
 
 * link:https://github.com/open-policy-agent/opa/releases[opa]: Sie verwenden dieses Tool, um den Code in wasm zu kompilieren. Dieser Leitfaden wurde mit der `v1.5.1`-Version geschrieben.
-* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: Tool, das Sie verwenden, um das {short-project-name}-WebAssembly-Modul vorzubereiten und auszuführen.
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: Tool, das Sie verwenden, um das {admc-short-name}-WebAssembly-Modul vorzubereiten und auszuführen.
 * link:https://github.com/bats-core/bats-core[`bats`]: Tool, das verwendet wird, um End-to-End-Tests durchzuführen. Wenn Sie sich entschieden haben, solche Tests zu schreiben
 * link:https://github.com/mikefarah/yq[`yq`]: Tool, das verwendet wird, um Daten aus YAML-Dateien zu extrahieren.
 
 == Bevor Sie Ihre Richtlinien migrieren
 
-Bevor Sie mit dem Prozess der Migration von Gatekeeper-Richtlinien beginnen, ziehen Sie in Betracht, bereits verfügbare Richtlinien im {short-project-name} link:https://artifacthub.io/packages/search?kind=13[Katalog] zu verwenden. Einige der link:https://github.com/kubewarden/rego-policies-library[Richtlinien] sind öffentlich verfügbare OPA- und Gatekeeper-Richtlinien, die nach {short-project-name} migriert wurden.
+Bevor Sie mit dem Prozess der Migration von Gatekeeper-Richtlinien beginnen, ziehen Sie in Betracht, bereits verfügbare Richtlinien im {admc-short-name} link:https://artifacthub.io/packages/search?kind=13[Katalog] zu verwenden. Einige der link:https://github.com/kubewarden/rego-policies-library[Richtlinien] sind öffentlich verfügbare OPA- und Gatekeeper-Richtlinien, die nach {admc-short-name} migriert wurden.
 
-Sehen Sie sich auch unsere xref:/explanations/comparisons/opa-comparison.adoc[Vergleich] Dokumentation zwischen {short-project-name} und Gatekeeper an.
+Sehen Sie sich auch unsere xref:/explanations/comparisons/opa-comparison.adoc[Vergleich] Dokumentation zwischen {admc-short-name} und Gatekeeper an.
 
-== Schritt 1: Initialisieren Sie Ihr {short-project-name}-Richtlinienprojekt
+== Schritt 1: Initialisieren Sie Ihr {admc-short-name}-Richtlinienprojekt
 
-Zuerst verwenden Sie die {short-project-name} Gatekeeper
+Zuerst verwenden Sie die {admc-short-name} Gatekeeper
 link:https://github.com/kubewarden/gatekeeper-policy-template[Vorlage], um
 eine grundlegende Struktur für das Richtlinienprojekt zu erstellen. Dies bietet Makefile-Ziele zum Erstellen
 und Testen Ihrer Richtlinie. Nachdem Sie den Richtliniencode aus der Vorlage erstellt haben,
@@ -53,12 +53,12 @@ PASS: 2/2
 == 2. Schritt: Migrieren Sie den Gatekeeper-Richtliniencode
 
 Jetzt beginnen Sie mit der Migration der Gatekeeper-Richtlinie. Dies beinhaltet die Umwandlung einer
-`ConstraintTemplate` und ihrer zugehörigen `Constraint` Ressourcen in eine {short-project-name}
-Richtlinie. In einem {short-project-name} Kontext betrachten Sie die `ConstraintTemplate` als den Kern
+`ConstraintTemplate` und ihrer zugehörigen `Constraint` Ressourcen in eine {admc-short-name}
+Richtlinie. In einem {admc-short-name} Kontext betrachten Sie die `ConstraintTemplate` als den Kern
 Richtliniencode, während die `Constraint` Instanzen in Richtlinieninstanzen
-übersetzt werden, die innerhalb von {short-project-name} laufen.
+übersetzt werden, die innerhalb von {admc-short-name} laufen.
 
-Zuerst kopieren Sie den Rego-Code von Ihrem `ConstraintTemplate` in die `policy.rego` Datei, die von der {short-project-name} Vorlage generiert wurde. Für dieses Beispiel sollten Sie die
+Zuerst kopieren Sie den Rego-Code von Ihrem `ConstraintTemplate` in die `policy.rego` Datei, die von der {admc-short-name} Vorlage generiert wurde. Für dieses Beispiel sollten Sie die
 folgende grundlegende
 link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[Demo-Richtlinie]
 aus dem Gatekeeper-Repository verwenden.
@@ -109,10 +109,10 @@ Kopieren Sie den Rego-Code-Schnipsel aus dem `rego` Feld in Ihre `policy.rego` D
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== Passen Sie den Rego-Code für {short-project-name} an
+=== Passen Sie den Rego-Code für {admc-short-name} an
 
 Sie müssen sicherstellen, dass der im Rego-Code verwendete `package` Name `policy` ist.
-Dies ist der Wert, der an vielen Stellen von der {short-project-name} Gatekeeper-Vorlage erwartet wird.
+Dies ist der Wert, der an vielen Stellen von der {admc-short-name} Gatekeeper-Vorlage erwartet wird.
 
 Wenn Sie ihn nicht ändern, werden Sie Fehler beim Erstellen der Richtlinie und beim Ausführen der End-to-End-Tests haben.
 
@@ -199,7 +199,7 @@ Was das für Sie bedeutet:
 
 Obwohl es sehr empfohlen wird, könnten Richtlinienautoren das Erstellen von Tests für die erste Version einer Richtlinie überspringen. Wenn dies auf Sie zutrifft, müssen Sie die Makefile-Ziele deaktivieren, die zum Ausführen von Tests verwendet werden. Sie können diese Ziele nicht vollständig entfernen, da die Standard-CI-Jobs erwarten, dass sie definiert sind. Stattdessen sollten Sie die Befehle, die `opa` und `bats` aufrufen, durch eine "no-op"-Operation ersetzen. Zum Beispiel können Sie einen `echo` Befehl verwenden, um eine Erklärung dafür auszugeben, warum die Tests nicht ausgeführt werden.
 
-Die {short-project-name} Gatekeeper-Vorlage umfasst sowohl Rego-Einheitstests als auch End-to-End (e2e) Tests mit Bats und `kwctl`. Wenn Sie planen, Tests einzuschließen, müssen beide Sätze an Ihre Richtlinie angepasst werden.
+Die {admc-short-name} Gatekeeper-Vorlage umfasst sowohl Rego-Einheitstests als auch End-to-End (e2e) Tests mit Bats und `kwctl`. Wenn Sie planen, Tests einzuschließen, müssen beide Sätze an Ihre Richtlinie angepasst werden.
 
 Wenn Ihre Gatekeeper-Richtlinie bereits Rego-Tests hat, können Sie diese in die `policy_test.rego` Datei kopieren. Diese werden automatisch ausgeführt, wenn Sie den `make test` Befehl ausführen.
 
@@ -410,7 +410,7 @@ spec:
 
 === Richtlinieneinstellungen definieren
 
-Diese Richtlinie hat Parameter, die Gatekeeper innerhalb des `Constraint` definiert. Sie müssen den `settings` Abschnitt im generierten {short-project-name} Richtlinienmanifest aktualisieren, um diese erforderlichen Parameter einzuschließen. Im folgenden Beispiel können Sie, zusätzlich zur Definition der Einstellungen, die Richtlinie aus dem OCI-Registry testen:
+Diese Richtlinie hat Parameter, die Gatekeeper innerhalb des `Constraint` definiert. Sie müssen den `settings` Abschnitt im generierten {admc-short-name} Richtlinienmanifest aktualisieren, um diese erforderlichen Parameter einzuschließen. Im folgenden Beispiel können Sie, zusätzlich zur Definition der Einstellungen, die Richtlinie aus dem OCI-Registry testen:
 
 [source,yaml]
 ----

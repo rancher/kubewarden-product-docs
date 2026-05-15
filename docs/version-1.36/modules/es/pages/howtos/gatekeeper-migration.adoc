@@ -1,37 +1,37 @@
 include::partial$variables.adoc[]
-= Migrando directivas de Gatekeeper a {project-name}
+= Migrando directivas de Gatekeeper a {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura una directiva de {project-name} migrando una directiva de Gatekeeper existente a través de dos pasos principales: compilar el código Rego en WebAssembly.
-:keywords: ["{project-name}", kubewarden, gatekeeper]
+:description: Configura una directiva de {admc-name} migrando una directiva de Gatekeeper existente a través de dos pasos principales: compilar el código Rego en WebAssembly.
+:keywords: ["{admc-name}", kubewarden, gatekeeper]
 :doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 :doc-type: [howto]
 :doc-topic: [operator-manual]
 
-Esta guía te muestra cómo convertir una directiva de Gatekeeper existente en una directiva de {project-name}. Este proceso implica dos pasos principales:
+Esta guía te muestra cómo convertir una directiva de Gatekeeper existente en una directiva de {admc-name}. Este proceso implica dos pasos principales:
 . Compila el programa Rego en un módulo de WebAssembly (Wasm).
-. Distribuye el módulo de WebAssembly como una directiva de {short-project-name}.
+. Distribuye el módulo de WebAssembly como una directiva de {admc-short-name}.
 
-El tutorial de xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[políticas Rego] cubre la mayor parte del proceso de construcción para compilar el código Rego en un módulo de WebAssembly. Esta guía se centra en el proceso paso a paso de extraer las definiciones de recursos personalizadas (CRDs) de Gatekeeper y migrarlas a una directiva funcional de {short-project-name}. Utiliza una directiva de demostración básica de Gatekeeper.
+El tutorial de xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[políticas Rego] cubre la mayor parte del proceso de construcción para compilar el código Rego en un módulo de WebAssembly. Esta guía se centra en el proceso paso a paso de extraer las definiciones de recursos personalizadas (CRDs) de Gatekeeper y migrarlas a una directiva funcional de {admc-short-name}. Utiliza una directiva de demostración básica de Gatekeeper.
 
 == Requisitos previos
 
 * link:https://github.com/open-policy-agent/opa/releases[opa]: utilizas esta herramienta para compilar el código en wasm. Esta guía fue escrita utilizando la versión `v1.5.1`.
-* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: herramienta que utilizas para preparar y ejecutar el módulo de WebAssembly {short-project-name}.
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: herramienta que utilizas para preparar y ejecutar el módulo de WebAssembly {admc-short-name}.
 * link:https://github.com/bats-core/bats-core[`bats`]: herramienta utilizada para ejecutar pruebas de extremo a extremo. Si decides escribir este tipo de pruebas
 * link:https://github.com/mikefarah/yq[`yq`]: herramienta utilizada para extraer datos de archivos YAML.
 
 == Antes de migrar tus directivas
 
-Antes de comenzar el proceso de migrar directivas de Gatekeeper, considera utilizar directivas ya disponibles en el {short-project-name} link:https://artifacthub.io/packages/search?kind=13[catálogo]. Algunas de las link:https://github.com/kubewarden/rego-policies-library[directivas] son directivas de OPA y Gatekeeper disponibles públicamente migradas a {short-project-name}.
+Antes de comenzar el proceso de migrar directivas de Gatekeeper, considera utilizar directivas ya disponibles en el {admc-short-name} link:https://artifacthub.io/packages/search?kind=13[catálogo]. Algunas de las link:https://github.com/kubewarden/rego-policies-library[directivas] son directivas de OPA y Gatekeeper disponibles públicamente migradas a {admc-short-name}.
 
-Además, echa un vistazo a nuestra documentación de xref:/explanations/comparisons/opa-comparison.adoc[comparación] entre {short-project-name} y Gatekeeper.
+Además, echa un vistazo a nuestra documentación de xref:/explanations/comparisons/opa-comparison.adoc[comparación] entre {admc-short-name} y Gatekeeper.
 
-== Paso 1: Inicializa tu proyecto de directiva {short-project-name}.
+== Paso 1: Inicializa tu proyecto de directiva {admc-short-name}.
 
-Primero, utiliza el Gatekeeper {short-project-name} link:https://github.com/kubewarden/gatekeeper-policy-template[plantilla] para crear una estructura básica del proyecto de directiva. Esto proporciona objetivos de Makefile para construir y probar tu directiva. Después de crear el código de directiva a partir de la plantilla, ejecuta los comandos de Makefile para verificar que la directiva se construya y las pruebas se realicen con éxito:
+Primero, utiliza el Gatekeeper {admc-short-name} link:https://github.com/kubewarden/gatekeeper-policy-template[plantilla] para crear una estructura básica del proyecto de directiva. Esto proporciona objetivos de Makefile para construir y probar tu directiva. Después de crear el código de directiva a partir de la plantilla, ejecuta los comandos de Makefile para verificar que la directiva se construya y las pruebas se realicen con éxito:
 
 [source,console]
 ----
@@ -48,9 +48,9 @@ PASS: 2/2
 
 == Paso 2: Migra el código de directiva de Gatekeeper.
 
-Ahora, comienza a migrar la directiva de Gatekeeper. Esto implica convertir un `ConstraintTemplate` y sus recursos asociados `Constraint` en una directiva {short-project-name}. En un contexto {short-project-name}, considera el `ConstraintTemplate` como el código de directiva principal, mientras que las instancias `Constraint` se traducen en instancias de directiva que se ejecutan dentro de {short-project-name}.
+Ahora, comienza a migrar la directiva de Gatekeeper. Esto implica convertir un `ConstraintTemplate` y sus recursos asociados `Constraint` en una directiva {admc-short-name}. En un contexto {admc-short-name}, considera el `ConstraintTemplate` como el código de directiva principal, mientras que las instancias `Constraint` se traducen en instancias de directiva que se ejecutan dentro de {admc-short-name}.
 
-Primero, copia el código Rego de tu `ConstraintTemplate` en el archivo `policy.rego` que generó la plantilla {short-project-name}. Para este ejemplo, deberías usar la siguiente link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[directiva de demostración] básica del repositorio de Gatekeeper.
+Primero, copia el código Rego de tu `ConstraintTemplate` en el archivo `policy.rego` que generó la plantilla {admc-short-name}. Para este ejemplo, deberías usar la siguiente link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[directiva de demostración] básica del repositorio de Gatekeeper.
 
 [.details]
 .YAML de directiva de Gatekeeper.
@@ -98,10 +98,10 @@ Copia el fragmento de código Rego del campo `rego` en tu archivo `policy.rego`:
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== Adapta el código Rego para {short-project-name}.
+=== Adapta el código Rego para {admc-short-name}.
 
 Debes asegurarte de que el nombre `package` utilizado dentro del código Rego sea `policy`.
-Este es el valor esperado en muchos lugares por la plantilla de Gatekeeper {short-project-name}.
+Este es el valor esperado en muchos lugares por la plantilla de Gatekeeper {admc-short-name}.
 
 Si no lo cambias, tendrás errores al construir la directiva y al ejecutar sus pruebas de extremo a extremo.
 
@@ -187,7 +187,7 @@ Lo que esto significa para ti:
 
 Aunque se recomienda encarecidamente, los autores de directivas pueden omitir la creación de pruebas para la versión inicial de una directiva. Si esto te aplica, necesitarás deshabilitar los objetivos de Makefile utilizados para ejecutar pruebas. No puedes eliminar estos objetivos por completo, ya que los trabajos CI predeterminados esperan que estén definidos. En su lugar, deberías reemplazar los comandos que llaman a `opa` y `bats` con una operación de "no-op". Por ejemplo, puedes usar un comando `echo` para imprimir una explicación de por qué no se están ejecutando las pruebas.
 
-La plantilla de Gatekeeper {short-project-name} incluye tanto pruebas unitarias de Rego como pruebas de extremo a extremo (e2e) utilizando Bats y `kwctl`. Si planeas incluir pruebas, ambos conjuntos necesitan ser adaptados para tu directiva.
+La plantilla de Gatekeeper {admc-short-name} incluye tanto pruebas unitarias de Rego como pruebas de extremo a extremo (e2e) utilizando Bats y `kwctl`. Si planeas incluir pruebas, ambos conjuntos necesitan ser adaptados para tu directiva.
 
 Si tu directiva de Gatekeeper ya tiene pruebas de Rego, puedes copiarlas en el archivo `policy_test.rego`. Estas se ejecutan automáticamente cuando ejecutas el comando `make test`.
 
@@ -398,7 +398,7 @@ spec:
 
 === Define la configuración de la directiva
 
-Esta directiva tiene parámetros, que Gatekeeper define dentro del `Constraint`. Debes actualizar la sección `settings` en el manifiesto de la directiva {short-project-name} generado para incluir estos parámetros requeridos. En el siguiente ejemplo, además de definir la configuración, puedes probar la directiva desde el registro OCI:
+Esta directiva tiene parámetros, que Gatekeeper define dentro del `Constraint`. Debes actualizar la sección `settings` en el manifiesto de la directiva {admc-short-name} generado para incluir estos parámetros requeridos. En el siguiente ejemplo, además de definir la configuración, puedes probar la directiva desde el registro OCI:
 
 [source,yaml]
 ----

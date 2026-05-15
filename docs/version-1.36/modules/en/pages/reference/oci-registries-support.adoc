@@ -1,9 +1,10 @@
 include::partial$variables.adoc[]
-= OCI registry support for {short-project-name}
+
+= OCI registry support for {admc-short-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Distribute {project-name} policies as OCI artifacts via regular Open Container Initiative (OCI) registries.
+:description: Distribute {admc-name} policies as OCI artifacts via regular Open Container Initiative (OCI) registries.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["distributing-policies", "oci-registries-support"]
 :doc-type: ["reference"]
@@ -12,17 +13,17 @@ include::partial$variables.adoc[]
 :sidebar_position: 70
 :current-version: {page-origin-branch}
 
-You distribute your {project-name} policies as
+You distribute your {admc-name} policies as
 https://opencontainers.org[OCI Artifacts]
 using regular Open Container Initiative (OCI) registries.
 
-{short-project-name} policy storage is alongside container images.
+{admc-short-name} policy storage is alongside container images.
 They don't require extra setup or maintenance
 other than that needed for regular container images.
 
 [NOTE]
 ====
-You can add a registry that works with {short-project-name} or
+You can add a registry that works with {admc-short-name} or
 correct any registry inaccuracies by using the
 "Edit this page" button at the bottom of the page
 ====
@@ -47,9 +48,9 @@ correct any registry inaccuracies by using the
 
 == Tools that work with OCI registries
 
-The {short-project-name} project recommends:
+The {admc-short-name} project recommends:
 
-* https://github.com/kubewarden/kwctl[`kwctl`] (our CLI tool).
+* xref:/reference/kwctl-cli.adoc[`kwctl`] (our CLI tool).
 * https://github.com/containers/skopeo[Skopeo] (https://github.com/containers/skopeo/pull/1705[≥ 1.9.0]).
 * https://github.com/google/go-containerregistry/blob/main/cmd/crane/README.md[Crane].
 
@@ -57,7 +58,7 @@ The {short-project-name} project recommends:
 
 === Docker Hub
 
-Currently, Docker Hub doesn't support OCI artifacts so can't be used to store {short-project-name} policies.
+Currently, Docker Hub doesn't support OCI artifacts so can't be used to store {admc-short-name} policies.
 Docker Inc. has announced that Docker Hub will support OCI artifacts in the
 https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[future].
 
@@ -65,4 +66,4 @@ https://www.docker.com/blog/announcing-docker-hub-oci-artifacts-support/[future]
 
 Although JFrog supports OCI artifacts,
 it's only partially possible to push to it, when following their specification.
-https://github.com/kubewarden/kwctl/issues/59[Read more here].
+https://github.com/kubewarden/adm-controller/issues/59[Read more here].

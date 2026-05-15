@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "audit-scanner"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "kubewarden", "audit scanner", "kubernetes"]
+:keywords: ["{admc-name}", "kubewarden", "audit scanner", "kubernetes"]
 :sidebar_label: Escáner de Auditoría
 :sidebar_position: 50
 :current-version: {page-origin-branch}
@@ -15,21 +15,21 @@ include::partial$variables.adoc[]
 [NOTE]
 ====
 
-La función Audit Scanner está disponible a partir de la versión {project-name} 1.7.0
+La función Audit Scanner está disponible a partir de la versión {admc-name} 1.7.0
 
 ====
 
 
-El componente `audit-scanner` comprueba constantemente los recursos en el clúster. Marca aquellos que no cumplen con las políticas {short-project-name} desplegadas en el clúster.
+El componente `audit-scanner` comprueba constantemente los recursos en el clúster. Marca aquellos que no cumplen con las políticas {admc-short-name} desplegadas en el clúster.
 
 Las políticas evolucionan con el tiempo. Hay nuevos despliegues de políticas y actualizaciones de políticas.
 Las versiones y configuraciones cambian. Esto puede dar lugar a situaciones en las que los recursos ya presentes en el clúster ya no son conformes. La función Audit Scanner proporciona a los administradores de Kubernetes una herramienta que verifica constantemente el estado de conformidad de sus clústeres.
 
-Para explicar el uso del Audit Scanner en {short-project-name}, considera el siguiente escenario.
+Para explicar el uso del Audit Scanner en {admc-short-name}, considera el siguiente escenario.
 
 Supón que Bob está desplegando un Pod de WordPress en el clúster. Bob es nuevo en Kubernetes, comete un error y despliega el Pod ejecutándose como un contenedor privilegiado. En este punto, no hay ninguna política que lo impida, por lo que el Pod se crea con éxito en el clúster.
 
-Unos días después, Alice, la administradora de Kubernetes, aplica una política {short-project-name} que prohíbe la creación de contenedores privilegiados. El Pod desplegado por Bob sigue ejecutándose en el clúster ya que ya existe.
+Unos días después, Alice, la administradora de Kubernetes, aplica una política {admc-short-name} que prohíbe la creación de contenedores privilegiados. El Pod desplegado por Bob sigue ejecutándose en el clúster ya que ya existe.
 
 Un informe generado por el Audit Scanner permite a Alice identificar todas las cargas de trabajo que están violando las políticas de creación. Esto incluye el Pod de WordPress creado por Bob.
 
@@ -43,7 +43,7 @@ Para la política que evalúa la solicitud, no hay diferencias entre las solicit
 
 == Habilitar Audit Scanner
 
-Puedes habilitar el Audit Scanner a partir de la versión {short-project-name} 1.7.0.
+Puedes habilitar el Audit Scanner a partir de la versión {admc-short-name} 1.7.0.
 
 Las instrucciones de instalación detalladas están en el xref:howtos/audit-scanner.adoc[instrucciones del Audit Scanner].
 
@@ -51,7 +51,7 @@ Las instrucciones de instalación detalladas están en el xref:howtos/audit-scan
 
 Por defecto, el Audit Scanner evalúa cada directiva. Los operadores que deseen omitir una evaluación de directiva en el Audit Scanner deben establecer el campo `spec.backgroundAudit` en `false` en la definición de la directiva.
 
-Además, las políticas en {short-project-name} ahora admiten dos anotaciones opcionales:
+Además, las políticas en {admc-short-name} ahora admiten dos anotaciones opcionales:
 
 * La anotación `io.kubewarden.policy.severity` te permite especificar el nivel de gravedad de la violación de la directiva, como `critical`, `high`, `medium`, `low` o `info`.
 * La anotación `io.kubewarden.policy.category` te permite categorizar la directiva en función de un dominio o propósito específico, como `PSP`, `compliance` o `performance`.
@@ -60,8 +60,8 @@ Consulta la xref:tutorials/writing-policies/index.adoc[documentación] de los au
 
 == Permisos y Cuentas de Servicio
 
-El Audit Scanner en {short-project-name} requiere configuraciones específicas de control de acceso basado en funciones (RBAC) para poder escanear recursos de Kubernetes y guardar los resultados. La instalación crea una Cuenta de Servicio predeterminada correcta con esos permisos. El usuario puede crear su propia Cuenta de Servicio para configurar el acceso a los recursos.
+El Audit Scanner en {admc-short-name} requiere configuraciones específicas de control de acceso basado en funciones (RBAC) para poder escanear recursos de Kubernetes y guardar los resultados. La instalación crea una Cuenta de Servicio predeterminada correcta con esos permisos. El usuario puede crear su propia Cuenta de Servicio para configurar el acceso a los recursos.
 
 El Audit Scanner por defecto `ServiceAccount` se vincula al `view` `ClusterRole` proporcionado por Kubernetes. Este `ClusterRole` permite el acceso de solo lectura a una amplia gama de recursos de Kubernetes dentro de un espacio de nombres. Puedes encontrar más detalles sobre este rol en la https://kubernetes.io/docs/reference/access-authn-authz/rbac/#user-facing-roles[documentación de Kubernetes].
 
-El Audit Scanner se vincula a un `ClusterRole` que otorga acceso de lectura a {short-project-name} tipos de recursos y acceso de lectura-escritura a los `PolicyReport` CRDs.  Estos permisos permiten al Audit Scanner obtener recursos para realizar evaluaciones de auditoría y crear informes de directivas basados en los resultados de la evaluación.
+El Audit Scanner se vincula a un `ClusterRole` que otorga acceso de lectura a {admc-short-name} tipos de recursos y acceso de lectura-escritura a los `PolicyReport` CRDs.  Estos permisos permiten al Audit Scanner obtener recursos para realizar evaluaciones de auditoría y crear informes de directivas basados en los resultados de la evaluación.

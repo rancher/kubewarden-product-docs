@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Befolgen Sie diese wesentlichen Schritte, um Richtlinien effektiv für Ihr {project-name}-Setup zu erstellen und zu verteilen.
+:description: Befolgen Sie diese wesentlichen Schritte, um Richtlinien effektiv für Ihr {admc-name}-Setup zu erstellen und zu verteilen.
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-operator"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "build-and-distribute"]
 :doc-type: ["tutorial"]
@@ -36,17 +36,17 @@ policy.wasm: WebAssembly (wasm) binary module version 0x1 (MVP)
 
 == Verteilen der Richtlinie
 
-{project-name} dokumentiert die Verteilung von Richtlinien im
+{admc-name} dokumentiert die Verteilung von Richtlinien im
 xref:../../../explanations/distributing-policies.adoc[Verteilen von Richtlinien]
 Abschnitt.
 
 == Weitere Beispiele
 
-Sie finden weitere Rust {short-project-name}-Richtlinien im GitHub-Bereich von {short-project-name}.
+Sie finden weitere Rust {admc-short-name}-Richtlinien im GitHub-Bereich von {admc-short-name}.
 https://github.com/search?l=Rust&q=topic%3Apolicy-as-code+org%3Akubewarden&type=Repositories[Diese Abfrage]
 kann Ihnen helfen, sie zu finden.
 
-Die {short-project-name}-Richtlinien-Repositories, die durch diese Abfrage angezeigt werden, haben GitHub-Aktionen, die die folgenden Aufgaben automatisieren:
+Die {admc-short-name}-Richtlinien-Repositories, die durch diese Abfrage angezeigt werden, haben GitHub-Aktionen, die die folgenden Aufgaben automatisieren:
 
 * Führen Sie Unit-Tests und Code-Linting bei Pull-Requests und nach Code-Merges in den Hauptzweig aus.
 * Erstellen Sie die Richtlinie im `release`-Modus und pushen Sie sie als Artefakt in eine OCI-Registry.

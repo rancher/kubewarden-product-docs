@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: サポートされているバージョニング戦略とそのコンポーネント間の互換性ルールを使用して、{project-name}スタックをアップグレードします。
+:description: サポートされているバージョニング戦略とそのコンポーネント間の互換性ルールを使用して、{admc-name}スタックをアップグレードします。
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["operator-manual", "upgrade-path"]
 :doc-type: ["reference"]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== {project-name}スタックのバージョニング
+== {admc-name}スタックのバージョニング
 
-{short-project-name}プロジェクトは、https://semver.org/[セマンティックバージョニング]を使用して、すべてのコンポーネントの「スタック」バージョンを定義します：バージョンは`MAJOR.MINOR.PATCH`パターンに従います。サポートされているバージョンは最新のリリースです。
+{admc-short-name}プロジェクトは、https://semver.org/[セマンティックバージョニング]を使用して、すべてのコンポーネントの「スタック」バージョンを定義します：バージョンは`MAJOR.MINOR.PATCH`パターンに従います。サポートされているバージョンは最新のリリースです。
 
-「スタック」バージョンのルールに従う{short-project-name}コンポーネントは次のとおりです：
+「スタック」バージョンのルールに従う{admc-short-name}コンポーネントは次のとおりです：
 
 * `kubewarden-crds`チャートのappVersionフィールド。
 
@@ -36,7 +36,7 @@ include::partial$variables.adoc[]
 
 == Helmチャートのバージョン
 
-Helmチャートは、`version`フィールドと`appVersion`フィールドを定義します。`appVersion`フィールドは、前述の{short-project-name}「スタック」バージョンを通知します。`version`フィールドはhttps://semver.org/[セマンティックバージョニング]に従い、チャートテンプレートおよび`values.yaml`の後方互換性のある変更を説明します。
+Helmチャートは、`version`フィールドと`appVersion`フィールドを定義します。`appVersion`フィールドは、前述の{admc-short-name}「スタック」バージョンを通知します。`version`フィールドはhttps://semver.org/[セマンティックバージョニング]に従い、チャートテンプレートおよび`values.yaml`の後方互換性のある変更を説明します。
 
 == アップグレードパス
 
@@ -49,16 +49,16 @@ include::latest@shared:en:partial$upg-path.adoc[]
 
 == アップグレードの順序
 
-{short-project-name}ユーザーは`kubewarden-crds`チャートから始めてスタックをアップグレードし、その後`kubewarden-controller`チャートをアップグレードする必要があります。その後、`policy-server`をアップグレードします（`kubewarden-defaults`チャートを介してまたはカスタムのイメージをバンプして）および`kwctl`。
+{admc-short-name}ユーザーは`kubewarden-crds`チャートから始めてスタックをアップグレードし、その後`kubewarden-controller`チャートをアップグレードする必要があります。その後、`policy-server`をアップグレードします（`kubewarden-defaults`チャートを介してまたはカスタムのイメージをバンプして）および`kwctl`。
 
 == ダウングレード
 
-ダウングレードは*サポートされていません*、{short-project-name}はそれらをテストしません。それにもかかわらず、ダウングレードが機能することに対する合理的な期待があります。
+ダウングレードは*サポートされていません*、{admc-short-name}はそれらをテストしません。それにもかかわらず、ダウングレードが機能することに対する合理的な期待があります。
 
 == SDK、ポリシー
 
-異なる言語とポリシーのためのポリシーSDKは、{short-project-name}チームによって維持されており、それぞれ独自のセマンティックバージョニングに従います。{short-project-name}は最新のリリースをサポートしています。彼らのためのアップグレードパスは必要なく、最新のリリースにバンプするだけです。
+異なる言語とポリシーのためのポリシーSDKは、{admc-short-name}チームによって維持されており、それぞれ独自のセマンティックバージョニングに従います。{admc-short-name}は最新のリリースをサポートしています。彼らのためのアップグレードパスは必要なく、最新のリリースにバンプするだけです。
 
-{short-project-name}スタックへの変更は、ポリシーとSDKが最新の{short-project-name}機能を使用するために更新されることを意味するかもしれません。{short-project-name}は、これらの更新を後方互換性を保つ形で行うよう注意しています。
+{admc-short-name}スタックへの変更は、ポリシーとSDKが最新の{admc-short-name}機能を使用するために更新されることを意味するかもしれません。{admc-short-name}は、これらの更新を後方互換性を保つ形で行うよう注意しています。
 
-例えば、{short-project-name}のマイナーバージョンで監査スキャナー（`v1.7.0`）のサポートが追加される場合、ポリシーに新しい`spec.backgroundAudit`フィールドが追加されたことを意味します。これはオプションであり、後方互換性があり、デフォルトで`true`に設定されています。
+例えば、{admc-short-name}のマイナーバージョンで監査スキャナー（`v1.7.0`）のサポートが追加される場合、ポリシーに新しい`spec.backgroundAudit`フィールドが追加されたことを意味します。これはオプションであり、後方互換性があり、デフォルトで`true`に設定されています。

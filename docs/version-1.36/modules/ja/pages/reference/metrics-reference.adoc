@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: {project-name}の公開されたプラットフォームメトリクスを使用して、クラスターのメトリクスとパターンを探索し、意思決定プロセスを支援します。
+:description: {admc-name}の公開されたプラットフォームメトリクスを使用して、クラスターのメトリクスとパターンを探索し、意思決定プロセスを支援します。
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "reference"]
 :doc-type: ["reference"]
@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 30
 :current-version: {page-origin-branch}
 
-{short-project-name}は関連するプラットフォームメトリクスを公開し、クラスター管理者やポリシー開発者がパターンや潜在的な問題を特定できるようにします。
+{admc-short-name}は関連するプラットフォームメトリクスを公開し、クラスター管理者やポリシー開発者がパターンや潜在的な問題を特定できるようにします。
 
 == ポリシーサーバー
 

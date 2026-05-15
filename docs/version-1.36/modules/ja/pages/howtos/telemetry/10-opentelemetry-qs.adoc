@@ -13,19 +13,19 @@ include::partial$variables.adoc[]
 
 https://opentelemetry.io/[OpenTelemetry]は、Cloud Native Computing Foundation (CNCF)の監視のためのフレームワークです。マイクロサービスがメトリクス、ログ、およびトレースを提供できるようにします。
 
-{project-name}のコンポーネントは、OpenTelemetry SDKを使用して、データをOpenTelemetryコレクター（エージェントと呼ばれる）に報告します。
+{admc-name}のコンポーネントは、OpenTelemetry SDKを使用して、データをOpenTelemetryコレクター（エージェントと呼ばれる）に報告します。
 
 このガイドでは、公式Kubernetes Helmチャートを使用して、`sidecar`モードでOpenTelemetryコレクターをデプロイする方法を説明します。
 
 これはOpenTelemetryを使用したシンプルなデプロイメントパターンです。最終的なセットアップは次のようになります：
 
-* {short-project-name}スタック（ポリシーサーバー、コントローラー）の各PodにはOpenTelemetryサイドカーがあります。
-* サイドカーは、OpenTelemetryプロトコル（OTLP）を介して{short-project-name}コンポーネントからトレースおよび監視情報を受信します。
+* {admc-short-name}スタック（ポリシーサーバー、コントローラー）の各PodにはOpenTelemetryサイドカーがあります。
+* サイドカーは、OpenTelemetryプロトコル（OTLP）を介して{admc-short-name}コンポーネントからトレースおよび監視情報を受信します。
 * OpenTelemetryコレクター：
  ** トレースイベントを中央のJaegerインスタンスに送信します。
  ** 特定のポートでPrometheusメトリクスを公開します。
 
-{short-project-name} Helmチャートは、OpenTelemetryコレクターのすべての可能なデプロイメントシナリオをカバーしていません。{short-project-name}を構成して、OpenTelemetryコレクターにデータを送信することも可能です。そのシナリオに関するドキュメントは、xref:./40-custom-otel-collector.adoc[カスタム
+{admc-short-name} Helmチャートは、OpenTelemetryコレクターのすべての可能なデプロイメントシナリオをカバーしていません。{admc-short-name}を構成して、OpenTelemetryコレクターにデータを送信することも可能です。そのシナリオに関するドキュメントは、xref:./40-custom-otel-collector.adoc[カスタム
 OpenTelemetryガイド]にあります。
 
 最初にKubernetesクラスターにOpenTelemetryをデプロイし、次のセクションでトレースとメトリクスに特に対処できるようにします。

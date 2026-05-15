@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Erstellen Sie eine neue Validierungsrichtlinie, um ungültige Hostnamen in Pod-Objekten durch die Konfiguration von Richtlinieneinstellungen abzulehnen, getestet mit den bereitgestellten Werkzeugen.
-:keywords: {project-name}, kubewarden, Kubernetes, Richtlinien in TypeScript schreiben, neue Validierungsrichtlinie
+:keywords: {admc-name}, kubewarden, Kubernetes, Richtlinien in TypeScript schreiben, neue Validierungsrichtlinie
 :doc-type: Anleitung
-:doc-topic: {project-name}, kubewarden, Richtlinien schreiben, TypeScript, eine neue Validierungsrichtlinie erstellen
+:doc-topic: {admc-name}, kubewarden, Richtlinien schreiben, TypeScript, eine neue Validierungsrichtlinie erstellen
 :doc-persona: Kubewarden-Richtlinienentwickler
 :current-version: {page-origin-branch}
 

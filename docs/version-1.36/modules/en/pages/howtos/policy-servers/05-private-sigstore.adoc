@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Configuring PolicyServers to use a private Sigstore instance
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:description: Configuring PolicyServers to use a private or self-hosted Sigstore instance for policy signature verification in {project-name}.
+:description: Configuring PolicyServers to use a private or self-hosted Sigstore instance for policy signature verification in {admc-name}.
 :keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-type: ["howto"]
@@ -59,7 +59,7 @@ kubectl get secret -o json -n tuf-system ctlog-public-key \
 ====
 
 Make sure that you safely download the certificates and keys from your
-Sigstore instance. Otherwise, you may end up configuring {project-name}
+Sigstore instance. Otherwise, you may end up configuring {admc-name}
 with compromised data.
 
 The above commands are examples of how to do that in a testing environment.
@@ -178,7 +178,7 @@ kubectl --namespace kubewarden create configmap my-verification-config \
 [NOTE]
 ====
 The ConfigMap key **must** be `verification-config` (not the filename).
-{short-project-name} looks for this exact key.
+{admc-short-name} looks for this exact key.
 ====
 
 == Step 4 - Configure the PolicyServer
@@ -193,7 +193,7 @@ kind: PolicyServer
 metadata:
   name: default
 spec:
-  image: ghcr.io/kubewarden/policy-server:latest
+  image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
   replicas: 1
   sigstoreTrustConfig: my-sigstore-trust-config
   verificationConfig: my-verification-config

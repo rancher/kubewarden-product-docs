@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Atualize sua pilha {project-name} usando estratégias de versionamento suportadas e regras de compatibilidade entre seus componentes.
+:description: Atualize sua pilha {admc-name} usando estratégias de versionamento suportadas e regras de compatibilidade entre seus componentes.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["operator-manual", "upgrade-path"]
 :doc-type: ["reference"]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 20
 :current-version: {page-origin-branch}
 
-== {project-name}Versionamento da pilha
+== {admc-name}Versionamento da pilha
 
-O projeto {short-project-name} utiliza https://semver.org/[Versionamento semântico] para definir a versão da "pilha" de todos os seus componentes: a versão segue o padrão `MAJOR.MINOR.PATCH`. A versão suportada é a última versão lançada.
+O projeto {admc-short-name} utiliza https://semver.org/[Versionamento semântico] para definir a versão da "pilha" de todos os seus componentes: a versão segue o padrão `MAJOR.MINOR.PATCH`. A versão suportada é a última versão lançada.
 
-Os componentes {short-project-name} que seguem as regras para a versão da "pilha" são:
+Os componentes {admc-short-name} que seguem as regras para a versão da "pilha" são:
 
 * `kubewarden-crds` gráfico, no campo appVersion deles.
 
@@ -36,7 +36,7 @@ Portanto, se a versão `kubewarden-controller` em execução for `1.1.2`, a vers
 
 == Versões de gráficos Helm
 
-Os gráficos Helm definem o `version` campo e o `appVersion` campo. O campo `appVersion` informa a versão da {short-project-name} "pilha" conforme mencionado anteriormente. O `version` campo também segue https://semver.org/[versionamento semântico] e descreve mudanças compatíveis com versões anteriores nos templates de gráficos e `values.yaml`.
+Os gráficos Helm definem o `version` campo e o `appVersion` campo. O campo `appVersion` informa a versão da {admc-short-name} "pilha" conforme mencionado anteriormente. O `version` campo também segue https://semver.org/[versionamento semântico] e descreve mudanças compatíveis com versões anteriores nos templates de gráficos e `values.yaml`.
 
 == Caminhos de fazer upgrade
 
@@ -49,16 +49,16 @@ include::latest@shared:en:partial$upg-path.adoc[]
 
 == Ordem de fazer upgrade
 
-Os {short-project-name} usuários devem fazer upgrade da pilha começando pelo `kubewarden-crds` gráfico, depois o `kubewarden-controller` gráfico. Depois disso, faça upgrade do `policy-server` (via `kubewarden-defaults` gráfico ou atualizando as imagens dos personalizados) e `kwctl`.
+Os {admc-short-name} usuários devem fazer upgrade da pilha começando pelo `kubewarden-crds` gráfico, depois o `kubewarden-controller` gráfico. Depois disso, faça upgrade do `policy-server` (via `kubewarden-defaults` gráfico ou atualizando as imagens dos personalizados) e `kwctl`.
 
 == Downgrades
 
-Downgrades não são suportados, e {short-project-name} não os testa. No entanto, há uma expectativa razoável de que eles devam funcionar.
+Downgrades não são suportados, e {admc-short-name} não os testa. No entanto, há uma expectativa razoável de que eles devam funcionar.
 
 == SDKs, políticas
 
-Os SDKs de políticas para as diferentes linguagens e políticas mantidas pela {short-project-name} equipe seguem seu próprio versionamento semântico. {short-project-name} suporta a versão mais recente. Não há necessidade de um caminho de upgrade para eles, apenas um upgrade para a versão mais recente.
+Os SDKs de políticas para as diferentes linguagens e políticas mantidas pela {admc-short-name} equipe seguem seu próprio versionamento semântico. {admc-short-name} suporta a versão mais recente. Não há necessidade de um caminho de upgrade para eles, apenas um upgrade para a versão mais recente.
 
-Mudanças na pilha {short-project-name} podem significar que políticas e SDKs recebam atualizações para usar os novos recursos do {short-project-name}. {short-project-name} se preocupa em realizar essas atualizações de maneira compatível com versões anteriores.
+Mudanças na pilha {admc-short-name} podem significar que políticas e SDKs recebam atualizações para usar os novos recursos do {admc-short-name}. {admc-short-name} se preocupa em realizar essas atualizações de maneira compatível com versões anteriores.
 
-Por exemplo, uma versão menor do {short-project-name} que adiciona suporte para o Audit Scanner (`v1.7.0`) significa que as políticas ganharam um novo campo `spec.backgroundAudit`. Isso é opcional, compatível com versões anteriores e definido como `true` por padrão.
+Por exemplo, uma versão menor do {admc-short-name} que adiciona suporte para o Audit Scanner (`v1.7.0`) significa que as políticas ganharam um novo campo `spec.backgroundAudit`. Isso é opcional, compatível com versões anteriores e definido como `true` por padrão.

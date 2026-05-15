@@ -36,4 +36,4 @@ Elas devem retornar um objeto `AdmissionReview` válido como os resultados da av
 
 Todas as políticas podem ser compiladas para o alvo `wasm` (WebAssembly) com a ferramenta CLI oficial `opa`.
 
-Em termos de execução de políticas, você pode ler mais sobre o suporte xref:tutorials/writing-policies/rego/02-builtin-support.adoc[incorporado do OPA] implementado em {short-project-name}.
+Em termos de execução de políticas, você pode ler mais sobre o suporte xref:tutorials/writing-policies/rego/02-builtin-support.adoc[incorporado do OPA] implementado em {admc-short-name}.

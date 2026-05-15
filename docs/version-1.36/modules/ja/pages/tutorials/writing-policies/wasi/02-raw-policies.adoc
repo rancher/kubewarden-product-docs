@@ -215,7 +215,7 @@ func validateCliSettings(settings *Settings) SettingsValidationResponse {
 }
 ----
 
-Kubernetes固有の型を削除し、代わりに`ValidationResponse`型を使用するために、`MutateRequest`構造体と`kw_sdk.go`関数を{short-project-name}で更新する必要があります。
+Kubernetes固有の型を削除し、代わりに`ValidationResponse`型を使用するために、`MutateRequest`構造体と`kw_sdk.go`関数を{admc-short-name}で更新する必要があります。
 
 [,go]
 ----

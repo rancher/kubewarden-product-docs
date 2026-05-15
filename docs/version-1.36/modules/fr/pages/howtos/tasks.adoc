@@ -4,27 +4,27 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Gérez les stratégies dans votre cluster Kubernetes avec {project-name} en utilisant l'outil CLI kwctl.
+:description: Gérez les stratégies dans votre cluster Kubernetes avec {admc-name} en utilisant l'outil CLI kwctl.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["common-tasks"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "kwctl", "stratégie", "serveur de stratégie", "stratégie d'admission de cluster", "stratégie d'admission"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "kwctl", "stratégie", "serveur de stratégie", "stratégie d'admission de cluster", "stratégie d'admission"]
 :current-version: {page-origin-branch}
 
-Cela décrit les tâches courantes après que vous xref:quick-start.adoc#installation[installiez {project-name}] dans votre cluster Kubernetes.
+Cela décrit les tâches courantes après que vous xref:quick-start.adoc#installation[installiez {admc-name}] dans votre cluster Kubernetes.
 
 Les tâches séparées sont dans un ordre logique.
 
 == Tester les stratégies
 
-{short-project-name} utilise deux outils pour vous aider à trouver des stratégies et à les tester localement :
+{admc-short-name} utilise deux outils pour vous aider à trouver des stratégies et à les tester localement :
 
-* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub], en utilisant leur filtre de paquet pour les stratégies {short-project-name}
+* https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[Artifact Hub], en utilisant leur filtre de paquet pour les stratégies {admc-short-name}
 * https://github.com/kubewarden/kwctl[`kwctl`], un outil CLI
 
 === Artifact Hub
 
-Artifact Hub héberge des stratégies contribuées par la communauté. Par exemple, vous pouvez trouver des substituts aux https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[stratégies de sécurité de pod Kubernetes dont la prise en charge a cessé], créées par les développeurs {short-project-name}.
+Artifact Hub héberge des stratégies contribuées par la communauté. Par exemple, vous pouvez trouver des substituts aux https://kubernetes.io/blog/2021/04/06/podsecuritypolicy-deprecation-past-present-and-future/[stratégies de sécurité de pod Kubernetes dont la prise en charge a cessé], créées par les développeurs {admc-short-name}.
 
 Comme indiqué dans la capture d'écran ci-dessous, une fois que vous trouvez une stratégie d'intérêt, sélectionnez le bouton `Install` et utilisez `kwctl` pour récupérer la stratégie pour votre cluster.
 
@@ -33,7 +33,7 @@ image::tasks-artifact-hub.png[Artifact Hub]
 [NOTE]
 ====
 
-Auparavant, les stratégies {short-project-name} pouvaient être trouvées au https://hub.kubewarden.io[{short-project-name} Hub de stratégies]. Ceci a été https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retiré].
+Auparavant, les stratégies {admc-short-name} pouvaient être trouvées au https://hub.kubewarden.io[{admc-short-name} Hub de stratégies]. Ceci a été https://www.kubewarden.io/blog/2022/07/artifact-hub-supports-kubewarden/[retiré].
 Les stratégies sont désormais disponibles à partir de https://artifacthub.io/packages/search?kind=13&sort=relevance&page=1[https://artifacthub.io].
 
 ====
@@ -41,7 +41,7 @@ Les stratégies sont désormais disponibles à partir de https://artifacthub.io/
 
 === `kwctl` outil CLI
 
-`kwctl` est l'outil CLI de {short-project-name} pour les auteurs de stratégies et les administrateurs de clusters afin de tester les stratégies avant leur application à un cluster Kubernetes.
+`kwctl` est l'outil CLI de {admc-short-name} pour les auteurs de stratégies et les administrateurs de clusters afin de tester les stratégies avant leur application à un cluster Kubernetes.
 
 Cet outil a une interface similaire à celle de l'outil CLI `docker`.
 
@@ -74,8 +74,8 @@ Vous pouvez lister toutes les options et sous-commandes `kwctl` en exécutant la
 ----
 $ kwctl --help
 kwctl 0.2.5
-{short-project-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
-Tool to manage {short-project-name} policies
+{admc-short-name} Developers <cncf-kubewarden-maintainers@lists.cncf.io>
+Tool to manage {admc-short-name} policies
 
 USAGE:
     kwctl [OPTIONS] <SUBCOMMAND>
@@ -86,18 +86,18 @@ OPTIONS:
     -V, --version    Print version information
 
 SUBCOMMANDS:
-    annotate       Add {short-project-name} metadata to a WebAssembly module
+    annotate       Add {admc-short-name} metadata to a WebAssembly module
     completions    Generate shell completions
     digest         Fetch the digest of its OCI manifest
     help           Print this message or the help of the given subcommand(s)
-    inspect        Inspect {short-project-name} policy
+    inspect        Inspect {admc-short-name} policy
     policies       Lists all downloaded policies
-    pull           Pulls a {short-project-name} policy from a given URI
-    push           Pushes a {short-project-name} policy to an OCI registry
-    rm             Removes a {short-project-name} policy from the store
-    run            Runs a {short-project-name} policy from a given URI
+    pull           Pulls a {admc-short-name} policy from a given URI
+    push           Pushes a {admc-short-name} policy to an OCI registry
+    rm             Removes a {admc-short-name} policy from the store
+    run            Runs a {admc-short-name} policy from a given URI
     scaffold       Scaffold a Kubernetes resource or configuration file
-    verify         Verify a {short-project-name} policy from a given URI using Sigstore
+    verify         Verify a {admc-short-name} policy from a given URI using Sigstore
 ----
 
 Voici quelques exemples d'utilisation de commandes :
@@ -261,5 +261,5 @@ Après avoir déployé le `ClusterAdmissionPolicy`, toutes les requêtes envoyé
 
 == Étapes suivantes
 
-* xref:tutorials/writing-policies/index.adoc[Rédaction de stratégies] explique comment rédiger des stratégies dans différents langages et générer des binaires WebAssembly, afin qu'ils puissent être utilisés par {short-project-name}.
+* xref:tutorials/writing-policies/index.adoc[Rédaction de stratégies] explique comment rédiger des stratégies dans différents langages et générer des binaires WebAssembly, afin qu'ils puissent être utilisés par {admc-short-name}.
 * xref:../explanations/distributing-policies.adoc[Distribution de stratégies] explique comment publier des stratégies sur https://github.com/opencontainers/distribution-spec/blob/main/spec.md[registres OCI].

@@ -41,16 +41,16 @@ Kubernetes CEL validation rules have access to several function libraries:
 with supplemental functions for lists, regex, URLs, authorizers, quantities,
 optional types, numerical comparisons, etc.
 
-== CEL in {project-name}: `cel-policy`
+== CEL in {admc-name}: `cel-policy`
 
-{short-project-name} provides https://github.com/kubewarden/cel-policy[cel-policy].
+{admc-short-name} provides https://github.com/kubewarden/cel-policy[cel-policy].
 This is a policy that builds and bundles the upstream
 https://pkg.go.dev/github.com/google/cel-go[cel-go] interpreter, and also the
 different libraries listed above and available for CEL in Kubernetes from
 `apiextensions-apiserver`.
 
-In addition, `cel-policy` bundles a *{short-project-name} CEL extension library* that exposes
-{short-project-name}'s https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native
+In addition, `cel-policy` bundles a *{admc-short-name} CEL extension library* that exposes
+{admc-short-name}'s https://github.com/kubewarden/cel-policy?tab=readme-ov-file#host-capabilities[host capabilities as native
 CEL]:
 
 * Sigstore verification
@@ -61,7 +61,7 @@ CEL]:
 
 This means that `cel-policy` is a superset of Kubernetes CEL,
 and backwards-compatible. One can reuse CEL written for vanilla Kubernetes, and/or
-make use of the features added by {short-project-name}.
+make use of the features added by {admc-short-name}.
 
 The `cel-policy` is shipped compiled and behaves as a CEL interpreter. Users of
 the policy pass the desired CEL expressions in the `spec.settings` of the
@@ -70,18 +70,18 @@ compiled and typed-checked for correctness when creating or updating the
 (Cluster)AdmissionPolicy. This means there's no need for custom builds of the
 `cel-policy`.
 
-=== Benefits of {short-project-name}'s `cel-policy` in comparison with ValidatingAdmissionPolicies
+=== Benefits of {admc-short-name}'s `cel-policy` in comparison with ValidatingAdmissionPolicies
 
-The {short-project-name} `cel-policy`:
+The {admc-short-name} `cel-policy`:
 
 * It's CEL code is backwards-compatible with ValidatingAdmissionPolicies.
 * Contrary to ValidatingAdmissionPolicies, it doesn't need a binding such as
-ValidatingAdmissionPolicyBinding, as this is included in {short-project-name}'s
+ValidatingAdmissionPolicyBinding, as this is included in {admc-short-name}'s
 (Cluster)Admissionpolicies definitions.
 * Can be deployed to clusters that lack ValidatingAdmissionPolicies support.
-* Is context-aware, and makes use of {short-project-name}'s fine-grained permissions
+* Is context-aware, and makes use of {admc-short-name}'s fine-grained permissions
 for xref:../../../reference/spec/05-context-aware-policies.adoc[context awareness].
 * Is deployed as (Cluster)AdmissionPolicy.
-* Benefits from {short-project-name}'s tracing and telemetry on policies.
+* Benefits from {admc-short-name}'s tracing and telemetry on policies.
 * It will be taken into account by the Audit Scanner.
 * Can be developed and tested out-of-cluster thanks to kwctl.

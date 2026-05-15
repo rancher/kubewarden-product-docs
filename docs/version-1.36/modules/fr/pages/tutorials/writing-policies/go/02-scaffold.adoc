@@ -93,7 +93,7 @@ Une véritable stratégie utiliserait un chemin de dépôt, comme `github.com/ku
 À condition que les outils nécessaires soient en place, une commande `make test` utilise Docker pour tirer une image de compilateur TinyGo en l'utilisant pour construire et tester le modèle de stratégie.
 
 La commande par défaut `make` construit la cible `policy.wasm`. Ensuite, `make test` exécute les tests Go définis.
-La commande `make e2e-tests` exécute des tests en utilisant https://github.com/bats-core/bats-core[bats] dans un cluster {short-project-name}.
+La commande `make e2e-tests` exécute des tests en utilisant https://github.com/bats-core/bats-core[bats] dans un cluster {admc-short-name}.
 Après avoir cloné le `go-policy-template`, l'exécution de ces commandes vérifie que vous avez les outils nécessaires pour le tutoriel.
 
 .Sortie des commandes `make`

@@ -5,7 +5,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: 任意のKubernetesクラスターでrancher-backupオペレーターを使用してバックアップと復元を構成および管理します。
-:keywords: "{project-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
+:keywords: "{admc-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: HOWTO(操作方法)
 :doc-topic: operator-manual, rancher-backup-operator
@@ -13,11 +13,11 @@ include::partial$variables.adoc[]
 
 `rancher-backup`オペレーターは、任意のKubernetesクラスター上でRancherのバックアップと復元に使用できます。
 
-バージョン`v9.0.0`以降、`rancher-backup`は{project-name}をサポートしています。これには以下のものが含まれます：
+バージョン`v9.0.0`以降、`rancher-backup`は{admc-name}をサポートしています。これには以下のものが含まれます：
 
-- デフォルトのRancherネームスペース`cattle-kubewarden-system`（または`cattle-kubewarden-*`）と、デフォルトの{short-project-name}ネームスペース`kubewarden`。
-- {short-project-name}に必要なリソースは、Helmチャートを介してインストールされます。
-- {short-project-name}のCRDは、{short-project-name}コントローラーによって復元後に調整されます。
+- デフォルトのRancherネームスペース`cattle-kubewarden-system`（または`cattle-kubewarden-*`）と、デフォルトの{admc-short-name}ネームスペース`kubewarden`。
+- {admc-short-name}に必要なリソースは、Helmチャートを介してインストールされます。
+- {admc-short-name}のCRDは、{admc-short-name}コントローラーによって復元後に調整されます。
 - `policy-reporter`チャートの`kubewarden-controller`サブチャート、デフォルト値について。これにはGrafana統合やその他のプラグインは含まれません。
 
 == ユーザーシークレット
@@ -40,7 +40,7 @@ kubectl label secret secret-ghcr-docker resources.cattle.io/backup=true
 
 リンクに従ってください：https://documentation.suse.com/cloudnative/rancher-manager/latest/en/rancher-admin/back-up-restore-and-disaster-recovery/back-up-restore-and-disaster-recovery.html[Rancher Manager]のドキュメント。Minikubeインストールでは、Minikubeが標準でサポートするタイプ`hostPath`のPersistentVolumesを使用して`standard`という名前のものを使用します。
 
-バックアップオペレーターに、値`optionalResources.kubewarden.enabled`を`true`に設定することで、{short-project-name}のユーザー定義CRもバックアップするよう指示する必要があります。
+バックアップオペレーターに、値`optionalResources.kubewarden.enabled`を`true`に設定することで、{admc-short-name}のユーザー定義CRもバックアップするよう指示する必要があります。
 
 インストールは次のようになります：
 
@@ -58,7 +58,7 @@ helm install --wait -n cattle-resources-system \
 
 == バックアップ
 
-`rancher-resource-set-full`を使用して{short-project-name}のシークレットをバックアップします。
+`rancher-resource-set-full`を使用して{admc-short-name}のシークレットをバックアップします。
 これには、Helmインストール時に作成されるTLSシークレットが含まれます。
 
 `rancher-resource-basic`を使用することを希望する場合は、必要なTLSシークレットをバックアップまたは手動で作成することを忘れないでください。

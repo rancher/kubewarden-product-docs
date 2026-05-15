@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Publier {project-name} stratégies sur Artifact Hub en créant une mise en page de dépôt Git bien formatée et en configurant GitHub Actions pour l'emballage automatisé, facilitant l'intégration continue.
+:description: Publier {admc-name} stratégies sur Artifact Hub en créant une mise en page de dépôt Git bien formatée et en configurant GitHub Actions pour l'emballage automatisé, facilitant l'intégration continue.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 
 https://artifacthub.io/[Artifact Hub] est un site web où les utilisateurs peuvent trouver, installer et publier des paquets et des configurations pour les projets https://cncf.io[CNCF].
 
-Les stratégies {project-name} peuvent être publiées sur Artifact Hub et rendues découvrables par le large public des utilisateurs de CNCF.
+Les stratégies {admc-name} peuvent être publiées sur Artifact Hub et rendues découvrables par le large public des utilisateurs de CNCF.
 
 [NOTE]
 ====
@@ -25,7 +25,7 @@ Référez-vous à la section xref:explanations/distributing-policies.adoc[distri
 ====
 
 
-Ce document se concentre sur les étapes nécessaires pour rendre une stratégie {short-project-name} découvrable sur Artifact Hub.
+Ce document se concentre sur les étapes nécessaires pour rendre une stratégie {admc-short-name} découvrable sur Artifact Hub.
 
 == Préparez votre dépôt Git
 
@@ -67,7 +67,7 @@ Décidez si vous souhaitez publier la stratégie en tant qu'utilisateur ou sous 
 
 Ensuite, appuyez sur le _"Ajouter"_ bouton et remplissez le formulaire :
 
-* Choisissez _"{short-project-name} stratégies"_ comme type :
+* Choisissez _"{admc-short-name} stratégies"_ comme type :
 * Entrez un _"Nom"_ et un _"Nom d'affichage"_ de votre choix.
 * Entrez l'URL de votre dépôt Git.
 * Entrez `artifacthub` comme la branche à suivre.

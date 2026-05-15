@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Escribe la lógica de validación para los recursos de Kubernetes en el archivo src/index.ts, accediendo a los datos de la solicitud entrante para devolver una respuesta.
-:keywords: "{project-name}", kubewarden, kubernetes, escribiendo políticas, typescript
+:keywords: "{admc-name}", kubewarden, kubernetes, escribiendo políticas, typescript
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, escribiendo-políticas, typescript, lógica-de-validación
+:doc-topic: {admc-name}, kubewarden, escribiendo-políticas, typescript, lógica-de-validación
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Crítico: No escribas información de registro en STDOUT.
 
-Escribir en STDOUT rompe las políticas. En su lugar, utiliza STDERR para el registro o la instalación de registro proporcionada por el SDK de {project-name}. La salida de la directiva a STDOUT solo debe contener la respuesta de validación.
+Escribir en STDOUT rompe las políticas. En su lugar, utiliza STDERR para el registro o la instalación de registro proporcionada por el SDK de {admc-name}. La salida de la directiva a STDOUT solo debe contener la respuesta de validación.
 ====
 
 La lógica de validación va en el `src/index.ts` archivo.
@@ -25,7 +25,7 @@ Tu lógica de validación necesita:
 * Devolver una respuesta basada en la entrada y la configuración de la directiva.
 
 La solicitud entrante contiene un objeto JSON con el recurso de Kubernetes a validar.
-Puedes acceder a los datos de este objeto JSON a través de las funciones auxiliares del SDK de {short-project-name}.
+Puedes acceder a los datos de este objeto JSON a través de las funciones auxiliares del SDK de {admc-short-name}.
 
 == La `validate` función
 
@@ -174,4 +174,4 @@ switch (action) {
 }
 ----
 
-El {short-project-name} complemento de Javy proporciona la `policyAction()` función que indica si la directiva debe validar un recurso o validar su configuración.
+El {admc-short-name} complemento de Javy proporciona la `policyAction()` función que indica si la directiva debe validar un recurso o validar su configuración.

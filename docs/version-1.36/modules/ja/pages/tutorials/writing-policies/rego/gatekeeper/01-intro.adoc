@@ -23,14 +23,14 @@ include::partial$variables.adoc[]
 
 == 既存のポリシーとの互換性
 
-既存のすべてのゲートキーパーのポリシーは、この章で説明されているように{short-project-name}と互換性があるべきです。
+既存のすべてのゲートキーパーのポリシーは、この章で説明されているように{admc-short-name}と互換性があるべきです。
 
 [IMPORTANT]
 ====
-これが真実でない場合は、あなたのゲートキーパーのポリシーについて報告してください。私たちは、あなたのゲートキーパーのポリシーが{short-project-name}で動作するように努めます。
+これが真実でない場合は、あなたのゲートキーパーのポリシーについて報告してください。私たちは、あなたのゲートキーパーのポリシーが{admc-short-name}で動作するように努めます。
 ====
 
 
 ポリシーは、`opa` CLIを使用して`wasm`ターゲットにコンパイルする必要があります。
 
-ポリシーの実行については、Open Policy Agentのxref:tutorials/writing-policies/rego/02-builtin-support.adoc[ビルトインサポート]について{short-project-name}でさらに読むことができます。
+ポリシーの実行については、Open Policy Agentのxref:tutorials/writing-policies/rego/02-builtin-support.adoc[ビルトインサポート]について{admc-short-name}でさらに読むことができます。

@@ -1,21 +1,21 @@
 include::partial$variables.adoc[]
-= {project-name} in a Large-Scale Environment
+= {admc-name} in a Large-Scale Environment
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure {project-name}s with {project-name} to ensure high availability and performance in demanding large-scale environments.
-:keywords: [kubewarden, "{project-name}", kubernetes, policyservers, production]
+:description: Configure {admc-name}s with {admc-name} to ensure high availability and performance in demanding large-scale environments.
+:keywords: [kubewarden, "{admc-name}", kubernetes, policyservers, production]
 :doc-persona: kubewarden-operator, kubewarden-integrator
 :doc-type: howto
 :doc-topic: operator-manual, policy-servers, production
 :sidebar_label: Deployment at scale
 :sidebar_position: 21
 
-This section details a real-world deployment of {project-name} in a demanding, large-scale environment. It illustrates how to configure {short-project-name} for high availability and performance and what to expect under heavy load.
+This section details a real-world deployment of {admc-name} in a demanding, large-scale environment. It illustrates how to configure {admc-short-name} for high availability and performance and what to expect under heavy load.
 
 [IMPORTANT]
 ====
-If you want to see more tips on how to run {short-project-name} in production, check out the xref:/howtos/production-deployments.adoc[Production deployments] documentation.
+If you want to see more tips on how to run {admc-short-name} in production, check out the xref:/howtos/production-deployments.adoc[Production deployments] documentation.
 ====
 
 == Environment Overview
@@ -31,9 +31,9 @@ The infrastructure consists of approximately 20 Kubernetes clusters. The largest
 ** Deployments: 8,000
 ** Services: 13,000
 
-== {short-project-name} Configuration
+== {admc-short-name} Configuration
 
-To meet the demands of this environment, {short-project-name} is configured with a focus on workload isolation and high availability.
+To meet the demands of this environment, {admc-short-name} is configured with a focus on workload isolation and high availability.
 
 * Policy Enforcement: 22 `ClusterAdmissionPolicies` are enforced across the clusters, with no namespace-specific `AdmissionPolicies`.
 * PolicyServer Architecture: Two separate `PolicyServer` deployments are used to isolate workloads:

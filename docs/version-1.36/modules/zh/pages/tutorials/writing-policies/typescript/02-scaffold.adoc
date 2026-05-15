@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: 创建一个新的验证策略，通过配置策略设置来拒绝 Pod 对象中的无效主机名，并使用提供的工具进行测试。
-:keywords: {project-name}, kubewarden, kubernetes, 用 TypeScript 编写策略, 新的验证策略
+:keywords: {admc-name}, kubewarden, kubernetes, 用 TypeScript 编写策略, 新的验证策略
 :doc-type: 教程
-:doc-topic: {project-name}, kubewarden, 编写策略, TypeScript, 创建一个新的验证策略
+:doc-topic: {admc-name}, kubewarden, 编写策略, TypeScript, 创建一个新的验证策略
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 

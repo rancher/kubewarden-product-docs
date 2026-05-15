@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Fonctionnalités réseau
 :current-version: {page-origin-branch}
 
-{project-name} les stratégies ne peuvent pas effectuer de requêtes réseau depuis le contexte d'exécution WebAssembly.
+{admc-name} les stratégies ne peuvent pas effectuer de requêtes réseau depuis le contexte d'exécution WebAssembly.
 
 Les opérations réseau peuvent être effectuées en tirant parti d'une série de capacités exposées par l'hôte.
 

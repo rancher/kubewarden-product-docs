@@ -6,7 +6,7 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :title: kwctl CLI
-:description: Explorez l'outil de ligne de commande \`kwctl` pour gérer les stratégies {project-name} et effectuer des tâches telles que le chargement de stratégies.
+:description: Explorez l'outil de ligne de commande \`kwctl` pour gérer les stratégies {admc-name} et effectuer des tâches telles que le chargement de stratégies.
 :keywords: cli, référence, kwctl
 :doc-persona: kubewarden-operator
 :doc-type: Référence
@@ -44,28 +44,28 @@ Ce document contient le contenu d'aide pour le programme en ligne de commande `k
 [[kwctl]]
 === `kwctl`
 
-Outil pour gérer les stratégies {project-name}
+Outil pour gérer les stratégies {admc-name}
 
 *Utilisation:* `kwctl [OPTIONS] <COMMAND>`
 
 ==== Sous-commandes
 
-* `annotate` — Ajoute des métadonnées {short-project-name} à un module WebAssembly
-* `bench` — Évalue une stratégie {short-project-name}
+* `annotate` — Ajoute des métadonnées {admc-short-name} à un module WebAssembly
+* `bench` — Évalue une stratégie {admc-short-name}
 * `completions` — Génère des complétions de shell
 * `digest` — Récupère le digest à partir du manifeste OCI d'une stratégie
 * `docs` — Génère la documentation markdown pour les commandes kwctl
 * `info` — Affiche les informations système
-* `inspect` — Inspecte la stratégie {short-project-name}
+* `inspect` — Inspecte la stratégie {admc-short-name}
 * `load` — Charge des stratégies à partir d'un fichier tar.gz
 * `policies` — Liste toutes les stratégies téléchargées
-* `pull` — Récupère une stratégie {short-project-name} à partir d'une URI donnée
-* `push` — Pousse une stratégie {short-project-name} vers un registre OCI
-* `rm` — Supprime une stratégie {short-project-name} du magasin
-* `run` — Exécute une stratégie {short-project-name} à partir d'une URI donnée
+* `pull` — Récupère une stratégie {admc-short-name} à partir d'une URI donnée
+* `push` — Pousse une stratégie {admc-short-name} vers un registre OCI
+* `rm` — Supprime une stratégie {admc-short-name} du magasin
+* `run` — Exécute une stratégie {admc-short-name} à partir d'une URI donnée
 * `save` — Enregistre les stratégies dans un fichier tar.gz
 * `scaffold` — Génère une ressource Kubernetes ou un fichier de configuration
-* `verify` — Vérifie une stratégie {short-project-name} à partir d'une URI donnée en utilisant Sigstore
+* `verify` — Vérifie une stratégie {admc-short-name} à partir d'une URI donnée en utilisant Sigstore
 
 ==== Options
 
@@ -75,7 +75,7 @@ Outil pour gérer les stratégies {project-name}
 [[kwctl-annotate]]
 === `kwctl annotate`
 
-Ajoute des métadonnées {short-project-name} à un module WebAssembly
+Ajoute des métadonnées {admc-short-name} à un module WebAssembly
 
 *Utilisation:* `kwctl annotate [OPTIONS] --metadata-path <PATH> --output-path <PATH> <wasm-path>`
 
@@ -92,21 +92,21 @@ Ajoute des métadonnées {short-project-name} à un module WebAssembly
 [[kwctl-bench]]
 === `kwctl bench`
 
-Évalue une stratégie {short-project-name}.
+Évalue une stratégie {admc-short-name}.
 
 La stratégie peut être spécifiée de plusieurs manières : +
 - URI : par exemple, `registry://ghcr.io/kubewarden/policies/psp-policy:latest` ou `\https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
 - Préfixe SHA : par exemple, `c3b80a10f9c3` (nécessite que la stratégie soit déjà récupérée) +
 - Fichier WASM local : par exemple, `file://home/tux/new-policy/psp-policy.wasm` +
-- Fichier YAML local : par exemple, `file://home/tux/cluster-admission-policy.yaml` (contient des déclarations de {short-project-name} Ressources Personnalisées comme `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Fichier YAML local : par exemple, `file://home/tux/cluster-admission-policy.yaml` (contient des déclarations de {admc-short-name} Ressources Personnalisées comme `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Comportement par défaut :
 Si le schéma est omis, `file://` est supposé, enraciné dans le répertoire courant.
 
-Remarques sur les Ressources Personnalisées {short-project-name} : +
+Remarques sur les Ressources Personnalisées {admc-short-name} : +
 - Les indicateurs `--request-path`, `--settings-path` et `--settings-json` sont ignorés ; les paramètres sont lus à partir de la définition de la Ressource Personnalisée. +
 - L'indicateur `--execution-mode` s'applique à toutes les stratégies dans le fichier YAML. +
-- L'indicateur `--raw` ne peut pas être utilisé, car les Ressources Personnalisées de {short-project-name} ne prennent pas en charge les stratégies `raw`.
+- L'indicateur `--raw` ne peut pas être utilisé, car les Ressources Personnalisées de {admc-short-name} ne prennent pas en charge les stratégies `raw`.
 
 Seuls les attributs suivants de la Définition de Ressource Personnalisée (CRD) sont évalués : +
 - Module de stratégie +
@@ -121,7 +121,7 @@ Un fichier YAML peut contenir plusieurs déclarations de Ressources Personnalis�
 
 ==== Arguments
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la stratégie, préfixe SHA ou fichier YAML contenant les ressources de stratégie {short-project-name}. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, enraciné dans le répertoire courant.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la stratégie, préfixe SHA ou fichier YAML contenant les ressources de stratégie {admc-short-name}. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, enraciné dans le répertoire courant.
 
 ==== Options
 
@@ -201,7 +201,7 @@ Afficher les informations système
 [[kwctl-inspect]]
 === `kwctl inspect`
 
-Inspecter la stratégie {short-project-name}
+Inspecter la stratégie {admc-short-name}
 
 *Utilisation:* `kwctl inspect [OPTIONS] <uri_or_sha_prefix>`
 
@@ -238,7 +238,7 @@ Liste toutes les stratégies téléchargées
 [[kwctl-pull]]
 === `kwctl pull`
 
-Récupère une stratégie {short-project-name} d'une URI donnée
+Récupère une stratégie {admc-short-name} d'une URI donnée
 
 *Utilisation:* `kwctl pull [OPTIONS] <uri>`
 
@@ -253,7 +253,7 @@ Récupère une stratégie {short-project-name} d'une URI donnée
 * `--docker-config-json-path <DOCKER_CONFIG>` — Chemin vers un répertoire contenant le fichier 'config.json' de Docker. Peut être utilisé pour indiquer les détails d'authentification du registre
 * `--github-owner <VALUE>` — Propriétaire GitHub attendu dans les certificats générés dans les pipelines CD
 * `--github-repo <VALUE>` — Dépôt GitHub attendu dans les certificats générés dans les pipelines CD
-* `-o`, `--output-path <PATH>` — Fichier de sortie. Si non fourni, sera téléchargé dans le magasin {short-project-name}
+* `-o`, `--output-path <PATH>` — Fichier de sortie. Si non fourni, sera téléchargé dans le magasin {admc-short-name}
 * `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
 * `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
 * `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
@@ -263,7 +263,7 @@ Récupère une stratégie {short-project-name} d'une URI donnée
 [[kwctl-push]]
 === `kwctl push`
 
-Pousse une stratégie {short-project-name} vers un registre OCI
+Pousse une stratégie {admc-short-name} vers un registre OCI
 
 *Utilisation:* `kwctl push [OPTIONS] <policy> <uri>`
 
@@ -288,7 +288,7 @@ L'annotation 'io.kubewarden.policy.source' est propagée en tant que 'org.openco
 [[kwctl-rm]]
 === `kwctl rm`
 
-Supprime une stratégie {short-project-name} du magasin
+Supprime une stratégie {admc-short-name} du magasin
 
 *Utilisation:* `kwctl rm <uri_or_sha_prefix>`
 
@@ -299,21 +299,21 @@ Supprime une stratégie {short-project-name} du magasin
 [[kwctl-run]]
 === `kwctl run`
 
-Exécute une ou plusieurs stratégies {short-project-name} localement.
+Exécute une ou plusieurs stratégies {admc-short-name} localement.
 
 La stratégie peut être spécifiée de plusieurs manières : +
 - URI : par exemple, `registry://ghcr.io/kubewarden/policies/psp-policy:latest` ou `https://example.com/kubewarden/policies/main/psp-policy/psp-policy.wasm` +
 - Préfixe SHA : par exemple, `c3b80a10f9c3` (nécessite que la stratégie soit déjà téléchargée) +
 - Fichier WASM local : par exemple, `file://home/tux/new-policy/psp-policy.wasm` +
-- Fichier YAML local : par exemple, `file://home/tux/cluster-admission-policy.yaml` (contient des déclarations de {short-project-name} ressources personnalisées comme `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
+- Fichier YAML local : par exemple, `file://home/tux/cluster-admission-policy.yaml` (contient des déclarations de {admc-short-name} ressources personnalisées comme `ClusterAdmissionPolicy`, `AdmissionPolicy`, etc.)
 
 Comportement par défaut :
 Si le schéma est omis, `file://` est supposé, ancré dans le répertoire courant.
 
-Remarques sur les ressources personnalisées {short-project-name} : +
+Remarques sur les ressources personnalisées {admc-short-name} : +
 - Les indicateurs `--request-path`, `--settings-path` et `--settings-json` sont ignorés ; les paramètres sont lus à partir de la définition de la ressource personnalisée. +
 - L'indicateur `--execution-mode` s'applique à toutes les stratégies dans le fichier YAML. +
-- L'indicateur `--raw` ne peut pas être utilisé, car les ressources personnalisées de {short-project-name} ne prennent pas en charge les stratégies `raw`.
+- L'indicateur `--raw` ne peut pas être utilisé, car les ressources personnalisées de {admc-short-name} ne prennent pas en charge les stratégies `raw`.
 
 Seuls les attributs suivants de la Définition de Ressource Personnalisée (CRD) sont évalués : +
 - Module de stratégie +
@@ -328,7 +328,7 @@ Un fichier YAML peut contenir plusieurs déclarations de Ressources Personnalis�
 
 ==== Arguments
 
-* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la stratégie, préfixe SHA ou fichier YAML contenant les ressources de stratégie {short-project-name}. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, ancré dans le répertoire courant.
+* `<URI_OR_SHA_PREFIX_OR_YAML_FILE>` — URI de la stratégie, préfixe SHA ou fichier YAML contenant les ressources de stratégie {admc-short-name}. Schémas pris en charge : registry://, https://, file://. Si le schéma est omis, file:// est supposé, ancré dans le répertoire courant.
 
 ==== Options
 
@@ -381,7 +381,7 @@ Créer une ressource Kubernetes ou un fichier de configuration
 * `admission-request` — Créer un objet AdmissionRequest
 * `artifacthub` — Générer un fichier artifacthub-pkg.yml à partir d'un fichier metadata.yml
 * `manifest` — Générer un manifeste de ressource Kubernetes
-* `vap` — Convertir un `ValidatingAdmissionPolicy` Kubernetes en un {short-project-name} `ClusterAdmissionPolicy`
+* `vap` — Convertir un `ValidatingAdmissionPolicy` Kubernetes en un {admc-short-name} `ClusterAdmissionPolicy`
 * `verification-config` — Générer un fichier de configuration de vérification Sigstore par défaut
 
 [[kwctl-scaffold-admission-request]]
@@ -395,7 +395,7 @@ Créer un objet AdmissionRequest
 
 * `--object <PATH>` — Le fichier contenant le nouvel objet à admettre
 * `--old-object <PATH>` — Le fichier contenant l'objet existant
-* `-o`, `--operation <TYPE>` — Type de ressource personnalisée {short-project-name} +
+* `-o`, `--operation <TYPE>` — Type de ressource personnalisée {admc-short-name} +
   Valeurs possibles : `CREATE`
 
 [[kwctl-scaffold-artifacthub]]
@@ -438,7 +438,7 @@ Générer un manifeste de ressource Kubernetes
 * `--sigstore-trust-config <PATH>` — Fichier au format JSON conforme au message ClientTrustConfig dans les spécifications protobuf de Sigstore. Ce fichier configure l'état entier de l'instance Sigstore, y compris les URI utilisés pour accéder aux services de CA et de transparence des artefacts ainsi que la racine de confiance cryptographique elle-même
 * `--sources-path <PATH>` — Fichier YAML contenant des informations source (https, hôtes de registre non sécurisés, CA personnalisées...)
 * `--title <VALUE>` — Titre de la stratégie
-* `-t`, `--type <VALUE>` — {short-project-name} type de ressource personnalisée +
+* `-t`, `--type <VALUE>` — {admc-short-name} type de ressource personnalisée +
   Valeurs possibles : `ClusterAdmissionPolicy`, `AdmissionPolicy`
 * `-a`, `--verification-annotation <KEY=VALUE>` — Annotation au format clé=valeur. Peut être répété plusieurs fois
 * `--verification-config-path <PATH>` — Fichier YAML contenant des informations de configuration de vérification (signatures, clés publiques...)
@@ -447,7 +447,7 @@ Générer un manifeste de ressource Kubernetes
 [[kwctl-scaffold-vap]]
 === `kwctl scaffold vap`
 
-Convertir Kubernetes `ValidatingAdmissionPolicy` en un {short-project-name} `ClusterAdmissionPolicy`
+Convertir Kubernetes `ValidatingAdmissionPolicy` en un {admc-short-name} `ClusterAdmissionPolicy`
 
 *Utilisation:* `kwctl scaffold vap [OPTIONS] --binding <VALIDATING-ADMISSION-POLICY-BINDING.yaml> --policy <VALIDATING-ADMISSION-POLICY.yaml>`
 
@@ -468,7 +468,7 @@ Générer un fichier de configuration de vérification Sigstore par défaut
 [[kwctl-verify]]
 === `kwctl verify`
 
-Vérifiez une stratégie {short-project-name} à partir d'une URI donnée en utilisant Sigstore
+Vérifiez une stratégie {admc-short-name} à partir d'une URI donnée en utilisant Sigstore
 
 *Utilisation:* `kwctl verify [OPTIONS] <uri>`
 

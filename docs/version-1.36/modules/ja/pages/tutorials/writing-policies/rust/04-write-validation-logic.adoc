@@ -116,7 +116,7 @@ fn validate(payload: &[u8]) -> CallResult {
 
 最後に、検証コードが期待通りに動作するかを確認するためにユニットテストを作成できます。
 
-`lib.rs`ファイルの下部にはすでにテストが定義されており、{short-project-name}のRust SDKもテストヘルパーを提供していることがわかります。
+`lib.rs`ファイルの下部にはすでにテストが定義されており、{admc-short-name}のRust SDKもテストヘルパーを提供していることがわかります。
 
 さらに、スキャフォールドプロジェクトには、`test_data`ディレクトリにデフォルトのhttps://en.wikipedia.org/wiki/Test_fixture#Software[テストフィクスチャ]が付属しています。これらの記録されたAdmissionリクエストを使用してユニットテストを作成します。
 

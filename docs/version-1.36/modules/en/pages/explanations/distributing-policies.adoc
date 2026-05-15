@@ -1,18 +1,19 @@
 include::partial$variables.adoc[]
+
 = Distributing policies
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
-:description: Distribute policies securely via an OCI-compliant registry using tools like kwctl, and ensure cluster security through {project-name} policy management.
+:description: Distribute policies securely via an OCI-compliant registry using tools like kwctl, and ensure cluster security through {admc-name} policy management.
 :doc-persona: ["kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
+:keywords: ["{admc-name}", "oci", "kubewarden", "policy", "wasm", "webassembly"]
 :current-version: {page-origin-branch}
 
-{project-name} policies are WebAssembly (Wasm) binaries evaluated by the {short-project-name} Policy Server.
+{admc-name} policies are WebAssembly (Wasm) binaries evaluated by the {admc-short-name} Policy Server.
 
-The {short-project-name} policy server loads policies from these sources:
+The {admc-short-name} policy server loads policies from these sources:
 
 * Local filesystem
 * HTTP(s) server
@@ -23,7 +24,7 @@ The {short-project-name} policy server loads policies from these sources:
  ** https://aws.amazon.com/ecr/[Amazon ECR]
  ** https://cloud.google.com/artifact-registry/[Google container registry]
 
-{short-project-name} recommends distributing {short-project-name} policies via a regular
+{admc-short-name} recommends distributing {admc-short-name} policies via a regular
 OCI-compliant registry. Container registries are a mandatory requirement for
 any Kubernetes cluster. Having a single place to store, and secure, all the
 artifacts required by a cluster is beneficial.
@@ -35,20 +36,20 @@ specification permits storing any binary blob inside a regular OCI-compliant
 container registry.
 
 The target OCI-compliant registry *must support artifacts* to successfully push
-a {short-project-name} Policy to it.
+a {admc-short-name} Policy to it.
 
-You can use the https://github.com/kubewarden/kwctl[`kwctl`] CLI to push a
-{short-project-name} Policy to an OCI-compliant registry.
+You can use the xref:/howtos/install-kwctl.adoc[`kwctl`] CLI to push a
+{admc-short-name} Policy to an OCI-compliant registry.
 
 == Annotating the policy
 
-You also annotate a policy with `kwctl`. Annotating a {short-project-name}
+You also annotate a policy with `kwctl`. Annotating a {admc-short-name}
 policy is done by adding Wasm custom sections to the policy binary. This means
 that the policy packages its own metadata.
 
 The `kwctl annotate` command requires two inputs:
 
-* the {short-project-name} policy to annotate, a local file in the filesystem.
+* the {admc-short-name} policy to annotate, a local file in the filesystem.
 * the annotations file, a file containing a YAML description of the policy metadata.
 This file is usually located in the root project folder of your policy.
 
@@ -169,5 +170,5 @@ metadata provided by annotations to correctly execute a policy. By default,
 `kwctl push` refuses to push such a policy to an OCI registry. If you need an
 unannotated policy, use the `-&#x200D;-&#x200D;force` flag of `kwctl push`.
 
-You can reference a policy from the {short-project-name} Policy Server or `kwctl` as
+You can reference a policy from the {admc-short-name} Policy Server or `kwctl` as
 `registry://<oci-registry>/kubewarden-policies/palindromify-policy:v0.0.1`.

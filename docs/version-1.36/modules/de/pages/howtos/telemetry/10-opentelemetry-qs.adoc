@@ -13,19 +13,19 @@ include::partial$variables.adoc[]
 
 https://opentelemetry.io/[OpenTelemetry] ist ein Cloud Native Computing Foundation (CNCF) Framework für Einblick. Es ermöglicht Ihren Microservices, Metriken, Protokolle und Traces bereitzustellen.
 
-{project-name}Die Komponenten von, die das OpenTelemetry SDK verwenden, melden Daten an einen OpenTelemetry Collector – genannt der Agent.
+{admc-name}Die Komponenten von, die das OpenTelemetry SDK verwenden, melden Daten an einen OpenTelemetry Collector – genannt der Agent.
 
 Diese Anleitung erklärt, wie man den OpenTelemetry Collector im `sidecar`-Modus mit dem offiziellen Kubernetes Helm-Chart bereitstellt.
 
 Dies ist ein einfaches Bereitstellungsschema mit OpenTelemetry. Das endgültige Setup sieht so aus:
 
-* Jeder Pod des {short-project-name} Stacks (Policy Server, Controller) hat einen OpenTelemetry Sidecar.
-* Der Sidecar erhält Tracing- und Überwachungsinformationen von der {short-project-name} Komponente über das OpenTelemetry-Protokoll (OTLP).
+* Jeder Pod des {admc-short-name} Stacks (Policy Server, Controller) hat einen OpenTelemetry Sidecar.
+* Der Sidecar erhält Tracing- und Überwachungsinformationen von der {admc-short-name} Komponente über das OpenTelemetry-Protokoll (OTLP).
 * Der OpenTelemetry Collector:
  ** Sendet die Trace-Ereignisse an eine zentrale Jaeger-Instanz.
  ** Stellt Prometheus-Metriken an einem bestimmten Port zur Verfügung.
 
-Das {short-project-name} Helm-Chart deckt nicht alle möglichen Bereitstellungsszenarien des OpenTelemetry Collectors ab. Es ist auch möglich, {short-project-name} zu konfigurieren, um Daten an einen OpenTelemetry Collector zu senden. Die Dokumentation für dieses Szenario befindet sich im xref:./40-custom-otel-collector.adoc[benutzerdefinierten OpenTelemetry-Leitfaden].
+Das {admc-short-name} Helm-Chart deckt nicht alle möglichen Bereitstellungsszenarien des OpenTelemetry Collectors ab. Es ist auch möglich, {admc-short-name} zu konfigurieren, um Daten an einen OpenTelemetry Collector zu senden. Die Dokumentation für dieses Szenario befindet sich im xref:./40-custom-otel-collector.adoc[benutzerdefinierten OpenTelemetry-Leitfaden].
 
 Zuerst setzen Sie OpenTelemetry in einem Kubernetes-Cluster ein, damit Sie es in den folgenden Abschnitten verwenden können, die sich speziell mit Tracing und Metriken befassen.
 

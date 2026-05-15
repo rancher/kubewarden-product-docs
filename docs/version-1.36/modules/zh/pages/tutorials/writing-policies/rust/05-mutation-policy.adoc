@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 配置一个新的 {project-name} 变异策略，以变更带有自定义注释的传入对象，然后进行测试。
+:description: 配置一个新的 {admc-name} 变异策略，以变更带有自定义注释的传入对象，然后进行测试。
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["kubewarden", "writing-policies", "rust", "new-mutation-policy"]
 :doc-type: ["tutorial"]
@@ -19,7 +19,7 @@ include::partial$variables.adoc[]
 * 接受请求而不更改传入对象
 * 根据需要变更传入对象并接受请求
 
-编写一个 {project-name} 变异策略并不复杂。
+编写一个 {admc-name} 变异策略并不复杂。
 您将使用前面章节中创建的验证策略，并通过一些更改将其转变为变异策略。
 
 您的策略使用之前定义的相同验证逻辑，但还会为所有具有有效名称的 Pod 添加注释。

@@ -3,10 +3,10 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Définissez et implémentez des structures de paramètres de stratégie efficaces à travers les stratégies {project-name} dans les fichiers src/types.ts et src/index.ts.
-:keywords: "{project-name}", kubewarden, kubernetes, définition des paramètres de stratégie, TypeScript
+:description: Définissez et implémentez des structures de paramètres de stratégie efficaces à travers les stratégies {admc-name} dans les fichiers src/types.ts et src/index.ts.
+:keywords: "{admc-name}", kubewarden, kubernetes, définition des paramètres de stratégie, TypeScript
 :doc-type: didacticiel
-:doc-topic: {project-name}, kubewarden, rédaction-des-stratégies, typescript, définition-des-paramètres-de-stratégie
+:doc-topic: {admc-name}, kubewarden, rédaction-des-stratégies, typescript, définition-des-paramètres-de-stratégie
 :doc-persona: développeur-de-stratégie-kubewarden
 :current-version: {page-origin-branch}
 
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 ====
 Critique : Ne pas écrire d'informations de journalisation sur STDOUT.
 
-Écrire sur STDOUT enfreint les stratégies. Utilisez plutôt STDERR pour la journalisation ou le service de journalisation fourni par le {project-name} SDK. La sortie de la stratégie sur STDOUT ne doit contenir que la réponse de validation.
+Écrire sur STDOUT enfreint les stratégies. Utilisez plutôt STDERR pour la journalisation ou le service de journalisation fourni par le {admc-name} SDK. La sortie de la stratégie sur STDOUT ne doit contenir que la réponse de validation.
 ====
 
 Tout d'abord, définissez la structure qui contient les paramètres de stratégie dans `src/types.ts` :
@@ -45,7 +45,7 @@ export interface KubernetesResource {
 
 == Création d'instances de Settings
 
-Les stratégies {short-project-name} utilisent deux fonctions qui gèrent les paramètres :
+Les stratégies {admc-short-name} utilisent deux fonctions qui gèrent les paramètres :
 
 * `validate` : Appelées lors de la validation de l'objet.
 * `validateSettings` : Appelées au moment du chargement de la stratégie.

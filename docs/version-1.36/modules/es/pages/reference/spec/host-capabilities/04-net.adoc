@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: Capacidades de red
 :current-version: {page-origin-branch}
 
-{project-name} Las políticas no pueden realizar solicitudes de red desde dentro del contexto de ejecución de WebAssembly.
+{admc-name} Las políticas no pueden realizar solicitudes de red desde dentro del contexto de ejecución de WebAssembly.
 
 Las operaciones de red se pueden realizar aprovechando una serie de capacidades expuestas por el host.
 

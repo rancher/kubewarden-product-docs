@@ -36,4 +36,4 @@ Deben devolver un objeto `AdmissionReview` válido como resultados de la evaluac
 
 Todas las directivas se pueden compilar al objetivo `wasm` (WebAssembly) con la herramienta CLI oficial `opa`.
 
-En términos de ejecución de directivas, puedes leer más sobre el xref:tutorials/writing-policies/rego/02-builtin-support.adoc[soporte integrado de OPA] implementado en {short-project-name}.
+En términos de ejecución de directivas, puedes leer más sobre el xref:tutorials/writing-policies/rego/02-builtin-support.adoc[soporte integrado de OPA] implementado en {admc-short-name}.

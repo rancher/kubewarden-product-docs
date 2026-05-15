@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-persona: ["kubewarden-policy-developer", "kubewarden-integrator"]
 :doc-topic: ["explanations", "context-aware-policies"]
 :doc-type: ["explanation"]
-:keywords: ["{project-name}", "Kubewarden", "política sensível ao contexto", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "administrador do cluster"]
+:keywords: ["{admc-name}", "Kubewarden", "política sensível ao contexto", "clusteradmissionpolicy", "admissionpolicy", "admissionrequest", "administrador do cluster"]
 :sidebar_label: Políticas sensíveis ao contexto
 :sidebar_position: 20
 :current-version: {page-origin-branch}
@@ -16,7 +16,7 @@ Os desenvolvedores podem criar políticas que buscam informações de um cluster
 
 [NOTE]
 ====
-Políticas sensíveis ao contexto estão disponíveis apenas em versões {project-name} ≥ v1.6.0.
+Políticas sensíveis ao contexto estão disponíveis apenas em versões {admc-name} ≥ v1.6.0.
 ====
 
 O controle de quais recursos uma política pode acessar no cluster é feito pela https://kubernetes.io/docs/concepts/security/service-accounts/[Conta de Serviço] do servidor de políticas. Um administrador do cluster controla o que uma política pode acessar por meio das regras RBAC do Kubernetes. Políticas sensíveis ao contexto têm apenas acesso *leitura* aos recursos solicitados.
@@ -28,7 +28,7 @@ Se um usuário não privilegiado implantar uma política sensível ao contexto c
 - Bloqueia todas as tentativas de acessar recursos do Kubernetes.
 - Relata-as ao administrador do cluster.
 
-Por padrão, {short-project-name} bloqueia todos os recursos do cluster. Um administrador {project-name} define quais recursos do Kubernetes cada política sensível ao contexto pode ler. `contextAwareResources` para fazer isso.
+Por padrão, {admc-short-name} bloqueia todos os recursos do cluster. Um administrador {admc-name} define quais recursos do Kubernetes cada política sensível ao contexto pode ler. `contextAwareResources` para fazer isso.
 
 O seguinte exemplo implanta uma política que requer acesso aos recursos `Deployment` e `Pod`:
 
@@ -60,12 +60,12 @@ spec:
 
 Uma vez implantada, esta política pode ler os dados dos recursos `deployment` e `pod`.
 
-Os autores de políticas fornecem listas de recursos do Kubernetes para sua política sensível ao contexto. Os autores de políticas fazem isso anotando a política. Os administradores {project-name} visualizam os metadados da política usando o comando `kwctl inspect`. Eles podem obter uma lista de recursos aos quais a política precisa de acesso. Um administrador usa esta lista para preencher a definição `ClusterAdmissionPolicy`.
+Os autores de políticas fornecem listas de recursos do Kubernetes para sua política sensível ao contexto. Os autores de políticas fazem isso anotando a política. Os administradores {admc-name} visualizam os metadados da política usando o comando `kwctl inspect`. Eles podem obter uma lista de recursos aos quais a política precisa de acesso. Um administrador usa esta lista para preencher a definição `ClusterAdmissionPolicy`.
 
 [WARNING]
 ====
 
-Para prevenir abusos do sistema, os administradores {project-name} devem revisar os recursos que a política acessa.
+Para prevenir abusos do sistema, os administradores {admc-name} devem revisar os recursos que a política acessa.
 
 Por exemplo, uma política que avalia objetos de entrada teria boas razões para ler os recursos `Ingress` definidos no cluster. A mesma política não pode justificar ter acesso aos recursos `Secret`.
 

@@ -12,7 +12,7 @@ include::partial$variables.adoc[]
 :sidebar_position: 1
 :current-version: {page-origin-branch}
 
-_{project-name} welcomes all contributors, whether new or experienced._
+_{admc-name} welcomes all contributors, whether new or experienced._
 
 ifeval::["{build-type}" == "community"]
 Please review the contributing guide https://github.com/kubewarden/community/blob/main/CONTRIBUTING.md[here].

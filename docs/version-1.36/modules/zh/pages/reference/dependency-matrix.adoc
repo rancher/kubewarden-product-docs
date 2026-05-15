@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: 了解 {project-name} 的依赖关系，包括它们的版本约束。
+:description: 了解 {admc-name} 的依赖关系，包括它们的版本约束。
 :doc-persona: [“kubewarden-all”]
 :doc-topic: [“operator-manual”, “dependencies”]
 :doc-type: [“reference”]
@@ -12,11 +12,11 @@ include::partial$variables.adoc[]
 :sidebar_position: 10
 :current-version: {page-origin-branch}
 
-此页面列出了 {project-name} 的依赖关系及其相关的版本约束。提供的范围之外的版本可能有效，但未经过测试。
+此页面列出了 {admc-name} 的依赖关系及其相关的版本约束。提供的范围之外的版本可能有效，但未经过测试。
 
 == OpenTelemetry、指标和追踪依赖关系
 
-在撰写时，https://opentelemetry.io[OpenTelemetry] 堆栈仍在不断改进。然而，它尚不稳定，未公告的向后不兼容更改仍然会发生。{short-project-name} 开发者努力跟踪 OpenTelemetry 堆栈的变化并进行调整。该项目针对已知有效的 OpenTelemetry、指标和追踪堆栈进行测试。
+在撰写时，https://opentelemetry.io[OpenTelemetry] 堆栈仍在不断改进。然而，它尚不稳定，未公告的向后不兼容更改仍然会发生。{admc-short-name} 开发者努力跟踪 OpenTelemetry 堆栈的变化并进行调整。该项目针对已知有效的 OpenTelemetry、指标和追踪堆栈进行测试。
 
 == 可选依赖关系
 
@@ -64,4 +64,4 @@ include::partial$variables.adoc[]
 
 == Rancher
 
-在 {short-project-name} 中对 Rancher 图表储存库中提供的监控和追踪 Helm 图表进行测试。
+在 {admc-short-name} 中对 Rancher 图表储存库中提供的监控和追踪 Helm 图表进行测试。

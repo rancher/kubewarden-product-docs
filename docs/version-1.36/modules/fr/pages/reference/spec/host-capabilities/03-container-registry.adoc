@@ -13,9 +13,9 @@ include::partial$variables.adoc[]
 
 Les registres de conteneurs peuvent être utilisés pour distribuer de nombreux types d'objets OCI.
 Des images de conteneurs bien connues aux artefacts OCI génériques.
-Les artefacts OCI sont utilisés pour stocker des objets tels que des stratégies {project-name}, des graphiques Helm, et plus encore.
+Les artefacts OCI sont utilisés pour stocker des objets tels que des stratégies {admc-name}, des graphiques Helm, et plus encore.
 
-Voici les capacités exposées par l'hôte {short-project-name} pour interagir avec les registres de conteneurs.
+Voici les capacités exposées par l'hôte {admc-short-name} pour interagir avec les registres de conteneurs.
 
 == Obtenir le digest du manifeste OCI
 
@@ -23,12 +23,12 @@ Ce rappel calcule le digest d'un manifeste OCI. Le digest peut être utilisé po
 
 === Caching
 
-Le calcul du digest implique une série de requêtes réseau entre l'hôte de stratégie {short-project-name} et le registre distant.
+Le calcul du digest implique une série de requêtes réseau entre l'hôte de stratégie {admc-short-name} et le registre distant.
 Ces opérations peuvent être coûteuses en temps, donc les résultats sont mis en cache pendant 1 minute.
 
 === Authentification
 
-Les interactions avec les registres privés nécessitent que l'hôte de stratégie {short-project-name} s'authentifie auprès du registre distant.
+Les interactions avec les registres privés nécessitent que l'hôte de stratégie {admc-short-name} s'authentifie auprès du registre distant.
 
 L'hôte de stratégie utilisera le même ensemble d'identifiants utilisés pour récupérer les stratégies depuis le registre distant.
 
@@ -65,11 +65,11 @@ Ce rappel récupère le manifeste des objets OCI. Lorsque disponible, cette info
 
 === Caching
 
-La récupération de cette information implique des requêtes réseau entre l'hôte de stratégie {short-project-name} et le registre distant. Ces opérations peuvent être coûteuses en temps, donc les résultats sont mis en cache pendant 1 minute.
+La récupération de cette information implique des requêtes réseau entre l'hôte de stratégie {admc-short-name} et le registre distant. Ces opérations peuvent être coûteuses en temps, donc les résultats sont mis en cache pendant 1 minute.
 
 === Authentification
 
-Les interactions avec des registres privés nécessitent que l'hôte de stratégie {short-project-name} s'authentifie auprès du registre distant.
+Les interactions avec des registres privés nécessitent que l'hôte de stratégie {admc-short-name} s'authentifie auprès du registre distant.
 
 L'hôte de stratégie utilise le même ensemble d'identifiants que celui utilisé pour récupérer les stratégies du registre distant.
 
@@ -187,11 +187,11 @@ Ce rappel récupère le manifeste des images OCI et sa configuration. Cette info
 
 === Caching
 
-La récupération de cette information implique des requêtes réseau entre l'hôte de stratégie {short-project-name} et le registre distant. Ces opérations peuvent être coûteuses en temps, donc les résultats sont mis en cache pendant 1 minute.
+La récupération de cette information implique des requêtes réseau entre l'hôte de stratégie {admc-short-name} et le registre distant. Ces opérations peuvent être coûteuses en temps, donc les résultats sont mis en cache pendant 1 minute.
 
 === Authentification
 
-Les interactions avec des registres privés nécessitent que l'hôte de stratégie {short-project-name} s'authentifie auprès du registre distant.
+Les interactions avec des registres privés nécessitent que l'hôte de stratégie {admc-short-name} s'authentifie auprès du registre distant.
 
 L'hôte de stratégie utilise le même ensemble d'identifiants que celui utilisé pour récupérer les stratégies du registre distant.
 

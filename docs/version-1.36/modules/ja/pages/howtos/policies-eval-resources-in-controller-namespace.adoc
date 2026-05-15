@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-type: ["howto"]
 :doc-topic: ["operator-manual", "policies"]
 
-デフォルトでは、Admission Controller は自身のネームスペースでリソースを評価するポリシーを許可しません。これにより、{short-project-name} のインストールを破損させる可能性のある誤設定を防ぎます。
+デフォルトでは、Admission Controller は自身のネームスペースでリソースを評価するポリシーを許可しません。これにより、{admc-short-name} のインストールを破損させる可能性のある誤設定を防ぎます。
 
 この安全対策は2層で実装されています。最初の階層は `--always-accept-admission-reviews-on-deployments-namespace` CLI フラグによって制御されます。
 このフラグは、Helm チャートでデフォルトで有効になっており、コントローラーが PolicyServer デプロイメントで `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` 環境変数を構成するようにします。この変数は、ポリシーサーバーに対して、変数で定義されたネームスペースからのアドミッションレビューを常に受け入れるように指示します。二番目の階層は Admission Controller 自体で、デフォルトではクラスター全体のポリシーにネームスペースセレクターを追加し、コントローラーが実行されるネームスペースをスキップします。
@@ -19,7 +19,7 @@ include::partial$variables.adoc[]
 
 最初のステップは、コントローラーが PolicyServer デプロイメントで `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` 環境変数を設定しないように構成することです。
 
-これを行うには、{short-project-name} のインストールをアップグレードし、`alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm チャートの `kubewarden-controller` 値を `false` に設定します。
+これを行うには、{admc-short-name} のインストールをアップグレードし、`alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm チャートの `kubewarden-controller` 値を `false` に設定します。
 
 [source,console]
 ----
@@ -29,7 +29,7 @@ helm upgrade -n kubewarden
 ----
 
 この変更により、ポリシーサーバーは任意のネームスペースからリソースを評価できるようになります。
-これが完了すると、ポリシーは {short-project-name} ネームスペースからのアドミッションレビューを評価するように構成できます。
+これが完了すると、ポリシーは {admc-short-name} ネームスペースからのアドミッションレビューを評価するように構成できます。
 
 == Admission Controller ネームスペース内のリソースを評価するためのポリシーを設定します。
 
@@ -73,5 +73,5 @@ spec:
 [NOTE]
 .私のカスタムネームスペースセレクターはどうなりますか？
 ====
-ポリシー CRD は、ユーザーが独自のネームスペースセレクターを定義することも許可します。これらのセレクターは変更されません。これは、ユーザーが {short-project-name} ネームスペースをスキップするセレクターを定義した場合でも、ポリシーは期待通りにそのネームスペースを無視し続けることを意味します。
+ポリシー CRD は、ユーザーが独自のネームスペースセレクターを定義することも許可します。これらのセレクターは変更されません。これは、ユーザーが {admc-short-name} ネームスペースをスキップするセレクターを定義した場合でも、ポリシーは期待通りにそのネームスペースを無視し続けることを意味します。
 ====

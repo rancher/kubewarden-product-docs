@@ -1,9 +1,9 @@
 include::partial$variables.adoc[]
-= ¿Qué es {project-name}?
+= ¿Qué es {admc-name}?
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Aprende sobre el papel de {project-name} en la gestión de políticas de Kubernetes, que incluye garantizar el cumplimiento y optimizar recursos.
+:description: Aprende sobre el papel de {admc-name} en la gestión de políticas de Kubernetes, que incluye garantizar el cumplimiento y optimizar recursos.
 :doc-persona: ["kubewarden-all"]
 :doc-topic: ["introduction"]
 :doc-type: ["explanation"]
@@ -13,14 +13,14 @@ include::partial$variables.adoc[]
 :slug: /
 :current-version: {page-origin-branch}
 
-{project-name} es un motor de políticas de Kubernetes.
+{admc-name} es un motor de políticas de Kubernetes.
 Aspira a ser el motor de políticas universal para Kubernetes.
 
 {intro-paragraph}
 
-== ¿Cómo ayuda {project-name}?
+== ¿Cómo ayuda {admc-name}?
 
-{short-project-name} ofrece flexibilidad para la admisión y aplicación de políticas en un entorno de Kubernetes.
+{admc-short-name} ofrece flexibilidad para la admisión y aplicación de políticas en un entorno de Kubernetes.
 
 === Beneficios y valor
 
@@ -29,10 +29,10 @@ Aspira a ser el motor de políticas universal para Kubernetes.
 - Reutilización de políticas de otros motores de políticas sin necesidad de reescribirlas.
 - Distribuye políticas utilizando mecanismos estándar y seguros, como registros compatibles con https://opencontainers.org[OCI].
 - La aplicación de políticas en la admisión asegura que solo se ejecuten cargas de trabajo conformes.
-- El escáner de auditoría de {short-project-name} verifica de forma activa y continua la aplicación de políticas a lo largo del tiempo.
+- El escáner de auditoría de {admc-short-name} verifica de forma activa y continua la aplicación de políticas a lo largo del tiempo.
 - Verifica políticas utilizando herramientas y prácticas de https://slsa.dev[SLSA] (Niveles de sistema de suministro para artefactos de software).
-- {project-name} proporciona un enfoque integral para la gestión de políticas de admisión.
-- La membresía en CNCF y una creciente comunidad y ecosistema de código abierto ayudan a {short-project-name} con transparencia, colaboración y mejora.
+- {admc-name} proporciona un enfoque integral para la gestión de políticas de admisión.
+- La membresía en CNCF y una creciente comunidad y ecosistema de código abierto ayudan a {admc-short-name} con transparencia, colaboración y mejora.
 
 === Casos de uso
 
@@ -42,9 +42,9 @@ Aspira a ser el motor de políticas universal para Kubernetes.
 
 Hay más documentación sobre casos de uso en la página de xref:use-cases.adoc[casos de uso].
 
-== ¿Nuevo en {short-project-name}?
+== ¿Nuevo en {admc-short-name}?
 
-Si eres nuevo en el proyecto {short-project-name}, comienza con la xref:quick-start.adoc[guía de inicio rápido] y la página de xref:explanations/architecture.adoc[arquitectura].
+Si eres nuevo en el proyecto {admc-short-name}, comienza con la xref:quick-start.adoc[guía de inicio rápido] y la página de xref:explanations/architecture.adoc[arquitectura].
 Entonces depende de dónde te lleven tus intereses. Para los desarrolladores de políticas, hay secciones específicas de lenguaje en los tutoriales. Para integradores y administradores, hay una sección de 'cómo hacer'. La sección de explicaciones contiene material de fondo útil. También hay un xref:glossary.adoc[glosario].
 
 == ¿Qué es WebAssembly?
@@ -67,12 +67,12 @@ Los autores de políticas pueden reutilizar sus habilidades, herramientas y mejo
 
 == Distribución de políticas
 
-Puedes servir {short-project-name} políticas utilizando un servidor web estándar o, mejor aún, puedes publicarlas en un registro compatible con OCI como https://github.com/opencontainers/artifacts[artefactos OCI].
+Puedes servir {admc-short-name} políticas utilizando un servidor web estándar o, mejor aún, puedes publicarlas en un registro compatible con OCI como https://github.com/opencontainers/artifacts[artefactos OCI].
 
 ifeval::["{build-type}" == "community"]
 
 == Neutralidad del proveedor
 
-{short-project-name} es un proyecto [neutral al proveedor](https://contribute.cncf.io/maintainers/community/vendor-neutrality/) según lo definido por la CNCF.
+{admc-short-name} es un proyecto [neutral al proveedor](https://contribute.cncf.io/maintainers/community/vendor-neutrality/) según lo definido por la CNCF.
 
 endif::[]

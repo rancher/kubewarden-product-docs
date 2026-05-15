@@ -8,7 +8,7 @@ include::partial$variables.adoc[]
 :doc-type: ["howto"]
 :doc-topic: ["operator-manual", "policies"]
 
-Standardmäßig erlaubt der Admission Controller nicht, dass Richtlinien Ressourcen in seinem eigenen Namespace evaluieren. Dies verhindert Fehlkonfigurationen, die die {short-project-name}-Installation beschädigen könnten.
+Standardmäßig erlaubt der Admission Controller nicht, dass Richtlinien Ressourcen in seinem eigenen Namespace evaluieren. Dies verhindert Fehlkonfigurationen, die die {admc-short-name}-Installation beschädigen könnten.
 
 Diese Sicherheitsmaßnahme wird in zwei Schichten implementiert. Die erste Schicht wird durch das `--always-accept-admission-reviews-on-deployments-namespace` CLI-Flag gesteuert.
 Dieses Flag, das standardmäßig in den Helm-Charts aktiviert ist, sorgt dafür, dass der Controller die `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` Umgebungsvariable in den PolicyServer-Implementierungen konfiguriert. Diese Variable teilt dem Policy-Server mit, dass er immer Zulassungsprüfungen aus dem im Variablen definierten Namespace akzeptieren soll. Die zweite Schicht ist der Admission Controller selbst, der standardmäßig einen Namespace-Selektor zu clusterweiten Richtlinien hinzufügt, um den Namespace zu überspringen, in dem der Controller läuft.
@@ -19,7 +19,7 @@ In einigen Szenarien möchten Clusteradministratoren jedoch, dass Richtlinien Re
 
 Der erste Schritt besteht darin, den Controller so zu konfigurieren, dass er die `KUBEWARDEN_ALWAYS_ACCEPT_ADMISSION_REVIEWS_ON_NAMESPACE` Umgebungsvariable in den PolicyServer-Bereitstellungen nicht setzt.
 
-Um dies zu tun, führen Sie ein Upgrade Ihrer {short-project-name} Installation durch und setzen Sie den `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace`-Wert des `kubewarden-controller`-Helm-Charts auf `false`:
+Um dies zu tun, führen Sie ein Upgrade Ihrer {admc-short-name} Installation durch und setzen Sie den `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace`-Wert des `kubewarden-controller`-Helm-Charts auf `false`:
 
 [source,console]
 ----
@@ -29,7 +29,7 @@ helm upgrade -n kubewarden
 ----
 
 Diese Änderung ermöglicht es Policy-Servern, Ressourcen aus jedem Namespace evaluieren.
-Sobald dies erledigt ist, können Richtlinien so konfiguriert werden, dass sie Zulassungsprüfungen aus dem {short-project-name} Namespace evaluieren.
+Sobald dies erledigt ist, können Richtlinien so konfiguriert werden, dass sie Zulassungsprüfungen aus dem {admc-short-name} Namespace evaluieren.
 
 == Richten Sie Richtlinien ein, um Ressourcen im Namespace des Admission Controllers evaluieren.
 
@@ -73,5 +73,5 @@ Diese Konfigurationsoption, die standardmäßig `false` ist, bewirkt, dass der C
 [NOTE]
 .Was ist mit meinen benutzerdefinierten Namespace-Selektoren?
 ====
-Die CRDs der Richtlinien erlauben es den Benutzern ebenfalls, ihre eigenen Namespace-Selektoren zu definieren. Diese Selektoren werden nicht geändert. Das bedeutet, dass wenn ein Benutzer einen Selektor definiert, der den {short-project-name} Namespace überspringt, die Richtlinie diesen Namespace wie erwartet ignoriert.
+Die CRDs der Richtlinien erlauben es den Benutzern ebenfalls, ihre eigenen Namespace-Selektoren zu definieren. Diese Selektoren werden nicht geändert. Das bedeutet, dass wenn ein Benutzer einen Selektor definiert, der den {admc-short-name} Namespace überspringt, die Richtlinie diesen Namespace wie erwartet ignoriert.
 ====

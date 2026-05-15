@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Veröffentlichen Sie {project-name} Richtlinien im Artifact Hub, indem Sie ein gut strukturiertes Git-Repository-Layout erstellen und GitHub Actions für die automatisierte Paketierung konfigurieren, um Continuous Integration zu ermöglichen.
+:description: Veröffentlichen Sie {admc-name} Richtlinien im Artifact Hub, indem Sie ein gut strukturiertes Git-Repository-Layout erstellen und GitHub Actions für die automatisierte Paketierung konfigurieren, um Continuous Integration zu ermöglichen.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-policy-developer", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["distributing-policies", "publish-policy-to-artifacthub"]
 :doc-type: ["tutorial"]
@@ -14,7 +14,7 @@ include::partial$variables.adoc[]
 
 https://artifacthub.io/[Artifact Hub] ist eine Website, auf der Benutzer Pakete und Konfigurationen für https://cncf.io[CNCF] Projekte finden, installieren und veröffentlichen können.
 
-{project-name} Richtlinien können im Artifact Hub veröffentlicht und einem breiten Publikum von CNCF-Nutzern zugänglich gemacht werden.
+{admc-name} Richtlinien können im Artifact Hub veröffentlicht und einem breiten Publikum von CNCF-Nutzern zugänglich gemacht werden.
 
 [NOTE]
 ====
@@ -25,7 +25,7 @@ Siehe den Abschnitt xref:explanations/distributing-policies.adoc[Richtlinien ver
 ====
 
 
-Dieses Dokument konzentriert sich auf die Schritte, die erforderlich sind, um eine {short-project-name} Richtlinie im Artifact Hub auffindbar zu machen.
+Dieses Dokument konzentriert sich auf die Schritte, die erforderlich sind, um eine {admc-short-name} Richtlinie im Artifact Hub auffindbar zu machen.
 
 == Bereiten Sie Ihr Git-Repository vor
 
@@ -67,7 +67,7 @@ Entscheiden Sie, ob Sie die Richtlinie als Benutzer oder unter einer Artifact Hu
 
 Drücken Sie dann die _"Hinzufügen"_ Schaltfläche und füllen Sie das Formular aus:
 
-* Wählen Sie _"{short-project-name} Richtlinien"_ als Art aus.
+* Wählen Sie _"{admc-short-name} Richtlinien"_ als Art aus.
 * Geben Sie einen _"Namen"_ und _"Anzeigename"_ Ihrer Wahl ein.
 * Geben Sie die URL zu Ihrem Git-Repository ein.
 * Geben Sie `artifacthub` als den zu verfolgenden Branch ein.

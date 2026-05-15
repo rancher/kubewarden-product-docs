@@ -13,7 +13,7 @@ include::partial$variables.adoc[]
 [IMPORTANT]
 ====
 
-この機能は、{project-name} v1.5.0からポリシーサーバーごとのタイムアウトに、v1.29.0からポリシーごとのタイムアウトに対応しています。
+この機能は、{admc-name} v1.5.0からポリシーサーバーごとのタイムアウトに、v1.29.0からポリシーごとのタイムアウトに対応しています。
 
 ====
 
@@ -21,7 +21,7 @@ include::partial$variables.adoc[]
 
 == 目的
 
-{short-project-name}ポリシーは、従来のプログラミング言語（xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go]、xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust]、およびxref:../tutorials/writing-policies/index.adoc[その他]のような）または特別なクエリ言語xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]を使用して記述できます。両方のアプローチには利点があるため、{short-project-name}の目標は、ポリシー作成者が自分のニーズに最適なツールを選択できるようにすることです。
+{admc-short-name}ポリシーは、従来のプログラミング言語（xref:../tutorials/writing-policies/go/01-intro-go.adoc[Go]、xref:../tutorials/writing-policies/rust/01-intro-rust.adoc[Rust]、およびxref:../tutorials/writing-policies/index.adoc[その他]のような）または特別なクエリ言語xref:../tutorials/writing-policies/rego/01-intro-rego.adoc[Rego]を使用して記述できます。両方のアプローチには利点があるため、{admc-short-name}の目標は、ポリシー作成者が自分のニーズに最適なツールを選択できるようにすることです。
 
 従来のhttps://en.wikipedia.org/wiki/Turing_completeness[チューリング完全]言語を使用する場合、次のような問題が発生する可能性があります：
 
@@ -47,7 +47,7 @@ include::partial$variables.adoc[]
 
 ### ポリシーごとに
 
-{short-project-name} v1.29.0以降、すべての{short-project-name}ポリシーは、その`spec.timeoutEvalSeconds`属性を介して独自のタイムアウト値を設定できます。これは、Webhookタイムアウトに使用される`spec.timeoutSeconds`と混同しないでください（セクション[以下](#comparison-with-kubernetes-dynamic-admission-controller-timeout)を参照）。
+{admc-short-name} v1.29.0以降、すべての{admc-short-name}ポリシーは、その`spec.timeoutEvalSeconds`属性を介して独自のタイムアウト値を設定できます。これは、Webhookタイムアウトに使用される`spec.timeoutSeconds`と混同しないでください（セクション[以下](#comparison-with-kubernetes-dynamic-admission-controller-timeout)を参照）。
 
 `spec.timeoutEvalSeconds`は詳細に設定可能で、ポリシーごとの評価タイムアウトの調整を可能にします。
 
@@ -90,7 +90,7 @@ spec:
 
 === ポリシーサーバーごとに
 
-{short-project-name} v1.5.0以降、ポリシーサーバーにはデフォルトで有効な設定可能な評価タイムアウトが付属しています。リクエスト評価の中断は、2秒後に行われます。この設定は、そのポリシーサーバーでスケジュールされたすべてのポリシーに影響を与えます。ポリシーごとに設定可能な`spec.timeoutEvalSeconds`タイムアウトは、このポリシーサーバーごとの設定よりも優先されます。
+{admc-short-name} v1.5.0以降、ポリシーサーバーにはデフォルトで有効な設定可能な評価タイムアウトが付属しています。リクエスト評価の中断は、2秒後に行われます。この設定は、そのポリシーサーバーでスケジュールされたすべてのポリシーに影響を与えます。ポリシーごとに設定可能な`spec.timeoutEvalSeconds`タイムアウトは、このポリシーサーバーごとの設定よりも優先されます。
 
 これらの環境変数を使用して、この動作を調整できます：
 
@@ -126,9 +126,9 @@ spec:
 
 == Kubernetesダイナミックアドミッションコントローラーのタイムアウトとの比較
 
-{short-project-name}はhttps://en.wikipedia.org/wiki/Webhook[ウェブフック]の実装であり、https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetesダイナミックアドミッションコントローラー]です。
+{admc-short-name}はhttps://en.wikipedia.org/wiki/Webhook[ウェブフック]の実装であり、https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Kubernetesダイナミックアドミッションコントローラー]です。
 
-内部的に、Kubernetes APIサーバーは、発生しようとしているイベントを説明するHTTPリクエストを{short-project-name}のポリシーサーバーに送信します。HTTPリクエストの後、Kubernetes APIサーバーは応答を待ちます。しかし、Kubernetes APIサーバーは永遠に待つわけではありません。一定の時間が経過すると、リクエストはタイムアウトしたと見なされます。
+内部的に、Kubernetes APIサーバーは、発生しようとしているイベントを説明するHTTPリクエストを{admc-short-name}のポリシーサーバーに送信します。HTTPリクエストの後、Kubernetes APIサーバーは応答を待ちます。しかし、Kubernetes APIサーバーは永遠に待つわけではありません。一定の時間が経過すると、リクエストはタイムアウトしたと見なされます。
 
 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#timeouts[公式Kubernetesドキュメント]を引用すると：
 
@@ -144,7 +144,7 @@ ____
 
 これは、ポリシー評価タイムアウト機能に関係なく、各Kubernetesアドミッションリクエストにはタイムアウトが適用されることを意味します。
 
-すべての{short-project-name}ポリシーは、`ClusterAdmissionPolicy`および`AdmissionPolicy`カスタムリソースの`timeoutSeconds`属性を介して独自のタイムアウト値を設定できます。
+すべての{admc-short-name}ポリシーは、`ClusterAdmissionPolicy`および`AdmissionPolicy`カスタムリソースの`timeoutSeconds`属性を介して独自のタイムアウト値を設定できます。
 デフォルトでは、タイムアウト値は10秒です。
 
 [IMPORTANT]
@@ -157,10 +157,10 @@ ____
 
 ====
 
-これから、KubernetesのWebhookタイムアウトと{short-project-name}のポリシー評価タイムアウトの違いをよりよく理解するために、以下のシナリオを検討できます。
+これから、KubernetesのWebhookタイムアウトと{admc-short-name}のポリシー評価タイムアウトの違いをよりよく理解するために、以下のシナリオを検討できます。
 
 
-=== {short-project-name}のポリシー評価タイムアウトは無効になっています。
+=== {admc-short-name}のポリシー評価タイムアウトは無効になっています。
 
 ポリシー評価タイムアウト機能がオフになっているポリシーサーバーがあり、そこにスケジュールされたポリシーが`spec.timeoutEvalSeconds`フィールドを設定していないと仮定します。このポリシーサーバーは、評価中に無限ループに入るバグの影響を受けるポリシーをホストしています。
 
@@ -172,19 +172,19 @@ Kubernetes APIサーバーは、このバグのあるポリシーによる評価
 現在、ポリシーサーバーの計算リソースがこの無限ループにより拘束されています。
 時間が経つにつれて、バグのあるポリシーをトリガーするアドミッションリクエストが増えると、ポリシーサーバーは計算リソースが不足します。Kubernetes APIサーバーに応答できません。これはポリシーサーバーに対するサービス拒否（DOS）攻撃に等しいです。
 
-=== {short-project-name}のポリシー評価タイムアウトは有効になっています。
+=== {admc-short-name}のポリシー評価タイムアウトは有効になっています。
 
 同じポリシーサーバーがポリシー評価タイムアウト機能を有効にしているシナリオを仮定します。これは、ポリシーサーバー全体で、またはポリシー`spec.timeoutEvalSeconds`を介してポリシー内で行われ、ポリシー評価タイムアウトは2秒です。
 
 Kubernetes APIサーバーは、このバグのあるポリシーによる評価のためにアドミッションリクエストを送信します。その結果、ポリシー評価は無限ループに入ります。
 その間、Kubernetes APIサーバーは応答を待っています。
 
-2秒後、{short-project-name}のポリシー評価タイムアウト機能がポリシー評価を中断し、拒否応答を生成します。応答には、ポリシー評価が時間内に完了しなかったために拒否が発生したことを説明するメッセージが含まれています。
+2秒後、{admc-short-name}のポリシー評価タイムアウト機能がポリシー評価を中断し、拒否応答を生成します。応答には、ポリシー評価が時間内に完了しなかったために拒否が発生したことを説明するメッセージが含まれています。
 
 [NOTE]
 ====
 
-{short-project-name}のポリシー評価タイムアウトをKubernetesのウェブフックタイムアウトと同じくらい高い値に設定することは良い選択ではありません。
+{admc-short-name}のポリシー評価タイムアウトをKubernetesのウェブフックタイムアウトと同じくらい高い値に設定することは良い選択ではありません。
 
 ポリシー評価が中断されている状態であるため、DOS攻撃の可能性は低減しますが、最終的な拒否応答はポリシーサーバーによって生成されません。拒否はKubernetes APIサーバーからウェブフックのタイムアウトによって発生します。
 

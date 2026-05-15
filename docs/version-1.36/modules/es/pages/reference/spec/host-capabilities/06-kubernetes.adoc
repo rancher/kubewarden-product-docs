@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Explora las capacidades de Kubernetes utilizando las políticas contextuales de {project-name} y el protocolo waPC para acceder a los recursos del clúster.
+:description: Explora las capacidades de Kubernetes utilizando las políticas contextuales de {admc-name} y el protocolo waPC para acceder a los recursos del clúster.
 :doc-persona: ["kubewarden-policy-developer"]
 :doc-topic: ["writing-policies", "specification", "host-capabilities", "kubernetes-capabilities"]
 :doc-type: ["reference"]
@@ -11,8 +11,8 @@ include::partial$variables.adoc[]
 :sidebar_label: Kubernetes capabilities
 :current-version: {page-origin-branch}
 
-Las políticas contextuales de {project-name} requieren acceso a los recursos del clúster de Kubernetes donde se están ejecutando.
-Para ello, los SDKs de {short-project-name} exponen funciones que utilizan el protocolo de comunicación waPC para hablar con el sistema anfitrión solicitando datos sobre el clúster.
+Las políticas contextuales de {admc-name} requieren acceso a los recursos del clúster de Kubernetes donde se están ejecutando.
+Para ello, los SDKs de {admc-short-name} exponen funciones que utilizan el protocolo de comunicación waPC para hablar con el sistema anfitrión solicitando datos sobre el clúster.
 
 == Contrato del protocolo waPC
 

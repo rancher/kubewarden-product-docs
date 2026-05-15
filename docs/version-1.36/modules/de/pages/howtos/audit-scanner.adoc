@@ -4,16 +4,16 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Überprüfen Sie den Compliance-Zustand Ihrer Cluster mithilfe der Audit-Scanner-Funktion innerhalb von {project-name}, um deren ordnungsgemäße Konfiguration sicherzustellen.
+:description: Überprüfen Sie den Compliance-Zustand Ihrer Cluster mithilfe der Audit-Scanner-Funktion innerhalb von {admc-name}, um deren ordnungsgemäße Konfiguration sicherzustellen.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["howto", "audit-scanner-installation"]
 :doc-type: ["howto"]
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "audit scanner"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "audit scanner"]
 :sidebar_label: Audit-Scanner
 :sidebar_position: 70 US-Dollar
 :current-version: {page-origin-branch}
 
-Beginnend mit Version `v1.7.0` hat {project-name} eine neue Funktion namens "Audit Scanner". Eine neue Komponente namens "audit-scanner" überprüft kontinuierlich die im Cluster deklarierten Ressourcen, kennzeichnet diejenigen, die nicht den bereitgestellten {project-name}-Richtlinien entsprechen, und speichert die Ergebnisse in speziellen Report-Custom Resources.
+Beginnend mit Version `v1.7.0` hat {admc-name} eine neue Funktion namens "Audit Scanner". Eine neue Komponente namens "audit-scanner" überprüft kontinuierlich die im Cluster deklarierten Ressourcen, kennzeichnet diejenigen, die nicht den bereitgestellten {admc-name}-Richtlinien entsprechen, und speichert die Ergebnisse in speziellen Report-Custom Resources.
 
 Richtlinien entwickeln sich im Laufe der Zeit: Sie stellen neue Richtlinien bereit und aktualisieren bestehende Richtlinien. Sowohl die Version als auch die Konfiguration ändern sich. Dies kann zu Situationen führen, in denen Ressourcen, die sich bereits im Cluster befinden, nicht mehr konform sind.
 
@@ -23,7 +23,7 @@ Der Audit Scanner kann seine Ergebnisse entweder in den Custom Resource Definiti
 
 == Installation
 
-Die Audit-Scanner-Komponente ist seit {short-project-name} `v1.7.0` verfügbar.
+Die Audit-Scanner-Komponente ist seit {admc-short-name} `v1.7.0` verfügbar.
 Stellen Sie daher sicher, dass Sie das Helm-Chart mit der App-Version `v1.7.0` oder höher installieren.
 
 . Installieren Sie das `kubewarden-crds` Helm-Chart. Das Chart installiert standardmäßig die benötigten `PolicyReport` CRDs.
@@ -71,7 +71,7 @@ Der Audit-Scanner ist standardmäßig aktiviert. Um ihn zu deaktivieren, setzen 
 Wenn Sie möchten, dass der Audit-Scanner seine Berichte in den PolicyReports CRDs (als veraltet markiert) anstelle der standardmäßigen OpenReports CRDs speichert, setzen Sie `auditScanner.reportCRDsKind="policyreport"`.
 ====
 
-Für weitere Informationen zur Installation von {short-project-name} siehe die xref:quick-start.adoc[Kurzanleitung].
+Für weitere Informationen zur Installation von {admc-short-name} siehe die xref:quick-start.adoc[Kurzanleitung].
 
 Standardmäßig wird die Implementierung des Audit-Scanners als https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob] alle 60 Minuten ausgelöst. Sie können diese und andere Einstellungen des Audit-Scanners anpassen, indem Sie das kubewarden-controller-Chart https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml] ändern.
 

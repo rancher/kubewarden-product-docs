@@ -1,37 +1,37 @@
 include::partial$variables.adoc[]
-= Migrando Políticas do Gatekeeper para {project-name}
+= Migrando Políticas do Gatekeeper para {admc-name}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configure uma política {project-name} migrando uma política existente do Gatekeeper através de duas etapas principais: compilando o código Rego em WebAssembly.
-:keywords: ["{project-name}", kubewarden, gatekeeper]
+:description: Configure uma política {admc-name} migrando uma política existente do Gatekeeper através de duas etapas principais: compilando o código Rego em WebAssembly.
+:keywords: ["{admc-name}", kubewarden, gatekeeper]
 :doc-persona:
   [kubewarden-operator, kubewarden-integrator, kubewarden-policy-developer]
 :doc-type: [howto]
 :doc-topic: [operator-manual]
 
-Este guia mostra como converter uma política existente do Gatekeeper em uma política {project-name}. Este processo envolve duas etapas principais:
+Este guia mostra como converter uma política existente do Gatekeeper em uma política {admc-name}. Este processo envolve duas etapas principais:
 . Compile o programa Rego em um módulo WebAssembly (Wasm).
-. Distribua o módulo WebAssembly como uma política {short-project-name}.
+. Distribua o módulo WebAssembly como uma política {admc-short-name}.
 
-O tutorial de políticas xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego] cobre a maior parte do processo de construção para compilar o código Rego em um módulo WebAssembly. Este guia foca no processo passo a passo de extrair as Definições de Recursos Personalizados (CRDs) do Gatekeeper e migrá-las para uma política {short-project-name} funcional. Ele utiliza uma política de demonstração básica do Gatekeeper.
+O tutorial de políticas xref:/tutorials/writing-policies/rego/01-intro-rego.adoc[Rego] cobre a maior parte do processo de construção para compilar o código Rego em um módulo WebAssembly. Este guia foca no processo passo a passo de extrair as Definições de Recursos Personalizados (CRDs) do Gatekeeper e migrá-las para uma política {admc-short-name} funcional. Ele utiliza uma política de demonstração básica do Gatekeeper.
 
 == Pré-requisitos
 
 * link:https://github.com/open-policy-agent/opa/releases[opa]: você usa esta ferramenta para compilar o código em wasm. Este guia foi escrito usando a versão `v1.5.1`.
-* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: ferramenta que você usa para preparar e executar o módulo de WebAssembly {short-project-name}.
+* link:https://github.com/kubewarden/kwctl/releases[`kwctl`]: ferramenta que você usa para preparar e executar o módulo de WebAssembly {admc-short-name}.
 * link:https://github.com/bats-core/bats-core[`bats`]: ferramenta usada para executar testes de ponta a ponta. Se você decidir escrever esse tipo de teste
 * link:https://github.com/mikefarah/yq[`yq`]: ferramenta usada para extrair dados de arquivos yaml.
 
 == Antes de migrar suas políticas
 
-Antes de iniciar o processo de migração das políticas do Gatekeeper, considere usar políticas já disponíveis no {short-project-name} link:https://artifacthub.io/packages/search?kind=13[catalog]. Algumas das link:https://github.com/kubewarden/rego-policies-library[políticas] são políticas OPA e Gatekeeper publicamente disponíveis migradas para {short-project-name}.
+Antes de iniciar o processo de migração das políticas do Gatekeeper, considere usar políticas já disponíveis no {admc-short-name} link:https://artifacthub.io/packages/search?kind=13[catalog]. Algumas das link:https://github.com/kubewarden/rego-policies-library[políticas] são políticas OPA e Gatekeeper publicamente disponíveis migradas para {admc-short-name}.
 
-Além disso, dê uma olhada na nossa documentação de xref:/explanations/comparisons/opa-comparison.adoc[comparação] entre {short-project-name} e Gatekeeper.
+Além disso, dê uma olhada na nossa documentação de xref:/explanations/comparisons/opa-comparison.adoc[comparação] entre {admc-short-name} e Gatekeeper.
 
-== Etapa 1: Inicialize seu projeto de política {short-project-name}
+== Etapa 1: Inicialize seu projeto de política {admc-short-name}
 
-Primeiro, use o Gatekeeper {short-project-name}
+Primeiro, use o Gatekeeper {admc-short-name}
 link:https://github.com/kubewarden/gatekeeper-policy-template[modelo] para criar
 uma estrutura básica de projeto de política. Isso fornece alvos Makefile para construir
 e testar sua política. Após criar o código da política a partir do modelo,
@@ -54,9 +54,9 @@ PASS: 2/2
 == Etapa 2: Migrar o código da política do Gatekeeper
 
 Agora, comece a migrar a política do Gatekeeper. Isso envolve converter um
-`ConstraintTemplate` e seus recursos associados `Constraint` em uma política {short-project-name}. Em um contexto {short-project-name}, considere o `ConstraintTemplate` como o código kernel da política, enquanto as instâncias `Constraint` se traduzem em instâncias de política executando dentro de {short-project-name}.
+`ConstraintTemplate` e seus recursos associados `Constraint` em uma política {admc-short-name}. Em um contexto {admc-short-name}, considere o `ConstraintTemplate` como o código kernel da política, enquanto as instâncias `Constraint` se traduzem em instâncias de política executando dentro de {admc-short-name}.
 
-Primeiro, copie o código Rego do seu `ConstraintTemplate` para o arquivo `policy.rego` que foi gerado pelo template {short-project-name}. Para este exemplo, você deve usar a seguinte política de demonstração link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[demo policy] do repositório do Gatekeeper.
+Primeiro, copie o código Rego do seu `ConstraintTemplate` para o arquivo `policy.rego` que foi gerado pelo template {admc-short-name}. Para este exemplo, você deve usar a seguinte política de demonstração link:https://github.com/open-policy-agent/gatekeeper/blob/896d6620f9c16d7a5d91a74a6a4260db8d735640/demo/basic/demo.sh#L1[demo policy] do repositório do Gatekeeper.
 
 [.details]
 .YAML da política do Gatekeeper
@@ -104,10 +104,10 @@ Copie o trecho de código Rego do campo `rego` para o seu arquivo `policy.rego`:
 cat gatekeeper/demo/basic/templates/k8srequiredlabels_template.yaml | yq ".spec.targets[0].rego" > policy.rego
 ----
 
-=== Adaptar o código Rego para {short-project-name}
+=== Adaptar o código Rego para {admc-short-name}
 
 Você precisa garantir que o nome `package` usado dentro do código Rego seja `policy`.
-Este é o valor esperado em muitos lugares pelo modelo do Gatekeeper {short-project-name}.
+Este é o valor esperado em muitos lugares pelo modelo do Gatekeeper {admc-short-name}.
 
 Se você não alterá-lo, terá erros ao construir a política e executar seus testes de ponta a ponta.
 
@@ -194,7 +194,7 @@ O que isso significa para você:
 
 Embora seja altamente recomendado, os autores de políticas podem pular a criação de testes para a versão inicial de uma política. Se isso se aplica a você, precisará desativar os alvos do Makefile usados para executar os testes. Você não pode remover esses alvos completamente, pois os trabalhos padrão de CI esperam que eles estejam definidos. Em vez disso, você deve substituir os comandos que chamam `opa` e `bats` por uma operação "no-op". Por exemplo, você pode usar um comando `echo` para imprimir uma explicação do porquê os testes não estão sendo executados.
 
-O template {short-project-name} do Gatekeeper inclui tanto testes unitários de Rego quanto testes de ponta a ponta (e2e) usando Bats e `kwctl`. Se você planeja incluir testes, ambos os conjuntos precisam ser adaptados para sua política.
+O template {admc-short-name} do Gatekeeper inclui tanto testes unitários de Rego quanto testes de ponta a ponta (e2e) usando Bats e `kwctl`. Se você planeja incluir testes, ambos os conjuntos precisam ser adaptados para sua política.
 
 Se sua política do Gatekeeper já possui testes de Rego, você pode copiá-los para o arquivo `policy_test.rego`. Esses são executados automaticamente quando você executa o comando `make test`.
 
@@ -405,7 +405,7 @@ spec:
 
 === Defina Configurações da Política
 
-Esta política tem parâmetros, que o Gatekeeper define dentro do `Constraint`. Você precisa atualizar a seção `settings` no manifesto de política gerado {short-project-name} para incluir esses parâmetros obrigatórios. No exemplo a seguir, além de definir as configurações, você pode testar a política a partir do registro OCI:
+Esta política tem parâmetros, que o Gatekeeper define dentro do `Constraint`. Você precisa atualizar a seção `settings` no manifesto de política gerado {admc-short-name} para incluir esses parâmetros obrigatórios. No exemplo a seguir, além de definir as configurações, você pode testar a política a partir do registro OCI:
 
 [source,yaml]
 ----

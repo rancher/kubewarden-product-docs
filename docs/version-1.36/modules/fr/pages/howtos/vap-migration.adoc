@@ -3,22 +3,22 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Migrer une stratégie ValidatingAdmissionPolicy vers {project-name} via les étapes de migration de la commande kwctl pour une transition de stratégie fluide.
+:description: Migrer une stratégie ValidatingAdmissionPolicy vers {admc-name} via les étapes de migration de la commande kwctl pour une transition de stratégie fluide.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
 :doc-topic: ["vap-migration"]
 :doc-type: ["howto"]
 :doctype: book
-:keywords: ["{project-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
+:keywords: ["{admc-name}", "kubewarden", "kubernetes", "cel", "vap", "validatingadmissionpolicy"]
 :current-version: {page-origin-branch}
 
 À partir de Kubernetes v1.26, le https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/[ValidatingAdmissionPolicy] fournit un moyen d'écrire des politiques d'admission personnalisées dans Kubernetes. Les politiques sont écrites avec le https://cel.dev/[Common Expression Language (CEL)], étendues avec quelques https://kubernetes.io/docs/reference/using-api/cel/[extensions spécifiques à Kubernetes].
 La stratégie ValidatingAdmissionPolicy a atteint la stabilité dans Kubernetes v1.30.
 
-{project-name} fournit une stratégie CEL capable d'exécuter des stratégies VAP Kubernetes sans aucune modification.
-Vous pouvez en savoir plus sur la stratégie CEL dans xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[cette section] de la documentation de {short-project-name}.
-xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Ce paragraphe] explique les avantages de l'exécution des stratégies VAP en utilisant {short-project-name}.
+{admc-name} fournit une stratégie CEL capable d'exécuter des stratégies VAP Kubernetes sans aucune modification.
+Vous pouvez en savoir plus sur la stratégie CEL dans xref:../tutorials/writing-policies/CEL/01-intro-cel.adoc[cette section] de la documentation de {admc-short-name}.
+xref:tutorials/writing-policies/CEL/01-intro-cel.adoc#_benefits_of_kubewardens_cel_policy_in_comparison_with_validatingadmissionpolicies[Ce paragraphe] explique les avantages de l'exécution des stratégies VAP en utilisant {admc-short-name}.
 
-Ce guide explique comment utiliser l'outil `kwctl` pour migrer une stratégie VAP vers {short-project-name}.
+Ce guide explique comment utiliser l'outil `kwctl` pour migrer une stratégie VAP vers {admc-short-name}.
 
 == Étapes de migration
 
@@ -82,7 +82,7 @@ spec:
 
 ======
 
-Vous pouvez migrer la stratégie vers {short-project-name} en suivant ces étapes :
+Vous pouvez migrer la stratégie vers {admc-short-name} en suivant ces étapes :
 
 .`kwctl` commande pour la migration de la stratégie
 [%collapsible]

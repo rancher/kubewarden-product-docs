@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Configura la generación de métricas en el Servidor de Políticas utilizando Prometheus y {project-name} habilitado a través de gráficos de Helm para la recolección de datos.
+:description: Configura la generación de métricas en el Servidor de Políticas utilizando Prometheus y {admc-name} habilitado a través de gráficos de Helm para la recolección de datos.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]
@@ -92,9 +92,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== Instalar {short-project-name}
+== Instalar {admc-short-name}
 
-Ahora puedes instalar {short-project-name}, de la manera recomendada con gráficos de Helm.
+Ahora puedes instalar {admc-short-name}, de la manera recomendada con gráficos de Helm.
 
 [NOTE]
 ====
@@ -104,14 +104,14 @@ El `cert-manager` es un requisito de OpenTelemetry, pero ya lo has instalado en 
 ====
 
 
-Primero, deberías añadir el repositorio de Helm que contiene {short-project-name}:
+Primero, deberías añadir el repositorio de Helm que contiene {admc-short-name}:
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-Luego, instalas las Definiciones de Recursos Personalizados (CRDs) definidas por {short-project-name}:
+Luego, instalas las Definiciones de Recursos Personalizados (CRDs) definidas por {admc-short-name}:
 
 [subs="+attributes",console]
 ----
@@ -120,9 +120,9 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-Ahora puedes desplegar el resto de la pila de {short-project-name}. El chart oficial de Helm crea un PolicyServer llamado `default`.
+Ahora puedes desplegar el resto de la pila de {admc-short-name}. El chart oficial de Helm crea un PolicyServer llamado `default`.
 
-Deberías configurar el chart de Helm para que tengas métricas habilitadas en {short-project-name}. El archivo `kubewarden-values.yaml` debería tener el siguiente contenido:
+Deberías configurar el chart de Helm para que tengas métricas habilitadas en {admc-short-name}. El archivo `kubewarden-values.yaml` debería tener el siguiente contenido:
 
 [subs="+attributes",yaml]
 ----
@@ -187,9 +187,9 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 
 Ahora puedes iniciar sesión con el nombre de usuario por defecto `admin` y la contraseña `prom-operator`.
 
-=== Usando el {short-project-name}panel de Grafana
+=== Usando el {admc-short-name}panel de Grafana
 
-{short-project-name} tiene un panel de Grafana con métricas básicas que ofrecen una visión general de cómo se comporta {short-project-name} en el clúster. Este panel de control está disponible en las versiones de GitHub del repositorio de {short-project-name} policy-server como un https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[archivo JSON] o en el https://grafana.com/grafana/dashboards/15314[sitio web de Grafana].
+{admc-short-name} tiene un panel de Grafana con métricas básicas que ofrecen una visión general de cómo se comporta {admc-short-name} en el clúster. Este panel de control está disponible en las versiones de GitHub del repositorio de {admc-short-name} policy-server como un https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[archivo JSON] o en el https://grafana.com/grafana/dashboards/15314[sitio web de Grafana].
 
 Para importar el panel de control en tu entorno, puedes descargar el archivo JSON desde el sitio web de Grafana o desde el repositorio:
 
@@ -212,7 +212,7 @@ Otra opción es importarlo directamente desde el sitio web grafana.com. Para est
 . Haz clic en el botón `load`.
 . Después de importar el panel de control, define la fuente de datos de Prometheus que vas a utilizar y termina el proceso de importación.
 
-El panel de Grafana tiene paneles que muestran el estado de todas las directivas gestionadas por {short-project-name}. También tiene paneles específicos de directivas.
+El panel de Grafana tiene paneles que muestran el estado de todas las directivas gestionadas por {admc-short-name}. También tiene paneles específicos de directivas.
 
 Puedes obtener métricas detalladas para una directiva específica cambiando el valor de la variable `policy_name` para que coincida con el nombre de la directiva requerida.
 

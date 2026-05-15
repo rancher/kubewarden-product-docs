@@ -12,14 +12,14 @@ include::partial$variables.adoc[]
 :sidebar_position: 8
 :current-version: {page-origin-branch}
 
-如果您注意到 {short-project-name} 文档存在问题或想要建议新内容，请打开一个问题。您只需拥有一个 https://github.com/join[GitHub 账号] 和一个浏览器。
+如果您注意到 {admc-short-name} 文档存在问题或想要建议新内容，请打开一个问题。您只需拥有一个 https://github.com/join[GitHub 账号] 和一个浏览器。
 
-通常，{short-project-name} 的任何新文档工作都始于 GitHub 上的一个问题。
+通常，{admc-short-name} 的任何新文档工作都始于 GitHub 上的一个问题。
 ifeval::["{build-type}" == "community"]
-https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{short-project-name} 文档团队] 审查、分类并标记它们。
+https://github.com/orgs/kubewarden/teams/kubewarden-documentation[{admc-short-name} 文档团队] 审查、分类并标记它们。
 endif::[]
 ifeval::["{build-type}" == "product"]
-https://github.com/orgs/rancher/teams/docs[{short-project-name} 文档团队] 审查、分类并标记它们。
+https://github.com/orgs/rancher/teams/docs[{admc-short-name} 文档团队] 审查、分类并标记它们。
 endif::[]
 任何人都可以参与任何问题的工作，包括报告者，但在开始任何工作之前，您应该将其分配给自己，以避免重复工作。
 
@@ -29,10 +29,10 @@ endif::[]
 
 * 点击顶部的 GitHub Octocat 图标。这会将您重定向到
 ifeval::["{build-type}" == "community"]
-  https://github.com/kubewarden/docs[用于 {short-project-name} 的文档储存库]。
+  https://github.com/kubewarden/docs[用于 {admc-short-name} 的文档储存库]。
 endif::[]
 ifeval::["{build-type}" == "product"]
-  https://github.com/rancher/kubewarden-product-docs[用于 {short-project-name} 的文档储存库]。
+  https://github.com/rancher/kubewarden-product-docs[用于 {admc-short-name} 的文档储存库]。
 endif::[]
 * 导航到问题选项卡并点击 *新问题*。
 * 描述问题或改进建议。细节越多，越好。

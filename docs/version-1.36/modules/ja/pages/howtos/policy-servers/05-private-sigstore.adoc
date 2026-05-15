@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = プライベートSigstoreインスタンスを使用するためのPolicyServersの設定
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:description: ポリシー署名検証のために、{project-name}でプライベートまたは自己ホスト型のSigstoreインスタンスを使用するようにPolicyServersを設定します。
+:description: ポリシー署名検証のために、{admc-name}でプライベートまたは自己ホスト型のSigstoreインスタンスを使用するようにPolicyServersを設定します。
 :keywords: ["kubewarden", "kubernetes", "policyservers", "sigstore", "private sigstore", "policy signing"]
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-type: ["howto"]
@@ -52,7 +52,7 @@ kubectl get secret -o json -n tuf-system ctlog-public-key \
 .セキュリティ上の考慮事項
 ====
 
-Sigstoreインスタンスから証明書とキーを安全にダウンロードしてください。そうしないと、{project-name}が改ざんされたデータで構成される可能性があります。
+Sigstoreインスタンスから証明書とキーを安全にダウンロードしてください。そうしないと、{admc-name}が改ざんされたデータで構成される可能性があります。
 
 上記のコマンドは、テスト環境でそれを行う方法の例です。
 この情報を正しく取得する方法を学ぶために、組織内の適切なチームに相談してください。
@@ -156,7 +156,7 @@ kubectl --namespace kubewarden create configmap my-verification-config \
 
 [NOTE]
 ====
-ConfigMap キー**は**`verification-config`でなければなりません（ファイル名ではありません）。{short-project-name}はこの正確なキーを探します。
+ConfigMap キー**は**`verification-config`でなければなりません（ファイル名ではありません）。{admc-short-name}はこの正確なキーを探します。
 ====
 
 == ステップ4 - PolicyServerを構成します

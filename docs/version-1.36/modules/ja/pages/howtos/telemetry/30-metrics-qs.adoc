@@ -3,7 +3,7 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
-:description: Prometheusを使用してポリシーサーバーでメトリクス報告を設定し、データ収集のためにHelmチャートを通じて{project-name}を有効にします。
+:description: Prometheusを使用してポリシーサーバーでメトリクス報告を設定し、データ収集のためにHelmチャートを通じて{admc-name}を有効にします。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
 :doc-topic: ["operator-manual", "telemetry", "metrics", "quick-start"]
 :doc-type: ["howto"]
@@ -83,9 +83,9 @@ helm install --wait --create-namespace \
   prometheus prometheus-community/kube-prometheus-stack
 ----
 
-== {short-project-name}をインストールします
+== {admc-short-name}をインストールします
 
-これで、Helmチャートを使用して{short-project-name}を推奨される方法でインストールできます。
+これで、Helmチャートを使用して{admc-short-name}を推奨される方法でインストールできます。
 
 [NOTE]
 ====
@@ -95,14 +95,14 @@ helm install --wait --create-namespace \
 ====
 
 
-まず、{short-project-name}を含むHelmリポジトリを追加する必要があります。
+まず、{admc-short-name}を含むHelmリポジトリを追加する必要があります。
 
 [subs="+attributes",console]
 ----
 helm repo add kubewarden https://charts.kubewarden.io
 ----
 
-次に、{short-project-name}によって定義されたカスタムリソース定義（CRD）をインストールします。
+次に、{admc-short-name}によって定義されたカスタムリソース定義（CRD）をインストールします。
 
 [subs="+attributes",console]
 ----
@@ -111,9 +111,9 @@ helm install --wait \
   kubewarden-crds kubewarden/kubewarden-crds
 ----
 
-これで、{short-project-name}スタックの残りをデプロイできます。公式のHelmチャートは、`default`という名前のPolicyServerを作成します。
+これで、{admc-short-name}スタックの残りをデプロイできます。公式のHelmチャートは、`default`という名前のPolicyServerを作成します。
 
-Helmチャートを構成して、{short-project-name}でメトリクスが有効になるようにする必要があります。`kubewarden-values.yaml`ファイルには次の内容が含まれている必要があります：
+Helmチャートを構成して、{admc-short-name}でメトリクスが有効になるようにする必要があります。`kubewarden-values.yaml`ファイルには次の内容が含まれている必要があります：
 
 [subs="+attributes",yaml]
 ----
@@ -178,9 +178,9 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080
 
 デフォルトのユーザー名`admin`とパスワード`prom-operator`でログインできます。
 
-=== {short-project-name} Grafanaダッシュボードの使用
+=== {admc-short-name} Grafanaダッシュボードの使用
 
-{short-project-name}には、クラスター内での{short-project-name}の動作についての概要を示す基本的なメトリクスを持つGrafanaダッシュボードがあります。このダッシュボードは、{short-project-name}ポリシーサーバーリポジトリのGitHubリリースで、https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSONファイル]として、またはhttps://grafana.com/grafana/dashboards/15314[Grafanaウェブサイト]で利用可能です。
+{admc-short-name}には、クラスター内での{admc-short-name}の動作についての概要を示す基本的なメトリクスを持つGrafanaダッシュボードがあります。このダッシュボードは、{admc-short-name}ポリシーサーバーリポジトリのGitHubリリースで、https://github.com/kubewarden/policy-server/releases/latest/download/kubewarden-dashboard.json[JSONファイル]として、またはhttps://grafana.com/grafana/dashboards/15314[Grafanaウェブサイト]で利用可能です。
 
 ダッシュボードを環境にインポートするには、GrafanaウェブサイトまたはリポジトリからJSONファイルをダウンロードできます。
 
@@ -203,7 +203,7 @@ curl https://github.com/kubewarden/policy-server/releases/latest/download/kubewa
 . `load`ボタンをクリックします。
 . ダッシュボードをインポートした後、使用するPrometheusデータソースを定義し、インポートプロセスを完了します。
 
-Grafanaダッシュボードには、{short-project-name}によって管理されているすべてのポリシーの状態を示すパネルがあります。また、ポリシー特有のパネルもあります。
+Grafanaダッシュボードには、{admc-short-name}によって管理されているすべてのポリシーの状態を示すパネルがあります。また、ポリシー特有のパネルもあります。
 
 特定のポリシーの詳細なメトリクスを取得するには、`policy_name`変数の値を必要なポリシーの名前に合わせて変更します。
 

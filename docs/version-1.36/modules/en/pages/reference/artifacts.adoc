@@ -1,24 +1,27 @@
 include::partial$variables.adoc[]
-:title: {project-name} artifacts
-:description: Verify {project-name} artifacts and access related binaries, Helm charts, for efficient security management.
+
+:title: {admc-name} artifacts
+:description: Verify {admc-name} artifacts and access related binaries, Helm charts, for efficient security management.
 :keywords: [artifacts, support, airgap, images]
 :doc-persona: [kubewarden-operator]
 :doc-type: [reference]
 :doc-topic: [operator-manual, artifacts, registry, images]
-
-= {title}
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-05-14
 :page-revdate: {revdate}
 
-== Verifying {project-name}
+= {title}
+
+== Verifying {admc-name}
 
 There is a tutorial on xref:/tutorials/verifying-kubewarden.adoc[verifying
-{short-project-name}] demonstrating how to verify {short-project-name} artifacts.
+{admc-short-name}] demonstrating how to verify {admc-short-name} artifacts.
 
 == Binaries
 
-Our `kwctl` CLI tool is published via https://github.com/kubewarden/kwctl/releases[GitHub releases].
+{admc-name} publishes the `kwctl` CLI tool at
+link:https://github.com/kubewarden/adm-controller/releases[GitHub releases].
+Learn how to install it in the xref:/howtos/install-kwctl.adoc[install kwctl] documentation.
 
 == OCI artifacts
 
@@ -34,6 +37,6 @@ in `ghcr.io` under https://github.com/orgs/kubewarden/packages.
 
 == Helm charts via HTTPS
 
-{short-project-name} publishes Helm charts in the Helm chart HTTPS repository at
+{admc-short-name} publishes Helm charts in the Helm chart HTTPS repository at
 https://charts.kubewarden.io. They're without SLSA, or signatures, but this
 type of Helm repository provides searching.

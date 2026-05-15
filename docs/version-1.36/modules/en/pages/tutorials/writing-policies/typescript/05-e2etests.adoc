@@ -4,9 +4,9 @@ include::partial$variables.adoc[]
 :revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Learn how to write and run comprehensive end-to-end tests for policy behavior using BATS and kwctl.
-:keywords: "{project-name}", kubewarden, kubernetes, testing policies, typescript, e2e testing
+:keywords: "{admc-name}", kubewarden, kubernetes, testing policies, typescript, e2e testing
 :doc-type: tutorial
-:doc-topic: {project-name}, kubewarden, writing-policies, typescript, end-to-end-testing
+:doc-topic: {admc-name}, kubewarden, writing-policies, typescript, end-to-end-testing
 :doc-persona: kubewarden-policy-developer
 :current-version: {page-origin-branch}
 
@@ -17,7 +17,7 @@ This section shows how you can write end-to-end tests running against the actual
 Recall, you need these tools on your development machine:
 
 * `bats`: Used to write the tests and automate their execution.
-* `kwctl` >= v1.30: CLI tool provided by {project-name} to run its policies outside of Kubernetes, among other actions. It's covered in xref:/tutorials/testing-policies/index.adoc[the testing policies section] of the documentation.
+* `kwctl` >= v1.30: CLI tool provided by {admc-name} to run its policies outside of Kubernetes, among other actions. It's covered in xref:/tutorials/testing-policies/index.adoc[the testing policies section] of the documentation.
 
 == Writing tests
 
@@ -253,9 +253,9 @@ The `echo "output = $\{output}"` statements in each test help with debugging by 
 
 == Conclusion
 
-The end-to-end tests provide comprehensive coverage of the policy behavior by testing against the actual WebAssembly binary. This ensures that the policy works correctly when deployed in {short-project-name}, not just in the TypeScript development environment.
+The end-to-end tests provide comprehensive coverage of the policy behavior by testing against the actual WebAssembly binary. This ensures that the policy works correctly when deployed in {admc-short-name}, not just in the TypeScript development environment.
 
 [TIP]
 ====
-For more comprehensive examples of end-to-end tests, you can explore the https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js source code], which includes extensive e2e tests demonstrating each of {short-project-name}'s host capabilities. These tests can serve as inspiration for testing more advanced policy features like networking, cryptographic operations, and OCI registry interactions.
+For more comprehensive examples of end-to-end tests, you can explore the https://github.com/kubewarden/policy-sdk-js/blob/main/demo_policy/e2e.bats[policy-sdk-js source code], which includes extensive e2e tests demonstrating each of {admc-short-name}'s host capabilities. These tests can serve as inspiration for testing more advanced policy features like networking, cryptographic operations, and OCI registry interactions.
 ====

@@ -11,7 +11,7 @@ include::partial$variables.adoc[]
 :sidebar_label: 签名验证器策略
 :current-version: {page-origin-branch}
 
-{project-name} 实现对 https://www.sigstore.dev/[Sigstore] 项目的支持。
+{admc-name} 实现对 https://www.sigstore.dev/[Sigstore] 项目的支持。
 这使得为您的集群实施 "安全供应链" 成为可能。
 
 安全供应链的一部分功能是确保在集群中运行的所有容器镜像都经过签名和验证。
@@ -19,15 +19,15 @@ include::partial$variables.adoc[]
 有关更多信息，请查看关于 xref:/howtos/security-hardening/secure-supply-chain.adoc[我们如何为策略本身实施安全供应链] 的文档。
 
 Sigstore 签名存储在容器注册表中，位于被签名的 OCI 对象旁边。
-它们可以是容器镜像或更通用的 OCI 工件，例如 {short-project-name} 策略。
+它们可以是容器镜像或更通用的 OCI 工件，例如 {admc-short-name} 策略。
 当一个对象被签名时，它的签名作为由 Sigstore 创建的 OCI 对象的层存储。
 需要检查容器签名的策略需要检查这些层，并需要拉取签名层以检查签名本身。
 
 获取和操作这些 OCI 层需要在 WebAssembly 客户端（策略）之外进行。
-因此，这由 WebAssembly 运行时 {short-project-name} 的 `policy-server` 或 `kwctl` 完成。
+因此，这由 WebAssembly 运行时 {admc-short-name} 的 `policy-server` 或 `kwctl` 完成。
 
-不同语言的 {short-project-name} 策略 SDK 负责处理此事。
-它们提供容器镜像、{short-project-name} 策略、Helm 图表和其他类型的 OCI 工件的验证功能。
+不同语言的 {admc-short-name} 策略 SDK 负责处理此事。
+它们提供容器镜像、{admc-short-name} 策略、Helm 图表和其他类型的 OCI 工件的验证功能。
 这确保了验证的安全和经过测试的代码路径。
 
 从注册表拉取数据并进行加密验证签名可能会耗时且计算开销大，因此 WebAssembly 运行时（PolicyServer，`kwctl`）确保签名拉取和验证计算都被缓存。
@@ -74,7 +74,7 @@ verify_keyless_exact_match(
 
 == 示例
 
-{short-project-name} 团队 https://github.com/kubewarden/verify-image-signatures[提供一个验证器策略]，强制所有容器使用 Sigstore 签名。
+{admc-short-name} 团队 https://github.com/kubewarden/verify-image-signatures[提供一个验证器策略]，强制所有容器使用 Sigstore 签名。
 它是使用 Rust 和 Rust SDK 构建的。
 该策略确保容器已签名，并可选择性地变更请求。变更将已验证的校验和附加到容器镜像的标签上。
 请查看文档以获取具体信息。
