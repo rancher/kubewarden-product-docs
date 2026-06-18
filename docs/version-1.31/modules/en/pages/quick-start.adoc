@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Quick start
-:revdate: 2025-11-17
+:revdate: 2026-06-18
 :page-revdate: {revdate}
 :description: Getting started with {project-name}, installing the {project-name} stack and taking care of prerequisites and authentication
 :doc-persona: ["kubewarden-all"]
@@ -103,7 +103,7 @@ Kubernetes cluster:
 
 * `kubewarden-crds`, which registers the {cluster-admission-policy},
   {admission-policy} and {policy-server} Custom Resource Definitions. Also, the
-  {report} Custom Resource Definitions used by the audit scanner.
+  {policy-report} Custom Resource Definitions used by the audit scanner.
 * `kubewarden-controller`, which installs the {short-project-name} controller and the
   audit scanner
 +
