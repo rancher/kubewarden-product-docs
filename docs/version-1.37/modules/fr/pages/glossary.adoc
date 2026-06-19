@@ -1,0 +1,78 @@
+include::partial$variables.adoc[]
+= Glossaire
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2026-06-18
+:page-revdate: {revdate}
+:description: Explorez les ressources clés et les configurations liées aux stratégies {admc-name} dans les environnements Kubernetes pour plus d'informations.
+:doc-persona: ["kubewarden-all"]
+:doc-topic: ["glossary"]
+:doc-type: ["explanation"]
+:keywords: ["kubewarden", "glossary"]
+:sidebar_label: Glossaire
+:sidebar_position: 90
+:current-version: {page-origin-branch}
+
+== R
+
+=== AdmissionPolicy
+
+Une ressource à l'échelle de l'espace de noms. La stratégie ne traite que les demandes ciblant l'espace de noms dans lequel l'AdmissionPolicy est définie.
+
+== C
+
+=== ClusterAdmissionPolicy
+
+Une <<_admissionpolicy,AdmissionPolicy>> qui cible des ressources à l'échelle du cluster.
+
+=== ClusterReport
+
+Un <<_report,Report>> et un ClusterReport stockent les résultats des analyses de stratégie. Le choix de l'un ou de l'autre dépend de la portée de la ressource.
+
+== K
+
+=== kwctl
+
+Un outil CLI pour générer et tester des fichiers YAML Kubernetes pour le déploiement de stratégies.
+
+== L
+
+=== MutatingWebhookConfiguration
+
+Un https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[ressource Kubernetes] créé par le contrôleur {admc-short-name} pour informer Kubernetes où envoyer un `AdmissionReview`.
+En d'autres termes, c'est ainsi qu'un contrôleur {admc-short-name} informe Kubernetes où trouver une stratégie de mutation de ressource.
+
+== P
+
+=== Rapport
+
+Un Report et un <<_clusterreport,ClusterReport>> stockent les résultats des analyses de stratégie. Le choix de l'un ou de l'autre dépend de la portée de la ressource.
+
+[#_policy_server]
+=== PolicyServer
+
+Un PolicyServer valide les demandes entrantes en exécutant des stratégies {admc-short-name} contre les demandes.
+
+== V
+
+=== ValidatingWebhookConfiguration
+
+Un https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#what-are-admission-webhooks[ressource Kubernetes] créé par le contrôleur {admc-short-name} pour informer Kubernetes où envoyer un `AdmissionReview`.
+En d'autres termes, c'est ainsi que {admc-short-name} informe Kubernetes où trouver une stratégie de validation de ressource.
+
+== M
+
+=== waPC
+
+Appels de procédure WebAssembly. https://wapc.io.
+
+=== WASI
+
+Interface système WebAssembly. https://wasi.dev.
+
+=== Wasm
+
+Un format d'instruction binaire pour une machine virtuelle basée sur une pile. Conçu pour le déploiement web. https://webassembly.org.
+
+=== Wasmtime
+
+Un composant d'exécution pour WebAssembly. https://wasmtime.dev.

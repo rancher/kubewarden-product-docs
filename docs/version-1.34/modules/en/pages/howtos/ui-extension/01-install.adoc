@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Rancher UI extension quickstart
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-03-18
+:revdate: 2026-06-18
 :page-revdate: {revdate}
 :description: Learn how to install the {project-name} UI as an extension of Rancher Manager with a step-by-step guide through the installation process.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -107,7 +107,7 @@ Helm repository with the {short-project-name} UI chart for installation.
   a registry secret within the `cattle-ui-plugin-system` namespace. Enter the
   domain of the image address in the *Registry Domain Name* field.
 . Navigate back to the *Extensions* page (for example,
-  `+https://cluster-ip/dashboard/c/local/uiplugins+`).
+  `\https://cluster-ip/dashboard/c/local/uiplugins`).
 . On the top right, select *Manage Extension Catalogs*.
   image:ui_airgap_01.png[Manage Catalogs]
 . Select the *Import Extension Catalog* button. image:ui_airgap_02.png[Import

@@ -1,21 +1,21 @@
 
 .PHONY: local
   local: tmpdir environment
-	bin/switch-prod-comm product | tee tmp/local-build.log
+	# bin/switch-prod-comm product | tee tmp/local-build.log
 	npx antora --version | tee -a tmp/local-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-local-playbook.yml 2>&1 | tee -a tmp/local-build.log
 
 .PHONY: rancher-dsc
 rancher-dsc: tmpdir environment
-	bin/switch-prod-comm product | tee tmp/rancher-dsc-build.log
+	# bin/switch-prod-comm product | tee tmp/rancher-dsc-build.log
 	npx antora --version | tee -a tmp/rancher-dsc-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-rancher-dsc.yml 2>&1 | tee -a tmp/rancher-dsc-build.log
 
 .PHONY: rancher-dsc-local
 rancher-dsc-local: tmpdir environment
-	bin/switch-prod-comm product | tee tmp/rancher-dsc-local-build.log
+	# bin/switch-prod-comm product | tee tmp/rancher-dsc-local-build.log
 	npx antora --version | tee -a tmp/rancher-dsc-local-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-rancher-dsc-local.yml  2>&1 | tee -a tmp/rancher-dsc-local-build.log
@@ -28,7 +28,7 @@ rancher-dsc-local: tmpdir environment
 
 .PHONY: local-community
 local-community: tmpdir environment
-	bin/switch-prod-comm community | tee tmp/local-community-build.log
+	# bin/switch-prod-comm community | tee tmp/local-community-build.log
 	npx antora --version | tee -a tmp/local-community-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-local-community-playbook.yml \
@@ -38,14 +38,14 @@ local-community: tmpdir environment
 
 .PHONY: remote
 remote: tmpdir environment
-	bin/switch-prod-comm product | tee tmp/remote-build.log
+	# bin/switch-prod-comm product | tee tmp/remote-build.log
 	npx antora --version | tee -a tmp/remote-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-remote-playbook.yml 2>&1 | tee -a tmp/remote-build.log
 
 .PHONY: remote-community
 remote-community: tmpdir environment
-	bin/switch-prod-comm community | tee tmp/remote-community-build.log
+	# bin/switch-prod-comm community | tee tmp/remote-community-build.log
 	npx antora --version | tee -a tmp/remote-community-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-remote-community-playbook.yml \
@@ -54,7 +54,7 @@ remote-community: tmpdir environment
 
 .PHONY: first-local
 first-local: tmpdir environment
-	bin/switch-prod-comm product | tee tmp/first-local-build.log
+	# bin/switch-prod-comm product | tee tmp/first-local-build.log
 	npx antora --version | tee -a tmp/first-local-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-rancher-first-local.yml \
@@ -63,7 +63,7 @@ first-local: tmpdir environment
 
 .PHONY: original-local
 original-local: tmpdir environment
-	bin/switch-prod-comm product | tee tmp/original-local-build.log
+	# bin/switch-prod-comm product | tee tmp/original-local-build.log
 	npx antora --version | tee -a tmp/original-local-build.log
 	npx antora --stacktrace --log-format=pretty --log-level=info \
 		kw-rancher-original-local.yml \

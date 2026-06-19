@@ -1,0 +1,64 @@
+include::partial$variables.adoc[]
+= Caminho de fazer upgrade
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2026-06-18
+:page-revdate: {revdate}
+:description: Atualize sua pilha {admc-name} usando estratégias de versionamento suportadas e regras de compatibilidade entre seus componentes.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["operator-manual", "upgrade-path"]
+:doc-type: ["reference"]
+:keywords: ["caminho de fazer upgrade", "suporte"]
+:sidebar_label: Caminho de fazer upgrade
+:sidebar_position: 20
+:current-version: {page-origin-branch}
+
+== {admc-name}Versionamento da pilha
+
+O projeto {admc-short-name} utiliza https://semver.org/[Versionamento semântico] para definir a versão da "pilha" de todos os seus componentes: a versão segue o padrão `MAJOR.MINOR.PATCH`. A versão suportada é a última versão lançada.
+
+Os componentes {admc-short-name} que seguem as regras para a versão da "pilha" são:
+
+* `kubewarden-crds` gráfico, no campo appVersion deles.
+
+* `kubewarden-controller` gráfico, no campo appVersion deles.
+
+* `kubewarden-defaults` gráfico, no campo appVersion deles.
+
+* `policy-server` tag de imagem para aqueles implantados manualmente. O recurso para o padrão já é gerenciado pelo `kubewarden-defaults` gráfico.
+
+* `kwctl` binário.
+
+== Compatibilidade de versão da pilha entre componentes
+
+O `kubewarden-crds` gráfico, o `kubewarden-controller` gráfico, o `kubewarden-defaults` gráfico, qualquer `policy-server` imagem implantada manualmente e `kwctl` devem executar a mesma versão `MAJOR`.`MINOR`.`PATCH`.
+
+Portanto, se a versão `kubewarden-controller` em execução for `1.1.2`, a versão dos +``policy-server``s e `kwctl` em uso também deve ser `1.1.2`.
+
+== Versões de gráficos Helm
+
+Os gráficos Helm definem o `version` campo e o `appVersion` campo. O campo `appVersion` informa a versão da {admc-short-name} "pilha" conforme mencionado anteriormente. O `version` campo também segue https://semver.org/[versionamento semântico] e descreve mudanças compatíveis com versões anteriores nos templates de gráficos e `values.yaml`.
+
+== Caminhos de fazer upgrade
+
+Ao atualizar componentes, você pode atualizar várias `PATCH` versões de pilha em uma única operação. No entanto, a atualização de várias versões de pilha `MAJOR` ou `MINOR` em uma única atualização não é suportada.
+
+Por exemplo, você pode atualizar componentes da versão `1.1.10` para `1.1.nn` em uma única atualização. Mas a atualização de `1.1.10` para `1.5.0` não é suportada. Nesses casos, você deve atualizar individualmente para cada `MAJOR`/`MINOR` versão entre as duas versões. Portanto, é necessário atualizar `1.1.10` para `1.2.0`, depois `1.3.0`, depois `1.4.0` e finalmente para `1.5.0`. Para atualizar uma `MAJOR` versão para outra, você precisa aplicar todas as `MINOR` atualizações entre as duas `MAJOR` versões.
+
+.Exemplo de gráfico de suporte a caminhos de fazer upgrade
+include::latest@shared:en:partial$upg-path.adoc[]
+
+== Ordem de fazer upgrade
+
+Os {admc-short-name} usuários devem fazer upgrade da pilha começando pelo `kubewarden-crds` gráfico, depois o `kubewarden-controller` gráfico. Depois disso, faça upgrade do `policy-server` (via `kubewarden-defaults` gráfico ou atualizando as imagens dos personalizados) e `kwctl`.
+
+== Downgrades
+
+Downgrades não são suportados, e {admc-short-name} não os testa. No entanto, há uma expectativa razoável de que eles devam funcionar.
+
+== SDKs, políticas
+
+Os SDKs de políticas para as diferentes linguagens e políticas mantidas pela {admc-short-name} equipe seguem seu próprio versionamento semântico. {admc-short-name} suporta a versão mais recente. Não há necessidade de um caminho de upgrade para eles, apenas um upgrade para a versão mais recente.
+
+Mudanças na pilha {admc-short-name} podem significar que políticas e SDKs recebam atualizações para usar os novos recursos do {admc-short-name}. {admc-short-name} se preocupa em realizar essas atualizações de maneira compatível com versões anteriores.
+
+Por exemplo, uma versão menor do {admc-short-name} que adiciona suporte para o Audit Scanner (`v1.7.0`) significa que as políticas ganharam um novo campo `spec.backgroundAudit`. Isso é opcional, compatível com versões anteriores e definido como `true` por padrão.
