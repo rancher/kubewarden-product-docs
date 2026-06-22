@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Validating policies
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Evaluate your validation requests using policy-specific settings to determine acceptance or rejection of Kubernetes AdmissionReview objects.
 :doc-persona: ["kubewarden-policy-developer"]
@@ -55,6 +55,7 @@ It looks like:
 The `settings` key points to a free-form JSON document holds the policy
 specific settings. The previous chapter focused on policies and settings.
 
+[#_an_example]
 == An example
 
 Given the following Kubernetes `AdmissionReview`:

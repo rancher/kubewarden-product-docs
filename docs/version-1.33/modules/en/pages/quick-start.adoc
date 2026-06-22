@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 = Quick start
-:revdate: 2026-06-18
+:revdate: 2026-03-18
 :page-revdate: {revdate}
 :description: Understand the {project-name} stack by learning how to deploy and manage its main components, including PolicyServers and ClusterAdmissionPolicy resources.
 :doc-persona: ["kubewarden-all"]
@@ -64,6 +64,7 @@ names for the CRDs:
 ====
 
 
+[#installation]
 == Installation
 
 [IMPORTANT]
@@ -366,6 +367,7 @@ Kubernetes 1.21.0
 
 The complete documentation of these Custom Resources is https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[here] or on https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
 
+[#_example_enforce_your_first_policy]
 == Example: Enforce your first policy
 
 We will use the https://github.com/kubewarden/pod-privileged-policy[`pod-privileged`] policy.

@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Configuring the {admc-name} stack for production
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Configure tolerations and affinity rules for optimal scheduling and reliability within the {admc-name} stack in a Kubernetes cluster.
 :keywords: ["{admc-name}", kubewarden, kubernetes, policyservers, production, poddisruptionbudget, affinity, limits, tolerations, priorityclass]
@@ -189,6 +189,7 @@ deleted PriorityClass remain unchanged, but following Pods that use the
 name of the deleted PriorityClass will not be created by Kubernetes.
 ====
 
+[#_policyserver_production_configuration]
 == `PolicyServer` production configuration
 
 `PolicyServers` are critical to the cluster. Reliability of them is important
