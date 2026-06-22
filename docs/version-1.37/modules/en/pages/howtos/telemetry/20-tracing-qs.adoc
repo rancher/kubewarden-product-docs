@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Tracing quickstart
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Enable tracing support for the Policy Server using this quickstart guide to collect fine-grained details about policy evaluations, which can be used to debug SUSE Security Admission issues.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -31,6 +31,7 @@ and policies.
 You use https://www.jaegertracing.io/[Jaeger] -- used to receive, store and
 visualize trace events.
 
+[#_install_jaeger]
 == Install Jaeger
 
 You use the https://github.com/jaegertracing/jaeger-operator[Jaeger Operator]

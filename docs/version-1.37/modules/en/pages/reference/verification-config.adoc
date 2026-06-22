@@ -9,7 +9,7 @@ include::partial$variables.adoc[]
 
 = Verification configuration format
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-05-04
 :page-revdate: {revdate}
 
 == Introduction
@@ -99,6 +99,7 @@ anyOf: # at least `anyOf.minimumMatches` are required to match
       urlPrefix: https://github.com/bob # <- it will be post-fixed with `/` for security reasons
 ----
 
+[#_signature_configuration_reference]
 == Signature configuration reference
 
 You can validate signature requirements contained in a file. Expand for an
