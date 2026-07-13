@@ -90,16 +90,13 @@ carried into the new chart. Use `global.imageRegistry` and
 ====
 Backed-up PolicyServer resources contain an explicit `spec.image` field pinned
 to the community policy-server image (for example,
-`ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0`). When you restore
-these resources after the migration, the explicit field overrides the
-{admc-name} chart default, so the PolicyServer pods keep pulling the community
-image instead of the {admc-name} one
-(`dp.apps.rancher.io/containers/kubewarden-policy-server:1.37.0`). You must
-update `spec.image` on every restored PolicyServer after applying the backup.
-See <<step-restore>>.
+`ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0`). The migration
+process in <<step-restore>> updates this field to the {admc-name} image
+(`dp.apps.rancher.io/containers/kubewarden-policy-server:1.37.0`) before
+applying the backup.
 
 Note that policy `spec.module` references (the Wasm policy module OCI images,
-e.g. `ghcr.io/kubewarden/policies/...`) are served from `ghcr.io` in both
+e.g. `ghcr.io/kubewarden/policies/...`) are for now served from `ghcr.io` in both
 the community and {admc-name} charts and do *not* need to be changed.
 ====
 
@@ -150,6 +147,17 @@ helm get values kubewarden-crds -n kubewarden -o yaml > kubewarden-crds-values.y
 helm get values kubewarden-controller -n kubewarden -o yaml > kubewarden-controller-values.yaml
 helm get values kubewarden-defaults -n kubewarden -o yaml > kubewarden-defaults-values.yaml
 ----
+
+Review the captured values and identify settings you want to carry over to the
+{admc-name} chart. Pay special attention to these critical key changes:
+
+* **`global.cattle.imagePullSecrets`** must be renamed to **`global.imagePullSecrets`**
+* **`global.cattle.systemDefaultRegistry`** is not recognized by the {admc-name} chart.
+  Remove it and use `global.imageRegistry` instead, or omit it to use the chart
+  default (`dp.apps.rancher.io`)
+
+See <<mapping-values>> for the complete mapping between community and {admc-name}
+chart values.
 
 [#step-uninstall]
 === Step 3: Uninstall the community charts
@@ -267,7 +275,17 @@ kubectl rollout status deployment \
   --timeout=300s
 ----
 
-Once the controller is ready, restore the backed-up resources:
+Once the controller is ready, update the PolicyServer images in your backup file
+before applying. The backed-up PolicyServers carry a `spec.image` field pinned
+to the community policy-server image. Update it to the {admc-name} image:
+
+[source,sh]
+----
+yq eval '.items[].spec.image = "dp.apps.rancher.io/containers/kubewarden-policy-server:1.37.0"' \
+  -i policyservers-backup.yaml
+----
+
+Now restore the backed-up resources:
 
 [source,sh]
 ----
@@ -277,28 +295,6 @@ kubectl apply -f admissionpolicies-backup.yaml
 kubectl apply -f clusteradmissionpolicygroups-backup.yaml
 kubectl apply -f admissionpolicygroups-backup.yaml
 ----
-
-[WARNING]
-====
-The restored PolicyServer resources carry a `spec.image` field pinned to the
-community policy-server image. You must update it to the {admc-name}
-policy-server image on every restored PolicyServer, otherwise the PolicyServer
-pods will keep pulling the community image from `ghcr.io` instead of the
-{admc-name} image from `dp.apps.rancher.io`.
-
-Patch all restored PolicyServers in a single loop:
-
-[source,sh]
-----
-for ps in $(kubectl get policyservers -o name); do
-  kubectl patch "$ps" --type=merge \
-    -p '{"spec":{"image":"dp.apps.rancher.io/containers/kubewarden-policy-server:1.37.0"}}'
-done
-----
-
-Alternatively, edit `spec.image` directly in `policyservers-backup.yaml` before
-running `kubectl apply` above.
-====
 
 [#step-verify]
 === Step 8: Verify the migration
@@ -353,9 +349,6 @@ image. Every `IMAGE` value must start with `dp.apps.rancher.io`:
 kubectl get policyservers \
   -o custom-columns=NAME:.metadata.name,IMAGE:.spec.image
 ----
-
-If any PolicyServer still shows a `ghcr.io/...` image, update it as described
-in <<step-restore>>.
 
 [#mapping-values]
 == Mapping your community chart values to the {admc-name} chart
