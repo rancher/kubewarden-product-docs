@@ -1,6 +1,6 @@
 include::partial$variables.adoc[]
 
-= Migration from the community three-chart setup to the {admc-name} single chart
+= Migration from three-chart setup
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-07-08
 :page-revdate: {revdate}
@@ -11,6 +11,7 @@ include::partial$variables.adoc[]
 :keywords: ["{admc-name}", "kubewarden", "helm", "chart", "migration", "upgrade", "kubewarden-crds", "kubewarden-controller", "kubewarden-defaults", "suse-security-admission-controller", "application-collection", "appco"]
 :sidebar_label: Migration from the community three-chart setup
 
+== Migration from the community three-chart setup to the {admc-name} single chart
 This page describes how to migrate an existing {community-project-name} installation
 based on the community upstream Helm charts to the {admc-name} single Helm chart,
 published in the https://apps.rancher.io[SUSE Application Collection].
