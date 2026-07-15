@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Audit Scanner - Policy Reports
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-05-04
 :page-revdate: {revdate}
 :description: Store and query audit scanner policy scan results using either Report or ClusterReport objects within your Kubernetes cluster.
 :doc-persona: [“kubewarden-user”, “kubewarden-operator”, “kubewarden-policy-developer”, “kubewarden-integrator”]
