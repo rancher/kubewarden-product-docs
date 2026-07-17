@@ -2,3 +2,21 @@
 include::latest@shared:en:partial$kubewarden-variables-1.36-forward.adoc[]
 
 // global variables for this version below:
+
+// default-container-image-tag is the version-specific image tag for the policy
+// server container image. Used together with {default-policy-server-image}
+// (defined in the shared variables file) to construct the full image reference.
+// Prefer {default-policy-server-image-tag} (defined below) over composing
+// the two attributes manually.
+:default-container-image-tag: 1.37.0
+
+// default-policy-server-image-tag is the fully-qualified policy server image
+// reference, combining {default-policy-server-image} (registry and image name,
+// build-type conditional, defined in the shared variables file) with
+// {default-container-image-tag} (version-specific tag, defined above).
+// This attribute is defined here, after the shared include, because
+// {default-policy-server-image} must already be resolved before it can be
+// composed. Use this single attribute in documentation instead of joining
+// the two parts manually, particularly inside source blocks with
+// subs="attributes+".
+:default-policy-server-image-tag: {default-policy-server-image}:{default-container-image-tag}

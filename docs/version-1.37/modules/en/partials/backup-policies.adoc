@@ -1,0 +1,19 @@
+Back up all your {policy-server} instances and policy custom resources.
+ifdef::migration-preserves-crs[]
+Because the community chart preserves user CRs on uninstall, this backup is a
+precaution rather than the primary recovery mechanism.
+endif::[]
+ifndef::migration-preserves-crs[]
+These are restored after the new chart is running.
+endif::[]
+
+[source,sh]
+----
+FILTER='del(.items[].metadata.uid, .items[].metadata.resourceVersion, .items[].metadata.creationTimestamp, .items[].metadata.generation, .items[].metadata.managedFields, .items[].status)'
+
+kubectl get clusteradmissionpolicies -A -o yaml | yq "$FILTER" > clusteradmissionpolicies-backup.yaml
+kubectl get admissionpolicies -A -o yaml | yq "$FILTER" > admissionpolicies-backup.yaml
+kubectl get clusteradmissionpolicygroups -A -o yaml | yq "$FILTER" > clusteradmissionpolicygroups-backup.yaml
+kubectl get admissionpolicygroups -A -o yaml | yq "$FILTER" > admissionpolicygroups-backup.yaml
+kubectl get policyservers -A -o yaml | yq "$FILTER" > policyservers-backup.yaml
+----

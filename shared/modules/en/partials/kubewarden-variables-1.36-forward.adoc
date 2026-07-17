@@ -80,3 +80,36 @@ endif::[]
 :Wasmtime: xref:glossary.adoc#_wasmtime[Wasmtime]
 
 // Glossary terms end
+
+// Artifact names and version to be used
+ifeval::["{build-type}" == "community"]
+:default-policy-server-image: ghcr.io/kubewarden/adm-controller/policy-server
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+:default-policy-server-image: dp.apps.rancher.io/containers/kubewarden-policy-server
+endif::[]
+
+// admc-chart-location is the chart reference passed to `helm install` commands
+// in migration and installation documentation.
+//
+// The two build types use different forms, which is intentional:
+// - The product build uses a self-contained OCI URL. No prior `helm repo add`
+//   is required; the registry, chart path, and transport are all embedded in
+//   the reference.
+// - The community build uses a <repo>/<chart> shorthand. This form assumes the
+//   Kubewarden Helm repository has already been added with:
+//     helm repo add kubewarden https://charts.kubewarden.io
+//
+// Both are valid arguments to `helm install <release> <chart-ref>` and serve
+// the same purpose: identifying which chart to install. The difference in form
+// reflects how each distribution publishes and distributes its chart.
+ifeval::["{build-type}" == "community"]
+:admc-chart-location: kubewarden/admission-controller
+endif::[]
+
+ifeval::["{build-type}" == "product"]
+:admc-chart-location: oci://dp.apps.rancher.io/charts/suse-security-admission-controller
+endif::[]
+
+// Artifact names and versions end
