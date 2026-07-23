@@ -1,0 +1,72 @@
+[IMPORTANT]
+.Authentication
+====
+
+{admc-short-name} component images are distributed through the
+https://apps.rancher.io[SUSE Application Collection]. You need credentials to
+access the registry. See the
+https://docs.apps.rancher.io/get-started/authentication/[Application Collection
+authentication documentation] for how to obtain them.
+
+Then log in to the registry with Helm:
+
+[subs="+attributes",console]
+----
+helm registry login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
+====
+
+Deploy the {admc-short-name} stack using the `suse-security-admission-controller`
+Helm chart from the SUSE Application Collection.
+
+First, create the namespace and an image pull secret so the cluster can
+authenticate when pulling component images:
+
+[subs="+attributes",console]
+----
+kubectl create namespace {admc-namespace}
+----
+
+[subs="+attributes",console]
+----
+kubectl create secret docker-registry application-collection \
+  -n {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+----
+
+The `suse-security-admission-controller` chart installs all {admc-short-name}
+components in a single Helm release:
+
+* The {cluster-admission-policy}, {admission-policy} and {policy-server}
+  Custom Resource Definitions, as well as the {policy-report} Custom Resource
+  Definitions used by the audit scanner.
+* The {admc-short-name} controller and the audit scanner.
++
+[NOTE]
+====
+
+If you need to disable the audit scanner component check the audit scanner
+installation xref:howtos/audit-scanner.adoc[documentation page].
+
+====
++
+* A `PolicyServer` resource named `default`. It can also install a set of
+  recommended policies to secure your cluster by enforcing well known best
+  practices.
+
+[subs="+attributes",console]
+----
+helm install {admc-release} \
+  {admc-chart-location} \
+  -n {admc-namespace} \
+  --set global.imagePullSecrets={application-collection}
+----
+
+The default configuration values are sufficient for most deployments. The
+https://docs.apps.rancher.io[SUSE Application Collection documentation] describes
+all the options.
