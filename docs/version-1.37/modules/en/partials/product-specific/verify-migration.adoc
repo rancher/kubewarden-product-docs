@@ -1,0 +1,49 @@
+Check that the CRDs are now owned by the new release and the controller is running:
+
+[source,sh,subs="attributes+"]
+----
+# CRDs owned by the new release
+kubectl get crd policyservers.policies.kubewarden.io \
+  -o jsonpath='{.metadata.annotations.meta\.helm\.sh/release-name}'
+
+# Controller running
+kubectl get deployment -n {migration-namespace} \
+  -l app.kubernetes.io/component=controller
+----
+
+Confirm that every backed-up resource is present in the cluster by comparing
+counts from the backup files against live cluster state. The `expected` and
+`actual` counts must match for each type:
+
+[source,sh]
+----
+for kind in policyservers clusteradmissionpolicies admissionpolicies \
+            clusteradmissionpolicygroups admissionpolicygroups; do
+  expected=$(yq '.items | length' "${kind}-backup.yaml")
+  actual=$(kubectl get "$kind" -A --no-headers 2>/dev/null | wc -l)
+  echo "$kind: expected=$expected actual=$actual"
+done
+----
+
+If any count does not match, apply the corresponding backup file and check the
+controller logs for errors.
+
+Check that all policies have reached `active` status. The controller reconciles
+them automatically:
+
+[source,sh]
+----
+kubectl get clusteradmissionpolicies
+kubectl get admissionpolicies -A
+kubectl get clusteradmissionpolicygroups
+kubectl get admissionpolicygroups -A
+----
+
+Confirm that every PolicyServer is using the {admc-name} policy-server image.
+Every `IMAGE` value must start with `dp.apps.rancher.io`:
+
+[source,sh]
+----
+kubectl get policyservers \
+  -o custom-columns=NAME:.metadata.name,IMAGE:.spec.image
+----
