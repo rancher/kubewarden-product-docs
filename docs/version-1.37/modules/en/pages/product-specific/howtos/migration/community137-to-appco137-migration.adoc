@@ -1,0 +1,453 @@
+include::partial$variables.adoc[]
+
+:page-languages: [en, de, es, fr, ja, pt, zh]
+:revdate: 2026-07-16
+:page-revdate: {revdate}
+:description: Migrate from the community admission-controller Helm chart to the SUSE Application Collection suse-security-admission-controller single chart.
+:doc-persona: ["kubewarden-operator"]
+:doc-topic: ["chart-migration", "application-collection"]
+:doc-type: ["howto"]
+:keywords: ["{admc-name}", "kubewarden", "helm", "chart", "migration", "upgrade", "admission-controller", "suse-security-admission-controller", "application-collection", "appco", "single-chart"]
+:sidebar_label: Migrate from Kubewarden 1.37 single chart to {admc-name} 1.37
+:migration-namespace: $NAMESPACE
+:migration-backup-selector:
+
+= Migrate from {admc-community-name} 1.37 single chart to {admc-name} 1.37
+
+This page describes how to migrate an existing {community-project-name}
+installation based on the community `admission-controller` Helm chart
+(from `https://charts.kubewarden.io`) to the {admc-name}
+`suse-security-admission-controller` chart published in the
+https://apps.rancher.io[SUSE Application Collection].
+
+Both charts are single flat charts at appVersion `1.37`, so there is no value
+reshaping. The main work is updating the image registry and pull-secret
+conventions to match the {admc-name} chart, and adopting the surviving CRDs
+into the new Helm release. Because both charts keep CRDs and preserve user
+policies on uninstall, this is largely an in-place migration in the same
+namespace.
+
+[WARNING]
+====
+As described in the xref:reference/upgrade-path.adoc[upgrade path documentation],
+version jumping is not allowed. You must be running the community
+`admission-controller` chart at appVersion `v1.37.0` before migrating to
+{admc-name} appVersion `1.37.0`.
+====
+
+This migration involves a short window, between uninstalling the community
+chart and the {admc-name} chart becoming ready, when policies do not protect
+your cluster.
+
+You can use the xref:howtos/audit-scanner.adoc[Audit Scanner] after the
+migration completes to identify any resources that may have entered the cluster
+without being evaluated during that window.
+
+[#what-changes]
+== What changes in this migration
+
+Both charts are flat and share the same top-level key names, so only the image
+registry and pull-secret conventions differ.
+
+[cols="1,2,2", options="header"]
+|===
+| Aspect | Community chart (source) | {admc-name} chart (target)
+
+| Chart source
+| `admission-controller` from `https://charts.kubewarden.io`
+| `suse-security-admission-controller` from `{admc-chart-location}`
+
+| Image registry key
+| `global.cattle.systemDefaultRegistry` (default: `ghcr.io`)
+| `global.imageRegistry` (default: `dp.apps.rancher.io`)
+
+| Pull secrets key
+| `imagePullSecrets` (top-level list)
+| `global.imagePullSecrets`
+
+| Component images
+| `ghcr.io/kubewarden/adm-controller/controller`, `ghcr.io/kubewarden/adm-controller/audit-scanner`, `ghcr.io/kubewarden/adm-controller/policy-server`
+| `dp.apps.rancher.io/containers/kubewarden-controller`, `dp.apps.rancher.io/containers/kubewarden-audit-scanner`, `dp.apps.rancher.io/containers/kubewarden-policy-server`
+
+| Policy module registry
+| `ghcr.io` (via `recommendedPolicies.defaultPoliciesRegistry` or fallback)
+| `ghcr.io` (unchanged)
+
+| Values shape
+| Flat, top-level keys
+| Flat, identical key names
+
+| CRDs on uninstall
+| Kept (`helm.sh/resource-policy: keep`)
+| Kept (`helm.sh/resource-policy: keep`)
+
+| User policies on uninstall
+| Preserved by the cleanup hook
+| Preserved by the cleanup hook
+|===
+
+[IMPORTANT]
+====
+The {admc-name} chart does not read `global.cattle.systemDefaultRegistry` or
+`global.cattle.imagePullSecrets`. Remove those keys from your values; the chart
+ignores them entirely.
+
+For pull secrets, the {admc-name} chart reads both `global.imagePullSecrets`
+and a top-level `imagePullSecrets` list (with `global.imagePullSecrets` taking
+precedence when both are set). Use `global.imagePullSecrets`. The Step 3 `yq`
+transform moves the community top-level key there automatically.
+====
+
+[IMPORTANT]
+====
+PolicyServer resources may carry an explicit `spec.image` field pinned to the
+community policy-server image (for example,
+`ghcr.io/kubewarden/adm-controller/policy-server:v1.37.0`). The migration
+process in <<step-restore>> updates this field to the {admc-name} image
+(`{default-policy-server-image-tag}`) for any PolicyServer that has it set.
+
+Policy `spec.module` references (Wasm policy module OCI images,
+e.g. `ghcr.io/kubewarden/policies/...`) are served from `ghcr.io` in both
+charts and do *not* need to be changed.
+====
+
+[NOTE]
+====
+Because the community chart keeps its CRDs and preserves user-defined
+PolicyServers and policies on uninstall, the migration is largely in place: the
+{admc-name} chart adopts the surviving CRDs using `--take-ownership` rather
+than recreating them from scratch. See <<crd-adoption>> for details.
+====
+
+[#prerequisites]
+== Prerequisites
+
+* Helm v3.18 or later (required for `--take-ownership`).
+* `kubectl` with access to your cluster.
+* `yq` v4 (https://github.com/mikefarah/yq[github.com/mikefarah/yq]) for
+  filtering backed-up resources and transforming your values file.
+* An access token or service account for the SUSE Application Collection. See
+  the https://docs.apps.rancher.io/get-started/authentication/[Application
+  Collection authentication documentation] for how to obtain credentials.
+* The community `admission-controller` chart installed at appVersion `v1.37.0`.
+* The {admc-name} chart version `1.0.0` available at
+  `{admc-chart-location}`.
+
+[#migration-steps]
+== Migration steps
+
+Set a shell variable for the namespace where the community chart is installed.
+The {admc-name} chart is installed into the same namespace. Replace
+`<your-namespace>` with the actual namespace from your installation:
+
+[source,sh]
+----
+NAMESPACE=<your-namespace>
+----
+
+[#step-backup]
+=== Step 1: Back up your policies and policy servers
+
+Back up all your {policy-server} instances and policy custom resources.
+Because the community chart preserves user CRs on uninstall, this backup is a
+precaution rather than the primary recovery mechanism.
+
+include::partial$backup-policies.adoc[]
+
+[#step-capture-values]
+=== Step 2: Capture your existing values
+
+Save your current user-supplied values from the community release for
+reference. You will transform this file in Step 3. Replace
+`admission-controller` with your actual Helm release name if it differs.
+
+[source,sh]
+----
+helm get values admission-controller \
+  -n "$NAMESPACE" \
+  -o yaml > old-values.yaml
+----
+
+[#step-transform-values]
+=== Step 3: Transform your values for the {admc-name} conventions
+
+The top-level key names are identical in both charts. Only the image registry
+and pull-secret keys differ. Use the following `yq` command to remove the
+`global.cattle` block and move the top-level `imagePullSecrets` to
+`global.imagePullSecrets`:
+
+[source,sh]
+----
+yq eval '
+  del(.global.cattle) |
+  (.global.imagePullSecrets = (.imagePullSecrets // [])) |
+  del(.imagePullSecrets)
+' old-values.yaml > new-values.yaml
+----
+
+Review `new-values.yaml` before proceeding. If you did not customise the
+registry or pull secrets in the community chart, the output may be nearly
+empty, which is fine, since the {admc-name} chart defaults cover all required
+settings.
+
+See <<mapping-values>> for the complete list of key differences.
+
+[NOTE]
+====
+The `global.imagePullSecrets` value in the {admc-name} chart is a list of
+secret name strings or `{name: ...}` objects. You create the pull secret
+itself in Step 5. If you add it by name here in `new-values.yaml`, make sure
+the name matches what you create in Step 5.
+====
+
+[#step-registry-login]
+=== Step 4: Log in to the Application Collection registry
+
+[source,sh]
+----
+helm registry login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
+[#step-pull-secret]
+=== Step 5: Create the image pull secret
+
+include::partial$create-image-pull-secret.adoc[]
+
+[#step-uninstall]
+=== Step 6: Uninstall the community chart
+
+Replace `admission-controller` with your actual Helm release name if it differs.
+
+[source,sh]
+----
+helm uninstall admission-controller -n "$NAMESPACE"
+----
+
+[NOTE]
+====
+The community chart keeps its CRDs (`helm.sh/resource-policy: keep`). Its
+cleanup hook deletes the **chart-managed** resources — the default
+`PolicyServer` and the recommended `ClusterAdmissionPolicies`, identified by
+the `kubewarden.io/managed-by: kubewarden-controller-defaults` label — together
+with their backing resources (Deployments, webhooks, Services, Secrets). Your
+**user-defined** PolicyServers and policies are preserved.
+
+The deleted chart-managed defaults are not lost: the {admc-name} chart's
+controller recreates them on install (via server-side apply, field owner
+`kubewarden-controller-defaults`) when `policyServer.enabled` or
+`recommendedPolicies.enabled` is set in your values. After uninstall, the CRDs
+and your user CRs remain in the cluster for the {admc-name} chart to adopt.
+There is still a short enforcement gap until the {admc-name} chart is ready.
+====
+
+[#step-install]
+=== Step 7: Install the {admc-name} chart and adopt the CRDs
+
+The CRDs surviving from the community release still carry its Helm ownership
+metadata (`meta.helm.sh/release-name` and `meta.helm.sh/release-namespace`).
+Installing the {admc-name} chart without `--take-ownership` fails with an
+error like this:
+
+----
+Error: ... invalid ownership metadata; annotation
+meta.helm.sh/release-name must equal "suse-security-admission-controller":
+current value is "admission-controller"
+----
+
+Pass `--take-ownership` to re-stamp the CRD ownership metadata for the new
+release. Because the install uses the same namespace as the community release,
+only the release-name dimension of the metadata changes.
+
+[source,sh,subs="attributes+"]
+----
+helm install suse-security-admission-controller \
+  {admc-chart-location} \
+  --version 1.0.0 \
+  -n "$NAMESPACE" \
+  --take-ownership \
+  --set global.imagePullSecrets={application-collection} \
+  --values new-values.yaml \
+  --wait
+----
+
+[#step-restore]
+=== Step 8: Update PolicyServer images
+
+Because user CRs survived the community chart uninstall, they are already
+present in the cluster. The default `PolicyServer` was deleted during uninstall
+and recreated by the new chart's controller, so patch the **live** PolicyServers
+in place rather than re-applying the backup — this updates both your user
+PolicyServers and the recreated default without creating duplicates. You only
+need to update any PolicyServer whose `spec.image` was pinned to the community
+image. The following command patches all live PolicyServers in place:
+
+[source,sh,subs="attributes+"]
+----
+kubectl get policyservers -A -o yaml \
+  | yq '.items[].spec.image = "{default-policy-server-image-tag}"' \
+  | kubectl apply -f -
+----
+
+[NOTE]
+====
+If a PolicyServer did not set `spec.image`, the controller uses the chart
+default and no change is needed. If any resource is unexpectedly missing after
+the uninstall, re-apply it from the Step 1 backup files, updating the
+PolicyServer image the same way:
+
+[source,sh,subs="attributes+"]
+----
+yq eval '.items[].spec.image = "{default-policy-server-image-tag}"' \
+  -i policyservers-backup.yaml
+kubectl apply -f policyservers-backup.yaml
+----
+
+Do not re-apply the entire backup once the chart's default resources have been
+recreated. `kubectl create` fails with `AlreadyExists` on the recreated
+defaults; `kubectl apply` (client-side) competes with the controller for field
+ownership of those resources (which the controller manages via server-side
+apply) and triggers a missing-annotation warning. Restore from backup only the
+individual **user** resources that are genuinely missing.
+====
+
+[#step-verify]
+=== Step 9: Verify the migration
+
+include::partial$verify-migration.adoc[]
+
+[#mapping-values]
+== Mapping your community chart values to the {admc-name} chart
+
+Both charts are flat and share identical top-level key names. Almost everything
+passes through unchanged. The only keys that differ are the image registry and
+the pull-secret key.
+
+[cols="2,2,2", options="header"]
+|===
+| Community key | {admc-name} key | Notes
+
+| `global.cattle.systemDefaultRegistry`
+| `global.imageRegistry`
+| Rename; omit to use the {admc-name} default (`dp.apps.rancher.io`)
+
+| `imagePullSecrets` (top-level)
+| `global.imagePullSecrets`
+| Normalize under `global`; both keys are read by the {admc-name} chart (via coalesce), with `global.imagePullSecrets` taking precedence
+
+| All other top-level keys (`logLevel`, `replicas`, `auditScanner.*`,
+  `policyServer.*`, `telemetry.*`, `mTLS.*`, `recommendedPolicies.*`,
+  `installOpenReportsCRDs`, `installPolicyReportCRDs`, `crdVersion`,
+  `nameOverride`, `fullnameOverride`, etc.)
+| Same key
+| Unchanged; carry over directly
+|===
+
+=== Image registry and pull secrets
+
+The registry convention changes from the Rancher-specific
+`global.cattle.systemDefaultRegistry` to the Application Collection standard
+`global.imageRegistry`. Do not carry `global.cattle.*` keys into the
+{admc-name} chart values; the chart ignores them.
+
+If you pull images from the default Application Collection registry
+(`dp.apps.rancher.io`), you do not need a registry override.
+
+If you pull images from a private mirror or an air-gapped registry:
+
+[source,yaml]
+----
+global:
+  imageRegistry: "my-private-registry.example.com"
+  imagePullSecrets:
+    - name: my-pull-secret
+----
+
+For pull secrets, the community chart used a top-level `imagePullSecrets` list.
+The {admc-name} chart reads both `global.imagePullSecrets` and a top-level
+`imagePullSecrets` (with `global.imagePullSecrets` taking precedence when both
+are set). The Step 3 `yq` command moves the list to `global.imagePullSecrets`
+(the preferred key) automatically.
+
+=== Recommended policies
+
+In the community chart, `recommendedPolicies.defaultPoliciesRegistry` defaults
+to `""`, which falls back to `global.cattle.systemDefaultRegistry` (`ghcr.io`).
+In the {admc-name} chart, `recommendedPolicies.defaultPoliciesRegistry`
+defaults to `ghcr.io` directly. The net result is the same.
+
+If you relied on `global.cattle.systemDefaultRegistry` to redirect policy
+modules to a private mirror, you must now set
+`recommendedPolicies.defaultPoliciesRegistry` explicitly in the {admc-name}
+chart values:
+
+[source,yaml]
+----
+recommendedPolicies:
+  defaultPoliciesRegistry: "my-private-registry.example.com"
+----
+
+The `recommendedPolicies.enabled` value defaults to `false` in both charts. If
+you had recommended policies enabled in the community setup, re-enable them
+explicitly in your new values.
+
+=== CRD toggles
+
+The two CRD installation toggles use the same top-level key names in both
+charts:
+
+* `installOpenReportsCRDs`
+* `installPolicyReportCRDs`
+
+Carry them over unchanged.
+
+[#caveats]
+== Caveats
+
+[#crd-adoption]
+=== CRD ownership adoption with `--take-ownership`
+
+The community chart keeps its CRDs on uninstall. When the {admc-name} chart
+installs into the same namespace under a different release name, the surviving
+CRDs still carry `meta.helm.sh/release-name: admission-controller`. Helm
+refuses to take over resources owned by another release without explicit
+consent.
+
+The `--take-ownership` flag (Helm 3.18+) re-stamps the CRD ownership metadata
+for the new release name. Since the install uses the same namespace, only the
+release-name annotation changes, while the namespace annotation stays consistent.
+
+The {admc-name} chart also annotates its CRDs with
+`helm.sh/resource-policy: keep`, so a future uninstall of the {admc-name}
+chart will leave the CRDs in place to protect any policies still running in the
+cluster.
+
+[#image-pull-secrets]
+=== Image pull secrets for policy-server pods
+
+include::partial$image-pull-secrets-caveat.adoc[]
+
+[#downtime-window]
+=== Policy enforcement gap
+
+Between Step 6 (uninstall the community chart) and Step 7 (the {admc-name}
+chart becoming ready), no admission controller is running. The webhook
+configurations are deleted by the community chart cleanup hook, so no admission
+evaluation takes place during this window.
+
+After the migration completes, run the Audit Scanner to identify any
+non-compliant resources that may have entered the cluster during the gap:
+
+[source,sh]
+----
+kubectl create job --from=cronjob/audit-scanner audit-scanner-manual -n "$NAMESPACE"
+----
+
+[#cattle-keys]
+=== `global.cattle.*` keys are ignored
+
+The {admc-name} chart does not read any key under `global.cattle`. In
+particular, `global.cattle.systemDefaultRegistry` and
+`global.cattle.imagePullSecrets` have no effect. Remove them from your values
+file and use `global.imageRegistry` and `global.imagePullSecrets` instead.
