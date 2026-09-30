@@ -3,16 +3,17 @@ include::partial$variables.adoc[]
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :revdate: 2026-07-16
 :page-revdate: {revdate}
+:current-version: {page-component-version}
 :description: Migrate from the community admission-controller Helm chart to the SUSE Application Collection suse-security-admission-controller single chart.
 :doc-persona: ["kubewarden-operator"]
 :doc-topic: ["chart-migration", "application-collection"]
 :doc-type: ["howto"]
 :keywords: ["{admc-name}", "kubewarden", "helm", "chart", "migration", "upgrade", "admission-controller", "suse-security-admission-controller", "application-collection", "appco", "single-chart"]
-:sidebar_label: Migrate from Kubewarden 1.37 single chart to {admc-name} 1.37
+:sidebar_label: Migrate from Kubewarden {current-version} single chart to {admc-name} {current-version}
 :migration-namespace: $NAMESPACE
 :migration-backup-selector:
 
-= From {admc-community-name} 1.37 to {admc-name} 1.37
+= From {admc-community-name} {current-version} to {admc-name} {current-version}
 
 This page describes how to migrate an existing {community-project-name}
 installation based on the community `admission-controller` Helm chart
@@ -20,7 +21,7 @@ installation based on the community `admission-controller` Helm chart
 `suse-security-admission-controller` chart published in the
 https://apps.rancher.io[SUSE Application Collection].
 
-Both charts are single flat charts at appVersion `1.37`, so there is no value
+Both charts are single flat charts at appVersion `{current-version}`, so there is no value
 reshaping. The main work is updating the image registry and pull-secret
 conventions to match the {admc-name} chart, and adopting the surviving CRDs
 into the new Helm release. Because both charts keep CRDs and preserve user
@@ -31,8 +32,8 @@ namespace.
 ====
 As described in the xref:reference/upgrade-path.adoc[upgrade path documentation],
 version jumping is not allowed. You must be running the community
-`admission-controller` chart at appVersion `v1.37.0` before migrating to
-{admc-name} appVersion `1.37.0`.
+`admission-controller` chart at appVersion `v{current-version}.0` before migrating to
+{admc-name} appVersion `{current-version}.0`.
 ====
 
 This migration involves a short window, between uninstalling the community
@@ -102,7 +103,7 @@ transform moves the community top-level key there automatically.
 ====
 PolicyServer resources may carry an explicit `spec.image` field pinned to the
 community policy-server image (for example,
-`ghcr.io/kubewarden/adm-controller/policy-server:v1.37.0`). The migration
+`ghcr.io/kubewarden/adm-controller/policy-server:v{current-version}.0`). The migration
 process in <<step-restore>> updates this field to the {admc-name} image
 (`{default-policy-server-image-tag}`) for any PolicyServer that has it set.
 
@@ -129,7 +130,7 @@ than recreating them from scratch. See <<crd-adoption>> for details.
 * An access token or service account for the SUSE Application Collection. See
   the https://docs.apps.rancher.io/get-started/authentication/[Application
   Collection authentication documentation] for how to obtain credentials.
-* The community `admission-controller` chart installed at appVersion `v1.37.0`.
+* The community `admission-controller` chart installed at appVersion `v{current-version}.0`.
 * The {admc-name} chart version `1.0.0` available at
   `{admc-chart-location}`.
 
