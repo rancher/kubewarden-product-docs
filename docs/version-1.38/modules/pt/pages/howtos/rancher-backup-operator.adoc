@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Backup e restauração com o Operador de Backup do Rancher
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure e gerencie backups e restaurações usando o operador rancher-backup em qualquer cluster Kubernetes.
 :keywords: "{admc-name}", Kubernetes, Kubewarden, Operador de Backup do Rancher, backup, restore
@@ -53,6 +53,7 @@ helm install --wait --create-namespace -n cattle-resources-system \
     rancher-backup-crd rancher-charts/rancher-backup-crd
 helm install --wait -n cattle-resources-system \
     rancher-backup rancher-charts/rancher-backup \
+    --set global.cattle.systemDefaultRegistry=registry.rancher.com \
     --set persistence.enabled=true --set persistence.storageClass=standard \
     --set optionalResources.kubewarden.enabled=true
 ----

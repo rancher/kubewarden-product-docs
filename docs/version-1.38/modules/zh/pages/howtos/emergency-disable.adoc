@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 紧急禁用
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: 紧急禁用
 :sidebar_position: 31
@@ -20,11 +20,11 @@ include::partial$variables.adoc[]
 
 首先，停止{admc-short-name}控制器。您可以通过将其部署缩减为零来实现：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
@@ -50,11 +50,11 @@ kubectl delete mutatingwebhookconfigurations \
 
 当紧急情况结束时，通过恢复{admc-short-name}控制器来恢复{admc-short-name}堆栈：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]

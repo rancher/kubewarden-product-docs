@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = {admc-short-name} ウェブフックのハードニング
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: ウェブフック
 :description: Kubernetes クラスター内のウェブフックへのアクセスを制限するために、ネットワークポリシーと認証を構成し、無効な呼び出し元からの接続を特に制限します。
@@ -30,13 +30,13 @@ Kubernetes のビルトイン NetworkPolicy リソースは、クラスターの
 
 `crd.projectcalico.org/v1` APIグループのNetworkPolicyリソースを使用して、次のようなネットワークポリシーを定義します:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: crd.projectcalico.org/v1
 kind: NetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
   types:
@@ -52,7 +52,7 @@ spec:
     - action: Allow
       protocol: TCP
       source:
-        namespaceSelector: 'kubernetes.io/metadata.name == "kubewarden"'
+        namespaceSelector: 'kubernetes.io/metadata.name == "{admc-namespace}"'
       destination:
         selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
 ----
@@ -81,13 +81,13 @@ selector: 'app.kubernetes.io/name == "kubewarden-controller" || has(kubewarden/p
 
 `cilium.io/v2` APIグループのCiliumNetworkPolicyリソースを使用して、次のようなネットワークポリシーを定義します:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   endpointSelector:
     matchExpressions:
@@ -102,7 +102,7 @@ spec:
       - remote-node
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kubewarden
+            k8s:io.kubernetes.pod.namespace: {admc-namespace}
 ----
 
 [NOTE]
@@ -177,12 +177,12 @@ plugins:
 +
 次に例を示します。
 +
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: v1
 kind: Config
 users:
-- name: '*.kubewarden.svc'
+- name: '*.{admc-namespace}.svc'
   user:
     client-certificate: /path/to/client/cert
     client-key: /path/to/client/key
@@ -196,9 +196,9 @@ users:
 +
 ルートCAが`/etc/k8s/admission/certs/rootCA.crt`で利用可能であると仮定し、次のコマンドで`ConfigMap`を作成します：
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
    --from-file=client-ca.crt=/etc/k8s/admission/certs/rootCA.crt
 ----
 
@@ -209,9 +209,10 @@ kubectl create configmap -n kubewarden api-server-mtls \
 +
 `ConfigMap`の名前は`api-server-mtls`であるため、`kubewarden-controller`をインストールするためのHelmコマンドは次のとおりです:
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+   --set global.imagePullSecrets=\{application-collection} \
    --set mTLS.enable=true \
    --set mTLS.configMapName=api-server-mtls
 ----

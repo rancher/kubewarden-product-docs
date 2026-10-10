@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = 允许在 Admission Controller 名称空间中进行评估
-:revdate: 2026-07-14
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: 如何配置 Admission Controller 以允许在其自身名称空间中进行策略评估
@@ -23,11 +23,11 @@ include::partial$variables.adoc[]
 
 为此，请升级您的 {admc-short-name} 安装，并将 `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm 图表的 `kubewarden-controller` 值设置为 `false`：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm upgrade -n kubewarden
+helm upgrade -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --reuse-values \
   --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
-  kubewarden-controller kubewarden/kubewarden-controller
 ----
 
 此更改允许策略服务器评估来自任何名称空间的资源。

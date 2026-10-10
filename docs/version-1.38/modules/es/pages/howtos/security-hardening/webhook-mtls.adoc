@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Asegurar webhooks con TLS mutuo con K3s
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Habilitar mTLS con K3s
 :description: Implementa protocolos de TLS mutuo (mTLS) para webhooks seguros con K3s en tu distribución de SUSE Kubernetes.
@@ -106,13 +106,13 @@ plugins:
 
 Finalmente, crea un archivo `kubeconfig` en `/etc/rancher/k3s/admission/kubeconfig`:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # /etc/rancher/admission/kubeconfig
 apiVersion: v1
 kind: Config
 users:
-- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+- name: "*.{admc-namespace}.svc" # namespace where the {admc-short-name} stack is deployed
   user:
     client-certificate: /etc/rancher/k3s/admission/certs/client.crt
     client-key: /etc/rancher/k3s/admission/certs/client.key
@@ -135,7 +135,7 @@ Instala K3s utilizando el siguiente comando:
 
 [source,console]
 ----
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_ARTIFACT_URL=<PRIME-ARTIFACTS-URL>/k3s sh -
 ----
 
 Espera a que finalice la instalación.
@@ -150,16 +150,16 @@ La CA raíz está disponible en `/etc/rancher/k3s/admission/certs/rootCA.crt` en
 
 Primero, crea el espacio de nombres `kubewarden`:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create namespace kubewarden
+kubectl create namespace {admc-namespace}
 ----
 
 Luego crea el `ConfigMap` en él. El siguiente comando, ejecutado en el nodo de Kubernetes, hace eso:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
     --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
 ----
 
@@ -174,9 +174,10 @@ Instala el {admc-short-name} stack como se describe en la guía xref:/quick-star
 
 El nombre del `ConfigMap` es `api-server-mtls`. El comando de Helm para instalar el `kubewarden-controller` es:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+    --set global.imagePullSecrets=\{application-collection} \
     --set mTLS.enable=true \
     --set mTLS.configMapName=api-server-mtls
 ----

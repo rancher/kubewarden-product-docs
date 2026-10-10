@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Tracing-Kurzanleitung
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Aktivieren Sie die Tracing-Unterstützung für den Policy Server mithilfe dieser Kurzanleitung, um detaillierte Informationen über die Richtlinienbewertungen zu sammeln, die zur Fehlersuche bei SUSE Security Admission-Problemen verwendet werden können.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -48,13 +48,19 @@ Um das Helm-Chart zu installieren:
 
 [subs="+attributes",console]
 ----
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+kubectl create namespace jaeger
+
+kubectl create secret docker-registry application-collection \
+  --namespace jaeger \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm upgrade -i --wait \
   --namespace jaeger \
-  --create-namespace \
-  --version 2.49.0 \
-  jaeger-operator jaegertracing/jaeger-operator \
+  --version 2.57.0 \
+  jaeger-operator oci://dp.apps.rancher.io/charts/jaeger-operator \
+  --set global.imagePullSecrets=\{application-collection} \
   --set rbac.clusterRole=true
 ----
 
@@ -76,7 +82,9 @@ kind: Jaeger
 metadata:
   name: my-open-telemetry
   namespace: jaeger
-spec: {}
+spec:
+  imagePullSecrets:
+    - name: application-collection
 EOF
 ----
 
@@ -98,18 +106,17 @@ Als ersten Schritt fügen Sie das Helm-Repository hinzu, das {admc-short-name} e
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 Dann installieren Sie die benutzerdefinierten Ressourcenbeschreibungen (CRDs), die von {admc-short-name} definiert sind:
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 Jetzt können Sie den Rest des {admc-short-name} Stacks bereitstellen. Das offizielle `kubewarden-defaults` Helm-Chart erstellt einen PolicyServer mit dem Namen `default`. Sie möchten, dass diese PolicyServer-Instanz das Tracing aktiviert hat.
 
@@ -141,12 +148,10 @@ Dann können Sie mit der Installation der Helm-Charts fortfahren:
 
 [subs="+attributes",console]
 ----
-helm install --wait --namespace kubewarden --create-namespace \
+helm install --wait --namespace {admc-namespace} \
   --values values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait --namespace kubewarden --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults
+  --set global.imagePullSecrets=\{application-collection} \
+  {admc-release} {admc-chart-location}
 ----
 
 Dies erstellt die `default` Instanz von `PolicyServer`:

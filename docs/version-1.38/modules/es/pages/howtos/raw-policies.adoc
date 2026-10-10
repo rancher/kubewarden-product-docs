@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Directivas en bruto
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configura directivas en bruto como un motor de evaluación de directivas genérico utilizando {admc-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
@@ -67,6 +67,13 @@ Para iniciar el servidor de directivas:
 
 [subs="+attributes",bash]
 ----
+docker login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
+[subs="+attributes",bash]
+----
 # Create a docker volume to store the policies
 docker volume create --driver local \
                 --opt type=tmpfs \
@@ -79,7 +86,7 @@ docker run --rm -it \
     -p 3000:3000 \
     -v $(pwd)/policies.yml:/policies.yml \
     -v policy-store:/registry \
-    ghcr.io/kubewarden/policy-server:1.9.0 \
+    {default-policy-server-image-tag} \
     --ignore-kubernetes-connection-failure=true
 ----
 
@@ -94,6 +101,15 @@ El controlador no permitirá al usuario cambiar el ConfigMap del Servidor de Dir
 Debido a ello, se debe iniciar un Servidor de Directivas dedicado.
 
 Crea un `policy-server.yaml` archivo con el siguiente contenido:
+
+[subs="+attributes",bash]
+----
+kubectl create secret docker-registry application-collection \
+  --namespace default \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+----
 
 [subs="+attributes",yaml]
 ----
@@ -112,9 +128,11 @@ spec:
       labels:
         app: policy-server
     spec:
+      imagePullSecrets:
+        - name: application-collection
       containers:
         - name: policy-server
-          image: ghcr.io/kubewarden/policy-server:v1.9.0
+          image: {default-policy-server-image-tag}
           ports:
             - containerPort: 3000
           volumeMounts:

@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Admission Controller ネームスペースでの評価を許可する
-:revdate: 2026-07-14
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Admission Controller を構成して、自身のネームスペースでポリシー評価を許可する方法
@@ -23,11 +23,11 @@ include::partial$variables.adoc[]
 
 これを行うには、{admc-short-name} のインストールをアップグレードし、`alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` Helm チャートの `kubewarden-controller` 値を `false` に設定します。
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm upgrade -n kubewarden
+helm upgrade -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --reuse-values \
   --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
-  kubewarden-controller kubewarden/kubewarden-controller
 ----
 
 この変更により、ポリシーサーバーは任意のネームスペースからリソースを評価できるようになります。

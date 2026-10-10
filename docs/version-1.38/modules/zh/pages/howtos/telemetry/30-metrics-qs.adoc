@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 指标快速入门
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: 使用 Prometheus 和通过 Helm 图表启用的 {admc-name} 在策略服务器上配置指标报告以进行数据收集。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -53,7 +53,7 @@ prometheus:
           app: kubewarden-policy-server-default
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
@@ -63,7 +63,7 @@ prometheus:
           app.kubernetes.io/name: kubewarden-controller
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
@@ -80,13 +80,20 @@ EOF
 
 [subs="+attributes",console]
 ----
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+kubectl create namespace prometheus
 
-helm install --wait --create-namespace \
+kubectl create secret docker-registry application-collection \
   --namespace prometheus \
-  --version 51.5.3 \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
+helm install --wait \
+  --namespace prometheus \
+  --version 92.1.0 \
   --values kube-prometheus-stack-values.yaml \
-  prometheus prometheus-community/kube-prometheus-stack
+  --set global.imagePullSecrets=\{application-collection} \
+  prometheus oci://dp.apps.rancher.io/charts/prometheus-operator
 ----
 
 == 安装 {admc-short-name}
@@ -105,17 +112,17 @@ helm install --wait --create-namespace \
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 然后您安装由 {admc-short-name} 定义的自定义资源定义（CRD）：
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 现在您可以部署其余的 {admc-short-name} 堆栈。官方 Helm 图表创建一个名为 `default` 的 PolicyServer。
 
@@ -136,17 +143,12 @@ telemetry:
 [subs="+attributes",console]
 ----
 helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
+  --namespace {admc-namespace} \
   --values kubewarden-values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
-  --set recommendedPolicies.defaultPolicyMode=monitor
+  --set recommendedPolicies.defaultPolicyMode=monitor \
+  {admc-release} {admc-chart-location}
 ----
 
 这会创建 `default` 的 `PolicyServer` 实例：
@@ -180,6 +182,12 @@ kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-operated 909
 [subs="+attributes",console]
 ----
 kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
+----
+
+[subs="+attributes",console]
+----
+kubectl get secret -n prometheus prometheus-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 --decode; echo
 ----
 
 您现在可以使用默认用户名 `admin` 和密码 `prom-operator` 登录。

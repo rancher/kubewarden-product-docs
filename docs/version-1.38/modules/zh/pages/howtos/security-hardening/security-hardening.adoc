@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 安全强化
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: 安全强化
 :sidebar_position: 50
@@ -19,9 +19,10 @@ include::partial$variables.adoc[]
 
 操作员可以通过安装所有{admc-short-name} Helm图表来获得安全部署。建议安装`kubewarden-defaults` Helm图表并启用其推荐的策略：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=protect
 ----
@@ -59,9 +60,10 @@ kubectl get clusterroles,roles -A | grep kubewarden
 
 为此，您需要将`pod-security.kubernetes.io/enforce: restricted`标签添加到{admc-short-name}部署名称空间。
 
-```console
-kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
-```
+[source,console,subs="attributes+"]
+----
+kubectl label namespace {admc-namespace} pod-security.kubernetes.io/enforce=restricted --overwrite
+----
 
 请参阅 Kubernetes Pod安全准入 的link:https://kubernetes.io/docs/concepts/security/pod-security-admission/[官方文档]以了解更多详细信息。
 

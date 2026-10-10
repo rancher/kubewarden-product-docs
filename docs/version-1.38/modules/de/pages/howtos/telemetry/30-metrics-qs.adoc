@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Metriken Kurzanleitung
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Konfigurieren Sie die Metrikberichterstattung auf dem Policy Server mit Prometheus und {admc-name}, das über Helm-Charts für die Datenerfassung aktiviert ist.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -55,7 +55,7 @@ prometheus:
           app: kubewarden-policy-server-default
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
@@ -65,7 +65,7 @@ prometheus:
           app.kubernetes.io/name: kubewarden-controller
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
@@ -82,13 +82,20 @@ Zum Zeitpunkt des Schreibens (2023-11-17) ist die neueste Chart-Version `51.5.3`
 
 [subs="+attributes",console]
 ----
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+kubectl create namespace prometheus
 
-helm install --wait --create-namespace \
+kubectl create secret docker-registry application-collection \
   --namespace prometheus \
-  --version 51.5.3 \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
+helm install --wait \
+  --namespace prometheus \
+  --version 92.1.0 \
   --values kube-prometheus-stack-values.yaml \
-  prometheus prometheus-community/kube-prometheus-stack
+  --set global.imagePullSecrets=\{application-collection} \
+  prometheus oci://dp.apps.rancher.io/charts/prometheus-operator
 ----
 
 == Installieren Sie {admc-short-name}
@@ -107,17 +114,17 @@ Zuerst sollten Sie das Helm-Repository hinzufügen, das {admc-short-name} enthä
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 Dann installieren Sie die von {admc-short-name} definierten benutzerdefinierten Ressourcenbeschreibungen (CRDs):
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 Jetzt können Sie den Rest des {admc-short-name} Stacks bereitstellen. Das offizielle Helm-Chart erstellt einen PolicyServer mit dem Namen `default`.
 
@@ -138,17 +145,12 @@ Jetzt installieren Sie die Helm-Charts:
 [subs="+attributes",console]
 ----
 helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
+  --namespace {admc-namespace} \
   --values kubewarden-values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
-  --set recommendedPolicies.defaultPolicyMode=monitor
+  --set recommendedPolicies.defaultPolicyMode=monitor \
+  {admc-release} {admc-chart-location}
 ----
 
 Dies erstellt die `default` Instanz von `PolicyServer`:
@@ -182,6 +184,12 @@ Sie können den Grafana-Dienst weiterleiten, damit Sie darauf zugreifen können.
 [subs="+attributes",console]
 ----
 kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
+----
+
+[subs="+attributes",console]
+----
+kubectl get secret -n prometheus prometheus-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 --decode; echo
 ----
 
 Sie können sich jetzt mit dem Standardbenutzernamen `admin` und dem Passwort `prom-operator` anmelden.

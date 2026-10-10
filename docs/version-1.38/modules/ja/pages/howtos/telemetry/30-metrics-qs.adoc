@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = メトリクス クイックスタート
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Prometheusを使用してポリシーサーバーでメトリクス報告を設定し、データ収集のためにHelmチャートを通じて{admc-name}を有効にします。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -48,7 +48,7 @@ prometheus:
           app: kubewarden-policy-server-default
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
@@ -58,7 +58,7 @@ prometheus:
           app.kubernetes.io/name: kubewarden-controller
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
@@ -75,13 +75,20 @@ PrometheusスタックHelmチャートをインストールするべきです：
 
 [subs="+attributes",console]
 ----
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+kubectl create namespace prometheus
 
-helm install --wait --create-namespace \
+kubectl create secret docker-registry application-collection \
   --namespace prometheus \
-  --version 51.5.3 \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
+helm install --wait \
+  --namespace prometheus \
+  --version 92.1.0 \
   --values kube-prometheus-stack-values.yaml \
-  prometheus prometheus-community/kube-prometheus-stack
+  --set global.imagePullSecrets=\{application-collection} \
+  prometheus oci://dp.apps.rancher.io/charts/prometheus-operator
 ----
 
 == {admc-short-name}をインストールします
@@ -100,17 +107,17 @@ helm install --wait --create-namespace \
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 次に、{admc-short-name}によって定義されたカスタムリソース定義（CRD）をインストールします。
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 これで、{admc-short-name}スタックの残りをデプロイできます。公式のHelmチャートは、`default`という名前のPolicyServerを作成します。
 
@@ -131,17 +138,12 @@ telemetry:
 [subs="+attributes",console]
 ----
 helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
+  --namespace {admc-namespace} \
   --values kubewarden-values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
-  --set recommendedPolicies.defaultPolicyMode=monitor
+  --set recommendedPolicies.defaultPolicyMode=monitor \
+  {admc-release} {admc-chart-location}
 ----
 
 これにより、`default`の`PolicyServer`インスタンスが作成されます：
@@ -175,6 +177,12 @@ Grafanaサービスを転送してアクセスできるようにします。
 [subs="+attributes",console]
 ----
 kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
+----
+
+[subs="+attributes",console]
+----
+kubectl get secret -n prometheus prometheus-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 --decode; echo
 ----
 
 デフォルトのユーザー名`admin`とパスワード`prom-operator`でログインできます。

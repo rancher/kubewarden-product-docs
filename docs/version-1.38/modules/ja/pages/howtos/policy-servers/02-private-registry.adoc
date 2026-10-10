@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = PolicyServersをプライベートレジストリで使用するように設定する
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Dockerの設定シークレットを作成し、設定のspec.imagePullSecretフィールドを設定することで、PolicyServersをプライベートレジストリを使用するように構成します。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -29,7 +29,7 @@ PolicyServersは通常のlink:https://kubernetes.io/docs/concepts/configuration/
 
 [subs="+attributes",shell]
 ----
-kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker \
+kubectl --namespace {admc-namespace} create secret docker-registry secret-ghcr-docker \
   --docker-username=myuser \
   --docker-password=mypass123 \
   --docker-server=myregistry.io
@@ -56,7 +56,7 @@ kind: PolicyServer
 metadata:
   name: default
 spec:
-  image: ghcr.io/kubewarden/policy-server:v1.1.1
+  image: {default-policy-server-image-tag}
   serviceAccountName: policy-server
   replicas: 1
   annotations:

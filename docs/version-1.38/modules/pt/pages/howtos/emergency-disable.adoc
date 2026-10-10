@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Desabilitação de emergência
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Desabilitação de emergência
 :sidebar_position: 31
@@ -20,11 +20,11 @@ Este documento explica como desabilitar {admc-short-name} para que as equipes de
 
 Primeiro, pare o controlador {admc-short-name}. Você faz isso escalando sua implantação para zero:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
@@ -50,11 +50,11 @@ kubectl delete mutatingwebhookconfigurations \
 
 Quando a emergência acabar, restaure a pilha {admc-short-name} trazendo de volta o controlador {admc-short-name}:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
