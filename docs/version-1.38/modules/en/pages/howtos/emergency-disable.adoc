@@ -67,5 +67,24 @@ kubectl scale deployment {admc-release}-ssac \
   there's only one replica of the controller running.
 ====
 Once the controller is running, it reconciles the deployed
-policies. The `ValidatingWebhookConfiguration` and `MutatingWebhookConfiguration` resources,
-previously deleted, are recreated, thus enforcing the policies.
+policies. The `ValidatingWebhookConfiguration` and `MutatingWebhookConfiguration` resources
+of the policies, previously deleted, are recreated, thus enforcing the policies.
+
+The controller doesn't recreate its own webhook configurations,
+`kubewarden-controller-validating-webhook-configuration` and
+`kubewarden-controller-mutating-webhook-configuration`, which the Helm chart
+installs. To recreate them, roll back the Helm release to its current revision.
+Get the revision number:
+
+[source,console,subs="attributes+"]
+----
+helm history {admc-release} -n {admc-namespace} --max 1
+----
+
+Then roll back to it, replacing `<revision>` with the number in the `REVISION`
+column:
+
+[source,console,subs="attributes+"]
+----
+helm rollback {admc-release} <revision> -n {admc-namespace} --wait
+----

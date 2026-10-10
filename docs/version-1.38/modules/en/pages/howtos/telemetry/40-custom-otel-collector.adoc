@@ -102,8 +102,8 @@ spec:
   - kubewarden.{admc-namespace}.svc
   - kubewarden.{admc-namespace}.svc.cluster.local
   issuerRef:
-  kind: Issuer
-  name: my-selfsigned-issuer
+    kind: Issuer
+    name: my-selfsigned-issuer
   secretName: my-client-cert
 ---
 apiVersion: cert-manager.io/v1
@@ -116,8 +116,8 @@ spec:
   - my-collector-collector.{admc-namespace}.svc
   - my-collector-collector.{admc-namespace}.svc.cluster.local
   issuerRef:
-  kind: Issuer
-  name: my-selfsigned-issuer
+    kind: Issuer
+    name: my-selfsigned-issuer
   secretName: my-server-cert
 ---
 apiVersion: cert-manager.io/v1
@@ -168,6 +168,13 @@ spec:
 EOF
 ----
 
+[NOTE]
+====
+If the Jaeger Operator webhook isn't ready yet, creating the `Jaeger` resource
+fails with `failed calling webhook "mjaeger.kb.io"`. Wait a few seconds and
+run the command again.
+====
+
 If you installed Traefik in the OpenTelemetry quickstart, expose the Jaeger
 Query UI with this `Ingress`:
 
@@ -203,14 +210,14 @@ prometheus:
   additionalServiceMonitors:
   - name: kubewarden
     selector:
-    matchLabels:
-      app.kubernetes.io/instance: {admc-namespace}.my-collector
+      matchLabels:
+        app.kubernetes.io/instance: {admc-namespace}.my-collector
     namespaceSelector:
-    matchNames:
-      - {admc-namespace}
+      matchNames:
+        - {admc-namespace}
     endpoints:
     - port: prometheus
-    interval: 10s
+      interval: 10s
 EOF
 
 kubectl create namespace prometheus
@@ -265,10 +272,10 @@ spec:
   volumes:
   - name: server-certificate
     secret:
-    secretName: my-server-cert
+      secretName: my-server-cert
   - name: client-certificate
     secret:
-    secretName: my-client-cert
+      secretName: my-client-cert
   volumeMounts:
   - name: server-certificate
     mountPath: /tmp/etc/ssl/certs/my-server-cert
@@ -277,34 +284,34 @@ spec:
     mountPath: /tmp/etc/ssl/certs/my-client-cert
     readOnly: true
   config:
-  receivers:
-    otlp:
-    protocols:
-      grpc:
-      tls:
-        cert_file: /tmp/etc/ssl/certs/my-server-cert/tls.crt
-        key_file: /tmp/etc/ssl/certs/my-server-cert/tls.key
-        client_ca_file: /tmp/etc/ssl/certs/my-client-cert/ca.crt
-  processors: {}
-  exporters:
-    debug:
-    verbosity: normal
-    prometheus:
-    endpoint: ":8080"
-    otlp/jaeger:
-    endpoint: "my-open-telemetry-collector.jaeger.svc.cluster.local:4317"
-    tls:
-      insecure: true
-  service:
-    pipelines:
-    metrics:
-      receivers: [otlp]
-      processors: []
-      exporters: [debug, prometheus]
-    traces:
-      receivers: [otlp]
-      processors: []
-      exporters: [debug, otlp/jaeger]
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            tls:
+              cert_file: /tmp/etc/ssl/certs/my-server-cert/tls.crt
+              key_file: /tmp/etc/ssl/certs/my-server-cert/tls.key
+              client_ca_file: /tmp/etc/ssl/certs/my-client-cert/ca.crt
+    processors: {}
+    exporters:
+      debug:
+        verbosity: normal
+      prometheus:
+        endpoint: ":8080"
+      otlp/jaeger:
+        endpoint: "my-open-telemetry-collector.jaeger.svc.cluster.local:4317"
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: []
+          exporters: [debug, prometheus]
+        traces:
+          receivers: [otlp]
+          processors: []
+          exporters: [debug, otlp/jaeger]
 ----
 Apply the manifest:
 [source,console]
@@ -337,10 +344,10 @@ telemetry:
   metrics: True
   tracing: True
   custom:
-  endpoint: "https://my-collector-collector.{admc-namespace}.svc:4317"
-  insecure: false
-  otelCollectorCertificateSecret: "my-server-cert"
-  otelCollectorClientCertificateSecret: "my-client-cert"
+    endpoint: "https://my-collector-collector.{admc-namespace}.svc:4317"
+    insecure: false
+    otelCollectorCertificateSecret: "my-server-cert"
+    otelCollectorClientCertificateSecret: "my-client-cert"
 ----
 
 The Secret referenced by the `otelCollectorCertificateSecret` key must have an

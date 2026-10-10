@@ -85,7 +85,7 @@ To start the policy server:
 docker volume create --driver local \
                 --opt type=tmpfs \
                 --opt device=tmpfs \
-                --opt o=ui=65533 \
+                --opt o=uid=65533 \
                 policy-store
 
 # Start the policy server
@@ -94,7 +94,7 @@ docker run --rm -it \
     -v $(pwd)/policies.yml:/policies.yml \
     -v policy-store:/registry \
     {default-policy-server-image-tag} \
-    --ignore-kubernetes-connection-failure=true
+    --ignore-kubernetes-connection-failure
 ----
 
 [NOTE]
@@ -267,6 +267,9 @@ The request will be not accepted, since `alice` has not been granted access to t
   "response": {
     "uid": "",
     "allowed": false,
+    "status": {
+      "message": "this request is not accepted"
+    },
     "auditAnnotations": null,
     "warnings": null
   }
