@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Secure webhooks with mutual TLS with K3s
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Enable mTLS with K3s
 :description: Implement mutual Transport Layer Security (mTLS) protocols for secure webhooks with K3s in your SUSE Kubernetes distribution.
@@ -113,13 +113,13 @@ plugins:
 
 Finally, create a `kubeconfig` file at `/etc/rancher/k3s/admission/kubeconfig`:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # /etc/rancher/admission/kubeconfig
 apiVersion: v1
 kind: Config
 users:
-- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+- name: "*.{admc-namespace}.svc" # namespace where the {admc-short-name} stack is deployed
   user:
     client-certificate: /etc/rancher/k3s/admission/certs/client.crt
     client-key: /etc/rancher/k3s/admission/certs/client.key
@@ -138,11 +138,14 @@ kube-apiserver-arg:
 
 == Install K3s
 
-Install K3s using the following command:
+Install SUSE Rancher Prime: K3s using the following command, where
+`<PRIME-ARTIFACTS-URL>` is the Prime Artifacts URL. See the
+https://documentation.suse.com/cloudnative/k3s/latest/en/quick-start.html[K3s
+quick start] for how to obtain it:
 
 [source,console]
 ----
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_ARTIFACT_URL=<PRIME-ARTIFACTS-URL>/k3s sh -
 ----
 
 Wait for the installation to complete.
@@ -156,22 +159,22 @@ needs to be available to the {admc-short-name} stack.
 
 The root CA is available at `/etc/rancher/k3s/admission/certs/rootCA.crt` on
 the Kubernetes node. You need its content in a `ConfigMap` under the
-`kubewarden` namespace. You store the contents of the `rootCA.crt` file in the
+`{admc-namespace}` namespace. You store the contents of the `rootCA.crt` file in the
 key named `client-ca.crt`.
 
-First, create the `kubewarden` namespace:
+First, create the `{admc-namespace}` namespace:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create namespace kubewarden
+kubectl create namespace {admc-namespace}
 ----
 
 Then create the `ConfigMap` in it. The following command, run on the Kubernetes
 node, does that:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
     --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
 ----
 
@@ -180,19 +183,21 @@ The name of the resulting `ConfigMap` is `api-server-mtls`.
 === Install the {admc-short-name} stack
 
 Install the {admc-short-name} stack as described in the
-xref:/quick-start.adoc[quickstart guide]. Follow all the steps, but when
-installing the `kubewarden-controller` Helm chart, make sure to enable the
+xref:/quick-start.adoc[quickstart guide]. Follow all the steps, except creating
+the `{admc-namespace}` namespace, which already exists. When installing the
+`suse-security-admission-controller` Helm chart, make sure to enable the
 following values:
 
 * `mTLS.enable`: must be `true`.
 * `mTLS.configMapName`: must the name of the previously created `ConfigMap`.
 
 The `ConfigMap` name is `api-server-mtls`. The Helm command to install the
-`kubewarden-controller` is:
+`suse-security-admission-controller` chart is:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden admission-controller kubewarden/admission-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+    --set global.imagePullSecrets=\{application-collection} \
     --set mTLS.enable=true \
     --set mTLS.configMapName=api-server-mtls
 ----

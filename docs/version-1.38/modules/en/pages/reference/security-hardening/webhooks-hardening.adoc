@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Hardening the {admc-short-name} webhooks
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Webhooks
 :description: Configure network policies and authentication to limit access to webhooks in your Kubernetes cluster, specifically restricting connections from invalid callers.
@@ -45,13 +45,13 @@ documentation for your CNI for more details.
 Use the NetworkPolicy resource in the `crd.projectcalico.org/v1` API group,
 to define a network policy like the following one:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: crd.projectcalico.org/v1
 kind: NetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
   types:
@@ -67,7 +67,7 @@ spec:
     - action: Allow
       protocol: TCP
       source:
-        namespaceSelector: 'kubernetes.io/metadata.name == "kubewarden"'
+        namespaceSelector: 'kubernetes.io/metadata.name == "{admc-namespace}"'
       destination:
         selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
 ----
@@ -99,13 +99,13 @@ selector: 'app.kubernetes.io/name == "kubewarden-controller" || has(kubewarden/p
 Use the CiliumNetworkPolicy resource in the `cilium.io/v2` API group to define
 a network policy like the following one:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   endpointSelector:
     matchExpressions:
@@ -120,7 +120,7 @@ spec:
       - remote-node
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kubewarden
+            k8s:io.kubernetes.pod.namespace: {admc-namespace}
 ----
 
 [NOTE]
@@ -212,12 +212,12 @@ client-certificate-data and client-key-data.
 +
 For example:
 +
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: v1
 kind: Config
 users:
-- name: '*.kubewarden.svc'
+- name: '*.{admc-namespace}.svc'
   user:
     client-certificate: /path/to/client/cert
     client-key: /path/to/client/key
@@ -232,33 +232,38 @@ documentation for your Kubernetes distribution.
 . Make the certificate of the root CA that issued the API server client
 certificate available to the {admc-short-name} stack.
 +
-Put its content into a `ConfigMap` under the `kubewarden`
+Put its content into a `ConfigMap` under the `{admc-namespace}`
 namespace using a key named `client-ca.crt`.
 +
 Assuming the root CA is available at `/etc/k8s/admission/certs/rootCA.crt`,
 create the `ConfigMap` with the following command:
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
    --from-file=client-ca.crt=/etc/k8s/admission/certs/rootCA.crt
 ----
 
-. Finally, when installing the `kubewarden-controller` Helm chart, make sure to
-enable the following values:
+. Finally, when installing the `suse-security-admission-controller` Helm chart,
+make sure to enable the following values:
 +
 - Set `mTLS.enable` to `true`.
 - Set `mTLS.configMapName` to the name of the `ConfigMap` that was previously created.
 +
 The `ConfigMap` name is `api-server-mtls`, so the Helm command to
-install the `admission-controller` is:
+install the `suse-security-admission-controller` chart is:
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden admission-controller kubewarden/admission-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+   --set global.imagePullSecrets=\{application-collection} \
    --set mTLS.enable=true \
    --set mTLS.configMapName=api-server-mtls
 ----
++
+This command requires the `application-collection` image pull secret in the
+`{admc-namespace}` namespace, as described in the
+xref:/quick-start.adoc#_installation[Quick start].
 +
 The {admc-short-name} controller creates a client certificate for use by the audit
 scanner component. The certificate is automatically rotated by the
