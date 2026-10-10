@@ -77,7 +77,6 @@ include::partial$variables.adoc[]
 *** xref:howtos/install-kwctl.adoc[Install `kwctl`]
 *** xref:howtos/argocd-installation.adoc[]
 *** xref:howtos/Rancher-Fleet.adoc[Rancher Fleet]
-*** xref:howtos/kubestellar-console.adoc[KubeStellar Console guided installation]
 ** Migrations
 ifeval::["{build-type}" == "product"]
 *** xref:{build-type}-specific/howtos/migration/community137-to-appco137-migration.adoc[]
