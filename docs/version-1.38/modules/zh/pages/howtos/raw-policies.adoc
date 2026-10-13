@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 原始策略
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: 将原始策略配置为通用策略评估引擎，使用 {admc-name}。
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
@@ -67,6 +67,13 @@ raw-mutation:
 
 [subs="+attributes",bash]
 ----
+docker login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
+[subs="+attributes",bash]
+----
 # Create a docker volume to store the policies
 docker volume create --driver local \
                 --opt type=tmpfs \
@@ -79,7 +86,7 @@ docker run --rm -it \
     -p 3000:3000 \
     -v $(pwd)/policies.yml:/policies.yml \
     -v policy-store:/registry \
-    ghcr.io/kubewarden/policy-server:1.9.0 \
+    {default-policy-server-image-tag} \
     --ignore-kubernetes-connection-failure=true
 ----
 
@@ -94,6 +101,15 @@ NOTE: 标志 `--ignore-kubernetes-connection-failure=true` 是在没有 Kubernet
 因此，必须启动一个专用的策略服务器。
 
 创建一个 `policy-server.yaml` 文件，并包含以下内容：
+
+[subs="+attributes",bash]
+----
+kubectl create secret docker-registry application-collection \
+  --namespace default \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+----
 
 [subs="+attributes",yaml]
 ----
@@ -112,9 +128,11 @@ spec:
       labels:
         app: policy-server
     spec:
+      imagePullSecrets:
+        - name: application-collection
       containers:
         - name: policy-server
-          image: ghcr.io/kubewarden/policy-server:v1.9.0
+          image: {default-policy-server-image-tag}
           ports:
             - containerPort: 3000
           volumeMounts:

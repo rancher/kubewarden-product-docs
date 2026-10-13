@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 使用 K3s 通过双向 TLS 保护 Webhook
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: 启用 K3s 的双向 TLS
 :description: 在您的 SUSE Kubernetes 发行版中，为 K3s 的安全 Webhook 实现双向传输层安全性 (mTLS) 协议。
@@ -106,13 +106,13 @@ plugins:
 
 最后，在 `/etc/rancher/k3s/admission/kubeconfig` 创建一个 `kubeconfig` 文件：
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # /etc/rancher/admission/kubeconfig
 apiVersion: v1
 kind: Config
 users:
-- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+- name: "*.{admc-namespace}.svc" # namespace where the {admc-short-name} stack is deployed
   user:
     client-certificate: /etc/rancher/k3s/admission/certs/client.crt
     client-key: /etc/rancher/k3s/admission/certs/client.key
@@ -135,7 +135,7 @@ kube-apiserver-arg:
 
 [source,console]
 ----
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_ARTIFACT_URL=<PRIME-ARTIFACTS-URL>/k3s sh -
 ----
 
 等待安装完成。
@@ -150,16 +150,16 @@ curl -sfL https://get.k3s.io | sh -
 
 首先，创建 `kubewarden` 命名空间：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create namespace kubewarden
+kubectl create namespace {admc-namespace}
 ----
 
 然后在其中创建 `ConfigMap`。在 Kubernetes 节点上运行以下命令：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
     --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
 ----
 
@@ -174,9 +174,10 @@ kubectl create configmap -n kubewarden api-server-mtls \
 
 `ConfigMap` 名称为 `api-server-mtls`。安装 `kubewarden-controller` 的 Helm 命令为：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+    --set global.imagePullSecrets=\{application-collection} \
     --set mTLS.enable=true \
     --set mTLS.configMapName=api-server-mtls
 ----

@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Härtung der {admc-short-name} Webhooks
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Webhooks
 :description: Konfigurieren Sie Netzwerkrichtlinien und Authentifizierung, um den Zugriff auf Webhooks in Ihrem Kubernetes-Cluster zu beschränken, insbesondere um Verbindungen von ungültigen Anrufern einzuschränken.
@@ -31,13 +31,13 @@ Dokumentation für Ihr CNI für weitere Details.
 
 Verwenden Sie die NetworkPolicy-Ressource in der `crd.projectcalico.org/v1` API-Gruppe, um eine Netzwerkrichtlinie wie die folgende zu definieren:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: crd.projectcalico.org/v1
 kind: NetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
   types:
@@ -53,7 +53,7 @@ spec:
     - action: Allow
       protocol: TCP
       source:
-        namespaceSelector: 'kubernetes.io/metadata.name == "kubewarden"'
+        namespaceSelector: 'kubernetes.io/metadata.name == "{admc-namespace}"'
       destination:
         selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
 ----
@@ -82,13 +82,13 @@ selector: 'app.kubernetes.io/name == "kubewarden-controller" || has(kubewarden/p
 
 Verwenden Sie die CiliumNetworkPolicy-Ressource in der `cilium.io/v2` API-Gruppe, um eine Netzwerkrichtlinie wie die folgende zu definieren:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   endpointSelector:
     matchExpressions:
@@ -103,7 +103,7 @@ spec:
       - remote-node
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kubewarden
+            k8s:io.kubernetes.pod.namespace: {admc-namespace}
 ----
 
 [NOTE]
@@ -185,12 +185,12 @@ Plug-ins verwendet, sollten Sie auch diese konfigurieren.
 +
 Beispiel:
 +
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: v1
 kind: Config
 users:
-- name: '*.kubewarden.svc'
+- name: '*.{admc-namespace}.svc'
   user:
     client-certificate: /path/to/client/cert
     client-key: /path/to/client/key
@@ -204,9 +204,9 @@ Legen Sie den Inhalt in eine `ConfigMap` im `kubewarden` Namespace mit einem Sch
 +
 Vorausgesetzt, die Root-CA ist unter `/etc/k8s/admission/certs/rootCA.crt` verfügbar, erstellen Sie die `ConfigMap` mit dem folgenden Befehl:
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
    --from-file=client-ca.crt=/etc/k8s/admission/certs/rootCA.crt
 ----
 
@@ -217,9 +217,10 @@ kubectl create configmap -n kubewarden api-server-mtls \
 +
 Der `ConfigMap` Name ist `api-server-mtls`, daher lautet der Helm-Befehl zur Installation des `kubewarden-controller`:
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+   --set global.imagePullSecrets=\{application-collection} \
    --set mTLS.enable=true \
    --set mTLS.configMapName=api-server-mtls
 ----

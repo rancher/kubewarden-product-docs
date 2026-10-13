@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Renforcement de la sécurité des {admc-short-name} webhooks
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Webhooks
 :description: Configurez les stratégies réseau et l'authentification pour limiter l'accès aux webhooks dans votre cluster Kubernetes, en restreignant spécifiquement les connexions des appelants non valides.
@@ -30,13 +30,13 @@ La ressource NetworkPolicy intégrée dans Kubernetes ne peut pas bloquer ou adm
 
 Utilisez la ressource NetworkPolicy dans le groupe d'API `crd.projectcalico.org/v1` pour définir une stratégie réseau comme celle-ci :
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: crd.projectcalico.org/v1
 kind: NetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
   types:
@@ -52,7 +52,7 @@ spec:
     - action: Allow
       protocol: TCP
       source:
-        namespaceSelector: 'kubernetes.io/metadata.name == "kubewarden"'
+        namespaceSelector: 'kubernetes.io/metadata.name == "{admc-namespace}"'
       destination:
         selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
 ----
@@ -81,13 +81,13 @@ selector: 'app.kubernetes.io/name == "kubewarden-controller" || has(kubewarden/p
 
 Utilisez la ressource CiliumNetworkPolicy dans le groupe d'API `cilium.io/v2` pour définir une stratégie réseau comme celle-ci :
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: "cilium.io/v2"
 kind: CiliumNetworkPolicy
 metadata:
   name: allow-k8s-and-audit-scanner
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   endpointSelector:
     matchExpressions:
@@ -102,7 +102,7 @@ spec:
       - remote-node
     - fromEndpoints:
         - matchLabels:
-            k8s:io.kubernetes.pod.namespace: kubewarden
+            k8s:io.kubernetes.pod.namespace: {admc-namespace}
 ----
 
 [NOTE]
@@ -177,12 +177,12 @@ C'est le même fichier de configuration utilisé pour configurer d'autres plug-i
 +
 Par exemple :
 +
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: v1
 kind: Config
 users:
-- name: '*.kubewarden.svc'
+- name: '*.{admc-namespace}.svc'
   user:
     client-certificate: /path/to/client/cert
     client-key: /path/to/client/key
@@ -196,9 +196,9 @@ Mettez son contenu dans un `ConfigMap` sous l'espace de noms `kubewarden` en uti
 +
 En supposant que l'autorité de certification racine est disponible à `/etc/k8s/admission/certs/rootCA.crt`, créez le `ConfigMap` avec la commande suivante :
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
    --from-file=client-ca.crt=/etc/k8s/admission/certs/rootCA.crt
 ----
 
@@ -209,9 +209,10 @@ kubectl create configmap -n kubewarden api-server-mtls \
 +
 Le nom `ConfigMap` est `api-server-mtls`, donc la commande Helm pour installer le `kubewarden-controller` est :
 +
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+   --set global.imagePullSecrets=\{application-collection} \
    --set mTLS.enable=true \
    --set mTLS.configMapName=api-server-mtls
 ----

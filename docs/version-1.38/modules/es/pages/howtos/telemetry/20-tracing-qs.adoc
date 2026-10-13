@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Inicio rápido de trazado
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Habilita el soporte de trazado para el Servidor de Políticas utilizando esta guía de inicio rápido para recopilar detalles precisos sobre las evaluaciones de políticas, que pueden ser utilizados para depurar problemas de admisión en SUSE Security.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -51,13 +51,19 @@ Para instalar el Chart de Helm:
 
 [subs="+attributes",console]
 ----
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+kubectl create namespace jaeger
+
+kubectl create secret docker-registry application-collection \
+  --namespace jaeger \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm upgrade -i --wait \
   --namespace jaeger \
-  --create-namespace \
-  --version 2.49.0 \
-  jaeger-operator jaegertracing/jaeger-operator \
+  --version 2.57.0 \
+  jaeger-operator oci://dp.apps.rancher.io/charts/jaeger-operator \
+  --set global.imagePullSecrets=\{application-collection} \
   --set rbac.clusterRole=true
 ----
 
@@ -79,7 +85,9 @@ kind: Jaeger
 metadata:
   name: my-open-telemetry
   namespace: jaeger
-spec: {}
+spec:
+  imagePullSecrets:
+    - name: application-collection
 EOF
 ----
 
@@ -102,18 +110,17 @@ Como primer paso, añades el repositorio de Helm que contiene {admc-short-name}:
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 Luego instalas las definiciones de recursos personalizadas (CRDs) definidas por {admc-short-name}:
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 Ahora puedes desplegar el resto de la pila de {admc-short-name}. El chart de Helm oficial de `kubewarden-defaults` crea un PolicyServer llamado `default`. Quieres que esta instancia de PolicyServer tenga el trazado habilitado.
 
@@ -145,12 +152,10 @@ Luego puedes proceder con la instalación de los charts de Helm:
 
 [subs="+attributes",console]
 ----
-helm install --wait --namespace kubewarden --create-namespace \
+helm install --wait --namespace {admc-namespace} \
   --values values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait --namespace kubewarden --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults
+  --set global.imagePullSecrets=\{application-collection} \
+  {admc-release} {admc-chart-location}
 ----
 
 Esto crea la instancia de `default` de `PolicyServer`:

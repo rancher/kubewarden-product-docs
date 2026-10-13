@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 验证 Rancher 应用程序集合镜像
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: 配置 PolicyServers 以使用 Docker 配置密钥进行身份验证并从 Rancher 应用程序集合中拉取镜像。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -45,7 +45,7 @@ $ kubectl create secret docker-registry application-collection \
 
 [subs="+attributes",console]
 ----
-$ kubectl create secret docker-registry application-collection-kw -n kubewarden \
+$ kubectl create secret docker-registry application-collection-kw -n {admc-namespace} \
   --docker-server=dp.apps.rancher.io \
   --docker-username=<mymail> \
   --docker-password=<mytoken>
@@ -57,8 +57,8 @@ $ kubectl create secret docker-registry application-collection-kw -n kubewarden 
 
 [subs="+attributes",console]
 ----
-$ helm upgrade -i --wait --namespace kubewarden \
-  --create-namespace kubewarden-defaults kubewarden/kubewarden-defaults \
+$ helm upgrade -i --wait --namespace {admc-namespace} \
+  --create-namespace {admc-release} {admc-chart-location} \
   --reuse-values \
   --set policyServer.imagePullSecret=application-collection-kw
 ----

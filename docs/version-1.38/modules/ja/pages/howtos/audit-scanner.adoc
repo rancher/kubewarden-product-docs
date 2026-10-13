@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = 監査スキャナー
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: {admc-name}内の監査スキャナー機能を使用して、クラスターのコンプライアンス状態を確認し、適切な構成がされていることを保証します。
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
@@ -30,7 +30,13 @@ include::partial$variables.adoc[]
 +
 [subs="+attributes",console]
 ----
-helm install kubewarden-crds kubewarden/kubewarden-crds
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 +
 
@@ -57,7 +63,9 @@ CRDに関する詳細情報は、link:https://github.com/kubernetes-sigs/wg-poli
 +
 [subs="+attributes",console]
 ----
-helm install kubewarden-controller kubewarden/kubewarden-controller
+helm install {admc-release} {admc-chart-location} \
+  -n {admc-namespace} \
+  --set global.imagePullSecrets=\{application-collection}
 ----
 +
 
@@ -115,7 +123,7 @@ policy-reporter: # subchart values settings
 
 [subs="+attributes",console]
 ----
-kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
+kubectl port-forward service/admission-controller-ui 8082:8080 -n {admc-namespace}
 ----
 
 これにより、ポリシーレポーターUIが`\http://localhost:8082`で利用可能になります。
@@ -127,8 +135,8 @@ kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
 [subs="+attributes",bash]
 ----
 kubectl create job \
-    --namespace kubewarden \
-    --from cronjob/audit-scanner \
+    --namespace {admc-namespace} \
+    --from cronjob/ssac \
     audit-scanner-manual-$(date +%Y-%m-%d-%H-%M-%S)
 ----
 
@@ -136,5 +144,5 @@ kubectl create job \
 
 [subs="+attributes",console]
 ----
-kubectl get -n kubewarden jobs
+kubectl get -n {admc-namespace} jobs
 ----

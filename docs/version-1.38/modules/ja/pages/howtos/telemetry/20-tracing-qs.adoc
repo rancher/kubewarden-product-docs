@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = トレーシング クイックスタート
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: このクイックスタートを使用して、ポリシーサーバーのトレーシングサポートを有効にし、ポリシー評価に関する詳細な情報を収集します。これにより、SUSE Security Admissionの問題をデバッグできます。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -41,13 +41,19 @@ Helmチャートをインストールするには：
 
 [subs="+attributes",console]
 ----
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+kubectl create namespace jaeger
+
+kubectl create secret docker-registry application-collection \
+  --namespace jaeger \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm upgrade -i --wait \
   --namespace jaeger \
-  --create-namespace \
-  --version 2.49.0 \
-  jaeger-operator jaegertracing/jaeger-operator \
+  --version 2.57.0 \
+  jaeger-operator oci://dp.apps.rancher.io/charts/jaeger-operator \
+  --set global.imagePullSecrets=\{application-collection} \
   --set rbac.clusterRole=true
 ----
 
@@ -68,7 +74,9 @@ kind: Jaeger
 metadata:
   name: my-open-telemetry
   namespace: jaeger
-spec: {}
+spec:
+  imagePullSecrets:
+    - name: application-collection
 EOF
 ----
 
@@ -89,18 +97,17 @@ Jaeger Operatorリソースを作成した後、`my-open-telemetry-collector.jae
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 次に、{admc-short-name}によって定義されたカスタムリソース定義をインストールします：
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 これで、{admc-short-name}スタックの残りをデプロイすることができます。公式の`kubewarden-defaults` Helmチャートは、`default`という名前のPolicyServerを作成します。このPolicyServerインスタンスにはトレーシングを有効にしたいです。
 
@@ -132,12 +139,10 @@ telemetry:
 
 [subs="+attributes",console]
 ----
-helm install --wait --namespace kubewarden --create-namespace \
+helm install --wait --namespace {admc-namespace} \
   --values values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait --namespace kubewarden --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults
+  --set global.imagePullSecrets=\{application-collection} \
+  {admc-release} {admc-chart-location}
 ----
 
 これにより、`PolicyServer`の`default`インスタンスが作成されます：

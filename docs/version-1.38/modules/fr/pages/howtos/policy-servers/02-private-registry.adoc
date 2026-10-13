@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Configuration des PolicyServers pour utiliser des registres privés
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configurez les PolicyServers pour utiliser des registres privés en créant un secret de configuration Docker et en configurant le champ spec.imagePullSecret dans la configuration.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -29,7 +29,7 @@ Vous créez ce Secret pour le PolicyServer avec la commande suivante :
 
 [subs="+attributes",shell]
 ----
-kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker \
+kubectl --namespace {admc-namespace} create secret docker-registry secret-ghcr-docker \
   --docker-username=myuser \
   --docker-password=mypass123 \
   --docker-server=myregistry.io
@@ -56,7 +56,7 @@ kind: PolicyServer
 metadata:
   name: default
 spec:
-  image: ghcr.io/kubewarden/policy-server:v1.1.1
+  image: {default-policy-server-image-tag}
   serviceAccountName: policy-server
   replicas: 1
   annotations:

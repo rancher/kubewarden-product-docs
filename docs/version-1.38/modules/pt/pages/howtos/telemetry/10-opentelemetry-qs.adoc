@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Início rápido de OpenTelemetry
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure e implante o coletor OpenTelemetry em modo sidecar usando o gráfico Helm oficial do Kubernetes para uma implantação simples e aprimorada.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -76,15 +76,29 @@ Os seguintes guias de telemetria usam https://traefik.io/traefik/[Traefik] como 
 
 Instale o Traefik usando seu gráfico Helm:
 
-[,console]
+[subs="+attributes",console]
 ----
-helm repo add traefik https://traefik.github.io/charts
-helm repo update
+helm registry login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
+[subs="+attributes",console]
+----
+kubectl create namespace traefik
+
+kubectl create secret docker-registry application-collection \
+  --namespace traefik \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm install --wait \
   --namespace traefik \
-  --create-namespace \
-  traefik traefik/traefik
+  --version 41.7.1 \
+  --set fullnameOverride=traefik \
+  --set global.imagePullSecrets=\{application-collection} \
+  traefik oci://dp.apps.rancher.io/charts/traefik-proxy
 ----
 
 Os seguintes guias criam um Kubernetes padrão `Ingress` com `ingressClassName: traefik` e roteiam a interface do usuário de consulta do Jaeger através do serviço Traefik.
@@ -106,14 +120,20 @@ O Operador OpenTelemetry requer a instalação do https://cert-manager.io/docs/i
 
 [subs="+attributes",console]
 ----
-helm repo add jetstack https://charts.jetstack.io
+kubectl create namespace cert-manager
+
+kubectl create secret docker-registry application-collection \
+  --namespace cert-manager \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm install --wait \
     --namespace cert-manager \
-    --create-namespace \
     --set crds.enabled=true \
-    --version 1.18.2 \
-    cert-manager jetstack/cert-manager
+    --set global.imagePullSecrets=\{application-collection} \
+    --version 1.21.2 \
+    cert-manager oci://dp.apps.rancher.io/charts/cert-manager
 ----
 
 Uma vez que o cert-manager esteja em execução, você pode instalar o gráfico Helm do operador OpenTelemetry:
@@ -127,14 +147,20 @@ No momento da redação (2024-11-11), a versão mais recente do gráfico do oper
 
 [subs="+attributes",console]
 ----
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+kubectl create namespace open-telemetry
+
+kubectl create secret docker-registry application-collection \
+  --namespace open-telemetry \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm install --wait \
   --namespace open-telemetry \
-  --create-namespace \
-  --version 0.97.1 \
-  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
-  my-opentelemetry-operator open-telemetry/opentelemetry-operator
+  --version 0.124.1 \
+  --set global.imagePullSecrets=\{application-collection} \
+  --set manager.collectorImage.tag=0.160.0-contrib \
+  my-opentelemetry-operator oci://dp.apps.rancher.io/charts/opentelemetry-operator
 ----
 
 == Integração do OpenTelemetry

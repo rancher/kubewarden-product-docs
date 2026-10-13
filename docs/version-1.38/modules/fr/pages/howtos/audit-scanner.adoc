@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Scanner d'audit
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Vérifiez l'état de conformité de vos clusters en utilisant la fonctionnalité Scanner d'audit dans {admc-name}, pour garantir leur bonne configuration.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
@@ -30,7 +30,13 @@ Par conséquent, assurez-vous d'installer le Helm chart avec la version de l'app
 +
 [subs="+attributes",console]
 ----
-helm install kubewarden-crds kubewarden/kubewarden-crds
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 +
 
@@ -57,7 +63,9 @@ Voir plus d'informations sur les CRD dans le link:https://github.com/kubernetes-
 +
 [subs="+attributes",console]
 ----
-helm install kubewarden-controller kubewarden/kubewarden-controller
+helm install {admc-release} {admc-chart-location} \
+  -n {admc-namespace} \
+  --set global.imagePullSecrets=\{application-collection}
 ----
 +
 
@@ -115,7 +123,7 @@ Pour un aperçu rapide ou pour le débogage, on peut configurer un réachemineme
 
 [subs="+attributes",console]
 ----
-kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
+kubectl port-forward service/admission-controller-ui 8082:8080 -n {admc-namespace}
 ----
 
 Ce qui rend l'interface utilisateur du Policy Reporter disponible à `\http://localhost:8082`.
@@ -127,8 +135,8 @@ L'implémentation du scanner d'audit se fait sous la forme d'un Cronjob qui s'ex
 [subs="+attributes",bash]
 ----
 kubectl create job \
-    --namespace kubewarden \
-    --from cronjob/audit-scanner \
+    --namespace {admc-namespace} \
+    --from cronjob/ssac \
     audit-scanner-manual-$(date +%Y-%m-%d-%H-%M-%S)
 ----
 
@@ -136,5 +144,5 @@ Vous pouvez vérifier l'état du travail avec :
 
 [subs="+attributes",console]
 ----
-kubectl get -n kubewarden jobs
+kubectl get -n {admc-namespace} jobs
 ----

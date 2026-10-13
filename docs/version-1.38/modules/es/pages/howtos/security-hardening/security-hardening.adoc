@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Protección de la seguridad
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Protección de la seguridad
 :sidebar_position: 50
@@ -19,9 +19,10 @@ Por favor, consulta el xref:/reference/threat-model.adoc[modelo de amenaza] para
 
 Los operadores pueden obtener una ampliación segura instalando {admc-short-name} gráficos de Helm. Se recomienda instalar `kubewarden-defaults` gráfico de Helm y habilitar sus políticas recomendadas con:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=protect
 ----
@@ -60,9 +61,10 @@ Desde la versión 1.23, la pila de {admc-short-name} puede ejecutarse en un espa
 
 Para ello, necesitas añadir la etiqueta `pod-security.kubernetes.io/enforce:restricted` al {admc-short-name} espacio de nombres de ampliación.
 
-```console
-kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
-```
+[source,console,subs="attributes+"]
+----
+kubectl label namespace {admc-namespace} pod-security.kubernetes.io/enforce=restricted --overwrite
+----
 
 Consulta https://kubernetes.io/docs/concepts/security/pod-security-admission/[documentación oficial] de la Admisión de Seguridad de Pods de Kubernetes para más detalles.
 

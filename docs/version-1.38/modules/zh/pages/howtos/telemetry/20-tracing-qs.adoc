@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 跟踪快速入门
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: 使用此快速入门指南为策略服务器启用跟踪支持，以收集有关策略评估的详细信息，这些信息可用于调试 SUSE Security 准入问题。
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -43,13 +43,19 @@ xref:howtos/telemetry/10-opentelemetry-qs.adoc#_install_opentelemetry[OpenTeleme
 
 [subs="+attributes",console]
 ----
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+kubectl create namespace jaeger
+
+kubectl create secret docker-registry application-collection \
+  --namespace jaeger \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm upgrade -i --wait \
   --namespace jaeger \
-  --create-namespace \
-  --version 2.49.0 \
-  jaeger-operator jaegertracing/jaeger-operator \
+  --version 2.57.0 \
+  jaeger-operator oci://dp.apps.rancher.io/charts/jaeger-operator \
+  --set global.imagePullSecrets=\{application-collection} \
   --set rbac.clusterRole=true
 ----
 
@@ -70,7 +76,9 @@ kind: Jaeger
 metadata:
   name: my-open-telemetry
   namespace: jaeger
-spec: {}
+spec:
+  imagePullSecrets:
+    - name: application-collection
 EOF
 ----
 
@@ -91,18 +99,17 @@ EOF
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 然后您安装由 {admc-short-name} 定义的自定义资源定义（CRDs）：
 
-[subs="+attributes",console]
-----
-helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
-  kubewarden-crds kubewarden/kubewarden-crds
-----
 
 现在您可以部署其余的 {admc-short-name} 堆栈。官方的 `kubewarden-defaults` helm 图表创建一个名为 `default` 的 PolicyServer。您希望此 PolicyServer 实例启用跟踪。
 
@@ -134,12 +141,10 @@ telemetry:
 
 [subs="+attributes",console]
 ----
-helm install --wait --namespace kubewarden --create-namespace \
+helm install --wait --namespace {admc-namespace} \
   --values values.yaml \
-  kubewarden-controller kubewarden/kubewarden-controller
-
-helm install --wait --namespace kubewarden --create-namespace \
-  kubewarden-defaults kubewarden/kubewarden-defaults
+  --set global.imagePullSecrets=\{application-collection} \
+  {admc-release} {admc-chart-location}
 ----
 
 这会创建 `PolicyServer` 的 `default` 实例：

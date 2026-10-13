@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Notfall-Deaktivierung
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Notfall-Deaktivierung
 :sidebar_position: 31
@@ -20,11 +20,11 @@ Dieses Dokument erklärt, wie man {admc-short-name} deaktiviert, damit die Betri
 
 Zuerst beenden Sie den {admc-short-name}-Controller. Sie tun dies, indem Sie dessen Implementierung auf null skalieren:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
@@ -50,11 +50,11 @@ kubectl delete mutatingwebhookconfigurations \
 
 Wenn der Notfall vorbei ist, stellen Sie den {admc-short-name}-Stack wieder her, indem Sie den {admc-short-name}-Controller zurückbringen:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]

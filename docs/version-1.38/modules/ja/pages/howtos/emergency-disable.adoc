@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = 緊急無効化
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: 緊急無効化
 :sidebar_position: 31
@@ -20,11 +20,11 @@ include::partial$variables.adoc[]
 
 まず、{admc-short-name}コントローラーを停止します。これを行うには、そのデプロイメントをゼロにスケールします：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
@@ -50,11 +50,11 @@ kubectl delete mutatingwebhookconfigurations \
 
 緊急事態が終了したら、{admc-short-name}コントローラーを復元することによって{admc-short-name}スタックを復元します：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]

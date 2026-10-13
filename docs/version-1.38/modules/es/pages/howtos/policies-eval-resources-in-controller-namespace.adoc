@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Permitir evaluaciones en el espacio de nombres del Controlador de Admisión
-:revdate: 2026-07-14
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Cómo configurar el Controlador de Admisión para permitir la evaluación de políticas en su propio espacio de nombres
@@ -23,11 +23,11 @@ El primer paso es configurar el controlador para no establecer la `KUBEWARDEN_AL
 
 Para hacer esto, actualiza la versión de tu instalación de {admc-short-name} y establece el valor `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` del `kubewarden-controller` gráfico de Helm a `false`:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm upgrade -n kubewarden
+helm upgrade -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --reuse-values \
   --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
-  kubewarden-controller kubewarden/kubewarden-controller
 ----
 
 Este cambio permite a los servidores de políticas evaluar recursos de cualquier espacio de nombres.

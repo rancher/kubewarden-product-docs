@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = 配置 PolicyServers 使用私有 Sigstore 实例
-:revdate: 2026-06-02
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: 配置 PolicyServers 使用私有或自托管的 Sigstore 实例进行 {admc-name} 的策略签名验证。
@@ -126,9 +126,9 @@ EOF
 
 将 `ClientTrustConfig` JSON 存储在具有键 `sigstore-trust-config` 的 ConfigMap 中。ConfigMap **必须** 位于准入控制器名称空间中。在此示例中为 `kubewarden`：
 
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubectl --namespace kubewarden create configmap my-sigstore-trust-config \
+kubectl --namespace {admc-namespace} create configmap my-sigstore-trust-config \
   --from-file=sigstore-trust-config=trust_config.json
 ----
 
@@ -150,9 +150,9 @@ anyOf: null
 
 创建 ConfigMap：
 
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubectl --namespace kubewarden create configmap my-verification-config \
+kubectl --namespace {admc-namespace} create configmap my-verification-config \
   --from-file=verification-config=verification_config.yaml
 ----
 
@@ -165,14 +165,14 @@ ConfigMap 键 **必须** 为 `verification-config`（而不是文件名）。{ad
 
 在您的 PolicyServer 上设置 `spec.sigstoreTrustConfig` 和 `spec.verificationConfig` 为您创建的 ConfigMaps 的名称：
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: policies.kubewarden.io/v1
 kind: PolicyServer
 metadata:
   name: default
 spec:
-  image: ghcr.io/kubewarden/policy-server:latest
+  image: {default-policy-server-image-tag}
   replicas: 1
   sigstoreTrustConfig: my-sigstore-trust-config
   verificationConfig: my-verification-config
