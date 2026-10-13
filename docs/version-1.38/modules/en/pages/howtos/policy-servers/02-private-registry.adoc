@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Configuring PolicyServers to use private registries
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure PolicyServers to use private registries by creating a Docker configuration secret and configuring the spec.imagePullSecret field in the configuration.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -43,7 +43,7 @@ You create this Secret for the PolicyServer with the following command:
 
 [subs="+attributes",shell]
 ----
-kubectl --namespace kubewarden create secret docker-registry secret-ghcr-docker \
+kubectl --namespace {admc-namespace} create secret docker-registry secret-ghcr-docker \
   --docker-username=myuser \
   --docker-password=mypass123 \
   --docker-server=myregistry.io
@@ -76,7 +76,7 @@ kind: PolicyServer
 metadata:
   name: default
 spec:
-  image: ghcr.io/kubewarden/policy-server:v1.1.1
+  image: {default-policy-server-image-tag}
   serviceAccountName: policy-server
   replicas: 1
   annotations:
@@ -85,8 +85,8 @@ spec:
 
 == Consuming the Secret in the Helm chart
 
-For the PolicyServer `default`, which is managed by the `admission-controller`
-Helm chart, you can set the `policyServer.imagePullSecret` value to the Secret
+For the PolicyServer `default`, which is managed by the
+`suse-security-admission-controller` Helm chart, you can set the `policyServer.imagePullSecret` value to the Secret
 name. Then, the created default policy server is able to download policies from
 your private registry as well:
 
@@ -94,7 +94,5 @@ your private registry as well:
 ----
 # values file example
 policyServer:
-  telemetry:
-    enabled: False
   imagePullSecret: secret-ghcr-docker
 ----

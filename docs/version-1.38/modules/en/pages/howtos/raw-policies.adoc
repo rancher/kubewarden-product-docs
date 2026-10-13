@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Raw policies
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure raw policies as a generic policy evaluation engine using {admc-name}.
 :doc-persona: ["kubewarden-distributor", "kubewarden-integrator", "kubewarden-operator", "kubewarden-policy-developer"]
@@ -66,6 +66,17 @@ raw-mutation:
     defaultResource: publicResource
 ----
 
+The policy server container image is distributed through the
+https://apps.rancher.io[SUSE Application Collection]. Log in to the registry
+before starting the container:
+
+[subs="+attributes",bash]
+----
+docker login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
 To start the policy server:
 
 [subs="+attributes",bash]
@@ -74,7 +85,7 @@ To start the policy server:
 docker volume create --driver local \
                 --opt type=tmpfs \
                 --opt device=tmpfs \
-                --opt o=ui=65533 \
+                --opt o=uid=65533 \
                 policy-store
 
 # Start the policy server
@@ -82,8 +93,8 @@ docker run --rm -it \
     -p 3000:3000 \
     -v $(pwd)/policies.yml:/policies.yml \
     -v policy-store:/registry \
-    ghcr.io/kubewarden/adm-controller/policy-server \
-    --ignore-kubernetes-connection-failure=true
+    {default-policy-server-image-tag} \
+    --ignore-kubernetes-connection-failure
 ----
 
 [NOTE]
@@ -93,7 +104,7 @@ The flag `--ignore-kubernetes-connection-failure` is required to start the polic
 
 You can also use a bind mount to store the policies modules in a persistent way:
 
-[,bash]
+[subs="+attributes",bash]
 ----
 mkdir -p ./registry
 
@@ -102,7 +113,7 @@ docker run --rm -it \
     -p 3000:3000 \
     -v $(pwd)/policies.yml:/policies.yml \
     -v $(pwd)/registry:/registry \
-    ghcr.io/kubewarden/adm-controller/policy-server \
+    {default-policy-server-image-tag} \
     --ignore-kubernetes-connection-failure
 ----
 
@@ -115,6 +126,19 @@ It's not possible to use a Policy Server instance managed by the {admc-short-nam
 The controller will not allow the user to change the Policy Server ConfigMap to add a raw policy,
 since it will try to reconcile it reverting the changes.
 Because of that, a dedicated Policy Server has to be started.
+
+The Policy Server container image is distributed through the SUSE Application
+Collection. Create the `application-collection` image pull secret in the
+namespace where you deploy the Policy Server, `default` in this example:
+
+[subs="+attributes",bash]
+----
+kubectl create secret docker-registry application-collection \
+  --namespace default \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+----
 
 Create a `policy-server.yaml` file with the following content:
 
@@ -135,9 +159,11 @@ spec:
       labels:
         app: policy-server
     spec:
+      imagePullSecrets:
+        - name: application-collection
       containers:
         - name: policy-server
-          image: ghcr.io/kubewarden/adm-controller/policy-server:v1.36.0
+          image: {default-policy-server-image-tag}
           ports:
             - containerPort: 3000
           volumeMounts:
@@ -241,6 +267,9 @@ The request will be not accepted, since `alice` has not been granted access to t
   "response": {
     "uid": "",
     "allowed": false,
+    "status": {
+      "message": "this request is not accepted"
+    },
     "auditAnnotations": null,
     "warnings": null
   }

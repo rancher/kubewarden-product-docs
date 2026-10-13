@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Metrics quickstart
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure metrics reporting on the Policy Server using Prometheus and {admc-name} enabled through Helm charts for data collection.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -32,20 +32,21 @@ You use https://github.com/prometheus-operator/prometheus-operator[Prometheus
 Operator], that lets us define Prometheus' targets.
 
 There are many ways to install and set up Prometheus. For ease of deployment,
-you should use the Prometheus community Helm chart.
+you should use the Prometheus Operator Helm chart from the SUSE Application
+Collection.
 
 The Prometheus Operator deployed with this Helm chart uses
 https://github.com/prometheus-operator/prometheus-operator/blob/master/Documentation/design.md#servicemonitor[Service
 Monitors], to define which services Prometheus monitors.
 
-In your case, you are adding a ServiceMonitor targeting the `kubewarden`
-namespace for services that match labels `app=kubewarden-policy-server-default`
-and `app.kubernetes.io/name: kubewarden-controller`. This configures the
+In your case, you are adding a ServiceMonitor targeting the `{admc-namespace}`
+namespace for services that match labels `kubewarden/policy-server: default`
+and `app.kubernetes.io/component: controller`. This configures the
 Prometheus Operator to inspect which Kubernetes Endpoints belong to services
 matching these conditions.
 
-You can create the two ServiceMonitors named `kubewarden-controller` and
-`kubewarden-policy-server` for use by the default Prometheus instance installed
+You can create the two ServiceMonitors named `kubewarden` and
+`kubewarden-controller` for use by the default Prometheus instance installed
 by the Helm chart.
 
 To do that, you should create the following values file:
@@ -58,43 +59,44 @@ prometheus:
     - name: kubewarden
       selector:
         matchLabels:
-          app: kubewarden-policy-server-default
+          kubewarden/policy-server: default
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
     - name: kubewarden-controller
       selector:
         matchLabels:
-          app.kubernetes.io/name: kubewarden-controller
+          app.kubernetes.io/component: controller
       namespaceSelector:
         matchNames:
-          - kubewarden
+          - {admc-namespace}
       endpoints:
         - port: metrics
           interval: 10s
 EOF
 ----
 
-You should install the Prometheus stack Helm Chart:
-
-[NOTE]
-====
-At the time of writing (2023-11-17) the latest chart version is `51.5.3`
-====
-
+You should install the Prometheus Operator Helm Chart:
 
 [subs="+attributes",console]
 ----
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+kubectl create namespace prometheus
 
-helm install --wait --create-namespace \
+kubectl create secret docker-registry application-collection \
   --namespace prometheus \
-  --version 51.5.3 \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
+helm install --wait \
+  --namespace prometheus \
+  --version 92.1.0 \
   --values kube-prometheus-stack-values.yaml \
-  prometheus prometheus-community/kube-prometheus-stack
+  --set global.imagePullSecrets=\{application-collection} \
+  prometheus oci://dp.apps.rancher.io/charts/prometheus-operator
 ----
 
 == Install {admc-short-name}
@@ -111,15 +113,22 @@ installed it in a previous section of this documentation.
 ====
 
 
-First, you should add the Helm repository that contains {admc-short-name}:
+First, create the namespace and the image pull secret for {admc-short-name}:
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
-Now you can deploy the rest of the {admc-short-name} stack. The official
-Helm chart creates a PolicyServer named `default`.
+Now you can deploy the rest of the {admc-short-name} stack. The
+`suse-security-admission-controller` Helm chart creates a PolicyServer named
+`default`.
 
 You should configure the Helm chart so that you have metrics enabled
 in {admc-short-name}. The `kubewarden-values.yaml` file should have the following contents:
@@ -139,12 +148,12 @@ Now, install the Helm charts:
 [subs="+attributes",console]
 ----
 helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
+  --namespace {admc-namespace} \
   --values kubewarden-values.yaml \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=monitor \
-  admission-controller kubewarden/admission-controller
+  {admc-release} {admc-chart-location}
 ----
 
 This creates the `default` instance of `PolicyServer`:
@@ -183,8 +192,14 @@ You can forward the Grafana service so you can access it.
 kubectl port-forward -n prometheus --address 0.0.0.0 svc/prometheus-grafana 8080:80
 ----
 
-You can now login with the default username `admin` and password
-`prom-operator`.
+You can now login with the username `admin`. The Helm chart generates a random
+password for this user. Retrieve it with:
+
+[subs="+attributes",console]
+----
+kubectl get secret -n prometheus prometheus-grafana \
+  -o jsonpath="{.data.admin-password}" | base64 --decode; echo
+----
 
 === Using the {admc-short-name} Grafana dashboard
 

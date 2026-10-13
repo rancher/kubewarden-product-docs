@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Open Telemetry quick start
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure and deploy the OpenTelemetry collector in sidecar mode using the official Kubernetes Helm chart for simple and enhanced deployment.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -87,24 +87,54 @@ $ minikube start --driver=kvm2
 
 After the cluster is ready, you can continue with the rest of the guide.
 
+[#_application_collection_credentials]
+=== SUSE Application Collection credentials
+
+The telemetry guides install all the Helm charts and container images from the
+https://apps.rancher.io[SUSE Application Collection]. Log in to the registry
+with Helm, using your
+https://docs.apps.rancher.io/get-started/authentication/[Application Collection
+credentials]:
+
+[subs="+attributes",console]
+----
+helm registry login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
+
+The cluster also needs credentials to pull the container images. Before
+installing each Helm chart, the guides create an image pull secret named
+`application-collection` in the namespace where the chart is installed.
+
 === Install Traefik
 
 The following telemetry guides use https://traefik.io/traefik/[Traefik] as the
 Ingress controller when exposing the Jaeger UI with Kubernetes `Ingress`
 resources.
 
-Install Traefik by using its Helm chart:
+Install Traefik by using its Helm chart from the SUSE Application Collection:
 
-[,console]
+[subs="+attributes",console]
 ----
-helm repo add traefik https://traefik.github.io/charts
-helm repo update
+kubectl create namespace traefik
+
+kubectl create secret docker-registry application-collection \
+  --namespace traefik \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm install --wait \
   --namespace traefik \
-  --create-namespace \
-  traefik traefik/traefik
+  --version 41.7.1 \
+  --set fullnameOverride=traefik \
+  --set global.imagePullSecrets=\{application-collection} \
+  traefik oci://dp.apps.rancher.io/charts/traefik-proxy
 ----
+
+The `fullnameOverride` value sets the name of the Traefik `Service` and
+`IngressClass` to `traefik`.
 
 The following guides create a standard Kubernetes `Ingress` with
 `ingressClassName: traefik` and route the Jaeger Query UI through the Traefik
@@ -132,38 +162,46 @@ https://cert-manager.io/docs/installation/[cert-manager] in the cluster.
 
 [subs="+attributes",console]
 ----
-helm repo add jetstack https://charts.jetstack.io
+kubectl create namespace cert-manager
+
+kubectl create secret docker-registry application-collection \
+  --namespace cert-manager \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm install --wait \
     --namespace cert-manager \
-    --create-namespace \
     --set crds.enabled=true \
-    --version 1.18.2 \
-    cert-manager jetstack/cert-manager
+    --set global.imagePullSecrets=\{application-collection} \
+    --version 1.21.2 \
+    cert-manager oci://dp.apps.rancher.io/charts/cert-manager
 ----
 
 Once cert-manager is running, you can install the OpenTelemetry operator Helm
 chart:
 
-[NOTE]
-====
-
-At the time of writing (2024-11-11) the latest OpenTelemetry operator chart
-version is `0.65.0`
-
-====
-
 [subs="+attributes",console]
 ----
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+kubectl create namespace open-telemetry
+
+kubectl create secret docker-registry application-collection \
+  --namespace open-telemetry \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm install --wait \
   --namespace open-telemetry \
-  --create-namespace \
-  --version 0.97.1 \
-  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
-  my-opentelemetry-operator open-telemetry/opentelemetry-operator
+  --version 0.124.1 \
+  --set global.imagePullSecrets=\{application-collection} \
+  --set manager.collectorImage.tag=0.160.0-contrib \
+  my-opentelemetry-operator oci://dp.apps.rancher.io/charts/opentelemetry-operator
 ----
+
+The `manager.collectorImage.tag` value selects the `contrib` distribution of the
+OpenTelemetry Collector image, which includes the exporters used in these
+guides.
 
 == OpenTelemetry integration
 

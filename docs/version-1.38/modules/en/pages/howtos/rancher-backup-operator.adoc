@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Backup and restore with Rancher Backup Operator
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure and manage backups and restores using the rancher-backup operator on any Kubernetes cluster.
 :keywords: "{admc-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
@@ -68,9 +68,14 @@ helm install --wait --create-namespace -n cattle-resources-system \
     rancher-backup-crd rancher-charts/rancher-backup-crd
 helm install --wait -n cattle-resources-system \
     rancher-backup rancher-charts/rancher-backup \
+    --set global.cattle.systemDefaultRegistry=registry.rancher.com \
     --set persistence.enabled=true --set persistence.storageClass=standard \
     --set optionalResources.kubewarden.enabled=true
 ----
+
+The `global.cattle.systemDefaultRegistry` value makes the chart pull the
+Rancher Backup Operator images from the SUSE Rancher Prime registry,
+`registry.rancher.com`.
 
 == Backup
 
