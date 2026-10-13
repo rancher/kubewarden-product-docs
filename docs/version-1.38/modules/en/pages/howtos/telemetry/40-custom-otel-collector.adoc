@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Custom OpenTelemetry Collector
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configure the {admc-name} to securely send telemetry data to a custom OpenTelemetry Collector deployed within the cluster.
 :keywords: kubewarden, kubernetes, metrics, tracing, opentelemetry
@@ -33,35 +33,55 @@ This one exposes the metrics as a Prometheus endpoint. The metrics are then
 collected by a Prometheus instance and stored in its database. The same
 Prometheus instance also exposes a UI to view and use the metrics.
 
-Resources you create get defined in the `kubewarden` Namespace, or expect its
-existence. Due to that, you should begin by creating the Namespace:
+All the Helm charts and container images used in this guide come from the
+https://apps.rancher.io[SUSE Application Collection]. Log in to the registry and
+create the image pull secrets as described in the
+xref:howtos/telemetry/10-opentelemetry-qs.adoc#_application_collection_credentials[OpenTelemetry
+quick start].
 
-[source,console]
+Resources you create get defined in the `{admc-namespace}` Namespace, or expect its
+existence. Due to that, you should begin by creating the Namespace and its image
+pull secret:
+
+[source,console,subs="attributes+"]
 ----
-kubectl create namespace kubewarden
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 
 === Install cert-manager and OpenTelemetry
 
 You install cert-manager and OpenTelemetry operator in this way:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm repo add jetstack https://charts.jetstack.io
+for ns in cert-manager open-telemetry; do
+  kubectl create namespace $ns
+  kubectl create secret docker-registry application-collection \
+    --namespace $ns \
+    --docker-server=dp.apps.rancher.io \
+    --docker-username=<your-username> \
+    --docker-password=<your-token>
+done
+
 helm install --wait \
   --namespace cert-manager \
-  --create-namespace \
   --set crds.enabled=true \
-  --version 1.18.2 \
-  cert-manager jetstack/cert-manager
+  --set global.imagePullSecrets=\{application-collection} \
+  --version 1.21.2 \
+  cert-manager oci://dp.apps.rancher.io/charts/cert-manager
 
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm install --wait \
   --namespace open-telemetry \
-  --create-namespace \
-  --version 0.97.1 \
-  --set "manager.collectorImage.repository=otel/opentelemetry-collector-contrib" \
-  my-opentelemetry-operator open-telemetry/opentelemetry-operator
+  --version 0.124.1 \
+  --set global.imagePullSecrets=\{application-collection} \
+  --set manager.collectorImage.tag=0.160.0-contrib \
+  my-opentelemetry-operator oci://dp.apps.rancher.io/charts/opentelemetry-operator
 ----
 
 You setup communication between {admc-short-name} components and the
@@ -69,18 +89,18 @@ OpenTelemetry Collector using mTLS.
 
 To do that, you need to create the whole Public Key Infrastructure (PKI):
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # pki.yaml file
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: my-client-certificate
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   dnsNames:
-  - kubewarden.kubewarden.svc
-  - kubewarden.kubewarden.svc.cluster.local
+  - kubewarden.{admc-namespace}.svc
+  - kubewarden.{admc-namespace}.svc.cluster.local
   issuerRef:
   kind: Issuer
   name: my-selfsigned-issuer
@@ -90,11 +110,11 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: my-certificate
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   dnsNames:
-  - my-collector-collector.kubewarden.svc
-  - my-collector-collector.kubewarden.svc.cluster.local
+  - my-collector-collector.{admc-namespace}.svc
+  - my-collector-collector.{admc-namespace}.svc.cluster.local
   issuerRef:
   kind: Issuer
   name: my-selfsigned-issuer
@@ -104,7 +124,7 @@ apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: my-selfsigned-issuer
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   selfSigned: {}
 ----
@@ -119,14 +139,21 @@ kubectl apply -f pki.yaml
 After that, you install https://www.jaegertracing.io/[Jaeger] to store
 and visualize trace events.
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+kubectl create namespace jaeger
+
+kubectl create secret docker-registry application-collection \
+  --namespace jaeger \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
 helm upgrade -i --wait \
   --namespace jaeger \
-  --create-namespace \
   --version 2.57.0 \
-  jaeger-operator jaegertracing/jaeger-operator \
+  jaeger-operator oci://dp.apps.rancher.io/charts/jaeger-operator \
+  --set global.imagePullSecrets=\{application-collection} \
   --set rbac.clusterRole=true
 
 kubectl apply -f - <<EOF
@@ -135,7 +162,9 @@ kind: Jaeger
 metadata:
   name: my-open-telemetry
   namespace: jaeger
-spec: {}
+spec:
+  imagePullSecrets:
+    - name: application-collection
 EOF
 ----
 
@@ -167,7 +196,7 @@ EOF
 
 Now you install https://prometheus.io/[Prometheus] to store and visualize metrics.
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 cat <<EOF > kube-prometheus-stack-values.yaml
 prometheus:
@@ -175,46 +204,64 @@ prometheus:
   - name: kubewarden
     selector:
     matchLabels:
-      app.kubernetes.io/instance: kubewarden.my-collector
+      app.kubernetes.io/instance: {admc-namespace}.my-collector
     namespaceSelector:
     matchNames:
-      - kubewarden
+      - {admc-namespace}
     endpoints:
     - port: prometheus
     interval: 10s
 EOF
 
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm install --wait --create-namespace \
+kubectl create namespace prometheus
+
+kubectl create secret docker-registry application-collection \
   --namespace prometheus \
-  --version 77.13.0 \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
+helm install --wait \
+  --namespace prometheus \
+  --version 92.1.0 \
   --values kube-prometheus-stack-values.yaml \
-  prometheus prometheus-community/kube-prometheus-stack
+  --set global.imagePullSecrets=\{application-collection} \
+  prometheus oci://dp.apps.rancher.io/charts/prometheus-operator
 ----
 
 [NOTE]
 ====
 
 The Prometheus service monitor obtains the {admc-short-name} metrics by
-scraping the OpenTelemetry collector running in the `kubewarden` Namespace.
+scraping the OpenTelemetry collector running in the `{admc-namespace}` Namespace.
 
 ====
 
 == Install OpenTelemetry Collector
 
-Now you can deploy a custom OpenTelemetry Collector in the `kubewarden`
-Namespace.
+Now you can deploy a custom OpenTelemetry Collector in the `{admc-namespace}`
+Namespace. The collector uses a ServiceAccount with the image pull secret, so
+it can pull its container image from the SUSE Application Collection.
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # otel-collector.yaml file
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: my-collector
+  namespace: {admc-namespace}
+imagePullSecrets:
+  - name: application-collection
+---
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
   name: my-collector
-  namespace: kubewarden
+  namespace: {admc-namespace}
 spec:
   mode: deployment # This configuration is omittable.
+  serviceAccount: my-collector
   volumes:
   - name: server-certificate
     secret:
@@ -282,7 +329,7 @@ When the OpenTelemetry Collector is running, you can deploy
 You need to configure the {admc-short-name} components so they send events
 and metrics to the OpenTelemetry Collector.
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # values.yaml
 telemetry:
@@ -290,7 +337,7 @@ telemetry:
   metrics: True
   tracing: True
   custom:
-  endpoint: "https://my-collector-collector.kubewarden.svc:4317"
+  endpoint: "https://my-collector-collector.{admc-namespace}.svc:4317"
   insecure: false
   otelCollectorCertificateSecret: "my-server-cert"
   otelCollectorClientCertificateSecret: "my-client-cert"
@@ -309,15 +356,15 @@ Leave these values empty if you don't use encryption or mTLS.
 
 Install the {admc-short-name} stack:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
 helm install --wait \
-  --namespace kubewarden \
-  --create-namespace \
+  --namespace {admc-namespace} \
   --values values.yaml \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=monitor \
-  admission-controller kubewarden/admission-controller
+  {admc-release} {admc-chart-location}
 ----
 
 Now everything is in place.

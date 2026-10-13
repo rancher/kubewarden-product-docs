@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Audit Scanner
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Verify the compliance state of your clusters using the Audit Scanner feature within {admc-name}, to ensure their proper configuration.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
@@ -40,7 +40,7 @@ The audit scanner component is available since {admc-short-name} `v1.7.0`.
 Therefore, make sure you are installing the Helm chart with app version
 `v1.7.0` or higher.
 
-The `admission-controller` chart installs the needed `PolicyReport` CRDs by default.
+The `suse-security-admission-controller` chart installs the needed `PolicyReport` CRDs by default.
 
 [NOTE]
 ====
@@ -78,7 +78,7 @@ set `auditScanner.reportCRDsKind="policyreport"`.
 To store the results of policy reports, you need to have the PolicyReport
 Custom Resource Definitions (CRDs) available. If the necessary
 PolicyReport CRDs are already in the cluster, you can't install them
-using the `admission-controller` chart. In that case, you can disable the
+using the `suse-security-admission-controller` chart. In that case, you can disable the
 installation of OpenReport CRDs by setting `installOpenReportCRDs` to
 `false` in the chart (or `installPolicyReportCRDs` to `false` if using the
 deprecated PolicyReports).
@@ -95,15 +95,16 @@ xref:quick-start.adoc[Quick Start guide]
 By default, the Audit Scanner implementation is as a
 https://kubernetes.io/docs/concepts/workloads/controllers/cron-jobs[Cronjob]
 triggered every 60 minutes. You can adjust this and other audit
-scanner settings by changing the kubewarden-controller chart
-https://github.com/kubewarden/helm-charts/blob/main/charts/kubewarden-controller/values.yaml[values.yaml].
+scanner settings by changing the values of the
+`suse-security-admission-controller` chart. To list them, run
+`helm show values {admc-chart-location}`.
 
 See xref:explanations/audit-scanner/audit-scanner.adoc[here] more information about the Audit
 Scanner.
 
 === Policy Reporter UI (optional)
 
-The `admission-controller` chart comes with a subchart of the
+The `suse-security-admission-controller` chart comes with a subchart of the
 https://kyverno.github.io/policy-reporter[Policy Reporter]. It's disabled by
 default, and enabled by setting `auditScanner.policyReporter=true`. The Policy
 Reporter subchart values are under the `.Values.policyReporter` key.
@@ -116,7 +117,7 @@ for more information about the Policy Reporter UI.
 By default, the Policy Reporter UI is only exposed as a ClusterIP service with
 name `admission-controller-ui` in the installation namespace of
 
-`admission-controller` chart was installed.
+`suse-security-admission-controller` chart was installed.
 
 ==== Ingress
 
@@ -147,7 +148,7 @@ For a quick look or debugging, one can setup a port-forwarding to the service wi
 
 [subs="+attributes",console]
 ----
-kubectl port-forward service/admission-controller-ui 8082:8080 -n kubewarden
+kubectl port-forward service/admission-controller-ui 8082:8080 -n {admc-namespace}
 ----
 
 Which makes the Policy Reporter UI available at `\http://localhost:8082`.
@@ -161,8 +162,8 @@ command:
 [subs="+attributes",bash]
 ----
 kubectl create job \
-    --namespace kubewarden \
-    --from cronjob/audit-scanner \
+    --namespace {admc-namespace} \
+    --from cronjob/ssac \
     audit-scanner-manual-$(date +%Y-%m-%d-%H-%M-%S)
 ----
 
@@ -170,5 +171,5 @@ You can check the status of the job with:
 
 [subs="+attributes",console]
 ----
-kubectl get -n kubewarden jobs
+kubectl get -n {admc-namespace} jobs
 ----

@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Emergency disable
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Emergency disable
 :sidebar_position: 31
@@ -20,17 +20,17 @@ This document explains how to disable {admc-short-name} so operations teams can 
 
 First, stop the {admc-short-name} controller. You do this by scaling its Deployment to zero:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment admission-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
 ====
 Ensure you use the name of the Namespace where the {admc-short-name} stack is deployed.
-Here, the stack is deployed in the `kubewarden` Namespace.
+Here, the stack is deployed in the `{admc-namespace}` Namespace.
 ====
 
 Next, delete all the `ValidatingWebhookConfigurations` and `MutatingWebhookConfigurations`
@@ -52,17 +52,17 @@ kubectl delete mutatingwebhookconfigurations \
 When the emergency is over, restore the {admc-short-name} stack by bringing back
 the {admc-short-name}:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment admission-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
 ====
 - Ensure you use the name of the Namespace where the {admc-short-name} stack is deployed.
-  Here, the stack is deployed in the `kubewarden` Namespace.
+  Here, the stack is deployed in the `{admc-namespace}` Namespace.
 - Ensure you scale the controller back to its original value. This example assumes
   there's only one replica of the controller running.
 ====
