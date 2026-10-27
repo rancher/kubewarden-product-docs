@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Security hardening
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Security hardening
 :sidebar_position: 50
@@ -19,17 +19,23 @@ to secure {admc-short-name} itself.
 Please refer to the xref:/reference/threat-model.adoc[threat model] for more
 information.
 
-== `admission-controller` Helm chart
+[#_admission_controller_helm_chart]
+== `suse-security-admission-controller` Helm chart
 
-Operators can obtain a secure deployment by installing all the {admc-short-name} Helm
-charts. It's recommended to enable its recommended policies with:
+Operators can obtain a secure deployment by installing the {admc-short-name} Helm
+chart. It's recommended to enable its recommended policies with:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden admission-controller kubewarden/admission-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=protect
 ----
+
+This command requires the `application-collection` image pull secret in the
+`{admc-namespace}` namespace, as described in the
+xref:/quick-start.adoc#_installation[Quick start].
 
 This provides a default PolicyServer and default policies, in protect mode, to
 ensure the {admc-short-name} stack is safe from other workloads.
@@ -68,8 +74,8 @@ By default, {admc-short-name} excludes specific Namespaces from
 interoperability with other workloads.
 
 Security-conscious operators can tune these Namespaces list via the
-`.global.skipNamespaces` value for both the `kubewarden-controller` and
-`kubewarden-defaults` Helm charts.
+`.global.skipNamespaces` value of the `suse-security-admission-controller` Helm
+chart.
 
 == Pod Security Admission
 
@@ -81,9 +87,10 @@ practices.
 To do that, you need to add the `pod-security.kubernetes.io/enforce:
 restricted` label to the {admc-short-name} deployment Namespace.
 
-```console
-kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
-```
+[source,console,subs="attributes+"]
+----
+kubectl label namespace {admc-namespace} pod-security.kubernetes.io/enforce=restricted --overwrite
+----
 
 See the
 https://kubernetes.io/docs/concepts/security/pod-security-admission/[official
@@ -91,10 +98,10 @@ documentation] of Kubernetes' Pod Security Admission for more details.
 
 === SecurityContexts
 
-The `admission-controller` Helm chart configures the SecurityContexts and
+The `suse-security-admission-controller` Helm chart configures the SecurityContexts and
 exposes them in its `values.yaml`.
 
-The `admission-controller` Helm chart also allows for configuring the default
+The `suse-security-admission-controller` Helm chart also allows for configuring the default
 Policy Server `.spec.securityContexts` under
 `.Values.policyServer.securityContexts`.
 
@@ -114,7 +121,7 @@ Each `PolicyServer` exposes a `spec.namespacedPoliciesCapabilities` field that
 lists which host capability API call paths are available to its namespaced
 policies. By default, all PolicyServers allow all host capability calls for
 namespaced policies. This includes the PolicyServer `default` (installed with
-the `kubewarden-defaults` Helm chart), and custom PolicyServers.
+the `suse-security-admission-controller` Helm chart), and custom PolicyServers.
 
 Cluster operators need to configure each PolicyServer's
 `spec.namespacedPoliciesCapabilities` by setting it to `[]` to deny all, or

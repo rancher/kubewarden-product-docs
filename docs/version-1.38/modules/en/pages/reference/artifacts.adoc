@@ -7,7 +7,7 @@ include::partial$variables.adoc[]
 :doc-type: [reference]
 :doc-topic: [operator-manual, artifacts, registry, images]
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 
 = {title}
@@ -23,20 +23,28 @@ There is a tutorial on xref:/tutorials/verifying-kubewarden.adoc[verifying
 link:https://github.com/kubewarden/adm-controller/releases[GitHub releases].
 Learn how to install it in the xref:/howtos/install-kwctl.adoc[install kwctl] documentation.
 
+[#_oci_artifacts]
 == OCI artifacts
 
-For Open Container Initiative (OCI) artifacts, the project publishes everything
-in `ghcr.io` under https://github.com/orgs/kubewarden/packages.
+The {admc-name} Helm chart and container images are Open Container Initiative
+(OCI) artifacts distributed through the https://apps.rancher.io[SUSE
+Application Collection]. Accessing them requires
+https://docs.apps.rancher.io/get-started/authentication/[Application Collection
+credentials].
 
-- https://github.com/orgs/kubewarden/packages/policies[`kubewarden/packages/policies/*`]
-  are the policy Wasm OCI artifacts.
-- https://github.com/orgs/kubewarden/packages/charts[`kubewarden/packages/charts/*`]
-  are the Helm charts as OCI artifacts. They follow SLSA standards.
-- the container images published as OCI images: `kubewarden-controller`, `policy-server`, `audit-scanner`, `kubectl`.
-- there's also `packages/tests/*` containing artifacts used in e2e tests.
+- `oci://dp.apps.rancher.io/charts/suse-security-admission-controller` is the
+  Helm chart.
+- `dp.apps.rancher.io/containers/kubewarden-controller`,
+  `dp.apps.rancher.io/containers/kubewarden-policy-server`,
+  `dp.apps.rancher.io/containers/kubewarden-audit-scanner` and
+  `dp.apps.rancher.io/containers/kubectl` are the container images.
 
+The policies maintained by the {admc-short-name} team are policy Wasm OCI
+artifacts published in `ghcr.io` under
+https://github.com/orgs/kubewarden/packages/policies[`kubewarden/packages/policies/*`].
+
+[#_helm_charts_via_https]
 == Helm charts via HTTPS
 
-{admc-short-name} publishes Helm charts in the Helm chart HTTPS repository at
-https://charts.kubewarden.io. They're without SLSA, or signatures, but this
-type of Helm repository provides searching.
+The SUSE Application Collection distributes the {admc-short-name} Helm chart
+only as an OCI artifact. There's no Helm chart HTTPS repository.

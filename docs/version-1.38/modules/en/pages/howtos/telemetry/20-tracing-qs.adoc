@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Tracing quickstart
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Enable tracing support for the Policy Server using this quickstart guide to collect fine-grained details about policy evaluations, which can be used to debug SUSE Security Admission issues.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -48,17 +48,23 @@ the compatibility chart].
 
 ====
 
-To install the Helm Chart:
+To install the Helm Chart from the SUSE Application Collection:
 
 [subs="+attributes",console]
 ----
-helm repo add jaegertracing https://jaegertracing.github.io/helm-charts
+kubectl create namespace jaeger
+
+kubectl create secret docker-registry application-collection \
+  --namespace jaeger \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 
 helm upgrade -i --wait \
   --namespace jaeger \
-  --create-namespace \
-  --version 2.49.0 \
-  jaeger-operator jaegertracing/jaeger-operator \
+  --version 2.57.0 \
+  jaeger-operator oci://dp.apps.rancher.io/charts/jaeger-operator \
+  --set global.imagePullSecrets=\{application-collection} \
   --set rbac.clusterRole=true
 ----
 
@@ -81,7 +87,9 @@ kind: Jaeger
 metadata:
   name: my-open-telemetry
   namespace: jaeger
-spec: {}
+spec:
+  imagePullSecrets:
+    - name: application-collection
 EOF
 ----
 
@@ -99,13 +107,13 @@ installed it in a previous section of this documentation.
 
 ====
 
-The official `admission-controller` helm
+The `suse-security-admission-controller` Helm
 chart creates a PolicyServer named `default`. You want this PolicyServer
 instance to have tracing enabled.
 
 To do that, you need to specify some extra values for the
-`kubewarden-controller` chart. You should create a `values.yaml` file with the
-following contents:
+`suse-security-admission-controller` chart. You should create a `values.yaml`
+file with the following contents:
 
 [subs="+attributes",yaml]
 ----
@@ -135,10 +143,18 @@ Deploy the {admc-short-name} stack in the usual way:
 
 [subs="+attributes",console]
 ----
-helm repo add kubewarden https://charts.kubewarden.io
-helm install --wait --namespace kubewarden --create-namespace \
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+
+helm install --wait --namespace {admc-namespace} \
   --values values.yaml \
-  admission-controller kubewarden/admission-controller
+  --set global.imagePullSecrets=\{application-collection} \
+  {admc-release} {admc-chart-location}
 ----
 
 This creates the `default` instance of `PolicyServer`:
