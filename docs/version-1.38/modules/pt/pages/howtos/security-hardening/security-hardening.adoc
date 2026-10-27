@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Proteção
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Proteção
 :sidebar_position: 50
@@ -19,9 +19,10 @@ Por favor, consulte o xref:/reference/threat-model.adoc[modelo de ameaça] para 
 
 Os operadores podem obter uma implantação segura instalando todos os {admc-short-name} gráficos Helm. É recomendado instalar o `kubewarden-defaults` gráfico Helm e habilitar suas políticas recomendadas com:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=protect
 ----
@@ -59,9 +60,10 @@ A partir da versão 1.23, a pilha do {admc-short-name} é capaz de rodar em um n
 
 Para fazer isso, você precisa adicionar o rótulo `pod-security.kubernetes.io/enforce: restrito` ao namespace de implantação {admc-short-name}.
 
-```console
-kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
-```
+[source,console,subs="attributes+"]
+----
+kubectl label namespace {admc-namespace} pod-security.kubernetes.io/enforce=restricted --overwrite
+----
 
 Veja a https://kubernetes.io/docs/concepts/security/pod-security-admission/[documentação oficial] do Admission de Segurança de Pod do Kubernetes para mais detalhes.
 

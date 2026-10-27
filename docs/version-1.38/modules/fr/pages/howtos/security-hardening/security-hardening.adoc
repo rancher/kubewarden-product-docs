@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Renforcement de la sécurité
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Renforcement de la sécurité
 :sidebar_position: 50
@@ -19,9 +19,10 @@ Veuillez vous référer au xref:/reference/threat-model.adoc[modèle de menace] 
 
 Les opérateurs peuvent obtenir un déploiement sécurisé en installant tous les {admc-short-name} charts Helm. Il est recommandé d'installer le `kubewarden-defaults` chart Helm et d'activer ses stratégies recommandées avec :
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=protect
 ----
@@ -60,9 +61,10 @@ Les opérateurs soucieux de la sécurité peuvent ajuster cette liste d'espaces 
 
 Pour ce faire, vous devez ajouter l'étiquette `pod-security.kubernetes.io/enforce: restricted` à l'espace de noms de déploiement {admc-short-name}.
 
-```console
-kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
-```
+[source,console,subs="attributes+"]
+----
+kubectl label namespace {admc-namespace} pod-security.kubernetes.io/enforce=restricted --overwrite
+----
 
 Voir la https://kubernetes.io/docs/concepts/security/pod-security-admission/[documentation officielle] de l'Admission de Sécurité des Pods de Kubernetes pour plus de détails.
 

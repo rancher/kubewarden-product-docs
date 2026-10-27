@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = セキュリティハードニング
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: セキュリティハードニング
 :sidebar_position: 50
@@ -19,9 +19,10 @@ include::partial$variables.adoc[]
 
 オペレーターは、すべての{admc-short-name} Helmチャートをインストールすることで、安全なデプロイメントを取得できます。`kubewarden-defaults` Helmチャートをインストールし、推奨されるポリシーを有効にすることをお勧めします。
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defaults \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --set global.imagePullSecrets=\{application-collection} \
   --set recommendedPolicies.enabled=True \
   --set recommendedPolicies.defaultPolicyMode=protect
 ----
@@ -59,9 +60,10 @@ kubectl get clusterroles,roles -A | grep kubewarden
 
 そのためには、`pod-security.kubernetes.io/enforce: restricted`ラベルを{admc-short-name}デプロイメントネームスペースに追加する必要があります。
 
-```console
-kubectl label namespace kubewarden pod-security.kubernetes.io/enforce=restricted --overwrite
-```
+[source,console,subs="attributes+"]
+----
+kubectl label namespace {admc-namespace} pod-security.kubernetes.io/enforce=restricted --overwrite
+----
 
 詳細については、Kubernetesのポッドセキュリティアドミッションのlink:https://kubernetes.io/docs/concepts/security/pod-security-admission/[公式ドキュメント]を参照してください。
 

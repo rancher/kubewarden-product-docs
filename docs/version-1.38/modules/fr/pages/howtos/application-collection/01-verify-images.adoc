@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Vérifiez les images de la Collection d'Applications Rancher
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configurez les PolicyServers pour s'authentifier et tirer des images de la Collection d'Applications Rancher en utilisant un secret de configuration Docker.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -45,7 +45,7 @@ Pour le PolicyServer `default`, installé avec le chart Helm `kubewarden-default
 
 [subs="+attributes",console]
 ----
-$ kubectl create secret docker-registry application-collection-kw -n kubewarden \
+$ kubectl create secret docker-registry application-collection-kw -n {admc-namespace} \
   --docker-server=dp.apps.rancher.io \
   --docker-username=<mymail> \
   --docker-password=<mytoken>
@@ -57,8 +57,8 @@ Si vous utilisez le PolicyServer `default` du chart Helm `kubewarden-defaults`, 
 
 [subs="+attributes",console]
 ----
-$ helm upgrade -i --wait --namespace kubewarden \
-  --create-namespace kubewarden-defaults kubewarden/kubewarden-defaults \
+$ helm upgrade -i --wait --namespace {admc-namespace} \
+  --create-namespace {admc-release} {admc-chart-location} \
   --reuse-values \
   --set policyServer.imagePullSecret=application-collection-kw
 ----

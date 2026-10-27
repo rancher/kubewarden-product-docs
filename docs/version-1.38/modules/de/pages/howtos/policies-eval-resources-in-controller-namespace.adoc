@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Erlauben von Bewertungen im Namespace des Admission Controllers
-:revdate: 2026-07-14
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: So konfigurieren Sie den Admission Controller, um die Richtlinienevaluierung in seinem eigenen Namespace zuzulassen
@@ -23,11 +23,11 @@ Der erste Schritt besteht darin, den Controller so zu konfigurieren, dass er die
 
 Um dies zu tun, führen Sie ein Upgrade Ihrer {admc-short-name} Installation durch und setzen Sie den `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace`-Wert des `kubewarden-controller`-Helm-Charts auf `false`:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm upgrade -n kubewarden
+helm upgrade -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --reuse-values \
   --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
-  kubewarden-controller kubewarden/kubewarden-controller
 ----
 
 Diese Änderung ermöglicht es Policy-Servern, Ressourcen aus jedem Namespace evaluieren.

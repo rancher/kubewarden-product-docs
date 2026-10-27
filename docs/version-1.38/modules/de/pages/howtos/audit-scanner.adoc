@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Audit-Scanner
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Überprüfen Sie den Compliance-Zustand Ihrer Cluster mithilfe der Audit-Scanner-Funktion innerhalb von {admc-name}, um deren ordnungsgemäße Konfiguration sicherzustellen.
 :doc-persona: ["kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
@@ -30,7 +30,13 @@ Stellen Sie daher sicher, dass Sie das Helm-Chart mit der App-Version `v1.7.0` o
 +
 [subs="+attributes",console]
 ----
-helm install kubewarden-crds kubewarden/kubewarden-crds
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
 ----
 +
 
@@ -57,7 +63,9 @@ Weitere Informationen zu den CRDs finden Sie im link:https://github.com/kubernet
 +
 [subs="+attributes",console]
 ----
-helm install kubewarden-controller kubewarden/kubewarden-controller
+helm install {admc-release} {admc-chart-location} \
+  -n {admc-namespace} \
+  --set global.imagePullSecrets=\{application-collection}
 ----
 +
 
@@ -115,7 +123,7 @@ Für einen schnellen Blick oder zur Fehlersuche kann man eine Portweiterleitung 
 
 [subs="+attributes",console]
 ----
-kubectl port-forward service/kubewarden-controller-ui 8082:8080 -n kubewarden
+kubectl port-forward service/admission-controller-ui 8082:8080 -n {admc-namespace}
 ----
 
 Was die Policy Reporter UI unter `\http://localhost:8082` verfügbar macht.
@@ -127,8 +135,8 @@ Die Implementierung des Audit-Scanners erfolgt als Cronjob, der standardmäßig 
 [subs="+attributes",bash]
 ----
 kubectl create job \
-    --namespace kubewarden \
-    --from cronjob/audit-scanner \
+    --namespace {admc-namespace} \
+    --from cronjob/ssac \
     audit-scanner-manual-$(date +%Y-%m-%d-%H-%M-%S)
 ----
 
@@ -136,5 +144,5 @@ Sie können den Status des Jobs mit folgendem Befehl überprüfen:
 
 [subs="+attributes",console]
 ----
-kubectl get -n kubewarden jobs
+kubectl get -n {admc-namespace} jobs
 ----

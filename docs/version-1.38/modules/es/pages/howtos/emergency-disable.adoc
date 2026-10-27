@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Desactivación de emergencia
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Desactivación de emergencia
 :sidebar_position: 31
@@ -20,11 +20,11 @@ Este documento explica cómo desactivar {admc-short-name} para que los equipos d
 
 Primero, detén el controlador de {admc-short-name}. Haces esto escalando su ampliación a cero:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
@@ -50,11 +50,11 @@ kubectl delete mutatingwebhookconfigurations \
 
 Cuando la emergencia haya terminado, restaura la pila de {admc-short-name} volviendo a activar el controlador de {admc-short-name}:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]

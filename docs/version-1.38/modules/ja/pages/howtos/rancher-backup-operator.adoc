@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Rancher Backup Operatorを使用したバックアップと復元
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: 任意のKubernetesクラスターでrancher-backupオペレーターを使用してバックアップと復元を構成および管理します。
 :keywords: "{admc-name}", kubernetes, kubewarden, rancher backup operator, backup, restore
@@ -53,6 +53,7 @@ helm install --wait --create-namespace -n cattle-resources-system \
     rancher-backup-crd rancher-charts/rancher-backup-crd
 helm install --wait -n cattle-resources-system \
     rancher-backup rancher-charts/rancher-backup \
+    --set global.cattle.systemDefaultRegistry=registry.rancher.com \
     --set persistence.enabled=true --set persistence.storageClass=standard \
     --set optionalResources.kubewarden.enabled=true
 ----

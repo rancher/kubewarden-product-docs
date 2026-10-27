@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = K3sで相互トランスポート層セキュリティ（mTLS）を使用してWebhookを保護する
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: K3sで相互トランスポート層セキュリティ（mTLS）を有効にする
 :description: SUSE KubernetesディストリビューションのK3sを使用して、Webhookを保護するために相互トランスポート層セキュリティ（mTLS）プロトコルを実装します。
@@ -106,13 +106,13 @@ plugins:
 
 最後に、`/etc/rancher/k3s/admission/kubeconfig`に`kubeconfig`ファイルを作成します：
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 # /etc/rancher/admission/kubeconfig
 apiVersion: v1
 kind: Config
 users:
-- name: "*.kubewarden.svc" # namespace where the kubewarden stack is deployed
+- name: "*.{admc-namespace}.svc" # namespace where the {admc-short-name} stack is deployed
   user:
     client-certificate: /etc/rancher/k3s/admission/certs/client.crt
     client-key: /etc/rancher/k3s/admission/certs/client.key
@@ -135,7 +135,7 @@ kube-apiserver-arg:
 
 [source,console]
 ----
-curl -sfL https://get.k3s.io | sh -
+curl -sfL https://get.k3s.io | INSTALL_K3S_ARTIFACT_URL=<PRIME-ARTIFACTS-URL>/k3s sh -
 ----
 
 インストールが完了するまで待ちます。
@@ -150,16 +150,16 @@ Kubernetesクライアント証明書を発行したルートCAの証明書は�
 
 まず、`kubewarden`名前空間を作成します：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create namespace kubewarden
+kubectl create namespace {admc-namespace}
 ----
 
 次に、その中に`ConfigMap`を作成します。Kubernetesノードで実行される以下のコマンドがそれを行います：
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl create configmap -n kubewarden api-server-mtls \
+kubectl create configmap -n {admc-namespace} api-server-mtls \
     --from-file=client-ca.crt=/etc/rancher/k3s/admission/certs/rootCA.crt
 ----
 
@@ -174,9 +174,10 @@ xref:/quick-start.adoc[クイックスタートガイド]に記載されてい�
 
 `ConfigMap`の名前は`api-server-mtls`です。`kubewarden-controller`をインストールするためのHelmコマンドは次のとおりです:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm install --wait -n kubewarden kubewarden-controller kubewarden/kubewarden-controller \
+helm install --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
+    --set global.imagePullSecrets=\{application-collection} \
     --set mTLS.enable=true \
     --set mTLS.configMapName=api-server-mtls
 ----

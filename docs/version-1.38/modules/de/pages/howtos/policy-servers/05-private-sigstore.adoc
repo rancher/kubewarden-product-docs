@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Konfigurieren von PolicyServern zur Verwendung einer privaten Sigstore-Instanz
-:revdate: 2026-06-02
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Konfigurieren von PolicyServern zur Verwendung einer privaten oder selbst gehosteten Sigstore-Instanz zur Überprüfung von Richtlinienunterschriften in {admc-name}.
@@ -126,9 +126,9 @@ EOF
 
 Speichern Sie das `ClientTrustConfig` JSON in einer ConfigMap mit dem Schlüssel `sigstore-trust-config`. Die ConfigMap **muss** im Namespace des Admission Controllers sein. In diesem Beispiel ist `kubewarden`:
 
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubectl --namespace kubewarden create configmap my-sigstore-trust-config \
+kubectl --namespace {admc-namespace} create configmap my-sigstore-trust-config \
   --from-file=sigstore-trust-config=trust_config.json
 ----
 
@@ -150,9 +150,9 @@ Ersetzen Sie `<namespace>` und `<serviceaccount>` durch den Namespace und den Se
 
 Erstellen Sie die ConfigMap:
 
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-kubectl --namespace kubewarden create configmap my-verification-config \
+kubectl --namespace {admc-namespace} create configmap my-verification-config \
   --from-file=verification-config=verification_config.yaml
 ----
 
@@ -165,14 +165,14 @@ Der ConfigMap-Schlüssel **muss** `verification-config` sein (nicht der Dateinam
 
 Setzen Sie `spec.sigstoreTrustConfig` und `spec.verificationConfig` auf Ihrem PolicyServer auf die Namen der ConfigMaps, die Sie erstellt haben:
 
-[source,yaml]
+[source,yaml,subs="attributes+"]
 ----
 apiVersion: policies.kubewarden.io/v1
 kind: PolicyServer
 metadata:
   name: default
 spec:
-  image: ghcr.io/kubewarden/policy-server:latest
+  image: {default-policy-server-image-tag}
   replicas: 1
   sigstoreTrustConfig: my-sigstore-trust-config
   verificationConfig: my-verification-config

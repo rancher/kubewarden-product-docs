@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Sistema de suministro seguro
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Configura {admc-name} para validar la integridad de las firmas de artefactos y las políticas de admisión.
 :doc-persona: ["kubewarden-user", "kubewarden-operator", "kubewarden-distributor", "kubewarden-integrator"]
@@ -409,7 +409,7 @@ metadata:
   finalizers:
     - kubewarden
 spec:
-  image: ghcr.io/kubewarden/policy-server:v0.2.7
+  image: {default-policy-server-image-tag}
   serviceAccountName: policy-server
   replicas: 1
 //highlight-next-l

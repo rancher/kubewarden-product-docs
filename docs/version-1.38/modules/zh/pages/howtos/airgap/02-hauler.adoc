@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = Air gap installation with Hauler
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-05-04
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Use Hauler to install {admc-name} in air-gapped environments.
 :keywords: ["{admc-name}", kubewarden, kubernetes, air gap installation, hauler]
@@ -15,14 +15,15 @@ link:https://docs.hauler.dev/docs/intro[Hauler]. Hauler is a tool that helps
 users run workloads in air-gapped environments. It moves the required resources
 for apps into those air-gapped environments.
 
-{admc-short-name} provides a manifest file with all the
+Hauler uses a manifest file that lists all the
 required resources to run {admc-short-name} in a private environment. This
-documentation describes how you can use it. Refer to the Hauler documentation
-to learn more about it.
+documentation describes how you can create and use it. Refer to the Hauler
+documentation to learn more about it. Hauler is also available in the
+https://apps.rancher.io[SUSE Application Collection].
 
 The basic workflow using the Hauler manifest is:
 
-. Get it from a {admc-short-name} release page
+. Create it with the {admc-short-name} resources from the SUSE Application Collection
 . Load all the resources required to run {admc-short-name} into a local store
 . Export them into a file
 . Move the file into the private environment
@@ -30,10 +31,71 @@ The basic workflow using the Hauler manifest is:
 . Copy everything into a registry, to be used in the installation process, in
   your air-gapped environment
 
-== Download Hauler manifest from Helm chart release page
+[#_download_hauler_manifest_from_helm_chart_release_page]
+== Create the Hauler manifest
 
-Download `hauler_manifest.yml` from the {admc-short-name}
-link:https://github.com/kubewarden/helm-charts/releases/[release page].
+The {admc-short-name} Helm chart and container images are distributed through
+the SUSE Application Collection. Create a `hauler_manifest.yaml` file with the
+following content:
+
+[source,yaml]
+----
+apiVersion: content.hauler.cattle.io/v1
+kind: Charts
+metadata:
+  name: suse-security-admission-controller-chart
+spec:
+  charts:
+    - name: suse-security-admission-controller
+      repoURL: oci://dp.apps.rancher.io/charts
+      version: 1.1.0
+---
+apiVersion: content.hauler.cattle.io/v1
+kind: Images
+metadata:
+  name: suse-security-admission-controller-images
+spec:
+  images:
+    - name: dp.apps.rancher.io/containers/kubewarden-controller:1.38.2-14.2
+    - name: dp.apps.rancher.io/containers/kubewarden-audit-scanner:1.38.2-14.2
+    - name: dp.apps.rancher.io/containers/kubewarden-policy-server:1.38.2-14.2
+    - name: dp.apps.rancher.io/containers/kubectl:1.37.0-3.1
+    - name: dp.apps.rancher.io/containers/policy-reporter:3.10.0-13.1
+    - name: dp.apps.rancher.io/containers/policy-reporter-ui:2.8.1-13.1
+---
+apiVersion: content.hauler.cattle.io/v1
+kind: Images
+metadata:
+  name: kubewarden-policies
+  annotations:
+    hauler.dev/certificate-oidc-issuer: https://token.actions.githubusercontent.com
+    hauler.dev/certificate-identity-regexp: https://github.com/kubewarden/policies/.github/workflows/release.yml@refs/tags/.*
+spec:
+  images:
+    - name: ghcr.io/kubewarden/policies/allow-privilege-escalation-psp:v1.0.14
+    - name: ghcr.io/kubewarden/policies/capabilities-psp:v1.0.14
+    - name: ghcr.io/kubewarden/policies/host-namespaces-psp:v1.1.12
+    - name: ghcr.io/kubewarden/policies/hostpaths-psp:v1.1.11
+    - name: ghcr.io/kubewarden/policies/pod-privileged:v1.0.14
+    - name: ghcr.io/kubewarden/policies/user-group-psp:v1.1.5
+----
+
+The chart version and image tags in this example correspond to
+{admc-short-name} 1.38.2. For other versions, use the images listed in the
+`images-lock.yaml` file included in the chart. The policies are the ones that
+the chart deploys when you enable its recommended policies. Add any other
+policy that you want to use.
+
+Log in to the SUSE Application Collection with Hauler, using your
+https://docs.apps.rancher.io/get-started/authentication/[Application Collection
+credentials]:
+
+[source,shell]
+----
+hauler login dp.apps.rancher.io \
+  --username <your-username> \
+  --password <your-token>
+----
 
 Synchronize the resources defined in the manifest to your Hauler store:
 
@@ -65,12 +127,18 @@ these:
 
 [source,shell]
 ----
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter:3.8.1]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kyverno/policy-reporter-ui:2.6.1]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/adm-controller/policy-server:v1.37.0]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/adm-controller/audit-scanner:v1.37.0]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/rancher/kuberlr-kubectl:v8.1.1]
-2025-08-12 18:55:54 WRN specify an export platform to prevent potential platform mismatch on import of index [ghcr.io/kubewarden/adm-controller/controller:v1.37.0]
+2026-10-10 09:36:57 WRN compatibility warning... docker... multi-arch index [dp.apps.rancher.io/containers/kubewarden-policy-server:1.38.2-14.2] saved without --platform
+2026-10-10 09:36:57 WRN 'docker load' keeps only one architecture per tag (last wins)... use --platform (i.e. linux/amd64) to select one... containerd and OCI imports include all architectures and are unaffected
+2026-10-10 09:36:57 WRN compatibility warning... docker... multi-arch index [dp.apps.rancher.io/containers/kubewarden-controller:1.38.2-14.2] saved without --platform
+2026-10-10 09:36:57 WRN 'docker load' keeps only one architecture per tag (last wins)... use --platform (i.e. linux/amd64) to select one... containerd and OCI imports include all architectures and are unaffected
+2026-10-10 09:36:57 WRN compatibility warning... docker... multi-arch index [dp.apps.rancher.io/containers/kubectl:1.37.0-3.1] saved without --platform
+2026-10-10 09:36:57 WRN 'docker load' keeps only one architecture per tag (last wins)... use --platform (i.e. linux/amd64) to select one... containerd and OCI imports include all architectures and are unaffected
+2026-10-10 09:36:57 WRN compatibility warning... docker... multi-arch index [dp.apps.rancher.io/containers/policy-reporter:3.10.0-13.1] saved without --platform
+2026-10-10 09:36:57 WRN 'docker load' keeps only one architecture per tag (last wins)... use --platform (i.e. linux/amd64) to select one... containerd and OCI imports include all architectures and are unaffected
+2026-10-10 09:36:57 WRN compatibility warning... docker... multi-arch index [dp.apps.rancher.io/containers/policy-reporter-ui:2.8.1-13.1] saved without --platform
+2026-10-10 09:36:57 WRN 'docker load' keeps only one architecture per tag (last wins)... use --platform (i.e. linux/amd64) to select one... containerd and OCI imports include all architectures and are unaffected
+2026-10-10 09:36:57 WRN compatibility warning... docker... multi-arch index [dp.apps.rancher.io/containers/kubewarden-audit-scanner:1.38.2-14.2] saved without --platform
+2026-10-10 09:36:57 WRN 'docker load' keeps only one architecture per tag (last wins)... use --platform (i.e. linux/amd64) to select one... containerd and OCI imports include all architectures and are unaffected
 ----
 
 To avoid this warning message, you can set the `--platform` CLI flag to define
@@ -125,7 +193,7 @@ configuration:
 #       insecure_skip_verify: true
 
 # Configure policy-server to allow pulling policies from insecure sources
-# helm install .. admission-controller .. --set policyServer.insecureSources[0]=<HOST_IP:5000>
+# helm install .. suse-security-admission-controller .. --set policyServer.insecureSources[0]=<HOST_IP:5000>
 
 hauler store serve registry
 ----
@@ -144,35 +212,36 @@ Helm charts from OCI artifacts.
 
 Install the {admc-short-name} stack:
 
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-helm install --wait -n kubewarden admission-controller --create-namespace \
-    --set "global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>" \
-    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/admission-controller
+helm install --wait -n {admc-namespace} {admc-release} --create-namespace \
+    --set "global.imageRegistry=<REGISTRY.YOURDOMAIN.COM:PORT>" \
+    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/suse-security-admission-controller \
+    --version 1.1.0
 ----
+
+The `global.imageRegistry` value sets the registry of all the container images
+of the chart, including the images of the Policy Reporter sub-chart. If your
+private registry requires authentication, create an image pull secret in the
+`{admc-namespace}` namespace and set it with `global.imagePullSecrets`.
 
 [CAUTION]
 ====
 
-To use the PolicyReporter sub-chart available in the `admission-controller`
-chart you need to define other values specific for the sub-chart in an
-air-gapped environment. See an example below:
+To use the PolicyReporter sub-chart available in the
+`suse-security-admission-controller` chart, enable it with the
+`auditScanner.policyReporter` value. See an example below:
 
-[source,shell]
+[source,shell,subs="attributes+"]
 ----
-helm install --wait -n kubewarden admission-controller oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/admission-controller \
-    --set global.cattle.systemDefaultRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
-    --set auditScanner.policyReporter=true \
-    --set policy-reporter.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
-    --set policy-reporter.image.repository=kyverno/policy-reporter \
-    --set policy-reporter.ui.image.registry=<REGISTRY.YOURDOMAIN.COM:PORT> \
-    --set policy-reporter.ui.image.repository=kyverno/policy-reporter-ui
+helm install --wait -n {admc-namespace} {admc-release} --create-namespace \
+    oci://<REGISTRY.YOURDOMAIN.COM:PORT>/hauler/suse-security-admission-controller \
+    --version 1.1.0 \
+    --set global.imageRegistry=<REGISTRY.YOURDOMAIN.COM:PORT> \
+    --set auditScanner.policyReporter=true
 ----
 
-It's necessary to define `auditScanner.policyReporter` and four other values to
-enable the sub-chart and to configure the registry and repository with the
-location of the Policy Reporter image store. For more information about the
-policy report sub-chart values, refer to
+For more information about the policy report sub-chart values, refer to
 link:https://kyverno.github.io/policy-reporter-docs/getting-started/helm.html[Policy
 Reporter documentation].
 
@@ -194,7 +263,7 @@ kind: ClusterAdmissionPolicy
 metadata:
   name: privileged-pods
 spec:
-  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v1.0.11
+  module: registry://<REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/policies/pod-privileged:v1.0.14
   rules:
   - apiGroups: [""]
     apiVersions: ["v1"]
@@ -218,7 +287,7 @@ kind: PolicyServer
 metadata:
   name: reserved-instance-for-tenant-a
 spec:
-  image: <REGISTRY.YOURDOMAIN.COM:PORT>/kubewarden/adm-controller/policy-server:v1.37.0
+  image: <REGISTRY.YOURDOMAIN.COM:PORT>/containers/kubewarden-policy-server:1.38.2-14.2
   replicas: 2
   serviceAccountName: sa
 ----

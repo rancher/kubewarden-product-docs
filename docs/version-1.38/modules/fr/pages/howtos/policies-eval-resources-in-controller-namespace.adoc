@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Autoriser les évaluations dans l'espace de noms du contrôleur d'admission
-:revdate: 2026-07-14
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Comment configurer le contrôleur d'admission pour permettre l'évaluation des stratégies dans son propre espace de noms
@@ -23,11 +23,11 @@ La première étape consiste à configurer le contrôleur pour ne pas définir `
 
 Pour ce faire, mettez à niveau votre installation de {admc-short-name} et définissez la valeur `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` du chart Helm `kubewarden-controller` sur `false` :
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm upgrade -n kubewarden
+helm upgrade -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --reuse-values \
   --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
-  kubewarden-controller kubewarden/kubewarden-controller
 ----
 
 Ce changement permet aux serveurs de stratégies d'évaluer les ressources de n'importe quel espace de noms.

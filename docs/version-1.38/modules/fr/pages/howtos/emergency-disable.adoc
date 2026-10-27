@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Désactivation d'urgence
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: Désactivation d'urgence
 :sidebar_position: 31
@@ -20,11 +20,11 @@ Ce document explique comment désactiver {admc-short-name} afin que les équipes
 
 Tout d'abord, interrompez le contrôleur {admc-short-name}. Vous le faites en réduisant son déploiement à zéro :
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=0 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]
@@ -50,11 +50,11 @@ kubectl delete mutatingwebhookconfigurations \
 
 Lorsque l'urgence est terminée, restaurez la pile {admc-short-name} en rétablissant le contrôleur {admc-short-name} :
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-kubectl scale deployment kubewarden-controller \
+kubectl scale deployment {admc-release}-ssac \
   --replicas=1 \
-  -n kubewarden
+  -n {admc-namespace}
 ----
 
 [tip]

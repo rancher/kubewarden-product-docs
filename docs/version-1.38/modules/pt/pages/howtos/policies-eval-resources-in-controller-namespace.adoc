@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 
 = Permitindo avaliações no namespace do Admission Controller
-:revdate: 2026-07-14
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :page-languages: [en, de, es, fr, ja, pt, zh]
 :description: Como configurar o Admission Controller para permitir a avaliação de políticas em seu próprio namespace
@@ -23,11 +23,11 @@ O primeiro passo é configurar o controlador para não definir a `KUBEWARDEN_ALW
 
 Para fazer isso, atualize sua {admc-short-name} instalação e defina o `alwaysAcceptAdmissionReviewsOnDeploymentsNamespace` valor do `kubewarden-controller` chart Helm para `false`:
 
-[source,console]
+[source,console,subs="attributes+"]
 ----
-helm upgrade -n kubewarden
+helm upgrade -n {admc-namespace} {admc-release} {admc-chart-location} \
+  --reuse-values \
   --set "alwaysAcceptAdmissionReviewsOnDeploymentsNamespace=false"
-  kubewarden-controller kubewarden/kubewarden-controller
 ----
 
 Essa mudança permite que os servidores de políticas avaliem recursos de qualquer namespace.

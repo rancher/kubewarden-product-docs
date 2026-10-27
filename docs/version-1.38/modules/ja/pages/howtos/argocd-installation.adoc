@@ -2,7 +2,7 @@ include::partial$variables.adoc[]
 
 = ArgoCDのインストール
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :sidebar_label: ArgoCDのインストール
 :sidebar_position: 35
@@ -26,41 +26,55 @@ Kubernetesリソースを管理するためにArgoCDを使用している場合�
 
 これを行うには、ArgoCDアプリケーションに`ignoreDifferences`フィールドを追加します：
 
-[subs="+attributes", yaml]
+[subs="+attributes",console]
+----
+kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: application-collection-repo
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repository
+stringData:
+  type: helm
+  name: application-collection
+  url: dp.apps.rancher.io/charts
+  enableOCI: "true"
+  username: <your-username>
+  password: <your-token>
+EOF
+
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+----
+
+[subs="+attributes",yaml]
 ----
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: kubewarden-crds
+  name: {admc-release}
   namespace: argocd
 spec:
   project: default
   source:
-    repoURL: https://charts.kubewarden.io
-    chart: kubewarden-crds
-    targetRevision: 1.13.0
+    repoURL: dp.apps.rancher.io/charts
+    chart: suse-security-admission-controller
+    targetRevision: 1.1.0
+    helm:
+      valuesObject:
+        global:
+          imagePullSecrets:
+            - application-collection
   destination:
     server: https://kubernetes.default.svc
-    namespace: kubewarden-system
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: kubewarden-controller
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://charts.kubewarden.io
-    chart: kubewarden-controller
-    targetRevision: 4.1.0
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: kubewarden-system
+    namespace: {admc-namespace}
   syncPolicy:
     automated:
       prune: true
@@ -74,19 +88,19 @@ spec:
   - group: ""
     kind: "Secret"
     name: kubewarden-ca
-    namespace: kubewarden-system
+    namespace: {admc-namespace}
     jsonPointers:
       - /data
   - group: ""
     kind: "Secret"
     name: kubewarden-webhook-server-cert
-    namespace: kubewarden-system
+    namespace: {admc-namespace}
     jsonPointers:
       - /data
   - group: ""
     kind: "Secret"
     name: kubewarden-audit-scanner-client-cert
-    namespace: kubewarden-system
+    namespace: {admc-namespace}
     jsonPointers:
       - /data
   - group: "admissionregistration.k8s.io"
@@ -97,25 +111,6 @@ spec:
     kind: "ValidatingWebhookConfiguration"
     jqPathExpressions:
       - '.webhooks[]?.clientConfig.caBundle'
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: kubewarden-defaults
-  namespace: argocd
-spec:
-  project: default
-  source:
-    repoURL: https://charts.kubewarden.io
-    chart: kubewarden-defaults
-    targetRevision: 2.8.0
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: kubewarden-system
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
 ----
 
 [NOTE]
