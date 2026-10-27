@@ -1,7 +1,7 @@
 include::partial$variables.adoc[]
 = Managing {admc-name} with Rancher Fleet
 :page-languages: [en, de, es, fr, ja, pt, zh]
-:revdate: 2026-06-18
+:revdate: 2026-10-10
 :page-revdate: {revdate}
 :description: Manage {admc-name} Helm chart using Rancher Fleet and Kubernetes Custom Resource Definitions (CRDs) to implement a GitOps approach.
 :doc-persona: ["kubewarden-operator", "kubewarden-integrator"]
@@ -13,15 +13,114 @@ include::partial$variables.adoc[]
 :current-version: {page-origin-branch}
 
 You can manage {admc-name} Helm chart,
-like other Helm charts, with https://fleet.rancher.io/[Rancher Fleet].
+like other Helm charts, with
+https://documentation.suse.com/cloudnative/continuous-delivery/latest/en/index.html[SUSE
+Rancher Prime: Continuous Delivery] (Rancher Fleet).
 Rancher Fleet uses Kubernetes CRDs
 to define a GitOps approach to managing Kubernetes clusters.
-It does this by defining https://fleet.rancher.io/concepts[Fleet Bundles].
+It does this by defining
+https://documentation.suse.com/cloudnative/continuous-delivery/latest/en/explanations/concepts.html[Fleet
+Bundles].
 
+[#_installing]
 == Installing
 
 The {admc-short-name} chart is a standard chart. See the
 xref:/quick-start.adoc[Quickstart docs] for more information.
+
+The {admc-short-name} Helm chart and its container images are distributed
+through the https://apps.rancher.io[SUSE Application Collection]. To install
+{admc-short-name} with Fleet, Fleet needs credentials to pull the chart, and the
+target clusters need credentials to pull the container images. See the
+https://docs.apps.rancher.io/get-started/authentication/[Application Collection
+authentication documentation] for how to obtain them.
+
+. On each target cluster, create the `{admc-namespace}` namespace and an image
+  pull secret, so the cluster can pull the {admc-short-name} container images:
++
+[subs="+attributes",console]
+----
+kubectl create namespace {admc-namespace}
+
+kubectl create secret docker-registry application-collection \
+  --namespace {admc-namespace} \
+  --docker-server=dp.apps.rancher.io \
+  --docker-username=<your-username> \
+  --docker-password=<your-token>
+----
+
+. On the Fleet management cluster, create a Secret with the Application
+  Collection credentials in the namespace of the `GitRepo`. Fleet uses it to pull
+  the Helm chart. This example uses the `fleet-local` namespace, which targets
+  the local cluster; use `fleet-default` to target downstream clusters:
++
+[subs="+attributes",console]
+----
+kubectl create secret generic application-collection-helm \
+  --namespace fleet-local \
+  --from-literal=username=<your-username> \
+  --from-literal=password=<your-token>
+----
+
+. In your Git repository, add a `fleet.yaml` file that deploys the
+  `suse-security-admission-controller` chart from the Application Collection, in
+  a directory such as `admission-controller`:
++
+[subs="+attributes",yaml]
+----
+defaultNamespace: {admc-namespace}
+helm:
+  releaseName: {admc-release}
+  repo: {admc-chart-location}
+  version: 1.1.0
+  values:
+    global:
+      imagePullSecrets:
+        - application-collection
+----
++
+Add your own chart values under `helm.values`.
+
+. Create a `GitRepo` that watches that directory. The `helmSecretName` field
+  references the Secret with the Application Collection credentials. Fleet
+  forwards those credentials only to the Helm repositories that match
+  `helmRepoURLRegex`:
++
+[subs="+attributes",yaml]
+----
+kubectl apply -f - <<EOF
+apiVersion: fleet.cattle.io/v1alpha1
+kind: GitRepo
+metadata:
+  name: {admc-release}
+  namespace: fleet-local
+spec:
+  repo: <your-git-repository-url>
+  branch: main
+  paths:
+    - admission-controller
+  helmSecretName: application-collection-helm
+  helmRepoURLRegex: "^oci://dp.apps.rancher.io/"
+EOF
+----
+
+. Check that Fleet deployed the bundle:
++
+[subs="+attributes",console]
+----
+kubectl get gitrepo -n fleet-local {admc-release}
+kubectl get pods -n {admc-namespace}
+----
+
+Fleet deploys the chart with Helm against the target cluster, so the
+certificates that the chart creates on installation are reused on later
+deployments. Unlike with ArgoCD, no configuration is needed to ignore
+differences in the certificate Secrets or the webhook configurations.
+
+See the
+https://documentation.suse.com/cloudnative/continuous-delivery/latest/en/how-tos-for-users/gitrepo-add.html[Continuous
+Delivery documentation] for more information about `GitRepo` resources and
+credentials.
 
 == Removing
 
@@ -30,7 +129,7 @@ resources and CRDs. See the xref:/quick-start.adoc[Quickstart docs] for more
 information.
 
 {admc-short-name} Kubewarden uses a pre-delete helm hook job in
-`admission-controller` chart that deletes the controller, webhooks, resources
+`suse-security-admission-controller` chart that deletes the controller, webhooks, resources
 that enable PolicyServers to process policies, default PolicyServer and
 recommended policies.
 
@@ -44,7 +143,7 @@ after removing the Fleet Bundle:
   delete it directly with `kubectl delete bundle`, and let Fleet reconcile the
   removal of the Helm release from the target clusters.
 * Confirm the Helm release is uninstalled and the pre-delete hook completed,
-  by checking that the `kubewarden-controller` Deployment and webhooks are
+  by checking that the `{admc-release}-ssac` Deployment and webhooks are
   gone from the targeted clusters.
 * Manually delete the remaining CRDs, which will also remove the user-managed
   custom resources on each targeted cluster:
@@ -69,5 +168,9 @@ Bundle deployed {admc-short-name}.
 
 == Example
 
-For an example of Fleet bundle definitions see
+The <<_installing,Installing>> section contains a complete example of a
+`fleet.yaml` file and a `GitRepo` for the `suse-security-admission-controller`
+chart.
+
+For more examples of Fleet bundle definitions, based on the community chart, see
 https://github.com/kubewarden/fleet-example[github.com/kubewarden/fleet-example].
