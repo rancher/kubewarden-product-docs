@@ -93,6 +93,13 @@ spec:
 EOF
 ----
 
+[NOTE]
+====
+If the Jaeger Operator webhook isn't ready yet, creating the `Jaeger` resource
+fails with `failed calling webhook "mjaeger.kb.io"`. Wait a few seconds and
+run the command again.
+====
+
 After creation of Jaeger Operator resources, you have a Service under
 `my-open-telemetry-collector.jaeger.svc.cluster.local`. The Jaeger Query UI is
 exposed by the `my-open-telemetry-query` Service in the `jaeger` Namespace.
@@ -229,7 +236,7 @@ You need to wait for the policy to become active:
 
 [subs="+attributes",console]
 ----
-kubectl wait --for=condition=PolicyActive clusteradmissionpolicy/safe-labels
+kubectl wait --for=condition=PolicyActive clusteradmissionpolicy/safe-labels --timeout=5m
 ----
 
 Once the policy is active, you can try it:

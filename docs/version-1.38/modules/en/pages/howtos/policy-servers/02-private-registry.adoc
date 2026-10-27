@@ -94,7 +94,5 @@ your private registry as well:
 ----
 # values file example
 policyServer:
-  telemetry:
-    enabled: False
   imagePullSecret: secret-ghcr-docker
 ----

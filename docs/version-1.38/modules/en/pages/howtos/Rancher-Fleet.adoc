@@ -157,6 +157,15 @@ kubectl delete crd clusteradmissionpolicygroups.policies.kubewarden.io
 kubectl delete crd admissionpolicygroups.policies.kubewarden.io
 ----
 +
+If no other tool in the cluster uses the OpenReports CRDs, also delete the
+ones installed by the chart:
++
+[subs="+attributes",console]
+----
+kubectl delete crd reports.openreports.io
+kubectl delete crd clusterreports.openreports.io
+----
++
 [NOTE]
 ====
 

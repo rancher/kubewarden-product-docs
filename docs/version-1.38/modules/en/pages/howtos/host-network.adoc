@@ -91,7 +91,7 @@ metadata:
 spec:
   image: {default-policy-server-image-tag}
   replicas: 2
-  webhookPort: 9443
+  webhookPort: 9444
   readinessProbePort: 9081
 ----
 
@@ -132,7 +132,7 @@ affinity:
               operator: In
               values:
                 - policy-server
-                - kubewarden-controller
+                - controller
         topologyKey: kubernetes.io/hostname
 policyServer:
   affinity:
@@ -144,7 +144,7 @@ policyServer:
                 operator: In
                 values:
                   - policy-server
-                  - kubewarden-controller
+                  - controller
           topologyKey: kubernetes.io/hostname
 ----
 
@@ -178,7 +178,7 @@ spec:
                 operator: In
                 values:
                   - policy-server
-                  - kubewarden-controller
+                  - controller
           topologyKey: kubernetes.io/hostname
 ----
 

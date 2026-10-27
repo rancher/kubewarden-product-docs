@@ -107,7 +107,7 @@ Scanner.
 The `suse-security-admission-controller` chart comes with a subchart of the
 https://kyverno.github.io/policy-reporter[Policy Reporter]. It's disabled by
 default, and enabled by setting `auditScanner.policyReporter=true`. The Policy
-Reporter subchart values are under the `.Values.policyReporter` key.
+Reporter subchart values are under the `.Values.policy-reporter` key.
 
 This installs only part of the Policy Reporter upstream chart, the UI, which
 provides a visualization of the PolicyReports and ClusterPolicyReports in a
@@ -115,14 +115,14 @@ cluster. See xref:explanations/audit-scanner/audit-scanner.adoc[Audit Scanner]
 for more information about the Policy Reporter UI.
 
 By default, the Policy Reporter UI is only exposed as a ClusterIP service with
-name `admission-controller-ui` in the installation namespace of
-
+name `policy-reporter-ui` in the namespace where the
 `suse-security-admission-controller` chart was installed.
 
 ==== Ingress
 
-Users can provide their own Ingress configuration, or enable an Ingress via the subchart configuration 
-https://github.com/kyverno/policy-reporter/blob/policy-reporter-2.19.4/charts/policy-reporter/charts/ui/values.yaml#L172-L189[here].
+Users can provide their own Ingress configuration, or enable an Ingress with
+the `policy-reporter.ui.ingress` values of the subchart. To list them, run
+`helm show values {admc-chart-location}`.
 
 See this example of an Ingress configuration via the subchart:
 
@@ -148,7 +148,7 @@ For a quick look or debugging, one can setup a port-forwarding to the service wi
 
 [subs="+attributes",console]
 ----
-kubectl port-forward service/admission-controller-ui 8082:8080 -n {admc-namespace}
+kubectl port-forward service/policy-reporter-ui 8082:8080 -n {admc-namespace}
 ----
 
 Which makes the Policy Reporter UI available at `\http://localhost:8082`.

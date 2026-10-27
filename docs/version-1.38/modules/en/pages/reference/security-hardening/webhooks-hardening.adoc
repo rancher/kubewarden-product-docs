@@ -53,7 +53,7 @@ metadata:
   name: allow-k8s-and-audit-scanner
   namespace: {admc-namespace}
 spec:
-  selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+  selector: 'app.kubernetes.io/component in {"controller", "policy-server"}'
   types:
     - Ingress
   ingress:
@@ -63,13 +63,13 @@ spec:
         nets:
         - 192.168.42.0/24
       destination:
-        selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+        selector: 'app.kubernetes.io/component in {"controller", "policy-server"}'
     - action: Allow
       protocol: TCP
       source:
         namespaceSelector: 'kubernetes.io/metadata.name == "{admc-namespace}"'
       destination:
-        selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+        selector: 'app.kubernetes.io/component in {"controller", "policy-server"}'
 ----
 
 [NOTE]
@@ -79,11 +79,11 @@ This network policy uses label selectors introduced in {admc-short-name} 1.23.0.
 you are using an older version, update the labels in the policy to match your
 deployment.
 
-More sprecifically, write the
+More specifically, write the
 
 [source,yaml]
 ----
-selector: 'app.kubernetes.io/component in {"kubewarden-controller", "policy-server"}'
+selector: 'app.kubernetes.io/component in {"controller", "policy-server"}'
 ----
 
 selectors as:
@@ -162,7 +162,7 @@ matchExpressions:
 [TIP]
 ====
 
-Refer to xref:/howtos/security-hardening/webhook-mtls.adoc[webook mTLS
+Refer to xref:/howtos/security-hardening/webhook-mtls.adoc[webhook mTLS
 how-to] for a step-by-step guide on configuring the Kubernetes API server of
 K3s to authenticate to the webhook.
 

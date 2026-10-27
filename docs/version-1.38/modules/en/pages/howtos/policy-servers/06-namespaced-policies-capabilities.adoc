@@ -115,6 +115,29 @@ spec:
 Any namespaced policy scheduled on this PolicyServer will have all host
 capability calls blocked.
 
+[#_empty_list_on_creation]
+[IMPORTANT]
+====
+When a PolicyServer is created with `namespacedPoliciesCapabilities: []`, the
+controller removes the empty list the first time it reconciles the
+PolicyServer. Without the field, all host capabilities are allowed. After
+creating the PolicyServer, set the empty list again:
+
+[subs="+attributes",console]
+----
+kubectl patch policyserver for-namespaced-policies --type=merge \
+  -p '{"spec":{"namespacedPoliciesCapabilities":[]}}'
+----
+
+Check that the field is set. The following command must print `[]`:
+
+[subs="+attributes",console]
+----
+kubectl get policyserver for-namespaced-policies \
+  -o jsonpath='{.spec.namespacedPoliciesCapabilities}'
+----
+====
+
 === Example: allow only OCI signature verification
 
 [subs="+attributes",yaml]
@@ -160,8 +183,16 @@ capability access:
 ----
 helm upgrade --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
   --reuse-values \
-  --set 'policyServer.namespacedPoliciesCapabilities={}'
+  --set-json 'policyServer.namespacedPoliciesCapabilities=[]'
+
+kubectl patch policyserver default --type=merge \
+  -p '{"spec":{"namespacedPoliciesCapabilities":[]}}'
 ----
+
+The Helm chart doesn't set an empty list on the `default` PolicyServer: with
+an empty `policyServer.namespacedPoliciesCapabilities` value, the chart leaves
+the field unset, which allows all host capabilities. That's why the empty list
+is set directly on the PolicyServer with `kubectl patch`.
 
 To allow only OCI and DNS capabilities:
 
@@ -271,7 +302,17 @@ metadata:
   namespace: {admc-namespace}
 spec:
   image: {default-policy-server-image-tag}
+  replicas: 1
   namespacedPoliciesCapabilities: []
+----
+
+After creating the PolicyServer, set the empty list again, as explained in
+<<_empty_list_on_creation,Example: deny all host capabilities>>:
+
+[subs="+attributes",console]
+----
+kubectl patch policyserver for-namespaced-policies --type=merge \
+  -p '{"spec":{"namespacedPoliciesCapabilities":[]}}'
 ----
 
 === 2. Deploy the `ns-policyserver-mapper` policy
@@ -302,7 +343,7 @@ Wait for the policy to become active:
 
 [subs="+attributes",console]
 ----
-kubectl wait --for=condition=PolicyActive clusteradmissionpolicy/ns-to-policyserver
+kubectl wait --for=condition=PolicyActive clusteradmissionpolicy/ns-to-policyserver --timeout=5m
 ----
 
 === 3. Label team Namespaces
@@ -328,7 +369,10 @@ exercising host capabilities:
 ----
 helm upgrade --wait -n {admc-namespace} {admc-release} {admc-chart-location} \
   --reuse-values \
-  --set 'policyServer.namespacedPoliciesCapabilities={}'
+  --set-json 'policyServer.namespacedPoliciesCapabilities=[]'
+
+kubectl patch policyserver default --type=merge \
+  -p '{"spec":{"namespacedPoliciesCapabilities":[]}}'
 ----
 
 == Upgrade considerations
