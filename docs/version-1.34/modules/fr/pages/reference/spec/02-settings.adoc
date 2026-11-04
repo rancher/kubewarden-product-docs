@@ -41,7 +41,7 @@ Si les paramètres fournis par l'utilisateur sont `valid`, `validate_settings` i
 [NOTE]
 ====
 
-Le {short-project-name} de https://github.com/chimera-kube/policy-server[serveur-de-stratégie] valide tous les paramètres de la stratégie fournis par les utilisateurs au démarrage. Le serveur de stratégie se termine immédiatement avec une erreur si au moins l'une de ses stratégies a reçu des paramètres de configuration incorrects.
+Le {short-project-name} de https://github.com/kubewarden/policy-server[serveur-de-stratégie] valide tous les paramètres de la stratégie fournis par les utilisateurs au démarrage. Le serveur de stratégie se termine immédiatement avec une erreur si au moins l'une de ses stratégies a reçu des paramètres de configuration incorrects.
 
 ====
 

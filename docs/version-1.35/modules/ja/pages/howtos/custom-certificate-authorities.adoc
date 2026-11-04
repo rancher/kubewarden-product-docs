@@ -20,7 +20,7 @@ include::partial$variables.adoc[]
 標準の {project-name} インストールでは、`policy-server` は Linuxコンテナに付属の CA ストアを使用します。
 クライアント側では、`kwctl` がオペレーティングシステムの CA ストアを使用します。
 
-https://github.com/kubewarden/kubewarden-controller[Controller] を使用している場合、xref:/howtos/policy-servers/01-custom-cas.adoc[`spec` フィールド] を介して PolicyServer を設定できます。
+https://github.com/kubewarden/adm-controller[Controller] を使用している場合、xref:/howtos/policy-servers/01-custom-cas.adoc[`spec` フィールド] を介して PolicyServer を設定できます。
 
 [NOTE]
 ====

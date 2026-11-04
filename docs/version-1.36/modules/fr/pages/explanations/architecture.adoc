@@ -71,7 +71,7 @@ Les stratégies dans {admc-name} sont des artefacts OCI (Open Container Initiati
 +
 {admc-name} s'intègre à Kubernetes en utilisant https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Contrôle d'Admission Dynamique]. En particulier, {admc-name} fonctionne comme un Webhook d'Admission Kubernetes. Le `policy-server` est le point de terminaison Webhook appelé par le serveur API Kubernetes pour valider les demandes.
 
-* Le https://github.com/kubewarden/kubewarden-controller[{admc-name} contrôleur] est un contrôleur Kubernetes qui réconcilie les Ressources Personnalisées de {admc-name}. Ce contrôleur crée des parties de la pile {admc-name}.
+* Le https://github.com/kubewarden/adm-controller[{admc-name} contrôleur] est un contrôleur Kubernetes qui réconcilie les Ressources Personnalisées de {admc-name}. Ce contrôleur crée des parties de la pile {admc-name}.
 Il traduit également la configuration de {admc-name} en directives Kubernetes.
 +
 Le `kubewarden-controller` enregistre les objets `MutatingWebhookConfiguration` ou `ValidatingWebhookConfiguration` nécessaires auprès du serveur API Kubernetes.

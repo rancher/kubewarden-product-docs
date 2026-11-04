@@ -41,7 +41,7 @@ Si la configuración proporcionada por el usuario es `valid`, `validate_settings
 [NOTE]
 ====
 
-El {short-project-name} https://github.com/chimera-kube/policy-server[policy-server] de valida toda la configuración de la directiva proporcionada por los usuarios al inicio. El policy-server sale inmediatamente con un error si al menos una de sus directivas recibió parámetros de configuración incorrectos.
+El {short-project-name} https://github.com/kubewarden/policy-server[policy-server] de valida toda la configuración de la directiva proporcionada por los usuarios al inicio. El policy-server sale inmediatamente con un error si al menos una de sus directivas recibió parámetros de configuración incorrectos.
 
 ====
 

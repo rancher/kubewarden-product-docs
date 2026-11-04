@@ -41,7 +41,7 @@ include::partial$variables.adoc[]
 [NOTE]
 ====
 
-{admc-short-name}的link:https://github.com/chimera-kube/policy-server[policy-server]在启动时验证用户提供的所有策略设置。如果至少有一个策略接收到错误的配置参数，policy-server将立即退出并显示错误。
+{admc-short-name}的link:https://github.com/kubewarden/policy-server[policy-server]在启动时验证用户提供的所有策略设置。如果至少有一个策略接收到错误的配置参数，policy-server将立即退出并显示错误。
 
 ====
 

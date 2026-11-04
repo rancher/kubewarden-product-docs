@@ -85,7 +85,7 @@ cat */policylist.txt > policies.txt
 +
 デフォルトポリシーのリストを含むファイルは、{admc-short-name}デフォルトlink:https://github.com/kubewarden/helm-charts/releases/[リリースページ]にあります。
 
-. https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller`リポジトリ]から`kubewarden-save-policies.sh`と`kubewarden-load-policies.sh`をダウンロードします。
+. https://github.com/kubewarden/adm-controller/blob/main/scripts[`kubewarden-controller`リポジトリ]から`kubewarden-save-policies.sh`と`kubewarden-load-policies.sh`をダウンロードします。
 
 . ポリシーを`.tar.gz`ファイルに保存する：
 +

@@ -120,7 +120,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 [CAUTION]
 ====
 
-Puisque https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`], une ressource `PolicyServer` nommée `default` n'est pas créée en utilisant le chart `kubewarden-controller`. Maintenant, un chart Helm appelé `kubewarden-defaults` installe le serveur de stratégie par défaut.
+Puisque https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`], une ressource `PolicyServer` nommée `default` n'est pas créée en utilisant le chart `kubewarden-controller`. Maintenant, un chart Helm appelé `kubewarden-defaults` installe le serveur de stratégie par défaut.
 
 Cela signifie que si vous n'utilisez pas la dernière version de `kubewarden-controller` lors de la mise à niveau ou de la suppression, votre serveur de stratégie par défaut n'est pas mis à niveau ou supprimé. Ainsi, vous pourriez rencontrer des problèmes si vous essayez d'installer le `kubewarden-defaults` avec des informations conflictuelles, par exemple, le même nom de serveur de stratégie. Pour installer les futures mises à niveau du chart Helm `kubewarden-defaults`, supprimez la ressource `PolicyServer` existante créée par le `kubewarden-controller` avant d'installer le nouveau chart. Maintenant, vous pouvez mettre à jour votre serveur de stratégie en utilisant les mises à niveau Helm sans conflits de ressources. Lorsque vous supprimez le `PolicyServer`, vous supprimez également toutes les stratégies qui y sont liées.
 
@@ -307,7 +307,7 @@ Le contrôleur enregistre le webhook des ressources {cluster-admission-policy} `
 
 ====
 
-La documentation complète de ces ressources personnalisées est https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[ici] ou sur https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
+La documentation complète de ces ressources personnalisées est https://github.com/kubewarden/adm-controller/blob/main/docs/crds/README.md[ici] ou sur https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
 
 [#_example_enforce_your_first_policy]
 == Exemple : Appliquez votre première stratégie

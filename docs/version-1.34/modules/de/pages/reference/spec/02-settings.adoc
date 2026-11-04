@@ -41,7 +41,7 @@ Wenn die vom Benutzer bereitgestellten Einstellungen `valid` sind, ignoriert `va
 [NOTE]
 ====
 
-{short-project-name}'s https://github.com/chimera-kube/policy-server[policy-server] validiert alle von Benutzern bereitgestellten Richtlinieneinstellungen zur Startzeit. Der policy-server beendet sich sofort mit einem Fehler, wenn mindestens eine seiner Richtlinien falsche Konfigurationsparameter erhalten hat.
+{short-project-name}'s https://github.com/kubewarden/policy-server[policy-server] validiert alle von Benutzern bereitgestellten Richtlinieneinstellungen zur Startzeit. Der policy-server beendet sich sofort mit einem Fehler, wenn mindestens eine seiner Richtlinien falsche Konfigurationsparameter erhalten hat.
 
 ====
 

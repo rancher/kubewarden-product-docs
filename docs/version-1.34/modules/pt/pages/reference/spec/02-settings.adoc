@@ -41,7 +41,7 @@ Se as configurações fornecidas pelo usuário forem `valid`, `validate_settings
 [NOTE]
 ====
 
-O https://github.com/chimera-kube/policy-server[policy-server] de {short-project-name} valida todas as configurações de política fornecidas pelos usuários no momento da inicialização. O servidor de política fecha imediatamente com um erro se pelo menos uma de suas políticas recebeu parâmetros de configuração incorretos.
+O https://github.com/kubewarden/policy-server[policy-server] de {short-project-name} valida todas as configurações de política fornecidas pelos usuários no momento da inicialização. O servidor de política fecha imediatamente com um erro se pelo menos uma de suas políticas recebeu parâmetros de configuração incorretos.
 
 ====
 

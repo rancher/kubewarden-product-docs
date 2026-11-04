@@ -85,7 +85,7 @@ cat */policylist.txt > policies.txt
 +
 Um arquivo com uma lista de políticas padrão está na {admc-short-name} https://github.com/kubewarden/helm-charts/releases/[página de lançamento].
 
-. Baixe `kubewarden-save-policies.sh` e `kubewarden-load-policies.sh` do repositório https://github.com/kubewarden/kubewarden-controller/blob/main/scripts[`kubewarden-controller`].
+. Baixe `kubewarden-save-policies.sh` e `kubewarden-load-policies.sh` do repositório https://github.com/kubewarden/adm-controller/blob/main/scripts[`kubewarden-controller`].
 
 . Salve as políticas em um arquivo `.tar.gz`:
 +

@@ -20,7 +20,7 @@ Se utiliza el almacén de autoridades de certificación (CA) del sistema para va
 En una instalación estándar de {admc-name}, el `policy-server` utiliza el almacén de CA que se envía con su contenedor de Linux.
 En el lado del cliente, `kwctl` utiliza el almacén de CA de su sistema operativo.
 
-Si estás utilizando el https://github.com/kubewarden/kubewarden-controller[Controlador], puedes configurar el PolicyServer a través de sus campos xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`].
+Si estás utilizando el https://github.com/kubewarden/adm-controller[Controlador], puedes configurar el PolicyServer a través de sus campos xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`].
 
 [NOTE]
 ====

@@ -71,7 +71,7 @@ As políticas em {admc-name} são artefatos OCI (Open Container Initiative). Ess
 +
 {admc-name} se integra ao Kubernetes usando https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Controle de Admissão Dinâmico]. Em particular, {admc-name} opera como um Webhook de Admissão do Kubernetes. O `policy-server` é o endpoint do Webhook chamado pelo servidor da API do Kubernetes para validar solicitações.
 
-* O https://github.com/kubewarden/kubewarden-controller[{admc-name} controlador] é um controlador do Kubernetes que reconcilia os Recursos Customizados de {admc-name}. Esse controlador cria partes da pilha {admc-name}.
+* O https://github.com/kubewarden/adm-controller[{admc-name} controlador] é um controlador do Kubernetes que reconcilia os Recursos Customizados de {admc-name}. Esse controlador cria partes da pilha {admc-name}.
 Ele também traduz a configuração de {admc-name} em diretrizes do Kubernetes.
 +
 O `kubewarden-controller` registra os objetos necessários `MutatingWebhookConfiguration` ou `ValidatingWebhookConfiguration` com o servidor da API do Kubernetes.

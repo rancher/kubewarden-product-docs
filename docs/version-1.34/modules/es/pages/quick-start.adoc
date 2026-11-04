@@ -120,7 +120,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 [CAUTION]
 ====
 
-Dado que https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`], no se crea un recurso `PolicyServer` llamado `default` utilizando el gráfico `kubewarden-controller`. Ahora un gráfico de Helm llamado `kubewarden-defaults` instala el servidor de políticas por defecto.
+Dado que https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`], no se crea un recurso `PolicyServer` llamado `default` utilizando el gráfico `kubewarden-controller`. Ahora un gráfico de Helm llamado `kubewarden-defaults` instala el servidor de políticas por defecto.
 
 Esto significa que si no utilizas la última versión del `kubewarden-controller` al actualizar versión o eliminar, tu servidor de políticas por defecto no se actualiza ni se elimina. Por lo tanto, podrías encontrarte con problemas si intentas instalar el `kubewarden-defaults` con información conflictiva, por ejemplo, el mismo nombre de servidor de políticas. Para instalar futuras actualizaciones del Helm chart `kubewarden-defaults`, eliminar el recurso `PolicyServer` existente creado por el `kubewarden-controller` antes de instalar el nuevo chart. Ahora puedes actualizar la versión de tu servidor de políticas utilizando actualizaciones de Helm sin conflictos de recursos. Cuando eliminas el `PolicyServer`, también eliminas todas las políticas vinculadas a él.
 
@@ -307,7 +307,7 @@ Aparte de eso, no hay diferencias funcionales entre los recursos {admission-poli
 
 ====
 
-La documentación completa de estos Recursos Personalizados está https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[aquí] o en https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
+La documentación completa de estos Recursos Personalizados está https://github.com/kubewarden/adm-controller/blob/main/docs/crds/README.md[aquí] o en https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
 
 [#_example_enforce_your_first_policy]
 == Ejemplo: Aplica tu primera política

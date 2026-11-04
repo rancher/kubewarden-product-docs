@@ -71,7 +71,7 @@ WebAssemblyはポータブルで効率的であり、ポリシーが異なる環
 +
 {project-name}は、link:https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[アドミッションコントロール]を使用してKubernetesと統合されます。特に、{project-name}はKubernetesのアドミッションWebhookとして機能します。`policy-server`は、Kubernetes APIサーバーによってリクエストを検証するために呼び出されるWebhookエンドポイントです。
 
-* https://github.com/kubewarden/kubewarden-controller[{project-name}コントローラー]は、{project-name}のカスタムリソースを調整するKubernetesコントローラーです。このコントローラーは、{project-name}スタックの一部を作成します。
+* https://github.com/kubewarden/adm-controller[{project-name}コントローラー]は、{project-name}のカスタムリソースを調整するKubernetesコントローラーです。このコントローラーは、{project-name}スタックの一部を作成します。
 また、{project-name}の設定をKubernetesの指示に変換します。
 +
 `kubewarden-controller`は、必要な`MutatingWebhookConfiguration`または`ValidatingWebhookConfiguration`オブジェクトをKubernetes APIサーバーに登録します。

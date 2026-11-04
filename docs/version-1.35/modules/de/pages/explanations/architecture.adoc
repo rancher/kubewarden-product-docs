@@ -71,7 +71,7 @@ Richtlinien in {project-name} sind OCI (Open Container Initiative) Artefakte. Di
 +
 {project-name} integriert sich mit Kubernetes unter Verwendung von https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamische Zulassungssteuerung]. Insbesondere fungiert {project-name} als ein Kubernetes Zulassungs-Webhook. Der `policy-server` ist der Webhook-Endpunkt, der vom Kubernetes API-Server aufgerufen wird, um Anfragen zu validieren.
 
-* Der https://github.com/kubewarden/kubewarden-controller[{project-name} Controller] ist ein Kubernetes-Controller, der die {project-name} Benutzerdefinierten Ressourcen abgleicht. Dieser Controller erstellt Teile des {project-name} Stacks.
+* Der https://github.com/kubewarden/adm-controller[{project-name} Controller] ist ein Kubernetes-Controller, der die {project-name} Benutzerdefinierten Ressourcen abgleicht. Dieser Controller erstellt Teile des {project-name} Stacks.
 Er übersetzt auch die {project-name} Konfiguration in Kubernetes-Direktiven.
 +
 Der `kubewarden-controller` registriert die benötigten `MutatingWebhookConfiguration` oder `ValidatingWebhookConfiguration` Objekte beim Kubernetes API-Server.

@@ -71,7 +71,7 @@ Richtlinien in {admc-name} sind OCI (Open Container Initiative) Artefakte. Diese
 +
 {admc-name} integriert sich mit Kubernetes unter Verwendung von https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Dynamische Zulassungssteuerung]. Insbesondere fungiert {admc-name} als ein Kubernetes Zulassungs-Webhook. Der `policy-server` ist der Webhook-Endpunkt, der vom Kubernetes API-Server aufgerufen wird, um Anfragen zu validieren.
 
-* Der https://github.com/kubewarden/kubewarden-controller[{admc-name} Controller] ist ein Kubernetes-Controller, der die {admc-name} Benutzerdefinierten Ressourcen abgleicht. Dieser Controller erstellt Teile des {admc-name} Stacks.
+* Der https://github.com/kubewarden/adm-controller[{admc-name} Controller] ist ein Kubernetes-Controller, der die {admc-name} Benutzerdefinierten Ressourcen abgleicht. Dieser Controller erstellt Teile des {admc-name} Stacks.
 Er übersetzt auch die {admc-name} Konfiguration in Kubernetes-Direktiven.
 +
 Der `kubewarden-controller` registriert die benötigten `MutatingWebhookConfiguration` oder `ValidatingWebhookConfiguration` Objekte beim Kubernetes API-Server.

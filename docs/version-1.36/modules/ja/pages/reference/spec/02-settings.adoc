@@ -41,7 +41,7 @@ include::partial$variables.adoc[]
 [NOTE]
 ====
 
-{admc-short-name}のlink:https://github.com/chimera-kube/policy-server[policy-server]は、起動時にユーザーが提供したすべてのポリシー設定を検証します。ポリシーサーバーは、少なくとも1つのポリシーが誤った設定パラメータを受け取った場合、直ちにエラーで終了します。
+{admc-short-name}のlink:https://github.com/kubewarden/policy-server[policy-server]は、起動時にユーザーが提供したすべてのポリシー設定を検証します。ポリシーサーバーは、少なくとも1つのポリシーが誤った設定パラメータを受け取った場合、直ちにエラーで終了します。
 
 ====
 
