@@ -71,7 +71,7 @@ Las políticas en {project-name} son artefactos OCI (Open Container Initiative).
 +
 {project-name} se integra con Kubernetes utilizando https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[Control de Admisión Dinámico]. En particular, {project-name} opera como un Webhook de Admisión de Kubernetes. El `policy-server` es el punto final del Webhook llamado por el servidor API de Kubernetes para validar solicitudes.
 
-* El https://github.com/kubewarden/kubewarden-controller[{project-name} controlador] es un controlador de Kubernetes que reconcilia los Recursos Personalizados de {project-name}. Este controlador crea partes de la pila {project-name}.
+* El https://github.com/kubewarden/adm-controller[{project-name} controlador] es un controlador de Kubernetes que reconcilia los Recursos Personalizados de {project-name}. Este controlador crea partes de la pila {project-name}.
 También traduce la configuración de {project-name} en directivas de Kubernetes.
 +
 El `kubewarden-controller` registra los objetos necesarios `MutatingWebhookConfiguration` o `ValidatingWebhookConfiguration` con el servidor API de Kubernetes.

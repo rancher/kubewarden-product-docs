@@ -120,7 +120,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 [CAUTION]
 ====
 
-由于link:https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`]，未使用`kubewarden-controller`图表创建名为`PolicyServer`的`default`资源。现在，一个名为`kubewarden-defaults`的Helm图表安装默认策略服务器。
+由于link:https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`]，未使用`kubewarden-controller`图表创建名为`PolicyServer`的`default`资源。现在，一个名为`kubewarden-defaults`的Helm图表安装默认策略服务器。
 
 这意味着如果在升级或删除时未使用最新版本的`kubewarden-controller`，则您的默认策略服务器不会被升级或删除。因此，如果您尝试安装具有冲突信息的`kubewarden-defaults`，例如相同的策略服务器名称，可能会遇到问题。要安装`kubewarden-defaults` Helm图表的未来升级，请在安装新图表之前去除由`PolicyServer`创建的现有`kubewarden-controller`资源。现在，您可以使用Helm升级更新您的策略服务器，而不会发生资源冲突。当您去除`PolicyServer`时，您也会去除与之绑定的所有策略。
 
@@ -308,7 +308,7 @@ spec:
 
 ====
 
-这些自定义资源的完整文档在 https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[这里] 或 https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev] 上。
+这些自定义资源的完整文档在 https://github.com/kubewarden/adm-controller/blob/main/docs/crds/README.md[这里] 或 https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev] 上。
 
 [#_example_enforce_your_first_policy]
 == 示例：强制执行您的第一个策略

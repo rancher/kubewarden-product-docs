@@ -71,7 +71,7 @@ WebAssembly 是可移植且高效的，使策略能够在不同环境中无须�
 +
 {project-name} 通过 https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/[动态准入控制] 与 Kubernetes 集成。特别是，{project-name} 作为 Kubernetes 准入 Webhook 运行。`policy-server` 是由 Kubernetes API 服务器调用的 Webhook 端点，用于验证请求。
 
-* https://github.com/kubewarden/kubewarden-controller[{project-name} 控制器] 是一个 Kubernetes 控制器，用于协调 {project-name} 的自定义资源。该控制器创建 {project-name} 技术栈的部分。
+* https://github.com/kubewarden/adm-controller[{project-name} 控制器] 是一个 Kubernetes 控制器，用于协调 {project-name} 的自定义资源。该控制器创建 {project-name} 技术栈的部分。
 它还将 {project-name} 配置转换为 Kubernetes 指令。
 +
 `kubewarden-controller` 向 Kubernetes API 服务器注册所需的 `MutatingWebhookConfiguration` 或 `ValidatingWebhookConfiguration` 对象。

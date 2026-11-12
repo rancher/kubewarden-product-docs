@@ -110,7 +110,7 @@ Admission Control]. In particular, {project-name} operates as a Kubernetes
 Admission Webhook. The `policy-server` is the Webhook endpoint called by the
 Kubernetes API server to validate requests.
 
-* The https://github.com/kubewarden/kubewarden-controller[{project-name}
+* The https://github.com/kubewarden/adm-controller[{project-name}
 controller] is a Kubernetes controller that reconciles {project-name}'s
 Custom Resources. This controller creates parts of the {project-name} stack.
 It also translates {project-name} configuration into Kubernetes directives.

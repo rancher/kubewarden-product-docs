@@ -20,7 +20,7 @@ O repositório de autoridades de certificação (CA) do sistema é usado para va
 Em uma instalação padrão de {project-name}, o `policy-server` usa o repositório de CA fornecido com seu Linux Container.
 Do lado do cliente, `kwctl` usa o repositório CA do seu sistema operacional.
 
-Se você estiver usando o https://github.com/kubewarden/kubewarden-controller[Controlador], você pode configurar o PolicyServer por meio de seus campos xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`].
+Se você estiver usando o https://github.com/kubewarden/adm-controller[Controlador], você pode configurar o PolicyServer por meio de seus campos xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`].
 
 [NOTE]
 ====

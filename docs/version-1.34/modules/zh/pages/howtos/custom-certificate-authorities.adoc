@@ -20,7 +20,7 @@ include::partial$variables.adoc[]
 在标准的{project-name}安装中，`policy-server`使用随其 Linux Container 一起提供的CA存储。
 在客户端，`kwctl`使用您的操作系统CA存储。
 
-如果您使用的是link:https://github.com/kubewarden/kubewarden-controller[Controller]，您可以通过其xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`字段]配置PolicyServer。
+如果您使用的是link:https://github.com/kubewarden/adm-controller[Controller]，您可以通过其xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`字段]配置PolicyServer。
 
 [NOTE]
 ====

@@ -120,7 +120,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 [CAUTION]
 ====
 
-https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`]のため、`kubewarden-controller`チャートを使用しても、`default`という名前の`PolicyServer`リソースは作成されません。`kubewarden-defaults`というHelmチャートが、デフォルトのポリシーサーバーをインストールします。
+https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`]のため、`kubewarden-controller`チャートを使用しても、`default`という名前の`PolicyServer`リソースは作成されません。`kubewarden-defaults`というHelmチャートが、デフォルトのポリシーサーバーをインストールします。
 
 これは、`kubewarden-controller`の最新バージョンを使用していない場合、アップグレードするまたは削除する際に、デフォルトのポリシーサーバーがアップグレードされず、または削除されないことを意味します。したがって、同じポリシーサーバー名など、矛盾する情報で`kubewarden-defaults`をインストールしようとすると問題が発生する可能性があります。将来の`kubewarden-defaults` Helmチャートのアップグレードをインストールするには、新しいチャートをインストールする前に、`kubewarden-controller`によって作成された既存の`PolicyServer`リソースを削除する必要があります。これで、リソースの競合なしにHelmでアップグレードすることでポリシーサーバーを更新できます。`PolicyServer`を削除すると、それにバインドされたすべてのポリシーも削除されます。
 
@@ -307,7 +307,7 @@ spec:
 
 ====
 
-これらのカスタムリソースの完全なドキュメントはlink:https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[こちら]またはlink:https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev]にあります。
+これらのカスタムリソースの完全なドキュメントはlink:https://github.com/kubewarden/adm-controller/blob/main/docs/crds/README.md[こちら]またはlink:https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev]にあります。
 
 [#_example_enforce_your_first_policy]
 == 例:最初のポリシーを強制します。

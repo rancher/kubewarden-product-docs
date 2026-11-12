@@ -120,7 +120,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 [CAUTION]
 ====
 
-Da https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`] wird eine `PolicyServer` Ressource mit dem Namen `default` nicht mit dem `kubewarden-controller` Chart erstellt. Jetzt installiert ein Helm-Chart namens `kubewarden-defaults` den Standardrichtlinienserver.
+Da https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`] wird eine `PolicyServer` Ressource mit dem Namen `default` nicht mit dem `kubewarden-controller` Chart erstellt. Jetzt installiert ein Helm-Chart namens `kubewarden-defaults` den Standardrichtlinienserver.
 
 Das bedeutet, dass, wenn Sie nicht die neueste Version des `kubewarden-controller` verwenden, während Sie aktualisieren oder löschen, Ihr Standardrichtlinienserver nicht aktualisiert oder gelöscht wird. Sie könnten auf Probleme stoßen, wenn Sie versuchen, den `kubewarden-defaults` mit widersprüchlichen Informationen zu installieren, zum Beispiel denselben Richtlinienserver-Namen. Um zukünftige Upgrades des `kubewarden-defaults` Helm-Charts zu installieren, entfernen Sie die vorhandene `PolicyServer` Ressource, die von dem `kubewarden-controller` erstellt wurde, bevor Sie das neue Chart installieren. Jetzt können Sie Ihren Richtlinienserver mit Helm-Upgrade ohne Ressourcenkonflikte aktualisieren. Wenn Sie das `PolicyServer` entfernen, entfernen Sie auch alle daran gebundenen Richtlinien.
 
@@ -314,7 +314,7 @@ Kubernetes 1.21.0 eingeführt wurde.
 
 ====
 
-Die vollständige Dokumentation dieser benutzerdefinierten Ressourcen ist https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[hier] oder auf https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
+Die vollständige Dokumentation dieser benutzerdefinierten Ressourcen ist https://github.com/kubewarden/adm-controller/blob/main/docs/crds/README.md[hier] oder auf https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
 
 [#_example_enforce_your_first_policy]
 == Beispiel: Setzen Sie Ihre erste Richtlinie durch.

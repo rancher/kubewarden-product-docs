@@ -20,7 +20,7 @@ Le magasin d'autorités de certification (CA) du système est utilisé pour vali
 Dans une installation standard de {admc-name}, le `policy-server` utilise le magasin CA fourni avec son Linux Container.
 Du côté client, `kwctl` utilise le magasin CA de votre système d'exploitation.
 
-Si vous utilisez le https://github.com/kubewarden/kubewarden-controller[Contrôleur], vous pouvez configurer le PolicyServer via ses xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`champs].
+Si vous utilisez le https://github.com/kubewarden/adm-controller[Contrôleur], vous pouvez configurer le PolicyServer via ses xref:/howtos/policy-servers/01-custom-cas.adoc[`spec`champs].
 
 [NOTE]
 ====

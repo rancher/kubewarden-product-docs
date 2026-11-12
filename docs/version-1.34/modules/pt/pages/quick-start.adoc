@@ -120,7 +120,7 @@ helm install --wait -n kubewarden kubewarden-defaults kubewarden/kubewarden-defa
 [CAUTION]
 ====
 
-Como https://github.com/kubewarden/kubewarden-controller/releases/tag/v0.4.0[`v0.4.0`], um recurso `PolicyServer` chamado `default` não é criado usando o gráfico `kubewarden-controller`. Agora, um gráfico Helm chamado `kubewarden-defaults` instala o servidor de políticas padrão.
+Como https://github.com/kubewarden/adm-controller/releases/tag/v0.4.0[`v0.4.0`], um recurso `PolicyServer` chamado `default` não é criado usando o gráfico `kubewarden-controller`. Agora, um gráfico Helm chamado `kubewarden-defaults` instala o servidor de políticas padrão.
 
 Isso significa que, se não estiver usando a versão mais recente do `kubewarden-controller` ao fazer upgrade ou excluir, seu servidor de políticas padrão não será atualizado ou excluído. Portanto, você pode encontrar problemas se tentar instalar o `kubewarden-defaults` com informações conflitantes, por exemplo, o mesmo nome de servidor de políticas. Para instalar futuras atualizações do gráfico Helm `kubewarden-defaults`, remova o recurso `PolicyServer` existente criado pelo `kubewarden-controller` antes de instalar o novo gráfico. Agora você pode fazer upgrade do seu servidor de políticas usando upgrades do Helm sem conflitos de recursos. Quando você remove o `PolicyServer`, você remove todas as políticas vinculadas a ele também.
 
@@ -307,7 +307,7 @@ Além disso, não há diferenças funcionais entre os recursos {admission-policy
 
 ====
 
-A documentação completa desses Recursos Personalizados está https://github.com/kubewarden/kubewarden-controller/blob/main/docs/crds/README.asciidoc[aqui] ou em https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
+A documentação completa desses Recursos Personalizados está https://github.com/kubewarden/adm-controller/blob/main/docs/crds/README.md[aqui] ou em https://doc.crds.dev/github.com/kubewarden/kubewarden-controller[docs.crds.dev].
 
 [#_example_enforce_your_first_policy]
 == Exemplo: Imponha sua primeira política
