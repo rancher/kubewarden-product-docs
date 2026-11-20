@@ -1,3 +1,20 @@
 = kubewarden-product-docs
 
 SUSE product documentation for Kubewarden.
+
+== License
+
+This repository uses two licenses:
+
+* The documentation is licensed under the Creative Commons Attribution 4.0
+  International license (CC-BY-4.0), the same as the upstream community
+  documentation at https://github.com/kubewarden/docs. See `LICENSE`. This
+  includes the content in `docs/`, `shared/` and `archived-docs/`, and the
+  other text files.
+* The code and the build files are licensed under the Apache License 2.0.
+  See `LICENSE-CODE`. This includes `bin/`, `.github/`, the `Makefile`, the
+  playbooks, and the other configuration files.
+
+The submodules (`dsc-style-bundle`, `kw-community-docs-supp-files`,
+`product-docs-common` and `product-docs-supplemental-files`) have their own
+licenses.
